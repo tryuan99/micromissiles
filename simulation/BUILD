@@ -32,8 +32,8 @@ py_library(
 )
 
 py_binary(
-    name = "if_amplitude_vs_range_main",
-    srcs = ["if_amplitude_vs_range_main.py"],
+    name = "snr_vs_range_main",
+    srcs = ["snr_vs_range_main.py"],
     deps = [
         ":radar",
         ":target",

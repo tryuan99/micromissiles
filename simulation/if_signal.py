@@ -66,8 +66,9 @@ class IFSignal:
             target: Target.
         """
         # Calculate the IF amplitude using the radar equation.
-        amplitude_db = (
+        power_db = (
             radar.tx_eirp
+            + constants.power2db(1e-3)  # Convert from dBm to dBW.
             + radar.rx_gain
             + target.rcs
             + constants.power2db(
@@ -75,4 +76,4 @@ class IFSignal:
             )
             - radar.noise_figure
         )
-        return constants.db2mag(amplitude_db)
+        return constants.power2mag(constants.db2power(power_db))

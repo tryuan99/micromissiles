@@ -25,10 +25,10 @@ def db2mag(db: Any) -> Any:
 
 
 def power2mag(power: Any) -> Any:
-    """Converts power to magnitude."""
-    return np.sqrt(power)
+    """Converts power to magnitude using V = sqrt(P * 50 ohms)."""
+    return np.sqrt(power * 50)
 
 
 def mag2power(magnitude: Any) -> Any:
-    """Converts magnitude to power."""
-    return magnitude**2
+    """Converts magnitude to power using P = V^2 / 50 ohms."""
+    return magnitude**2 / 50
