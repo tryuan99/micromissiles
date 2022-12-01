@@ -36,8 +36,8 @@ def plot_if_amplitude_vs_range(
     ranges = np.arange(1, int(radar.r_max + 1))
     if_amplitudes = np.zeros(len(ranges))
     fft_peak_magnitudes = np.zeros(len(ranges))
-    for i in range(len(ranges)):
-        target.range = ranges[i]
+    for i, range in enumerate(ranges):
+        target.range = range
         if_amplitudes[i] = constants.mag2db(AdcData.get_if_amplitude(radar, target))
         fft_peak_magnitudes[i] = if_amplitudes[i] + constants.mag2db(
             fft_processing_gain

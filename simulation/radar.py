@@ -2,7 +2,6 @@
 
 import numpy as np
 import scipy.constants
-from typing import Tuple
 
 from simulation.noise import GaussianNoise
 from utils import constants
@@ -151,14 +150,18 @@ class Radar:
     def az_res(self) -> float:
         """Angular resolution in rad."""
         return 2 / (
-            np.max(d_tx_hor) + np.max(d_rx_hor) - (np.min(d_tx_hor) + np.min(d_rx_hor))
+            np.max(self.d_tx_hor)
+            + np.max(self.d_rx_hor)
+            - (np.min(self.d_tx_hor) + np.min(self.d_rx_hor))
         )
 
     @property
     def el_res(self) -> float:
         """Elevational resolution in rad."""
         return 2 / (
-            np.max(d_tx_ver) + np.max(d_rx_ver) - (np.min(d_tx_ver) + np.min(d_rx_ver))
+            np.max(self.d_tx_ver)
+            + np.max(self.d_rx_ver)
+            - (np.min(self.d_tx_ver) + np.min(self.d_rx_ver))
         )
 
     @property
@@ -178,7 +181,7 @@ class Radar:
         """Noise factor."""
         return constants.db2power(self.noise_figure)
 
-    def generate_noise(self, shape: Tuple[int, ...], temperature: float) -> np.ndarray:
+    def generate_noise(self, shape: tuple[int, ...], temperature: float) -> np.ndarray:
         """Generates the noise in the ADC samples, including thermal noise,
         quantization noise, and phase noise, all scaled by the noise figure.
 
@@ -202,7 +205,7 @@ class Radar:
         return self.get_thermal_noise_amplitude(temperature)
 
     def generate_thermal_noise(
-        self, shape: Tuple[int, ...], temperature: float
+        self, shape: tuple[int, ...], temperature: float
     ) -> np.ndarray:
         """Generates thermal noise in the ADC samples.
 
