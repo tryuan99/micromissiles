@@ -6,6 +6,7 @@ import numpy as np
 
 from simulation.adc_data import AdcData
 from simulation.radar import Radar
+from simulation.samples import Samples
 from simulation.target import Target
 from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
@@ -39,14 +40,14 @@ def plot_range_doppler_map(
     )
     adc_data = AdcData(radar, target)
 
-    samples = adc_data.samples
+    samples = Samples(adc_data.get_samples())
     if noise:
-        samples += radar.generate_noise(adc_data.shape, temperature).samples
+        samples.add_samples(radar.generate_noise(adc_data.shape, temperature))
 
     # Apply the windows.
     windowed_samples = np.einsum(
         "ij,i->ij",
-        np.einsum("ij,j->ij", samples, radar.wnd_r),
+        np.einsum("ij,j->ij", samples.get_samples(), radar.wnd_r),
         radar.wnd_v,
     )
 

@@ -6,22 +6,18 @@ antenna's chirp.
 import numpy as np
 
 from simulation.radar import Radar
+from simulation.samples import Samples
 from simulation.target import Target
 from utils import constants
 
 
-class AdcData:
+class AdcData(Samples):
     """Represents the ADC samples of the received IF signal."""
 
     def __init__(
         self, radar: Radar, target: Target, tx_antenna: int = 0, rx_antenna: int = 0
     ):
-        self.samples = self.generate_adc_data(radar, target, tx_antenna, rx_antenna)
-
-    @property
-    def shape(self) -> tuple[int, ...]:
-        """Shape of the ADC samples."""
-        return self.samples.shape
+        super().__init__(self.generate_adc_data(radar, target, tx_antenna, rx_antenna))
 
     @staticmethod
     def generate_adc_data(

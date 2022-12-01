@@ -7,6 +7,7 @@ py_library(
     srcs = ["adc_data.py"],
     deps = [
         ":radar",
+        ":samples",
         ":target",
         "//utils:constants",
         requirement("numpy"),
@@ -16,7 +17,10 @@ py_library(
 py_library(
     name = "noise",
     srcs = ["noise.py"],
-    deps = [requirement("numpy")],
+    deps = [
+        ":samples",
+        requirement("numpy"),
+    ],
 )
 
 py_library(
@@ -27,6 +31,12 @@ py_library(
         requirement("numpy"),
         requirement("scipy"),
     ],
+)
+
+py_library(
+    name = "samples",
+    srcs = ["samples.py"],
+    deps = [requirement("numpy")],
 )
 
 py_library(
@@ -54,6 +64,7 @@ py_binary(
     srcs = ["range_doppler_main.py"],
     deps = [
         ":radar",
+        ":samples",
         ":target",
         ":adc_data",
         "//utils:constants",

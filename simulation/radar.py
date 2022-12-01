@@ -28,7 +28,6 @@ class Radar:
         self.N_v = 512  # Number of chirps.
 
         # Antenna parameters.
-        # TODO(titan): Change the antenna array parameters.
         self.N_tx = 3  # Number of TX antennas.
         self.N_rx = 4  # Number of RX antennas.
         self.d_tx_hor = [0, 2, 2]  # TX antenna horizontal spacing in lambda/2.

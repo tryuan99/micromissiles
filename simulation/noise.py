@@ -4,72 +4,84 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from simulation.samples import Samples
 
-class Noise(ABC):
+
+class Noise(Samples, ABC):
     """Represents some noise."""
 
-    def __init__(self, samples: np.ndarray):
-        self.samples = samples
-
-    @property
-    def shape(self) -> tuple[int, ...]:
-        """Shape of the noise."""
-        return self.samples.shape
-
-    @property
     @abstractmethod
-    def mean(self) -> float:
-        """Mean of the noise."""
-        pass
-
-    @property
-    @abstractmethod
-    def std(self) -> float:
-        """Standard deviation, or RMS value, of the noise."""
+    def get_mean(self) -> float:
+        """Returns the mean of the noise."""
         pass
 
 
 class GaussianNoise(Noise):
     """Represents complex white Gaussian noise."""
 
-    def __init__(self, shape: tuple[int, ...], amplitude: float = 1) -> np.ndarray:
-        super().__init__(
+    def __init__(self, shape: tuple[int, ...], amplitude: float = 1):
+        super().__init__(self.generate_noise_samples(shape, amplitude))
+
+    def get_mean(self) -> float:
+        """Returns the mean of the noise."""
+        return 0
+
+    @staticmethod
+    def generate_noise_samples(shape: tuple[int, ...], amplitude: float) -> np.ndarray:
+        """Generates noise samples.
+
+        Args:
+            shape: Shape of the noise.
+            amplitude: Noise amplitude.
+
+        Returns:
+            Noise samples.
+        """
+        return (
             amplitude
             / np.sqrt(2)
             * (np.random.normal(size=shape) + 1j * np.random.normal(size=shape))
         )
-        self.amplitude = amplitude
-
-    @property
-    def mean(self) -> float:
-        """Mean of the noise."""
-        return 0
-
-    @property
-    def std(self) -> float:
-        """Standard deviation, or RMS value, of the noise."""
-        return self.amplitude
 
 
 class UniformNoise(Noise):
     """Represents complex white uniform noise."""
 
     def __init__(
-        self, shape: tuple[int, ...], low: float = -0.5, high: float = 0.5
-    ) -> np.ndarray:
-        super().__init__(
-            np.random.uniform(low=low, high=high, size=shape)
-            + 1j * np.random.uniform(low=low, high=high, size=shape)
-        )
+        self,
+        shape: tuple[int, ...],
+        amplitude: float = 1,
+        low: float = -0.5,
+        high: float = 0.5,
+    ):
+        super().__init__(self.generate_noise_samples(shape, amplitude, low, high))
         self.low = low
         self.high = high
 
-    @property
-    def mean(self) -> float:
-        """Mean of the noise."""
+    def get_mean(self) -> float:
+        """Returns the mean of the noise."""
         return (self.high - self.low) / 2
 
-    @property
-    def std(self) -> float:
-        """Standard deviation, or RMS value, of the noise."""
-        return np.sqrt(2) / np.sqrt(12) * (self.high - self.low)
+    @staticmethod
+    def generate_noise_samples(
+        shape: tuple[int, ...], amplitude: float, low: float, high: float
+    ) -> np.ndarray:
+        """Generates noise samples.
+
+        Args:
+            shape: Shape of the noise.
+            amplitude: Noise amplitude.
+            low: Lower bound of the output interval.
+            high: Upper bound of the output interval.
+
+        Returns:
+            Noise samples.
+        """
+        return (
+            amplitude
+            / (np.sqrt(2) / np.sqrt(12) * (high - low))
+            * (
+                np.random.uniform(low=low, high=high, size=shape)
+                + 1j * np.random.uniform(low=low, high=high, size=shape)
+            )
+        )
