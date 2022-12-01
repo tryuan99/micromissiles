@@ -3,10 +3,8 @@
 from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.constants
 
 from simulation.if_signal import IFSignal
-from simulation.noise import GaussianNoise
 from simulation.radar import Radar
 from simulation.target import Target
 from utils import constants
@@ -40,20 +38,10 @@ def plot_range_doppler_map(
         range=range, range_rate=range_rate, acceleration=acceleration, rcs=rcs
     )
     if_signal = IFSignal(radar, target)
-    thermal_noise = GaussianNoise(
-        if_signal.shape,
-        constants.power2mag(
-            scipy.constants.k
-            * scipy.constants.convert_temperature(temperature, "Celsius", "Kelvin")
-            * radar.B
-        ),
-    )
 
     samples = if_signal.samples
     if noise:
-        samples += thermal_noise.samples
-        # TODO(titan): Add phase noise.
-        # TODO(titan): Add quantization noise.
+        samples += radar.generate_noise(if_signal.shape, temperature).samples
 
     # Apply the windows.
     s_if_w = np.einsum(

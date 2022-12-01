@@ -4,7 +4,11 @@ import numpy as np
 from typing import Tuple
 
 
-class GaussianNoise:
+class Noise:
+    """Represents noise."""
+
+
+class GaussianNoise(Noise):
     """Represents complex white Gaussian noise."""
 
     def __init__(self, shape: Tuple[int, ...], amplitude: float = 1) -> np.ndarray:
@@ -26,7 +30,7 @@ class GaussianNoise:
         return self.amplitude
 
 
-class UniformNoise:
+class UniformNoise(Noise):
     """Represents complex white uniform noise."""
 
     def __init__(

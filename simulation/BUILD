@@ -22,7 +22,11 @@ py_library(
 py_library(
     name = "radar",
     srcs = ["radar.py"],
-    deps = [requirement("numpy")],
+    deps = [
+        ":noise",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
 )
 
 py_library(
@@ -42,7 +46,6 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("scipy"),
     ],
 )
 
@@ -50,7 +53,6 @@ py_binary(
     name = "range_doppler_main",
     srcs = ["range_doppler_main.py"],
     deps = [
-        ":noise",
         ":radar",
         ":target",
         ":if_signal",
@@ -59,6 +61,5 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("scipy"),
     ],
 )

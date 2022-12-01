@@ -1,6 +1,11 @@
 """The radar class represents a physical radar."""
 
 import numpy as np
+import scipy.constants
+from typing import Tuple
+
+from simulation.noise import GaussianNoise
+from utils import constants
 
 
 class Radar:
@@ -82,22 +87,22 @@ class Radar:
         return self.c / self.fc
 
     @property
-    def pri(self):
+    def pri(self) -> float:
         """Pulse reptition interval in s."""
         return self.Tc
 
     @property
-    def prf(self):
+    def prf(self) -> float:
         """Pulse repetition frequency in Hz."""
         return 1 / self.Tc
 
     @property
-    def cpi(self):
+    def cpi(self) -> float:
         """Coherent processing interval, or frame time, in s."""
         return self.N_v * self.Tc
 
     @property
-    def duty_cycle(self):
+    def duty_cycle(self) -> float:
         """Duty cycle."""
         return self.N_r / self.fs / self.pri
 
@@ -143,27 +148,86 @@ class Radar:
         return np.linspace(-self.v_max, self.v_max, self.N_bins_v, endpoint=False)
 
     @property
-    def az_res(self):
+    def az_res(self) -> float:
         """Angular resolution in rad."""
         return 2 / (
             np.max(d_tx_hor) + np.max(d_rx_hor) - (np.min(d_tx_hor) + np.min(d_rx_hor))
         )
 
     @property
-    def el_res(self):
+    def el_res(self) -> float:
         """Elevational resolution in rad."""
         return 2 / (
             np.max(d_tx_ver) + np.max(d_rx_ver) - (np.min(d_tx_ver) + np.min(d_rx_ver))
         )
 
     @property
-    def wnd_r(self):
+    def wnd_r(self) -> np.ndarray:
         """Normalized Blackman window for the range FFT."""
         wnd = np.blackman(self.N_r + 2)[1:-1]
         return wnd / np.linalg.norm(wnd)
 
     @property
-    def wnd_v(self):
+    def wnd_v(self) -> np.ndarray:
         """Normalized Hann window for the Doppler FFT."""
         wnd = np.hanning(self.N_v + 2)[1:-1]
         return wnd / np.linalg.norm(wnd)
+
+    @property
+    def noise_factor(self) -> float:
+        """Noise factor."""
+        return constants.db2power(self.noise_figure)
+
+    def generate_noise(self, shape: Tuple[int, ...], temperature: float) -> np.ndarray:
+        """Generates the noise in the ADC samples, including thermal noise,
+        quantization noise, and phase noise, all scaled by the noise figure.
+
+        Args:
+            shape: Shape of the noise.
+            temperature: Temperature in Celsius.
+
+        Returns:
+            Noise in the ADC samples.
+        """
+        # TODO(titan): Add quantization and phase noise.
+        return self.generate_thermal_noise(shape, temperature)
+
+    def get_noise_amplitude(self, temperature: float) -> float:
+        """Returns the noise amplitude considering the noise figure, thermal
+        noise, quantization noise, and phase noise.
+
+        Args:
+            temperature: Temperature in Celsius.
+        """
+        return self.get_thermal_noise_amplitude(temperature)
+
+    def generate_thermal_noise(
+        self, shape: Tuple[int, ...], temperature: float
+    ) -> np.ndarray:
+        """Generates thermal noise in the ADC samples.
+
+        Args:
+            shape: Shape of the noise.
+            temperature: Temperature in Celsius.
+
+        Returns:
+            Thermal noise in the ADC samples.
+        """
+        return GaussianNoise(shape, self.get_thermal_noise_amplitude(temperature))
+
+    def get_thermal_noise_amplitude(self, temperature: float) -> float:
+        """Returns the thermal noise amplitude.
+
+        Args:
+            temperature: Temperature in Celsius.
+        """
+        # The sqrt(2) factor is because the I and Q samples are sampled
+        # independently and added together.
+        return constants.power2mag(
+            scipy.constants.k
+            * scipy.constants.convert_temperature(temperature, "Celsius", "Kelvin")
+            * self.fs
+            / 2
+            * np.sqrt(2)
+            * self.noise_factor
+        )

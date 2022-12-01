@@ -3,7 +3,6 @@
 from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.constants
 
 from simulation.if_signal import IFSignal
 from simulation.radar import Radar
@@ -27,15 +26,9 @@ def plot_if_amplitude_vs_range(
     target = Target(rcs=rcs)
     fft_processing_gain = radar.N_r * radar.N_v
 
-    # Calculate the thermal noise amplitude in dB before and after the 2D FFT.
-    thermal_noise_amplitude_db = constants.mag2db(
-        constants.power2mag(
-            scipy.constants.k
-            * scipy.constants.convert_temperature(temperature, "Celsius", "Kelvin")
-            * radar.B
-        )
-    )
-    thermal_noise_fft_magnitude_db = thermal_noise_amplitude_db + constants.mag2db(
+    # Calculate the noise amplitude in dB before and after the 2D FFT.
+    noise_amplitude_db = constants.mag2db(radar.get_noise_amplitude(temperature))
+    noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
         np.sqrt(fft_processing_gain)
     )
 
@@ -53,7 +46,7 @@ def plot_if_amplitude_vs_range(
     # Plot the IF amplitude as a function of the target range.
     fig, ax = plt.subplots(figsize=(12, 8))
     plt.plot(ranges, if_amplitudes, label="IF amplitude")
-    plt.axhline(thermal_noise_amplitude_db, color="r", label="Thermal noise amplitude")
+    plt.axhline(noise_amplitude_db, color="r", label="Noise amplitude")
     ax.set_title("IF amplitude vs. range")
     ax.set_xlabel("Target range in m")
     ax.set_ylabel("IF amplitude in dB")
@@ -63,9 +56,7 @@ def plot_if_amplitude_vs_range(
     # Plot the FFT peak magnitude as a function of the target range.
     fig, ax = plt.subplots(figsize=(12, 8))
     plt.plot(ranges, fft_peak_magnitudes, label="FFT peak magnitude")
-    plt.axhline(
-        thermal_noise_fft_magnitude_db, color="r", label="Thermal noise magnitude"
-    )
+    plt.axhline(noise_fft_magnitude_db, color="r", label="Noise magnitude")
     ax.set_title("FFT peak magnitude vs. range")
     ax.set_xlabel("Target range in m")
     ax.set_ylabel("FFT peak magnitude in dB")

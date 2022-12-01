@@ -74,6 +74,5 @@ class IFSignal:
             + constants.power2db(
                 radar.lambdac**2 / ((4 * np.pi) ** 3 * target.range**4)
             )
-            - radar.noise_figure
         )
         return constants.power2mag(constants.db2power(power_db))
