@@ -1,5 +1,6 @@
-"""The IF signal class represents the IF signal received by a radar's RX antenna
-corresponding to a single radar target reflecting a TX antenna's chirp.
+"""The ADC data class represents the ADC samples of the IF signal received by a
+radar's RX antenna corresponding to a single radar target reflecting a TX
+antenna's chirp.
 """
 
 import numpy as np
@@ -10,24 +11,24 @@ from simulation.target import Target
 from utils import constants
 
 
-class IFSignal:
-    """Represents a received IF signal."""
+class AdcData:
+    """Represents the ADC samples of the received IF signal."""
 
     def __init__(
         self, radar: Radar, target: Target, tx_antenna: int = 0, rx_antenna: int = 0
     ):
-        self.samples = self.generate_if_samples(radar, target, tx_antenna, rx_antenna)
+        self.samples = self.generate_adc_data(radar, target, tx_antenna, rx_antenna)
 
     @property
     def shape(self) -> Tuple[int, ...]:
-        """Shape of the IF samples."""
+        """Shape of the ADC samples."""
         return self.samples.shape
 
     @staticmethod
-    def generate_if_samples(
+    def generate_adc_data(
         radar: Radar, target: Target, tx_antenna: int, rx_antenna: int
     ) -> np.ndarray:
-        """Generates the IF samples for the given TX and RX antennas.
+        """Generates the ADC samples for the given TX and RX antennas.
 
         Args:
             radar: Radar.
@@ -36,7 +37,7 @@ class IFSignal:
             rx_antenna: RX antenna index.
 
         Returns:
-            IF samples for the given TX and RX antennas.
+            ADC samples for the given TX and RX antennas.
         """
         x, y, z = target.get_position_over_time(radar.t_axis)
         d_tx = np.sqrt(
@@ -53,7 +54,7 @@ class IFSignal:
         tau = (d_tx + d_rx) / radar.c  # Return time-of-flight for each sample in s.
         f_sig = radar.mu * tau  # IF of each sample.
         phi_sig = radar.f0 * tau - radar.mu / 2 * tau**2  # IF phase of each sample.
-        return IFSignal.get_if_amplitude(radar, target) * np.exp(
+        return AdcData.get_if_amplitude(radar, target) * np.exp(
             1j * 2 * np.pi * (f_sig * radar.t_axis_chirp + phi_sig)
         )
 

@@ -3,8 +3,8 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
-    name = "if_signal",
-    srcs = ["if_signal.py"],
+    name = "adc_data",
+    srcs = ["adc_data.py"],
     deps = [
         ":radar",
         ":target",
@@ -41,7 +41,7 @@ py_binary(
     deps = [
         ":radar",
         ":target",
-        ":if_signal",
+        ":adc_data",
         "//utils:constants",
         requirement("absl-py"),
         requirement("matplotlib"),
@@ -55,7 +55,7 @@ py_binary(
     deps = [
         ":radar",
         ":target",
-        ":if_signal",
+        ":adc_data",
         "//utils:constants",
         "//utils/visualization:color_maps",
         requirement("absl-py"),

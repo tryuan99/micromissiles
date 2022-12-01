@@ -4,7 +4,7 @@ from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
 
-from simulation.if_signal import IFSignal
+from simulation.adc_data import AdcData
 from simulation.radar import Radar
 from simulation.target import Target
 from utils import constants
@@ -38,7 +38,7 @@ def plot_if_amplitude_vs_range(
     fft_peak_magnitudes = np.zeros(len(ranges))
     for i in range(len(ranges)):
         target.range = ranges[i]
-        if_amplitudes[i] = constants.mag2db(IFSignal.get_if_amplitude(radar, target))
+        if_amplitudes[i] = constants.mag2db(AdcData.get_if_amplitude(radar, target))
         fft_peak_magnitudes[i] = if_amplitudes[i] + constants.mag2db(
             fft_processing_gain
         )

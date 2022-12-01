@@ -4,7 +4,7 @@ from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
 
-from simulation.if_signal import IFSignal
+from simulation.adc_data import AdcData
 from simulation.radar import Radar
 from simulation.target import Target
 from utils import constants
@@ -37,28 +37,28 @@ def plot_range_doppler_map(
     target = Target(
         range=range, range_rate=range_rate, acceleration=acceleration, rcs=rcs
     )
-    if_signal = IFSignal(radar, target)
+    adc_data = AdcData(radar, target)
 
-    samples = if_signal.samples
+    samples = adc_data.samples
     if noise:
-        samples += radar.generate_noise(if_signal.shape, temperature).samples
+        samples += radar.generate_noise(adc_data.shape, temperature).samples
 
     # Apply the windows.
-    s_if_w = np.einsum(
+    windowed_samples = np.einsum(
         "ij,i->ij",
         np.einsum("ij,j->ij", samples, radar.wnd_r),
         radar.wnd_v,
     )
 
     # Perform the 2D FFT.
-    s_fft = np.fft.fft2(s_if_w, (radar.N_bins_v, radar.N_bins_r))
+    fft_samples = np.fft.fft2(windowed_samples, (radar.N_bins_v, radar.N_bins_r))
 
     # Plot the range-Doppler map
     fig = plt.figure(figsize=(12, 8))
     ax = plt.axes(projection="3d")
     surf = ax.plot_surface(
         *np.meshgrid(radar.v_axis, radar.r_axis),
-        constants.mag2db(np.abs(np.fft.fftshift(s_fft, axes=0))).T,
+        constants.mag2db(np.abs(np.fft.fftshift(fft_samples, axes=0))).T,
         cmap=COLOR_MAPS["parula"],
         antialiased=False,
     )
