@@ -34,6 +34,16 @@ py_library(
 )
 
 py_library(
+    name = "range_doppler_map",
+    srcs = ["range_doppler_map.py"],
+    deps = [
+        ":radar",
+        ":samples",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "samples",
     srcs = ["samples.py"],
     deps = [requirement("numpy")],
@@ -64,6 +74,7 @@ py_binary(
     srcs = ["range_doppler_main.py"],
     deps = [
         ":radar",
+        ":range_doppler_map",
         ":samples",
         ":target",
         ":adc_data",

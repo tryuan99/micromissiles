@@ -6,6 +6,7 @@ import numpy as np
 
 from simulation.adc_data import AdcData
 from simulation.radar import Radar
+from simulation.range_doppler_map import RangeDopplerMap
 from simulation.samples import Samples
 from simulation.target import Target
 from utils import constants
@@ -44,22 +45,17 @@ def plot_range_doppler_map(
     if noise:
         samples.add_samples(radar.generate_noise(adc_data.shape, temperature))
 
-    # Apply the windows.
-    windowed_samples = np.einsum(
-        "ij,i->ij",
-        np.einsum("ij,j->ij", samples.get_samples(), radar.wnd_r),
-        radar.wnd_v,
-    )
+    range_doppler_map = RangeDopplerMap(samples, radar)
+    range_doppler_map.apply_2d_window()
+    range_doppler_map.perform_2d_fft()
+    range_doppler_map.fft_shift()
 
-    # Perform the 2D FFT.
-    fft_samples = np.fft.fft2(windowed_samples, (radar.N_bins_v, radar.N_bins_r))
-
-    # Plot the range-Doppler map
+    # Plot the range-Doppler map.
     fig = plt.figure(figsize=(12, 8))
     ax = plt.axes(projection="3d")
     surf = ax.plot_surface(
         *np.meshgrid(radar.v_axis, radar.r_axis),
-        constants.mag2db(np.abs(np.fft.fftshift(fft_samples, axes=0))).T,
+        constants.mag2db(range_doppler_map.get_abs_samples()).T,
         cmap=COLOR_MAPS["parula"],
         antialiased=False,
     )
