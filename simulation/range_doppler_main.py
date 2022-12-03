@@ -30,7 +30,7 @@ def plot_range_doppler_map(
         range_rate: Range rate in m/s.
         acceleration: Acceleration in m/s^2.
         rcs: Radar cross section in dBsm.
-        temperature: Temperature in C.
+        temperature: Temperature in Celsius.
         oversampling: Oversampling factor.
         noise: If true, add noise.
     """
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     flags.DEFINE_float("range_rate", 10, "Range rate in m/s.")
     flags.DEFINE_float("acceleration", 0, "Acceleration in m/s^2.")
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")
-    flags.DEFINE_float("temperature", 30, "Temperature in C.")
+    flags.DEFINE_float("temperature", 30, "Temperature in Celsius.")
     flags.DEFINE_integer("oversampling", 1, "Oversampling factor.", lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
 

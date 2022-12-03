@@ -11,6 +11,9 @@ from utils import constants
 
 FLAGS = flags.FLAGS
 
+# Minimum SNR in dB for detecting the target.
+MINIMUM_SNR = 15  # dB
+
 
 def plot_if_amplitude_vs_range(
     rcs: float,
@@ -20,7 +23,7 @@ def plot_if_amplitude_vs_range(
 
     Args:
         rcs: Radar cross section in dBsm.
-        temperature: Temperature in C.
+        temperature: Temperature in Celsius.
     """
     radar = Radar()
     target = Target(rcs=rcs)
@@ -57,6 +60,11 @@ def plot_if_amplitude_vs_range(
     fig, ax = plt.subplots(figsize=(12, 8))
     plt.plot(ranges, fft_peak_magnitudes, label="FFT peak magnitude")
     plt.axhline(noise_fft_magnitude_db, color="r", label="Noise magnitude")
+    plt.axhline(
+        noise_fft_magnitude_db + MINIMUM_SNR,
+        color="g",
+        label=f"Noise magnitude + {MINIMUM_SNR} dB",
+    )
     ax.set_title("FFT peak magnitude vs. range")
     ax.set_xlabel("Target range in m")
     ax.set_ylabel("FFT peak magnitude in dB")
@@ -74,6 +82,6 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")
-    flags.DEFINE_float("temperature", 30, "Temperature in C.")
+    flags.DEFINE_float("temperature", 30, "Temperature in Celsius.")
 
     app.run(main)
