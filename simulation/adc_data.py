@@ -1,6 +1,6 @@
 """The ADC data class represents the ADC samples of the IF signal received by a
-radar's RX antenna corresponding to a single radar target reflecting a TX
-antenna's chirp.
+radar's RX antennas corresponding to a single radar target reflecting a chirp
+from all transmitting TX antennas.
 """
 
 import numpy as np
@@ -12,15 +12,42 @@ from utils import constants
 
 
 class AdcData(Samples):
-    """Represents the ADC samples of the received IF signal."""
+    """Represents the ADC samples of the IF signal received at all RX antennas."""
 
-    def __init__(
-        self, radar: Radar, target: Target, tx_antenna: int = 0, rx_antenna: int = 0
-    ):
-        super().__init__(self.generate_adc_data(radar, target, tx_antenna, rx_antenna))
+    def __init__(self, radar: Radar, target: Target):
+        super().__init__(self.generate_adc_data_3d(radar, target))
 
     @staticmethod
-    def generate_adc_data(
+    def generate_adc_data_3d(radar: Radar, target: Target) -> np.ndarray:
+        """Generates the ADC samples for all RX antennas.
+
+        Args:
+            radar: Radar.
+            target: Target.
+
+        Returns:
+            3-dimensional ADC samples for all RX antennas with dimensions
+            (number of RX antennas) x (number of chirps) x (number of ADC
+            samples).
+        """
+        # TODO(titan): Add MIMO.
+        return np.array(
+            [
+                np.sum(
+                    [
+                        AdcData.generate_adc_data_2d(
+                            radar, target, tx_antenna, rx_antenna
+                        )
+                        for tx_antenna in range(radar.N_tx)
+                    ],
+                    axis=0,
+                )
+                for rx_antenna in range(radar.N_rx)
+            ]
+        )
+
+    @staticmethod
+    def generate_adc_data_2d(
         radar: Radar, target: Target, tx_antenna: int, rx_antenna: int
     ) -> np.ndarray:
         """Generates the ADC samples for the given TX and RX antennas.
@@ -32,7 +59,8 @@ class AdcData(Samples):
             rx_antenna: RX antenna index.
 
         Returns:
-            ADC samples for the given TX and RX antennas.
+            2-dimensional ADC samples for the given TX and RX antennas with
+            dimensions (number of chirps) x (number of ADC samples).
         """
         x, y, z = target.get_position_over_time(radar.t_axis)
         d_tx = np.sqrt(

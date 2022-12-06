@@ -15,7 +15,7 @@ from utils.visualization.color_maps import COLOR_MAPS
 FLAGS = flags.FLAGS
 
 
-def plot_range_doppler_map(
+def plot_range_doppler_map_siso(
     range: float,
     range_rate: float,
     acceleration: float,
@@ -24,7 +24,7 @@ def plot_range_doppler_map(
     oversampling: int,
     noise: bool,
 ) -> None:
-    """Plots the range-Doppler map using a 2D FFT.
+    """Plots the range-Doppler map using a 2D FFT for a SISO radar.
 
     Args:
         range: Range in m.
@@ -36,6 +36,8 @@ def plot_range_doppler_map(
         noise: If true, add noise.
     """
     radar = Radar(oversampling=oversampling)
+    radar.N_tx = 1
+    radar.N_rx = 1
     target = Target(
         range=range, range_rate=range_rate, acceleration=acceleration, rcs=rcs
     )
@@ -55,7 +57,7 @@ def plot_range_doppler_map(
     ax = plt.axes(projection="3d")
     surf = ax.plot_surface(
         *np.meshgrid(radar.v_axis, radar.r_axis),
-        constants.mag2db(range_doppler_map.get_abs_samples()).T,
+        constants.mag2db(np.squeeze(range_doppler_map.get_abs_samples())).T,
         cmap=COLOR_MAPS["parula"],
         antialiased=False,
     )
@@ -71,7 +73,7 @@ def plot_range_doppler_map(
 
 def main(argv):
     assert len(argv) == 1, argv
-    plot_range_doppler_map(
+    plot_range_doppler_map_siso(
         FLAGS.range,
         FLAGS.range_rate,
         FLAGS.acceleration,

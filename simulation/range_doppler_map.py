@@ -19,11 +19,11 @@ class RangeDopplerMap(Samples):
 
     def apply_range_window(self) -> None:
         """Applies a window in the range dimension."""
-        self.samples = np.einsum("ij,j->ij", self.samples, self.radar.wnd_r)
+        self.samples = np.einsum("kij,j->kij", self.samples, self.radar.wnd_r)
 
     def apply_doppler_window(self) -> None:
         """Applies a window in the Doppler dimension."""
-        self.samples = np.einsum("ij,i->ij", self.samples, self.radar.wnd_v)
+        self.samples = np.einsum("kij,i->kij", self.samples, self.radar.wnd_v)
 
     def apply_2d_window(self) -> None:
         """Applies a window in the range and Doppler dimensions."""
@@ -32,11 +32,11 @@ class RangeDopplerMap(Samples):
 
     def perform_range_fft(self) -> None:
         """Performs the FFT in the range dimension."""
-        self.samples = np.fft.fft(self.samples, self.radar.N_bins_r, axis=1)
+        self.samples = np.fft.fft(self.samples, self.radar.N_bins_r, axis=2)
 
     def perform_doppler_fft(self) -> None:
         """Performs the FFT in the Doppler dimension."""
-        self.samples = np.fft.fft(self.samples, self.radar.N_bins_v, axis=0)
+        self.samples = np.fft.fft(self.samples, self.radar.N_bins_v, axis=1)
 
     def perform_2d_fft(self) -> None:
         """Performs the FFT in the range and Doppler dimensions."""
@@ -46,4 +46,4 @@ class RangeDopplerMap(Samples):
 
     def fft_shift(self) -> None:
         """Performs a FFT shift in the Doppler dimension."""
-        self.samples = np.fft.fftshift(self.samples, axes=0)
+        self.samples = np.fft.fftshift(self.samples, axes=1)
