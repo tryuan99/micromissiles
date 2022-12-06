@@ -21,10 +21,10 @@ class Radar:
 
         # Chirp parameters.
         self.f0 = 60e9  # Chirp starting frequency in Hz.
-        self.mu = 6e12  # Chirp slope in Hz/s.
-        self.fs = 10.24e6  # Sampling frequency in Hz.
-        self.Tc = 100e-6  # Chirp-to-chirp time in s.
-        self.N_r = 512  # Number of ADC samples.
+        self.mu = 1.25e12  # Chirp slope in Hz/s.
+        self.fs = 1.067e6  # Sampling frequency in Hz.
+        self.Tc = 250e-6  # Chirp-to-chirp time in s.
+        self.N_r = 256  # Number of ADC samples.
         self.N_v = 512  # Number of chirps.
 
         # Antenna parameters.
@@ -46,7 +46,7 @@ class Radar:
         )  # Starting times for each chirp.
 
         # FFT parameters.
-        self.N_bins_r = 512 * oversampling  # Number of range bins.
+        self.N_bins_r = 256 * oversampling  # Number of range bins.
         self.N_bins_v = 512 * oversampling  # Number of Doppler bins.
         self.N_bins_az = 32  # Number of bins in azimuth.
         self.N_bins_el = 32  # Number of bins in elevation.
