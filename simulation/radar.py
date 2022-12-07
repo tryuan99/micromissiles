@@ -165,21 +165,41 @@ class Radar:
         )
 
     @property
-    def wnd_r(self) -> np.ndarray:
+    def window_r(self) -> np.ndarray:
         """Normalized Blackman window for the range FFT."""
-        wnd = np.blackman(self.N_r + 2)[1:-1]
-        return wnd / np.linalg.norm(wnd)
+        window = np.blackman(self.N_r + 2)[1:-1]
+        return window / np.linalg.norm(window)
 
     @property
-    def wnd_v(self) -> np.ndarray:
+    def window_v(self) -> np.ndarray:
         """Normalized Hann window for the Doppler FFT."""
-        wnd = np.hanning(self.N_v + 2)[1:-1]
-        return wnd / np.linalg.norm(wnd)
+        window = np.hanning(self.N_v + 2)[1:-1]
+        return window / np.linalg.norm(window)
 
     @property
     def noise_factor(self) -> float:
         """Noise factor."""
         return constants.db2power(self.noise_figure)
+
+    def get_fft_processing_gain_r(self, noise=False, window=True) -> float:
+        """Returns the range FFT processing gain."""
+        window_samples = self.window_r if window else np.ones(self.N_r)
+        if noise:
+            return np.linalg.norm(window_samples)
+        return np.sum(window_samples)
+
+    def get_fft_processing_gain_v(self, noise=False, window=True) -> float:
+        """Returns the Doppler FFT processing gain."""
+        window_samples = self.window_v if window else np.ones(self.N_v)
+        if noise:
+            return np.linalg.norm(window_samples)
+        return np.sum(window_samples)
+
+    def get_fft_processing_gain(self, noise=False, window=True) -> float:
+        """Returns the 2D FFT processing gain."""
+        return self.get_fft_processing_gain_r(
+            noise, window
+        ) * self.get_fft_processing_gain_v(noise, window)
 
     def get_range_doppler_bin_indices(
         self, target: Target, fft_shifted: bool = True

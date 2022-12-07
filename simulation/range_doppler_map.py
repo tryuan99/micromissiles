@@ -27,11 +27,11 @@ class RangeDopplerMap(Samples):
 
     def apply_range_window(self) -> None:
         """Applies a window in the range dimension."""
-        self.samples = np.einsum("kij,j->kij", self.samples, self.radar.wnd_r)
+        self.samples = np.einsum("kij,j->kij", self.samples, self.radar.window_r)
 
     def apply_doppler_window(self) -> None:
         """Applies a window in the Doppler dimension."""
-        self.samples = np.einsum("kij,i->kij", self.samples, self.radar.wnd_v)
+        self.samples = np.einsum("kij,i->kij", self.samples, self.radar.window_v)
 
     def apply_2d_window(self) -> None:
         """Applies a window in the range and Doppler dimensions."""

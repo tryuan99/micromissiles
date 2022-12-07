@@ -79,14 +79,13 @@ def plot_range_doppler_map_siso(
     plt.show()
 
     # Calculate the theoretical SNR.
-    fft_processing_gain = radar.N_r * radar.N_v
     signal_amplitude_db = constants.mag2db(adc_data.get_amplitude())
     signal_fft_magnitude_db = signal_amplitude_db + constants.mag2db(
-        fft_processing_gain
+        radar.get_fft_processing_gain()
     )
     noise_amplitude_db = constants.mag2db(noise_samples.get_amplitude())
     noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
-        np.sqrt(fft_processing_gain)
+        radar.get_fft_processing_gain(noise=True)
     )
     logging.info(
         "Theoretical SNR: %f - %f = %f dB",
