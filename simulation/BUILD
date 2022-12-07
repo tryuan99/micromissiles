@@ -28,6 +28,7 @@ py_library(
     srcs = ["radar.py"],
     deps = [
         ":noise",
+        ":target",
         requirement("numpy"),
         requirement("scipy"),
     ],

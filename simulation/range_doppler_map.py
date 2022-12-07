@@ -10,7 +10,7 @@ class RangeDopplerMap(Samples):
     """Performs range and Doppler processing on the ADC samples."""
 
     def __init__(self, samples: Samples, radar: Radar):
-        super().__init__(samples.get_samples())
+        super().__init__(samples)
         self.radar = radar
 
     def get_abs_samples(self) -> np.ndarray:

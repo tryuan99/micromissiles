@@ -1,6 +1,6 @@
-"""Simulates the radar datapath processing and plots the range-Doppler map."""
+"""Simulates the radar datapath processing and plots the range-Doppler map for a SISO radar."""
 
-from absl import app, flags
+from absl import app, flags, logging
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -13,6 +13,9 @@ from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
+
+# Guard length around the target's peak.
+GUARD_LENGTH = 1
 
 
 def plot_range_doppler_map_siso(
@@ -43,21 +46,28 @@ def plot_range_doppler_map_siso(
     )
     adc_data = AdcData(radar, target)
 
-    samples = Samples(adc_data.get_samples())
+    samples = Samples(adc_data)
+    noise_samples = Samples(np.zeros(samples.shape))
     if noise:
-        samples.add_samples(radar.generate_noise(adc_data.shape, temperature))
+        noise_samples.add_samples(
+            radar.generate_noise(noise_samples.shape, temperature)
+        )
+    samples.add_samples(noise_samples)
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_2d_window()
     range_doppler_map.perform_2d_fft()
     range_doppler_map.fft_shift()
+    range_doppler_map_abs_db = constants.mag2db(
+        np.squeeze(range_doppler_map.get_abs_samples())
+    )
 
     # Plot the range-Doppler map.
     fig = plt.figure(figsize=(12, 8))
     ax = plt.axes(projection="3d")
     surf = ax.plot_surface(
         *np.meshgrid(radar.v_axis, radar.r_axis),
-        constants.mag2db(np.squeeze(range_doppler_map.get_abs_samples())).T,
+        range_doppler_map_abs_db.T,
         cmap=COLOR_MAPS["parula"],
         antialiased=False,
     )
@@ -68,7 +78,44 @@ def plot_range_doppler_map_siso(
     plt.colorbar(surf)
     plt.show()
 
-    # TODO(titan): Calculate the SNR.
+    # Calculate the theoretical SNR.
+    fft_processing_gain = radar.N_r * radar.N_v
+    signal_amplitude_db = constants.mag2db(adc_data.get_amplitude())
+    signal_fft_magnitude_db = signal_amplitude_db + constants.mag2db(
+        fft_processing_gain
+    )
+    noise_amplitude_db = constants.mag2db(noise_samples.get_amplitude())
+    noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
+        np.sqrt(fft_processing_gain)
+    )
+    logging.info(
+        "Theoretical SNR: %f - %f = %f dB",
+        signal_fft_magnitude_db,
+        noise_fft_magnitude_db,
+        signal_fft_magnitude_db - noise_fft_magnitude_db,
+    )
+
+    # Calculate the empirical SNR.
+    range_bin_index, doppler_bin_index = radar.get_range_doppler_bin_indices(target)
+    signal_fft_magnitude_db_simulated = range_doppler_map_abs_db[
+        doppler_bin_index, range_bin_index
+    ]
+    range_doppler_map_without_target = Samples(range_doppler_map)
+    # Zero out the range-Doppler bins around the target's peak.
+    range_doppler_map_without_target.samples[
+        :,
+        doppler_bin_index - GUARD_LENGTH : doppler_bin_index + GUARD_LENGTH,
+        range_bin_index - GUARD_LENGTH : range_bin_index + GUARD_LENGTH,
+    ] = 0
+    noise_fft_magnitude_db_simulated = constants.mag2db(
+        range_doppler_map_without_target.get_amplitude()
+    )
+    logging.info(
+        "Simulated SNR: %f - %f = %f dB",
+        signal_fft_magnitude_db_simulated,
+        noise_fft_magnitude_db_simulated,
+        signal_fft_magnitude_db_simulated - noise_fft_magnitude_db_simulated,
+    )
 
 
 def main(argv):
@@ -86,7 +133,7 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_float("range", 50, "Range in m.", lower_bound=0.0)
-    flags.DEFINE_float("range_rate", 10, "Range rate in m/s.")
+    flags.DEFINE_float("range_rate", 0, "Range rate in m/s.")
     flags.DEFINE_float("acceleration", 0, "Acceleration in m/s^2.")
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")
     flags.DEFINE_float("temperature", 30, "Temperature in Celsius.")

@@ -4,6 +4,7 @@ import numpy as np
 import scipy.constants
 
 from simulation.noise import GaussianNoise
+from simulation.target import Target
 from utils import constants
 
 
@@ -179,6 +180,30 @@ class Radar:
     def noise_factor(self) -> float:
         """Noise factor."""
         return constants.db2power(self.noise_figure)
+
+    def get_range_doppler_bin_indices(
+        self, target: Target, fft_shifted: bool = True
+    ) -> tuple[int, int]:
+        """Returns the range-Doppler indices corresponding to the target."""
+        # TODO(titan): This could be made more accurate by considering velocity and acceleration.
+        average_range = (
+            target.range
+            + (
+                target.range
+                + target.range_rate * self.cpi
+                + 1 / 2 * target.acceleration * self.cpi**2
+            )
+        ) / 2
+        average_range_rate = (
+            target.range_rate + (target.range_rate + target.acceleration * self.cpi)
+        ) / 2
+        range_bin_index = (average_range * self.N_bins_r / self.r_max) % self.N_bins_r
+        doppler_bin_index = (
+            (average_range_rate * self.N_bins_v / 2) / self.v_max
+        ) % self.N_bins_v
+        if fft_shifted:
+            doppler_bin_index = (doppler_bin_index + self.N_bins_v // 2) % self.N_bins_v
+        return int(np.round(range_bin_index)), int(np.round(doppler_bin_index))
 
     def generate_noise(self, shape: tuple[int, ...], temperature: float) -> np.ndarray:
         """Generates the noise in the ADC samples, including thermal noise,
