@@ -17,6 +17,14 @@ class RangeDopplerMap(Samples):
         """Returns the absolute value of the samples."""
         return np.abs(self.samples)
 
+    def accumulate_log_magnitude(self) -> np.ndarray:
+        """Returns the log magnitude of the samples accumulated over all RX antennas.
+
+        The accumulated range-Doppler map is intended for CFAR.
+        """
+        # mmWave SDK uses a base-2 logarithm.
+        return np.sum(np.log2(np.abs(self.samples)), axis=0)
+
     def apply_range_window(self) -> None:
         """Applies a window in the range dimension."""
         self.samples = np.einsum("kij,j->kij", self.samples, self.radar.wnd_r)
