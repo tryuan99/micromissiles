@@ -15,6 +15,18 @@ py_library(
 )
 
 py_library(
+    name = "azimuth_elevation_map",
+    srcs = ["azimuth_elevation_map.py"],
+    deps = [
+        ":radar",
+        ":range_doppler_map",
+        ":samples",
+        ":target",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "noise",
     srcs = ["noise.py"],
     deps = [
@@ -54,6 +66,24 @@ py_library(
     name = "target",
     srcs = ["target.py"],
     deps = [requirement("numpy")],
+)
+
+py_binary(
+    name = "direction_of_arrival_main",
+    srcs = ["direction_of_arrival_main.py"],
+    deps = [
+        ":azimuth_elevation_map",
+        ":radar",
+        ":range_doppler_map",
+        ":samples",
+        ":target",
+        ":adc_data",
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
 )
 
 py_binary(

@@ -35,8 +35,16 @@ class Radar:
         self.d_tx_ver = [0, 2, 0]  # TX antenna vertical spacing in lambda/2.
         self.d_rx_hor = [1, 0, 1, 0]  # RX antenna horizontal spacing in lambda/2.
         self.d_rx_ver = [1, 1, 0, 0]  # RX antenna vertical spacing in lambda/2.
-        assert len(self.d_tx_hor) == len(self.d_tx_ver) == self.N_tx
-        assert len(self.d_rx_hor) == len(self.d_rx_ver) == self.N_rx
+        assert len(self.d_tx_hor) == self.N_tx
+        assert len(self.d_tx_ver) == self.N_tx
+        assert len(self.d_rx_hor) == self.N_rx
+        assert len(self.d_rx_ver) == self.N_rx
+        assert np.min(self.d_tx_hor) >= 0
+        assert np.min(self.d_tx_ver) >= 0
+        assert np.min(self.d_rx_hor) >= 0
+        assert np.min(self.d_rx_ver) >= 0
+        assert np.min(self.d_tx_hor + self.d_rx_hor) == 0
+        assert np.min(self.d_tx_ver + self.d_rx_ver) == 0
 
         # Time axis.
         self.t_axis_chirp = (
@@ -156,6 +164,14 @@ class Radar:
         )
 
     @property
+    def az_axis(self) -> np.ndarray:
+        """Azimuth axis in rad."""
+        # The FFT outputs a positive spatial frequency if the phase increases
+        # in the positive x-direction. In our coordinate system, the phase
+        # increases in the negative x-direction.
+        return -np.arcsin(np.linspace(-1, 1, self.N_bins_az, endpoint=False))
+
+    @property
     def el_res(self) -> float:
         """Elevational resolution in rad."""
         return 2 / (
@@ -163,6 +179,14 @@ class Radar:
             + np.max(self.d_rx_ver)
             - (np.min(self.d_tx_ver) + np.min(self.d_rx_ver))
         )
+
+    @property
+    def el_axis(self):
+        """Elevation axis in rad."""
+        # The FFT outputs a positive spatial frequency if the phase increases
+        # in the positive y-direction. In our coordinate system, the phase
+        # increases in the negative y-direction.
+        return -np.arcsin(np.linspace(-1, 1, self.N_bins_el, endpoint=False))
 
     @property
     def window_r(self) -> np.ndarray:
