@@ -80,7 +80,8 @@ def plot_direction_of_arrival_simo(
     plt.show()
 
     # Perform the 2D azimuth-elevation FFT.
-    azimuth_elevation_map = AzimuthElevationMap(range_doppler_map, radar, target)
+    azimuth_elevation_map = AzimuthElevationMap(range_doppler_map, radar,
+                                                target)
     azimuth_elevation_map.perform_2d_fft()
     azimuth_elevation_map.fft_shift()
 
@@ -124,7 +125,10 @@ if __name__ == "__main__":
     flags.DEFINE_float("elevation", 0, "Elevation in rad.")
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")
     flags.DEFINE_float("temperature", 30, "Temperature in Celsius.")
-    flags.DEFINE_integer("oversampling", 1, "Oversampling factor.", lower_bound=1)
+    flags.DEFINE_integer("oversampling",
+                         1,
+                         "Oversampling factor.",
+                         lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
 
     app.run(main)

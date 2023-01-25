@@ -33,7 +33,8 @@ class Radar:
         self.N_rx = 4  # Number of RX antennas.
         self.d_tx_hor = [0, 2, 2]  # TX antenna horizontal spacing in lambda/2.
         self.d_tx_ver = [0, 2, 0]  # TX antenna vertical spacing in lambda/2.
-        self.d_rx_hor = [1, 0, 1, 0]  # RX antenna horizontal spacing in lambda/2.
+        self.d_rx_hor = [1, 0, 1,
+                         0]  # RX antenna horizontal spacing in lambda/2.
         self.d_rx_ver = [1, 1, 0, 0]  # RX antenna vertical spacing in lambda/2.
         assert len(self.d_tx_hor) == self.N_tx
         assert len(self.d_tx_ver) == self.N_tx
@@ -47,12 +48,10 @@ class Radar:
         assert np.min(self.d_tx_ver + self.d_rx_ver) == 0
 
         # Time axis.
-        self.t_axis_chirp = (
-            np.arange(self.N_r) / self.fs
-        )  # Time axis for the samples of a single chirp.
-        self.t_chirp_start = (
-            np.arange(self.N_v) * self.Tc
-        )  # Starting times for each chirp.
+        self.t_axis_chirp = (np.arange(self.N_r) / self.fs
+                            )  # Time axis for the samples of a single chirp.
+        self.t_chirp_start = (np.arange(self.N_v) * self.Tc
+                             )  # Starting times for each chirp.
 
         # FFT parameters.
         self.N_bins_r = 256 * oversampling  # Number of range bins.
@@ -61,12 +60,10 @@ class Radar:
         self.N_bins_el = 32  # Number of bins in elevation.
         assert self.N_bins_r >= self.N_r
         assert self.N_bins_v >= self.N_v
-        assert self.N_bins_az >= np.max(self.d_tx_hor) + np.max(self.d_rx_hor) - (
-            np.min(self.d_tx_hor) + np.min(self.d_rx_hor)
-        )
-        assert self.N_bins_el >= np.max(self.d_tx_ver) + np.max(self.d_rx_ver) - (
-            np.min(self.d_tx_ver) + np.min(self.d_rx_ver)
-        )
+        assert self.N_bins_az >= np.max(self.d_tx_hor) + np.max(
+            self.d_rx_hor) - (np.min(self.d_tx_hor) + np.min(self.d_rx_hor))
+        assert self.N_bins_el >= np.max(self.d_tx_ver) + np.max(
+            self.d_rx_ver) - (np.min(self.d_tx_ver) + np.min(self.d_rx_ver))
 
     @property
     def lambda0(self) -> float:
@@ -119,10 +116,8 @@ class Radar:
 
         The time axis has dimensions (number of chirps) x (number of ADC samples).
         """
-        return (
-            np.repeat([self.t_axis_chirp], self.N_v, axis=0)
-            + self.t_chirp_start[:, np.newaxis]
-        )
+        return (np.repeat([self.t_axis_chirp], self.N_v, axis=0) +
+                self.t_chirp_start[:, np.newaxis])
 
     @property
     def r_res(self) -> float:
@@ -152,16 +147,16 @@ class Radar:
     @property
     def v_axis(self) -> np.ndarray:
         """Doppler axis in m/s."""
-        return np.linspace(-self.v_max, self.v_max, self.N_bins_v, endpoint=False)
+        return np.linspace(-self.v_max,
+                           self.v_max,
+                           self.N_bins_v,
+                           endpoint=False)
 
     @property
     def az_res(self) -> float:
         """Angular resolution in rad."""
-        return 2 / (
-            np.max(self.d_tx_hor)
-            + np.max(self.d_rx_hor)
-            - (np.min(self.d_tx_hor) + np.min(self.d_rx_hor))
-        )
+        return 2 / (np.max(self.d_tx_hor) + np.max(self.d_rx_hor) -
+                    (np.min(self.d_tx_hor) + np.min(self.d_rx_hor)))
 
     @property
     def az_axis(self) -> np.ndarray:
@@ -174,11 +169,8 @@ class Radar:
     @property
     def el_res(self) -> float:
         """Elevational resolution in rad."""
-        return 2 / (
-            np.max(self.d_tx_ver)
-            + np.max(self.d_rx_ver)
-            - (np.min(self.d_tx_ver) + np.min(self.d_rx_ver))
-        )
+        return 2 / (np.max(self.d_tx_ver) + np.max(self.d_rx_ver) -
+                    (np.min(self.d_tx_ver) + np.min(self.d_rx_ver)))
 
     @property
     def el_axis(self):
@@ -222,34 +214,31 @@ class Radar:
     def get_fft_processing_gain(self, noise=False, window=True) -> float:
         """Returns the 2D FFT processing gain."""
         return self.get_fft_processing_gain_r(
-            noise, window
-        ) * self.get_fft_processing_gain_v(noise, window)
+            noise, window) * self.get_fft_processing_gain_v(noise, window)
 
-    def get_range_doppler_bin_indices(
-        self, target: Target, fft_shifted: bool = True
-    ) -> tuple[int, int]:
+    def get_range_doppler_bin_indices(self,
+                                      target: Target,
+                                      fft_shifted: bool = True
+                                     ) -> tuple[int, int]:
         """Returns the range-Doppler indices corresponding to the target."""
         # TODO(titan): This could be made more accurate by considering velocity and acceleration.
-        average_range = (
-            target.range
-            + (
-                target.range
-                + target.range_rate * self.cpi
-                + 1 / 2 * target.acceleration * self.cpi**2
-            )
-        ) / 2
+        average_range = (target.range +
+                         (target.range + target.range_rate * self.cpi +
+                          1 / 2 * target.acceleration * self.cpi**2)) / 2
         average_range_rate = (
-            target.range_rate + (target.range_rate + target.acceleration * self.cpi)
-        ) / 2
-        range_bin_index = (average_range * self.N_bins_r / self.r_max) % self.N_bins_r
-        doppler_bin_index = (
-            (average_range_rate * self.N_bins_v / 2) / self.v_max
-        ) % self.N_bins_v
+            target.range_rate +
+            (target.range_rate + target.acceleration * self.cpi)) / 2
+        range_bin_index = (average_range * self.N_bins_r /
+                           self.r_max) % self.N_bins_r
+        doppler_bin_index = ((average_range_rate * self.N_bins_v / 2) /
+                             self.v_max) % self.N_bins_v
         if fft_shifted:
-            doppler_bin_index = (doppler_bin_index + self.N_bins_v // 2) % self.N_bins_v
+            doppler_bin_index = (doppler_bin_index +
+                                 self.N_bins_v // 2) % self.N_bins_v
         return int(np.round(range_bin_index)), int(np.round(doppler_bin_index))
 
-    def generate_noise(self, shape: tuple[int, ...], temperature: float) -> np.ndarray:
+    def generate_noise(self, shape: tuple[int, ...],
+                       temperature: float) -> np.ndarray:
         """Generates the noise in the ADC samples, including thermal noise,
         quantization noise, and phase noise, all scaled by the noise figure.
 
@@ -272,9 +261,8 @@ class Radar:
         """
         return self.get_thermal_noise_amplitude(temperature)
 
-    def generate_thermal_noise(
-        self, shape: tuple[int, ...], temperature: float
-    ) -> np.ndarray:
+    def generate_thermal_noise(self, shape: tuple[int, ...],
+                               temperature: float) -> np.ndarray:
         """Generates thermal noise in the ADC samples.
 
         Args:
@@ -284,7 +272,8 @@ class Radar:
         Returns:
             Thermal noise in the ADC samples.
         """
-        return GaussianNoise(shape, self.get_thermal_noise_amplitude(temperature))
+        return GaussianNoise(shape,
+                             self.get_thermal_noise_amplitude(temperature))
 
     def get_thermal_noise_amplitude(self, temperature: float) -> float:
         """Returns the thermal noise amplitude.
@@ -295,10 +284,6 @@ class Radar:
         # The sqrt(2) factor is because the I and Q samples are sampled
         # independently and added together.
         return constants.power2mag(
-            scipy.constants.k
-            * scipy.constants.convert_temperature(temperature, "Celsius", "Kelvin")
-            * self.fs
-            / 2
-            * np.sqrt(2)
-            * self.noise_factor
-        )
+            scipy.constants.k * scipy.constants.convert_temperature(
+                temperature, "Celsius", "Kelvin") * self.fs / 2 * np.sqrt(2) *
+            self.noise_factor)

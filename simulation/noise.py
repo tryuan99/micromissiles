@@ -27,7 +27,8 @@ class GaussianNoise(Noise):
         return 0
 
     @staticmethod
-    def generate_noise_samples(shape: tuple[int, ...], amplitude: float) -> np.ndarray:
+    def generate_noise_samples(shape: tuple[int, ...],
+                               amplitude: float) -> np.ndarray:
         """Generates noise samples.
 
         Args:
@@ -38,10 +39,8 @@ class GaussianNoise(Noise):
             Noise samples.
         """
         return (
-            amplitude
-            / np.sqrt(2)
-            * (np.random.normal(size=shape) + 1j * np.random.normal(size=shape))
-        )
+            amplitude / np.sqrt(2) *
+            (np.random.normal(size=shape) + 1j * np.random.normal(size=shape)))
 
 
 class UniformNoise(Noise):
@@ -54,7 +53,8 @@ class UniformNoise(Noise):
         low: float = -0.5,
         high: float = 0.5,
     ):
-        super().__init__(self.generate_noise_samples(shape, amplitude, low, high))
+        super().__init__(
+            self.generate_noise_samples(shape, amplitude, low, high))
         self.low = low
         self.high = high
 
@@ -63,9 +63,8 @@ class UniformNoise(Noise):
         return (self.high - self.low) / 2
 
     @staticmethod
-    def generate_noise_samples(
-        shape: tuple[int, ...], amplitude: float, low: float, high: float
-    ) -> np.ndarray:
+    def generate_noise_samples(shape: tuple[int, ...], amplitude: float,
+                               low: float, high: float) -> np.ndarray:
         """Generates noise samples.
 
         Args:
@@ -77,11 +76,6 @@ class UniformNoise(Noise):
         Returns:
             Noise samples.
         """
-        return (
-            amplitude
-            / (np.sqrt(2) / np.sqrt(12) * (high - low))
-            * (
-                np.random.uniform(low=low, high=high, size=shape)
-                + 1j * np.random.uniform(low=low, high=high, size=shape)
-            )
-        )
+        return (amplitude / (np.sqrt(2) / np.sqrt(12) * (high - low)) *
+                (np.random.uniform(low=low, high=high, size=shape) +
+                 1j * np.random.uniform(low=low, high=high, size=shape)))

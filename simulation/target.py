@@ -47,11 +47,8 @@ class Target:
         Args:
             t_axis: Time axis.
         """
-        return (
-            self.range
-            + t_axis * self.range_rate
-            + 1 / 2 * self.acceleration * t_axis**2
-        )
+        return (self.range + t_axis * self.range_rate +
+                1 / 2 * self.acceleration * t_axis**2)
 
     def get_position_over_time(self, t_axis: np.ndarray) -> np.ndarray:
         """Returns the position of the target along the given time axis.
@@ -64,13 +61,10 @@ class Target:
             of the target along the given time axis.
         """
         d = self.get_distance_over_time(
-            t_axis
-        )  # Distance from the origin at each sample in m.
-        z = (
-            d * np.cos(self.azimuth) * np.cos(self.elevation)
-        )  # Distance along the z-axis in m.
+            t_axis)  # Distance from the origin at each sample in m.
+        z = (d * np.cos(self.azimuth) * np.cos(self.elevation)
+            )  # Distance along the z-axis in m.
         x = np.tan(self.azimuth) * z  # Distance along the x-axis in m.
         y = np.tan(self.elevation) * np.sqrt(
-            x**2 + z**2
-        )  # Distance along the y-axis in m.
+            x**2 + z**2)  # Distance along the y-axis in m.
         return x, y, z

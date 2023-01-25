@@ -30,10 +30,10 @@ def plot_if_amplitude_vs_range(
     fft_processing_gain = radar.N_r * radar.N_v
 
     # Calculate the noise amplitude in dB before and after the 2D FFT.
-    noise_amplitude_db = constants.mag2db(radar.get_noise_amplitude(temperature))
+    noise_amplitude_db = constants.mag2db(
+        radar.get_noise_amplitude(temperature))
     noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
-        radar.get_fft_processing_gain(noise=True)
-    )
+        radar.get_fft_processing_gain(noise=True))
 
     # Calculate the signal amplitude and FFT peak magnitude in dB for each range.
     ranges = np.arange(1, int(radar.r_max + 1))
@@ -41,11 +41,9 @@ def plot_if_amplitude_vs_range(
     for i, range in enumerate(ranges):
         target.range = range
         signal_amplitudes_db[i] = constants.mag2db(
-            AdcData.get_if_amplitude(radar, target)
-        )
+            AdcData.get_if_amplitude(radar, target))
     fft_peak_magnitudes_db = signal_amplitudes_db + constants.mag2db(
-        radar.get_fft_processing_gain()
-    )
+        radar.get_fft_processing_gain())
 
     # Plot the signal amplitude as a function of the target range.
     fig, ax = plt.subplots(figsize=(12, 8))

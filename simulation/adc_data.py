@@ -31,25 +31,21 @@ class AdcData(Samples):
             samples).
         """
         # TODO(titan): Add MIMO.
-        return np.array(
-            [
-                np.sum(
-                    [
-                        AdcData.generate_adc_data_2d(
-                            radar, target, tx_antenna, rx_antenna
-                        )
-                        for tx_antenna in range(radar.N_tx)
-                    ],
-                    axis=0,
-                )
-                for rx_antenna in range(radar.N_rx)
-            ]
-        )
+        return np.array([
+            np.sum(
+                [
+                    AdcData.generate_adc_data_2d(radar, target, tx_antenna,
+                                                 rx_antenna)
+                    for tx_antenna in range(radar.N_tx)
+                ],
+                axis=0,
+            )
+            for rx_antenna in range(radar.N_rx)
+        ])
 
     @staticmethod
-    def generate_adc_data_2d(
-        radar: Radar, target: Target, tx_antenna: int, rx_antenna: int
-    ) -> np.ndarray:
+    def generate_adc_data_2d(radar: Radar, target: Target, tx_antenna: int,
+                             rx_antenna: int) -> np.ndarray:
         """Generates the ADC samples for the given TX and RX antennas.
 
         Args:
@@ -63,23 +59,19 @@ class AdcData(Samples):
             dimensions (number of chirps) x (number of ADC samples).
         """
         x, y, z = target.get_position_over_time(radar.t_axis)
-        d_tx = np.sqrt(
-            (x - radar.d_tx_hor[tx_antenna] * radar.lambdac / 2) ** 2
-            + (y - radar.d_tx_ver[tx_antenna] * radar.lambdac / 2) ** 2
-            + z**2
-        )  # Distance to the TX antenna at each sample in m.
-        d_rx = np.sqrt(
-            (x - radar.d_rx_hor[rx_antenna] * radar.lambdac / 2) ** 2
-            + (y - radar.d_rx_ver[rx_antenna] * radar.lambdac / 2) ** 2
-            + z**2
-        )  # Distance to the RX antenna at each sample in m.
+        d_tx = np.sqrt((x - radar.d_tx_hor[tx_antenna] * radar.lambdac / 2)**2 +
+                       (y - radar.d_tx_ver[tx_antenna] * radar.lambdac / 2)**2 +
+                       z**2)  # Distance to the TX antenna at each sample in m.
+        d_rx = np.sqrt((x - radar.d_rx_hor[rx_antenna] * radar.lambdac / 2)**2 +
+                       (y - radar.d_rx_ver[rx_antenna] * radar.lambdac / 2)**2 +
+                       z**2)  # Distance to the RX antenna at each sample in m.
 
-        tau = (d_tx + d_rx) / radar.c  # Return time-of-flight for each sample in s.
+        tau = (d_tx +
+               d_rx) / radar.c  # Return time-of-flight for each sample in s.
         f_sig = radar.mu * tau  # IF of each sample.
         phi_sig = radar.f0 * tau - radar.mu / 2 * tau**2  # IF phase of each sample.
         return AdcData.get_if_amplitude(radar, target) * np.exp(
-            1j * 2 * np.pi * (f_sig * radar.t_axis_chirp + phi_sig)
-        )
+            1j * 2 * np.pi * (f_sig * radar.t_axis_chirp + phi_sig))
 
     @staticmethod
     def get_if_amplitude(radar: Radar, target: Target) -> float:
@@ -91,12 +83,8 @@ class AdcData(Samples):
         """
         # Calculate the IF amplitude using the radar equation.
         power_db = (
-            radar.tx_eirp
-            + constants.power2db(1e-3)  # Convert from dBm to dBW.
-            + radar.rx_gain
-            + target.rcs
-            + constants.power2db(
-                radar.lambdac**2 / ((4 * np.pi) ** 3 * target.range**4)
-            )
-        )
+            radar.tx_eirp + constants.power2db(1e-3)  # Convert from dBm to dBW.
+            + radar.rx_gain + target.rcs +
+            constants.power2db(radar.lambdac**2 /
+                               ((4 * np.pi)**3 * target.range**4)))
         return constants.power2mag(constants.db2power(power_db))

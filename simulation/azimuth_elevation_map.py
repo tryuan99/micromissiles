@@ -15,10 +15,10 @@ class AzimuthElevationMap(Samples):
         super().__init__(samples)
         self.radar = radar
 
-    def __init__(
-        self, range_doppler_map: RangeDopplerMap, radar: Radar, target: Target
-    ):
-        range_bin_index, doppler_bin_index = radar.get_range_doppler_bin_indices(target)
+    def __init__(self, range_doppler_map: RangeDopplerMap, radar: Radar,
+                 target: Target):
+        range_bin_index, doppler_bin_index = radar.get_range_doppler_bin_indices(
+            target)
         spatial_samples = np.zeros(
             (
                 np.max(radar.d_tx_ver) + np.max(radar.d_rx_ver),
@@ -26,9 +26,10 @@ class AzimuthElevationMap(Samples):
             ),
             dtype=range_doppler_map.samples.dtype,
         )
-        spatial_samples[radar.d_rx_ver, radar.d_rx_hor] = range_doppler_map.samples[
-            range(radar.N_rx), doppler_bin_index, range_bin_index
-        ]
+        spatial_samples[radar.d_rx_ver,
+                        radar.d_rx_hor] = range_doppler_map.samples[
+                            range(radar.N_rx), doppler_bin_index,
+                            range_bin_index]
         super().__init__(spatial_samples)
         self.radar = radar
 
@@ -46,9 +47,8 @@ class AzimuthElevationMap(Samples):
 
     def perform_2d_fft(self) -> None:
         """Performs the FFT in the azimuth and elevation dimensions."""
-        self.samples = np.fft.fft2(
-            self.samples, (self.radar.N_bins_el, self.radar.N_bins_az)
-        )
+        self.samples = np.fft.fft2(self.samples,
+                                   (self.radar.N_bins_el, self.radar.N_bins_az))
 
     def fft_shift(self) -> None:
         """Performs a FFT shift in the azimuth and elevation dimensions."""

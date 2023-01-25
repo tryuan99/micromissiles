@@ -7,7 +7,7 @@ import numpy as np
 
 def _calculate_amplitude(samples: np.ndarray) -> float:
     """Calculates the amplitude of the samples."""
-    return np.sqrt(np.mean(np.abs(samples) ** 2))
+    return np.sqrt(np.mean(np.abs(samples)**2))
 
 
 def _mag2db(samples: np.ndarray) -> np.ndarray:
@@ -41,7 +41,9 @@ def simulate_windowing_loss() -> None:
 
         windowed_signal_fft_abs = np.abs(windowed_signal_fft)
         windowed_signal_fft_abs_db = _mag2db(windowed_signal_fft_abs)
-        plt.plot(time, windowed_signal_fft_abs_db, label=f"{window_name} window")
+        plt.plot(time,
+                 windowed_signal_fft_abs_db,
+                 label=f"{window_name} window")
 
         logging.info(
             "%s window: amplitude: %f, peak: %f dB",

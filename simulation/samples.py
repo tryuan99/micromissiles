@@ -24,4 +24,4 @@ class Samples:
 
     def get_amplitude(self) -> float:
         """Returns the empirical amplitude, or RMS value, of the samples."""
-        return np.sqrt(np.mean(np.abs(self.samples) ** 2))
+        return np.sqrt(np.mean(np.abs(self.samples)**2))

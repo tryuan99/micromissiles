@@ -11,7 +11,7 @@ def power2db(power: Any) -> Any:
 
 def db2power(db: Any) -> Any:
     """Converts dB to power."""
-    return 10 ** (db / 10)
+    return 10**(db / 10)
 
 
 def mag2db(magnitude: Any) -> Any:
@@ -21,7 +21,7 @@ def mag2db(magnitude: Any) -> Any:
 
 def db2mag(db: Any) -> Any:
     """Converts dB to magnitude, or voltage."""
-    return 10 ** (db / 20)
+    return 10**(db / 20)
 
 
 def power2mag(power: Any) -> Any:

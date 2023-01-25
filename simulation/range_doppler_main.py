@@ -41,17 +41,17 @@ def plot_range_doppler_map_siso(
     radar = Radar(oversampling=oversampling)
     radar.N_tx = 1
     radar.N_rx = 1
-    target = Target(
-        range=range, range_rate=range_rate, acceleration=acceleration, rcs=rcs
-    )
+    target = Target(range=range,
+                    range_rate=range_rate,
+                    acceleration=acceleration,
+                    rcs=rcs)
     adc_data = AdcData(radar, target)
 
     samples = Samples(adc_data)
     noise_samples = Samples(np.zeros(samples.shape))
     if noise:
         noise_samples.add_samples(
-            radar.generate_noise(noise_samples.shape, temperature)
-        )
+            radar.generate_noise(noise_samples.shape, temperature))
     samples.add_samples(noise_samples)
 
     range_doppler_map = RangeDopplerMap(samples, radar)
@@ -59,8 +59,7 @@ def plot_range_doppler_map_siso(
     range_doppler_map.perform_2d_fft()
     range_doppler_map.fft_shift()
     range_doppler_map_abs_db = constants.mag2db(
-        np.squeeze(range_doppler_map.get_abs_samples())
-    )
+        np.squeeze(range_doppler_map.get_abs_samples()))
 
     # Plot the range-Doppler map.
     fig = plt.figure(figsize=(12, 8))
@@ -81,12 +80,10 @@ def plot_range_doppler_map_siso(
     # Calculate the theoretical SNR.
     signal_amplitude_db = constants.mag2db(adc_data.get_amplitude())
     signal_fft_magnitude_db = signal_amplitude_db + constants.mag2db(
-        radar.get_fft_processing_gain()
-    )
+        radar.get_fft_processing_gain())
     noise_amplitude_db = constants.mag2db(noise_samples.get_amplitude())
     noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
-        radar.get_fft_processing_gain(noise=True)
-    )
+        radar.get_fft_processing_gain(noise=True))
     logging.info(
         "Theoretical SNR: %f - %f = %f dB",
         signal_fft_magnitude_db,
@@ -95,20 +92,19 @@ def plot_range_doppler_map_siso(
     )
 
     # Calculate the empirical SNR.
-    range_bin_index, doppler_bin_index = radar.get_range_doppler_bin_indices(target)
+    range_bin_index, doppler_bin_index = radar.get_range_doppler_bin_indices(
+        target)
     signal_fft_magnitude_db_simulated = range_doppler_map_abs_db[
-        doppler_bin_index, range_bin_index
-    ]
+        doppler_bin_index, range_bin_index]
     range_doppler_map_without_target = Samples(range_doppler_map)
     # Zero out the range-Doppler bins around the target's peak.
-    range_doppler_map_without_target.samples[
-        :,
-        doppler_bin_index - GUARD_LENGTH : doppler_bin_index + GUARD_LENGTH,
-        range_bin_index - GUARD_LENGTH : range_bin_index + GUARD_LENGTH,
-    ] = 0
+    range_doppler_map_without_target.samples[:, doppler_bin_index -
+                                             GUARD_LENGTH:doppler_bin_index +
+                                             GUARD_LENGTH, range_bin_index -
+                                             GUARD_LENGTH:range_bin_index +
+                                             GUARD_LENGTH,] = 0
     noise_fft_magnitude_db_simulated = constants.mag2db(
-        range_doppler_map_without_target.get_amplitude()
-    )
+        range_doppler_map_without_target.get_amplitude())
     logging.info(
         "Simulated SNR: %f - %f = %f dB",
         signal_fft_magnitude_db_simulated,
@@ -136,7 +132,10 @@ if __name__ == "__main__":
     flags.DEFINE_float("acceleration", 0, "Acceleration in m/s^2.")
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")
     flags.DEFINE_float("temperature", 30, "Temperature in Celsius.")
-    flags.DEFINE_integer("oversampling", 1, "Oversampling factor.", lower_bound=1)
+    flags.DEFINE_integer("oversampling",
+                         1,
+                         "Oversampling factor.",
+                         lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
 
     app.run(main)
