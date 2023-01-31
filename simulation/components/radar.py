@@ -3,8 +3,8 @@
 import numpy as np
 import scipy.constants
 
-from simulation.noise import GaussianNoise
-from simulation.target import Target
+from simulation.components.noise import GaussianNoise
+from simulation.components.target import Target
 from utils import constants
 
 

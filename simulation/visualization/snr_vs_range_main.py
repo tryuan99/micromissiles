@@ -4,9 +4,9 @@ from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
 
-from simulation.adc_data import AdcData
-from simulation.radar import Radar
-from simulation.target import Target
+from simulation.components.adc_data import AdcData
+from simulation.components.radar import Radar
+from simulation.components.target import Target
 from utils import constants
 
 FLAGS = flags.FLAGS
