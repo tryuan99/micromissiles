@@ -19,3 +19,8 @@ parse_pip_requirements()
 # Load pip dependencies.
 load("//deps:pip_deps.bzl", "load_pip_dependencies")
 load_pip_dependencies()
+
+# Load Protobuf dependencies and toolchains.
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
