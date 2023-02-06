@@ -15,23 +15,20 @@ FLAGS = flags.FLAGS
 MINIMUM_SNR = 15  # dB
 
 
-def plot_if_amplitude_vs_range(
-    rcs: float,
-    temperature: float,
-) -> None:
+def _plot_snr_vs_range(radar: Radar, rcs: float, temperature: float) -> None:
     """Plots the signal and noise amplitudes as a function of the target range.
 
     Args:
+        radar: Radar.
         rcs: Radar cross section in dBsm.
         temperature: Temperature in Celsius.
     """
-    radar = Radar()
     target = Target(rcs=rcs)
     fft_processing_gain = radar.N_r * radar.N_v
 
     # Calculate the noise amplitude in dB before and after the 2D FFT.
     noise_amplitude_db = constants.mag2db(
-        radar.get_noise_amplitude(temperature))
+        np.sqrt(radar.N_rx) * radar.get_noise_amplitude(temperature))
     noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
         radar.get_fft_processing_gain(noise=True))
 
@@ -41,7 +38,7 @@ def plot_if_amplitude_vs_range(
     for i, range in enumerate(ranges):
         target.range = range
         signal_amplitudes_db[i] = constants.mag2db(
-            AdcData.get_if_amplitude(radar, target))
+            radar.N_tx * radar.N_rx * AdcData.get_if_amplitude(radar, target))
     signal_fft_peak_magnitudes_db = signal_amplitudes_db + constants.mag2db(
         radar.get_fft_processing_gain())
 
@@ -73,12 +70,42 @@ def plot_if_amplitude_vs_range(
     plt.show()
 
 
+def plot_snr_vs_range_siso(
+    rcs: float,
+    temperature: float,
+) -> None:
+    """Plots the signal and noise amplitudes as a function of the target range
+    for a SISO radar.
+
+    Args:
+        rcs: Radar cross section in dBsm.
+        temperature: Temperature in Celsius.
+    """
+    radar = Radar()
+    radar.N_tx = 1
+    radar.N_rx = 1
+    _plot_snr_vs_range(radar, rcs, temperature)
+
+
+def plot_snr_vs_range_phased_array(
+    rcs: float,
+    temperature: float,
+) -> None:
+    """Plots the signal and noise amplitudes as a function of the target range
+    for a phased array MIMO radar.
+
+    Args:
+        rcs: Radar cross section in dBsm.
+        temperature: Temperature in Celsius.
+    """
+    radar = Radar()
+    _plot_snr_vs_range(radar, rcs, temperature)
+
+
 def main(argv):
     assert len(argv) == 1, argv
-    plot_if_amplitude_vs_range(
-        FLAGS.rcs,
-        FLAGS.temperature,
-    )
+    plot_snr_vs_range_siso(FLAGS.rcs, FLAGS.temperature)
+    plot_snr_vs_range_phased_array(FLAGS.rcs, FLAGS.temperature)
 
 
 if __name__ == "__main__":
