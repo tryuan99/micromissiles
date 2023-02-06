@@ -13,10 +13,6 @@ class RangeDopplerMap(Samples):
         super().__init__(samples)
         self.radar = radar
 
-    def get_abs_samples(self) -> np.ndarray:
-        """Returns the absolute value of the samples."""
-        return np.abs(self.samples)
-
     def accumulate_log_magnitude(self) -> np.ndarray:
         """Returns the log magnitude of the samples accumulated over all RX antennas.
 

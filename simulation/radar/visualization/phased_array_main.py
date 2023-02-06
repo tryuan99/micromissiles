@@ -80,7 +80,7 @@ def _simulate_snr_db(radar: Radar, target: Target, range_fft: Samples) -> float:
     """
     range_bin_index, _ = radar.get_range_doppler_bin_indices(target)
     signal_fft_magnitude_db_simulated = constants.mag2db(
-        np.abs(range_fft.samples[range_bin_index]))
+        range_fft.get_abs_samples()[range_bin_index])
     range_fft_without_target = Samples(range_fft.samples)
     # Zero out the range-Doppler bins around the target's peak.
     range_fft_without_target.samples[range_bin_index - GUARD_LENGTH *
@@ -119,7 +119,7 @@ def simulate_phased_array_snr(
     siso_radar.N_rx = 1
     siso_range_doppler_map = _simulate_range_fft(siso_radar, target)
     siso_range_fft = Samples(np.squeeze(siso_range_doppler_map.samples)[0])
-    siso_range_fft_abs_db = constants.mag2db(np.abs(siso_range_fft.samples))
+    siso_range_fft_abs_db = constants.mag2db(siso_range_fft.get_abs_samples())
 
     # Calculate the theoretical and empirical SNR after the FFT.
     siso_snr_db = _calculate_snr_db(siso_radar, target)
@@ -130,7 +130,7 @@ def simulate_phased_array_snr(
     mimo_radar.configure_phased_array(azimuth, elevation)
     mimo_range_doppler_map = _simulate_range_fft(mimo_radar, target)
     mimo_range_fft = Samples(np.sum(mimo_range_doppler_map.samples, axis=0)[0])
-    mimo_range_fft_abs_db = constants.mag2db(np.abs(mimo_range_fft.samples))
+    mimo_range_fft_abs_db = constants.mag2db(mimo_range_fft.get_abs_samples())
 
     # Calculate the theoretical and empirical SNR after the FFT.
     mimo_snr_db = _calculate_snr_db(mimo_radar, target)

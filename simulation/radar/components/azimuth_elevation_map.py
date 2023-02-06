@@ -33,10 +33,6 @@ class AzimuthElevationMap(Samples):
         super().__init__(spatial_samples)
         self.radar = radar
 
-    def get_abs_samples(self) -> np.ndarray:
-        """Returns the absolute value of the samples."""
-        return np.abs(self.samples)
-
     def perform_azimuth_fft(self) -> None:
         """Performs the FFT in the azimuth dimension."""
         self.samples = np.fft.fft(self.samples, self.radar.N_bins_az, axis=1)

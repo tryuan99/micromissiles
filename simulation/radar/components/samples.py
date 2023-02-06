@@ -22,6 +22,10 @@ class Samples:
         """Adds the samples."""
         self.samples = self.samples + samples.samples
 
+    def get_abs_samples(self) -> np.ndarray:
+        """Returns the absolute value of the samples."""
+        return np.abs(self.samples)
+
     def get_amplitude(self) -> float:
         """Returns the empirical amplitude, or RMS value, of the samples."""
         return np.sqrt(np.mean(np.abs(self.samples)**2))
