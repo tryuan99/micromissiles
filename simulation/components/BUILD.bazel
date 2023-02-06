@@ -27,6 +27,12 @@ py_library(
 )
 
 py_library(
+    name = "coordinates",
+    srcs = ["coordinates.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
     name = "noise",
     srcs = ["noise.py"],
     deps = [
@@ -39,6 +45,7 @@ py_library(
     name = "radar",
     srcs = ["radar.py"],
     deps = [
+        ":coordinates",
         ":noise",
         ":target",
         "//utils:constants",
@@ -66,5 +73,8 @@ py_library(
 py_library(
     name = "target",
     srcs = ["target.py"],
-    deps = [requirement("numpy")],
+    deps = [
+        ":coordinates",
+        requirement("numpy"),
+    ],
 )

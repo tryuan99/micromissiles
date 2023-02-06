@@ -3,6 +3,7 @@
 import numpy as np
 import scipy.constants
 
+from simulation.components.coordinates import PolarCoordinates
 from simulation.components.noise import GaussianNoise
 from simulation.components.target import Target
 from utils import constants
@@ -234,15 +235,12 @@ class Radar:
             elevation: Elevation in rad.
         """
         # Find the unit vector in the given azmiuth and elevation.
-        z = np.cos(azimuth) * np.cos(elevation)
-        x = np.tan(azimuth) * z
-        y = np.tan(elevation) * np.sqrt(x**2 + z**2)
-        direction = np.array([x, y, z])
-        direction /= np.linalg.norm(direction)
+        polar_coordinates = PolarCoordinates(1, azimuth, elevation)
+        direction = polar_coordinates.transform_to_cartesian().coordinates
 
         # Project the 3D position of each antenna onto the unit direction vector
         # to find the length of the projection in units of lambda/2.
-        # The phase shift is the length of the projection divided by 2.
+        # The phase shift is the negative length of the projection divided by 2.
         position_tx = np.vstack(
             (self.d_tx_hor, self.d_tx_ver, np.zeros(self.N_tx)))
         self.set_tx_phase_shifts(direction @ position_tx / 2)
