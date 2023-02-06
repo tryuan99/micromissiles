@@ -1,8 +1,8 @@
 """Simulates the windowing loss."""
 
-from absl import app, logging
 import matplotlib.pyplot as plt
 import numpy as np
+from absl import app, logging
 
 
 def _calculate_amplitude(samples: np.ndarray) -> float:

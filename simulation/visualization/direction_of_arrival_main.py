@@ -2,9 +2,9 @@
 direction-of-arrival spectrum for a SIMO radar.
 """
 
-from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
+from absl import app, flags
 
 from simulation.components.adc_data import AdcData
 from simulation.components.azimuth_elevation_map import AzimuthElevationMap

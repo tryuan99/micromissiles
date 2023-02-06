@@ -1,8 +1,8 @@
 """Simulates the SNR improvement of a phased array."""
 
-from absl import app, flags, logging
 import matplotlib.pyplot as plt
 import numpy as np
+from absl import app, flags, logging
 
 from simulation.components.adc_data import AdcData
 from simulation.components.radar import Radar

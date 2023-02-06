@@ -1,7 +1,8 @@
 """Constants and related utility functions."""
 
-import numpy as np
 from typing import Any
+
+import numpy as np
 
 
 def power2db(power: Any) -> Any:

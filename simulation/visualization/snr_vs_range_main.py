@@ -1,8 +1,8 @@
 """Simulates the signal-to-noise ratio as a function of the target range."""
 
-from absl import app, flags
 import matplotlib.pyplot as plt
 import numpy as np
+from absl import app, flags
 
 from simulation.components.adc_data import AdcData
 from simulation.components.radar import Radar
