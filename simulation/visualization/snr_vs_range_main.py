@@ -42,7 +42,7 @@ def plot_if_amplitude_vs_range(
         target.range = range
         signal_amplitudes_db[i] = constants.mag2db(
             AdcData.get_if_amplitude(radar, target))
-    fft_peak_magnitudes_db = signal_amplitudes_db + constants.mag2db(
+    signal_fft_peak_magnitudes_db = signal_amplitudes_db + constants.mag2db(
         radar.get_fft_processing_gain())
 
     # Plot the signal amplitude as a function of the target range.
@@ -57,7 +57,9 @@ def plot_if_amplitude_vs_range(
 
     # Plot the FFT peak magnitude as a function of the target range.
     fig, ax = plt.subplots(figsize=(12, 8))
-    plt.plot(ranges, fft_peak_magnitudes_db, label="FFT peak magnitude")
+    plt.plot(ranges,
+             signal_fft_peak_magnitudes_db,
+             label="Signal FFT peak magnitude")
     plt.axhline(noise_fft_magnitude_db, color="r", label="Noise magnitude")
     plt.axhline(
         noise_fft_magnitude_db + MINIMUM_SNR,
@@ -66,7 +68,7 @@ def plot_if_amplitude_vs_range(
     )
     ax.set_title("FFT peak magnitude vs. range")
     ax.set_xlabel("Target range in m")
-    ax.set_ylabel("FFT peak magnitude in dB")
+    ax.set_ylabel("FFT magnitude in dB")
     plt.legend()
     plt.show()
 

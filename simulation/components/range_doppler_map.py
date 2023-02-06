@@ -22,7 +22,7 @@ class RangeDopplerMap(Samples):
 
         The accumulated range-Doppler map is intended for CFAR.
         """
-        # mmWave SDK uses a base-2 logarithm.
+        # mmWave SDK uses a logarithmic CFAR with a base-2 logarithm.
         return np.sum(np.log2(np.abs(self.samples)), axis=0)
 
     def apply_range_window(self) -> None:

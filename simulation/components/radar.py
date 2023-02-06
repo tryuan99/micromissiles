@@ -31,11 +31,16 @@ class Radar:
         # Antenna parameters.
         self.N_tx = 3  # Number of TX antennas.
         self.N_rx = 4  # Number of RX antennas.
-        self.d_tx_hor = [0, 2, 2]  # TX antenna horizontal spacing in lambda/2.
-        self.d_tx_ver = [0, 2, 0]  # TX antenna vertical spacing in lambda/2.
-        self.d_rx_hor = [1, 0, 1,
-                         0]  # RX antenna horizontal spacing in lambda/2.
-        self.d_rx_ver = [1, 1, 0, 0]  # RX antenna vertical spacing in lambda/2.
+        self.d_tx_hor = np.array(
+            [0, 2, 2])  # TX antenna horizontal spacing in lambda/2.
+        self.d_tx_ver = np.array([0, 2, 0
+                                 ])  # TX antenna vertical spacing in lambda/2.
+        self.d_rx_hor = np.array(
+            [1, 0, 1, 0])  # RX antenna horizontal spacing in lambda/2.
+        self.d_rx_ver = np.array([1, 1, 0, 0
+                                 ])  # RX antenna vertical spacing in lambda/2.
+        self.phi_tx = np.zeros(self.N_tx)
+        self.phi_rx = np.zeros(self.N_rx)
         assert len(self.d_tx_hor) == self.N_tx
         assert len(self.d_tx_ver) == self.N_tx
         assert len(self.d_rx_hor) == self.N_rx
@@ -44,8 +49,10 @@ class Radar:
         assert np.min(self.d_tx_ver) >= 0
         assert np.min(self.d_rx_hor) >= 0
         assert np.min(self.d_rx_ver) >= 0
-        assert np.min(self.d_tx_hor + self.d_rx_hor) == 0
-        assert np.min(self.d_tx_ver + self.d_rx_ver) == 0
+        assert np.min(self.d_tx_hor) + np.min(self.d_rx_hor) == 0
+        assert np.min(self.d_tx_ver) + np.min(self.d_rx_ver) == 0
+        assert len(self.phi_tx) == self.N_tx
+        assert len(self.phi_rx) == self.N_rx
 
         # Time axis.
         self.t_axis_chirp = (np.arange(self.N_r) / self.fs
@@ -197,22 +204,86 @@ class Radar:
         """Noise factor."""
         return constants.db2power(self.noise_figure)
 
+    def set_tx_phase_shifts(self, phase_shifts: tuple[float]) -> None:
+        """Sets the phase shifts for the TX antennas.
+
+        Args:
+            phase_shifts: Phase shifts for the antennas in rad.
+        """
+        assert len(phase_shifts) == self.N_tx
+        self.phi_tx = phase_shifts
+
+    def set_rx_phase_shifts(self, phase_shifts: tuple[float]) -> None:
+        """Sets the phase shifts for the RX antennas.
+
+        Args:
+            phase_shifts: Phase shifts for the antennas in rad.
+        """
+        assert len(phase_shifts) == self.N_rx
+        self.phi_rx = phase_shifts
+
+    def configure_phased_array(self, azimuth: float, elevation: float) -> None:
+        """Configures the phase shifts to create a phased array.
+
+        The phase shifts for the TX and RX antennas are set relative to an
+        antenna at (0, 0), such that the antenna array beamforms in the given
+        azimuth and elevation.
+
+        Args:
+            azimuth: Azimuth in rad.
+            elevation: Elevation in rad.
+        """
+        # Find the unit vector in the given azmiuth and elevation.
+        z = np.cos(azimuth) * np.cos(elevation)
+        x = np.tan(azimuth) * z
+        y = np.tan(elevation) * np.sqrt(x**2 + z**2)
+        direction = np.array([x, y, z])
+        direction /= np.linalg.norm(direction)
+
+        # Project the 3D position of each antenna onto the unit direction vector
+        # to find the length of the projection in units of lambda/2.
+        # The phase shift is the length of the projection divided by 2.
+        position_tx = np.vstack(
+            (self.d_tx_hor, self.d_tx_ver, np.zeros(self.N_tx)))
+        self.set_tx_phase_shifts(direction @ position_tx / 2)
+        position_rx = np.vstack(
+            (self.d_rx_hor, self.d_rx_ver, np.zeros(self.N_rx)))
+        self.set_rx_phase_shifts(direction @ position_rx / 2)
+
     def get_fft_processing_gain_r(self, noise=False, window=True) -> float:
-        """Returns the range FFT processing gain."""
+        """Returns the range FFT processing gain.
+
+        Args:
+            noise: If true, returns the noise processing gain.
+            window: If true, the window gain is calculated based on the
+                corresponding window.
+        """
         window_samples = self.window_r if window else np.ones(self.N_r)
         if noise:
             return np.linalg.norm(window_samples)
         return np.sum(window_samples)
 
     def get_fft_processing_gain_v(self, noise=False, window=True) -> float:
-        """Returns the Doppler FFT processing gain."""
+        """Returns the Doppler FFT processing gain.
+
+        Args:
+            noise: If true, returns the noise processing gain.
+            window: If true, the window gain is calculated based on the
+                corresponding window.
+        """
         window_samples = self.window_v if window else np.ones(self.N_v)
         if noise:
             return np.linalg.norm(window_samples)
         return np.sum(window_samples)
 
     def get_fft_processing_gain(self, noise=False, window=True) -> float:
-        """Returns the 2D FFT processing gain."""
+        """Returns the 2D FFT processing gain.
+
+        Args:
+            noise: If true, returns the noise processing gain.
+            window: If true, the window gain is calculated based on the
+                corresponding window.
+        """
         return self.get_fft_processing_gain_r(
             noise, window) * self.get_fft_processing_gain_v(noise, window)
 
@@ -220,8 +291,14 @@ class Radar:
                                       target: Target,
                                       fft_shifted: bool = True
                                      ) -> tuple[int, int]:
-        """Returns the range-Doppler indices corresponding to the target."""
-        # TODO(titan): This could be made more accurate by considering velocity and acceleration.
+        """Returns the range-Doppler indices corresponding to the target.
+
+        Args:
+            target: Target.
+            fft_shifted: If true, the Doppler axis is FFT-shifted.
+        """
+        # TODO(titan): This could be made more accurate by considering velocity
+        # and acceleration.
         average_range = (target.range +
                          (target.range + target.range_rate * self.cpi +
                           1 / 2 * target.acceleration * self.cpi**2)) / 2

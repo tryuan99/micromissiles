@@ -41,6 +41,7 @@ py_library(
     deps = [
         ":noise",
         ":target",
+        "//utils:constants",
         requirement("numpy"),
         requirement("scipy"),
     ],

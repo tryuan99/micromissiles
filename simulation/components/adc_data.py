@@ -69,7 +69,8 @@ class AdcData(Samples):
         tau = (d_tx +
                d_rx) / radar.c  # Return time-of-flight for each sample in s.
         f_sig = radar.mu * tau  # IF of each sample.
-        phi_sig = radar.f0 * tau - radar.mu / 2 * tau**2  # IF phase of each sample.
+        phi_sig = radar.f0 * tau - radar.mu / 2 * tau**2 + radar.phi_tx[
+            tx_antenna] + radar.phi_rx[rx_antenna]  # IF phase of each sample.
         return AdcData.get_if_amplitude(radar, target) * np.exp(
             1j * 2 * np.pi * (f_sig * radar.t_axis_chirp + phi_sig))
 
