@@ -5,9 +5,9 @@ from all transmitting TX antennas.
 
 import numpy as np
 
-from simulation.components.radar import Radar
-from simulation.components.samples import Samples
-from simulation.components.target import Target
+from simulation.radar.components.radar import Radar
+from simulation.radar.components.samples import Samples
+from simulation.radar.components.target import Target
 from utils import constants
 
 

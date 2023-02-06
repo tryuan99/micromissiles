@@ -2,10 +2,10 @@
 
 import numpy as np
 
-from simulation.components.radar import Radar
-from simulation.components.range_doppler_map import RangeDopplerMap
-from simulation.components.samples import Samples
-from simulation.components.target import Target
+from simulation.radar.components.radar import Radar
+from simulation.radar.components.range_doppler_map import RangeDopplerMap
+from simulation.radar.components.samples import Samples
+from simulation.radar.components.target import Target
 
 
 class AzimuthElevationMap(Samples):

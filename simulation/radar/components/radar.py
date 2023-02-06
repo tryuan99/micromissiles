@@ -3,9 +3,9 @@
 import numpy as np
 import scipy.constants
 
-from simulation.components.coordinates import PolarCoordinates
-from simulation.components.noise import GaussianNoise
-from simulation.components.target import Target
+from simulation.radar.components.coordinates import PolarCoordinates
+from simulation.radar.components.noise import GaussianNoise
+from simulation.radar.components.target import Target
 from utils import constants
 
 

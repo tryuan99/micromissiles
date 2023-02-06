@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from simulation.components.radar import Radar
-from simulation.components.samples import Samples
+from simulation.radar.components.radar import Radar
+from simulation.radar.components.samples import Samples
 
 
 class RangeDopplerMap(Samples):

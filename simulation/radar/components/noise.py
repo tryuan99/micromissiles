@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from simulation.components.samples import Samples
+from simulation.radar.components.samples import Samples
 
 
 class Noise(Samples, ABC):

@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from absl import app, flags, logging
 
-from simulation.components.adc_data import AdcData
-from simulation.components.radar import Radar
-from simulation.components.range_doppler_map import RangeDopplerMap
-from simulation.components.samples import Samples
-from simulation.components.target import Target
+from simulation.radar.components.adc_data import AdcData
+from simulation.radar.components.radar import Radar
+from simulation.radar.components.range_doppler_map import RangeDopplerMap
+from simulation.radar.components.samples import Samples
+from simulation.radar.components.target import Target
 from utils import constants
 
 FLAGS = flags.FLAGS

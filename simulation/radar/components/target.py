@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from simulation.components.coordinates import PolarCoordinates
+from simulation.radar.components.coordinates import PolarCoordinates
 
 
 class Target:
