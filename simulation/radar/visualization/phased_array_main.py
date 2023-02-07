@@ -13,9 +13,6 @@ from utils import constants
 
 FLAGS = flags.FLAGS
 
-# Noise temperature in Celsius.
-TEMPERATURE = 20  # Celsius
-
 # Oversampling factor.
 OVERSAMPLING = 4
 
@@ -35,7 +32,7 @@ def _simulate_range_fft(radar: Radar, target: Target):
     """
     adc_data = AdcData(radar, target)
     samples = Samples(adc_data)
-    samples.add_samples(radar.generate_noise(adc_data.shape, TEMPERATURE))
+    samples.add_samples(radar.generate_noise(adc_data.shape))
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_range_window()
@@ -58,8 +55,7 @@ def _calculate_snr_db(radar: Radar, target: Target) -> float:
         AdcData.get_if_amplitude(radar, target)) + constants.mag2db(
             radar.get_fft_processing_gain_r())
     noise_fft_magnitude_db = constants.mag2db(
-        np.sqrt(radar.N_rx) *
-        radar.get_noise_amplitude(TEMPERATURE)) + constants.mag2db(
+        np.sqrt(radar.N_rx) * radar.get_noise_amplitude()) + constants.mag2db(
             radar.get_fft_processing_gain_r(noise=True))
     snr_db = signal_fft_magnitude_db - noise_fft_magnitude_db
     logging.info("Theoretical SNR: %f - %f = %f dB", signal_fft_magnitude_db,

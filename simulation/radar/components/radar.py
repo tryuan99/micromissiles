@@ -8,13 +8,18 @@ from simulation.radar.components.noise import GaussianNoise
 from simulation.radar.components.target import Target
 from utils import constants
 
+# Default temperature in Celsius.
+DEFAULT_TEMPERATURE = 30  # Celsius
+
 
 class Radar:
     """Represents a radar."""
 
     c = 299792458  # Speed of light in m/s.
 
-    def __init__(self, oversampling: int = 1):
+    def __init__(self,
+                 temperature: float = DEFAULT_TEMPERATURE,
+                 oversampling: int = 1):
         # Radar parameters. These values are based on TI's IWR6843AOP radar.
         # See https://www.ti.com/lit/ds/symlink/iwr6843aop.pdf for the data sheet.
         self.tx_eirp = 15  # EIRP in dBm.
@@ -72,6 +77,9 @@ class Radar:
             self.d_rx_hor) - (np.min(self.d_tx_hor) + np.min(self.d_rx_hor))
         assert self.N_bins_el >= np.max(self.d_tx_ver) + np.max(
             self.d_rx_ver) - (np.min(self.d_tx_ver) + np.min(self.d_rx_ver))
+
+        # Noise parameters.
+        self.temperature = temperature
 
     @property
     def lambda0(self) -> float:
@@ -312,53 +320,41 @@ class Radar:
                                  self.N_bins_v // 2) % self.N_bins_v
         return int(np.round(range_bin_index)), int(np.round(doppler_bin_index))
 
-    def generate_noise(self, shape: tuple[int, ...],
-                       temperature: float) -> np.ndarray:
+    def generate_noise(self, shape: tuple[int, ...]) -> np.ndarray:
         """Generates the noise in the ADC samples, including thermal noise,
         quantization noise, and phase noise, all scaled by the noise figure.
 
         Args:
             shape: Shape of the noise.
-            temperature: Temperature in Celsius.
 
         Returns:
             Noise in the ADC samples.
         """
         # TODO(titan): Add quantization and phase noise.
-        return self.generate_thermal_noise(shape, temperature)
+        return self.generate_thermal_noise(shape)
 
-    def get_noise_amplitude(self, temperature: float) -> float:
+    def get_noise_amplitude(self) -> float:
         """Returns the noise amplitude considering the noise figure, thermal
         noise, quantization noise, and phase noise.
-
-        Args:
-            temperature: Temperature in Celsius.
         """
-        return self.get_thermal_noise_amplitude(temperature)
+        return self.get_thermal_noise_amplitude()
 
-    def generate_thermal_noise(self, shape: tuple[int, ...],
-                               temperature: float) -> np.ndarray:
+    def generate_thermal_noise(self, shape: tuple[int, ...]) -> np.ndarray:
         """Generates thermal noise in the ADC samples.
 
         Args:
             shape: Shape of the noise.
-            temperature: Temperature in Celsius.
 
         Returns:
             Thermal noise in the ADC samples.
         """
-        return GaussianNoise(shape,
-                             self.get_thermal_noise_amplitude(temperature))
+        return GaussianNoise(shape, self.get_thermal_noise_amplitude())
 
-    def get_thermal_noise_amplitude(self, temperature: float) -> float:
-        """Returns the thermal noise amplitude.
-
-        Args:
-            temperature: Temperature in Celsius.
-        """
+    def get_thermal_noise_amplitude(self) -> float:
+        """Returns the thermal noise amplitude."""
         # The sqrt(2) factor is because the I and Q samples are sampled
         # independently and added together.
         return constants.power2mag(
             scipy.constants.k * scipy.constants.convert_temperature(
-                temperature, "Celsius", "Kelvin") * self.fs / 2 * np.sqrt(2) *
-            self.noise_factor)
+                self.temperature, "Celsius", "Kelvin") * self.fs / 2 *
+            np.sqrt(2) * self.noise_factor)

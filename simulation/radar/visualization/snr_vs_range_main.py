@@ -15,20 +15,19 @@ FLAGS = flags.FLAGS
 MINIMUM_SNR = 15  # dB
 
 
-def _plot_snr_vs_range(radar: Radar, rcs: float, temperature: float) -> None:
+def _plot_snr_vs_range(radar: Radar, rcs: float) -> None:
     """Plots the signal and noise amplitudes as a function of the target range.
 
     Args:
         radar: Radar.
         rcs: Radar cross section in dBsm.
-        temperature: Temperature in Celsius.
     """
     target = Target(rcs=rcs)
     fft_processing_gain = radar.N_r * radar.N_v
 
     # Calculate the noise amplitude in dB before and after the 2D FFT.
     noise_amplitude_db = constants.mag2db(
-        np.sqrt(radar.N_rx) * radar.get_noise_amplitude(temperature))
+        np.sqrt(radar.N_rx) * radar.get_noise_amplitude())
     noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
         radar.get_fft_processing_gain(noise=True))
 
@@ -81,10 +80,10 @@ def plot_snr_vs_range_siso(
         rcs: Radar cross section in dBsm.
         temperature: Temperature in Celsius.
     """
-    radar = Radar()
+    radar = Radar(temperature=temperature)
     radar.N_tx = 1
     radar.N_rx = 1
-    _plot_snr_vs_range(radar, rcs, temperature)
+    _plot_snr_vs_range(radar, rcs)
 
 
 def plot_snr_vs_range_phased_array(
@@ -98,8 +97,8 @@ def plot_snr_vs_range_phased_array(
         rcs: Radar cross section in dBsm.
         temperature: Temperature in Celsius.
     """
-    radar = Radar()
-    _plot_snr_vs_range(radar, rcs, temperature)
+    radar = Radar(temperature=temperature)
+    _plot_snr_vs_range(radar, rcs)
 
 
 def main(argv):

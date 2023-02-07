@@ -43,7 +43,7 @@ def plot_direction_of_arrival_simo(
         oversampling: Oversampling factor.
         noise: If true, add noise.
     """
-    radar = Radar(oversampling=oversampling)
+    radar = Radar(temperature=temperature, oversampling=oversampling)
     radar.N_tx = 1
     target = Target(
         range=rnge,
@@ -57,7 +57,7 @@ def plot_direction_of_arrival_simo(
 
     samples = Samples(adc_data)
     if noise:
-        samples.add_samples(radar.generate_noise(adc_data.shape, temperature))
+        samples.add_samples(radar.generate_noise(adc_data.shape))
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_2d_window()
