@@ -15,18 +15,6 @@ py_library(
 )
 
 py_library(
-    name = "azimuth_elevation_map",
-    srcs = ["azimuth_elevation_map.py"],
-    deps = [
-        ":radar",
-        ":range_doppler_map",
-        ":samples",
-        ":target",
-        requirement("numpy"),
-    ],
-)
-
-py_library(
     name = "coordinates",
     srcs = ["coordinates.py"],
     deps = [requirement("numpy")],
@@ -68,6 +56,17 @@ py_library(
     name = "samples",
     srcs = ["samples.py"],
     deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "spatial_samples",
+    srcs = ["spatial_samples.py"],
+    deps = [
+        ":radar",
+        ":range_doppler_map",
+        ":samples",
+        ":target",
+        requirement("numpy")],
 )
 
 py_library(

@@ -46,7 +46,7 @@ def simulate_windowing_loss() -> None:
                  label=f"{window_name} window")
 
         logging.info(
-            "%s window: amplitude: %f, peak: %f dB",
+            "%s window: amplitude: %f, peak: %f dB.",
             window_name,
             _calculate_amplitude(windowed_signal),
             np.max(windowed_signal_fft_abs_db),

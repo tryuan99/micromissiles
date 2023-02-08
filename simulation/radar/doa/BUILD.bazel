@@ -1,0 +1,27 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "doa_estimator",
+    srcs = ["doa_estimator.py"],
+    deps = [
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:spatial_samples",
+        "//utils/visualization:color_maps",
+        "//utils:constants",
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "doa_fft_estimator",
+    srcs = ["doa_fft_estimator.py"],
+    deps = [
+        ":doa_estimator",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:spatial_samples",
+        requirement("numpy"),
+    ],
+)

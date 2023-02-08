@@ -69,8 +69,8 @@ class Radar:
         # FFT parameters.
         self.N_bins_r = 256 * oversampling  # Number of range bins.
         self.N_bins_v = 512 * oversampling  # Number of Doppler bins.
-        self.N_bins_az = 32  # Number of bins in azimuth.
-        self.N_bins_el = 32  # Number of bins in elevation.
+        self.N_bins_az = 32 * oversampling  # Number of bins in azimuth.
+        self.N_bins_el = 32 * oversampling  # Number of bins in elevation.
         assert self.N_bins_r >= self.N_r
         assert self.N_bins_v >= self.N_v
         assert self.N_bins_az >= np.max(self.d_tx_hor) + np.max(
@@ -179,8 +179,8 @@ class Radar:
         """Azimuth axis in rad."""
         # The FFT outputs a positive spatial frequency if the phase increases
         # in the positive x-direction. In our coordinate system, the phase
-        # increases in the negative x-direction.
-        return -np.arcsin(np.linspace(-1, 1, self.N_bins_az, endpoint=False))
+        # increases in the positive x-direction.
+        return np.arcsin(np.linspace(-1, 1, self.N_bins_az, endpoint=False))
 
     @property
     def el_res(self) -> float:

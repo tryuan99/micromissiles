@@ -1,25 +1,21 @@
-"""Simulates the radar datapath processing and plots the range-Doppler map and
+"""Simulates direction-of-arrival estimation with a 2D FFT and plots the
 direction-of-arrival spectrum for a SIMO radar.
 """
 
-import matplotlib.pyplot as plt
-import numpy as np
-from absl import app, flags
+from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
-from simulation.radar.components.azimuth_elevation_map import \
-    AzimuthElevationMap
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
+from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.components.target import Target
-from utils import constants
-from utils.visualization.color_maps import COLOR_MAPS
+from simulation.radar.doa.doa_fft_estimator import DoaFftEstimator
 
 FLAGS = flags.FLAGS
 
 
-def plot_direction_of_arrival_simo(
+def plot_doa_fft_estimator_simo(
     rnge: float,
     range_rate: float,
     acceleration: float,
@@ -30,10 +26,10 @@ def plot_direction_of_arrival_simo(
     oversampling: int,
     noise: bool,
 ) -> None:
-    """Plots the range-Doppler map and direction-of-arrival spectrum for a SIMO radar.
+    """Plots the direction-of-arrival spectrum for a SIMO radar.
 
     Args:
-        range: Range in m.
+        rnge: Range in m.
         range_rate: Range rate in m/s.
         acceleration: Acceleration in m/s^2.
         azimuth: Azimuth in rad.
@@ -64,48 +60,22 @@ def plot_direction_of_arrival_simo(
     range_doppler_map.perform_2d_fft()
     range_doppler_map.fft_shift()
 
-    # Plot the range-Doppler map.
-    fig = plt.figure(figsize=(12, 8))
-    ax = plt.axes(projection="3d")
-    surf = ax.plot_surface(
-        *np.meshgrid(radar.v_axis, radar.r_axis),
-        range_doppler_map.accumulate_log_magnitude().T,
-        cmap=COLOR_MAPS["parula"],
-        antialiased=False,
-    )
-    ax.set_title("Range-Doppler map")
-    ax.set_xlabel("v in m/s")
-    ax.set_ylabel("d in m")
-    ax.view_init(45, -45)
-    plt.colorbar(surf)
-    plt.show()
-
-    # Perform the 2D azimuth-elevation FFT.
-    azimuth_elevation_map = AzimuthElevationMap(range_doppler_map, radar,
-                                                target)
-    azimuth_elevation_map.perform_2d_fft()
-    azimuth_elevation_map.fft_shift()
-
-    # Plot the azimuth-elevation FFT spectrum.
-    fig = plt.figure(figsize=(12, 8))
-    ax = plt.axes(projection="3d")
-    surf = ax.plot_surface(
-        *np.meshgrid(radar.el_axis, radar.az_axis),
-        constants.mag2db(azimuth_elevation_map.get_abs_samples()).T,
-        cmap=COLOR_MAPS["parula"],
-        antialiased=False,
-    )
-    ax.set_title("Azimuth-elevation FFT spectrum")
-    ax.set_xlabel("Elevation in rad")
-    ax.set_ylabel("Azimuth in rad")
-    ax.view_init(45, -45)
-    plt.colorbar(surf)
-    plt.show()
+    # Use a direction-of-arrival FFT estimator to perform direction-of-arrival
+    # estimation.
+    spatial_samples = SpatialSamples(radar, target, range_doppler_map)
+    doa_fft_estimator = DoaFftEstimator(radar, spatial_samples)
+    doa_fft_estimator.process_spatial_samples()
+    elevation_estimated, azimuth_estimated = doa_fft_estimator.estimate_doa()
+    logging.info("Estimated azimuth: %f rad, actual azimuth: %f rad.",
+                 azimuth_estimated, azimuth)
+    logging.info("Estimated elevation: %f radar, actual elevation: %f rad.",
+                 elevation_estimated, elevation)
+    doa_fft_estimator.plot_2d_spectrum()
 
 
 def main(argv):
     assert len(argv) == 1, argv
-    plot_direction_of_arrival_simo(
+    plot_doa_fft_estimator_simo(
         FLAGS.range,
         FLAGS.range_rate,
         FLAGS.acceleration,

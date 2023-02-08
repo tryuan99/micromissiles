@@ -84,7 +84,7 @@ def plot_range_doppler_map_siso(
     noise_fft_magnitude_db = noise_amplitude_db + constants.mag2db(
         radar.get_fft_processing_gain(noise=True))
     logging.info(
-        "Theoretical SNR: %f - %f = %f dB",
+        "Theoretical SNR: %f - %f = %f dB.",
         signal_fft_magnitude_db,
         noise_fft_magnitude_db,
         signal_fft_magnitude_db - noise_fft_magnitude_db,
@@ -101,11 +101,11 @@ def plot_range_doppler_map_siso(
                                              GUARD_LENGTH:doppler_bin_index +
                                              GUARD_LENGTH, range_bin_index -
                                              GUARD_LENGTH:range_bin_index +
-                                             GUARD_LENGTH,] = 0
+                                             GUARD_LENGTH] = 0
     noise_fft_magnitude_db_simulated = constants.mag2db(
         range_doppler_map_without_target.get_amplitude())
     logging.info(
-        "Simulated SNR: %f - %f = %f dB",
+        "Simulated SNR: %f - %f = %f dB.",
         signal_fft_magnitude_db_simulated,
         noise_fft_magnitude_db_simulated,
         signal_fft_magnitude_db_simulated - noise_fft_magnitude_db_simulated,

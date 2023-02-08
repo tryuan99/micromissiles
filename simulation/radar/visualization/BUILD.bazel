@@ -3,24 +3,6 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
-    name = "direction_of_arrival_main",
-    srcs = ["direction_of_arrival_main.py"],
-    deps = [
-        "//simulation/radar/components:azimuth_elevation_map",
-        "//simulation/radar/components:radar",
-        "//simulation/radar/components:range_doppler_map",
-        "//simulation/radar/components:samples",
-        "//simulation/radar/components:target",
-        "//simulation/radar/components:adc_data",
-        "//utils:constants",
-        "//utils/visualization:color_maps",
-        requirement("absl-py"),
-        requirement("matplotlib"),
-        requirement("numpy"),
-    ],
-)
-
-py_binary(
     name = "phased_array_main",
     srcs = ["phased_array_main.py"],
     deps = [

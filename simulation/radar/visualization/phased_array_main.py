@@ -58,7 +58,7 @@ def _calculate_snr_db(radar: Radar, target: Target) -> float:
         np.sqrt(radar.N_rx) * radar.get_noise_amplitude()) + constants.mag2db(
             radar.get_fft_processing_gain_r(noise=True))
     snr_db = signal_fft_magnitude_db - noise_fft_magnitude_db
-    logging.info("Theoretical SNR: %f - %f = %f dB", signal_fft_magnitude_db,
+    logging.info("Theoretical SNR: %f - %f = %f dB.", signal_fft_magnitude_db,
                  noise_fft_magnitude_db, snr_db)
     return snr_db
 
@@ -87,7 +87,7 @@ def _simulate_snr_db(radar: Radar, target: Target, range_fft: Samples) -> float:
     snr_db_simulated = (signal_fft_magnitude_db_simulated -
                         noise_fft_magnitude_db_simulated)
     logging.info(
-        "Simulated SNR: %f - %f = %f dB",
+        "Simulated SNR: %f - %f = %f dB.",
         signal_fft_magnitude_db_simulated,
         noise_fft_magnitude_db_simulated,
         snr_db_simulated,
@@ -96,18 +96,18 @@ def _simulate_snr_db(radar: Radar, target: Target, range_fft: Samples) -> float:
 
 
 def simulate_phased_array_snr(
-    range: float,
+    rnge: float,
     azimuth: float,
     elevation: float,
 ) -> None:
     """Simulates the SNR improvement of a phased array.
 
     Args:
-        range: Range in m.
+        rnge: Range in m.
         azimuth: Azimuth in rad.
         elevation: Elevation in rad.
     """
-    target = Target(range=range, azimuth=azimuth, elevation=elevation)
+    target = Target(range=rnge, azimuth=azimuth, elevation=elevation)
 
     # Simulate the range FFT for a SISO radar.
     siso_radar = Radar(oversampling=OVERSAMPLING)
@@ -135,11 +135,11 @@ def simulate_phased_array_snr(
     # Characterize the SNR improvement of a phased array MIMO radar, which
     # should be equal to 20*log10(N_tx * N_rx / sqrt(N_rx)).
     logging.info(
-        "Theoretical SNR gain due to phased array MIMO: %f dB == %f dB",
+        "Theoretical SNR gain due to phased array MIMO: %f dB == %f dB.",
         mimo_snr_db - siso_snr_db,
         constants.mag2db(mimo_radar.N_tx * mimo_radar.N_rx /
                          np.sqrt(mimo_radar.N_rx)))
-    logging.info("Simulated SNR gain due to phased array MIMO: %f dB",
+    logging.info("Simulated SNR gain due to phased array MIMO: %f dB.",
                  mimo_snr_db_simulated - siso_snr_db_simulated)
 
     # Plot the range FFT spectrum for the SISO radar and the phased array MIMO
