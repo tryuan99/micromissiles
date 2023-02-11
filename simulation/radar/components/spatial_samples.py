@@ -24,13 +24,15 @@ class SpatialSamples(Samples):
             target)
         spatial_samples = np.zeros(
             (
-                np.max(radar.d_tx_ver) + np.max(radar.d_rx_ver),
-                np.max(radar.d_tx_hor) + np.max(radar.d_rx_hor),
+                np.max(radar.d_tx_ver[:radar.N_tx]) +
+                np.max(radar.d_rx_ver[:radar.N_rx]) + 1,
+                np.max(radar.d_tx_hor[:radar.N_tx]) +
+                np.max(radar.d_rx_hor[:radar.N_rx]) + 1,
             ),
             dtype=range_doppler_map.samples.dtype,
         )
-        spatial_samples[radar.d_rx_ver,
-                        radar.d_rx_hor] = range_doppler_map.samples[
-                            range(radar.N_rx), doppler_bin_index,
-                            range_bin_index]
+        spatial_samples[
+            radar.d_rx_ver[:radar.N_rx],
+            radar.d_rx_hor[:radar.N_rx]] = range_doppler_map.samples[
+                range(radar.N_rx), doppler_bin_index, range_bin_index]
         super().__init__(spatial_samples)

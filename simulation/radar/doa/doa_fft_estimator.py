@@ -33,20 +33,28 @@ class DoaFftEstimator(DoaEstimator):
 
     def _perform_azimuth_fft(self) -> None:
         """Performs the FFT in the azimuth dimension."""
+        # The FFT outputs a positive spatial frequency if the phase increases
+        # in the positive x-direction. In our coordinate system, the phase
+        # increases in the positive x-direction.
         self.samples.samples = np.fft.fft(self.samples.samples,
                                           self.radar.N_bins_az,
                                           axis=1)
 
     def _perform_elevation_fft(self) -> None:
         """Performs the FFT in the elevation dimension."""
+        # The FFT outputs a positive spatial frequency if the phase increases
+        # in the positive y-direction. In our coordinate system, the phase
+        # increases in the negative y-direction.
         self.samples.samples = np.fft.fft(self.samples.samples,
                                           self.radar.N_bins_el,
                                           axis=0)
+        self.samples.samples = np.flip(self.samples.samples, axis=0)
 
     def _perform_2d_fft(self) -> None:
         """Performs the FFT in the azimuth and elevation dimensions."""
         self.samples.samples = np.fft.fft2(
             self.samples.samples, (self.radar.N_bins_el, self.radar.N_bins_az))
+        self.samples.samples = np.flip(self.samples.samples, axis=0)
 
     def _fft_shift(self) -> None:
         """Performs a FFT shift in the azimuth and elevation dimensions."""

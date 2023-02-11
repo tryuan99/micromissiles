@@ -25,3 +25,15 @@ py_library(
         requirement("numpy"),
     ],
 )
+
+py_library(
+    name = "doa_music_estimator",
+    srcs = ["doa_music_estimator.py"],
+    deps = [
+        ":doa_estimator",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:spatial_samples",
+        requirement("numpy"),
+    ],
+)

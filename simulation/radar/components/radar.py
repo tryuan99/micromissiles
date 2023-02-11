@@ -177,9 +177,6 @@ class Radar:
     @property
     def az_axis(self) -> np.ndarray:
         """Azimuth axis in rad."""
-        # The FFT outputs a positive spatial frequency if the phase increases
-        # in the positive x-direction. In our coordinate system, the phase
-        # increases in the positive x-direction.
         return np.arcsin(np.linspace(-1, 1, self.N_bins_az, endpoint=False))
 
     @property
@@ -191,10 +188,7 @@ class Radar:
     @property
     def el_axis(self):
         """Elevation axis in rad."""
-        # The FFT outputs a positive spatial frequency if the phase increases
-        # in the positive y-direction. In our coordinate system, the phase
-        # increases in the negative y-direction.
-        return -np.arcsin(np.linspace(-1, 1, self.N_bins_el, endpoint=False))
+        return np.arcsin(np.linspace(-1, 1, self.N_bins_el, endpoint=False))
 
     @property
     def window_r(self) -> np.ndarray:
@@ -248,7 +242,7 @@ class Radar:
 
         # Project the 3D position of each antenna onto the unit direction vector
         # to find the length of the projection in units of lambda/2.
-        # The phase shift is the negative length of the projection divided by 2.
+        # The phase shift is the x / lambda, so divide the projection by 2.
         position_tx = np.vstack(
             (self.d_tx_hor, self.d_tx_ver, np.zeros(self.N_tx)))
         self.set_tx_phase_shifts(direction @ position_tx / 2)
