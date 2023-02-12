@@ -18,6 +18,21 @@ py_binary(
 )
 
 py_binary(
+    name = "doa_array_extension_estimator_main",
+    srcs = ["doa_array_extension_estimator_main.py"],
+    deps = [
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:range_doppler_map",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:spatial_samples",
+        "//simulation/radar/components:target",
+        "//simulation/radar/doa:doa_array_extension_estimator",
+        requirement("absl-py"),
+    ],
+)
+
+py_binary(
     name = "doa_music_estimator_main",
     srcs = ["doa_music_estimator_main.py"],
     deps = [

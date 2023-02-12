@@ -1,5 +1,6 @@
-"""Simulates direction-of-arrival estimation with a 2D FFT and plots the
-direction-of-arrival spectrum for a SIMO radar.
+"""Simulates direction-of-arrival estimation by extending the virtual antenna
+array and performing a 2D FFT and plots the direction-of-arrival spectrum for a
+SIMO radar.
 """
 
 from absl import app, flags, logging
@@ -10,12 +11,13 @@ from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.components.target import Target
-from simulation.radar.doa.doa_fft_estimator import DoaFftEstimator
+from simulation.radar.doa.doa_array_extension_estimator import \
+    DoaArrayExtensionEstimator
 
 FLAGS = flags.FLAGS
 
 
-def plot_doa_fft_estimator_simo(
+def plot_doa_array_extension_estimator_simo(
     rnge: float,
     range_rate: float,
     acceleration: float,
@@ -63,7 +65,7 @@ def plot_doa_fft_estimator_simo(
     # Use a direction-of-arrival FFT estimator to perform direction-of-arrival
     # estimation.
     spatial_samples = SpatialSamples(radar, target, range_doppler_map)
-    doa_estimator = DoaFftEstimator(radar, spatial_samples)
+    doa_estimator = DoaArrayExtensionEstimator(radar, spatial_samples)
     doa_estimator.process_spatial_samples()
     elevation_estimated, azimuth_estimated = doa_estimator.estimate_doa()
     logging.info("Estimated azimuth: %f rad, actual azimuth: %f rad.",
@@ -75,7 +77,7 @@ def plot_doa_fft_estimator_simo(
 
 def main(argv):
     assert len(argv) == 1, argv
-    plot_doa_fft_estimator_simo(
+    plot_doa_array_extension_estimator_simo(
         FLAGS.range,
         FLAGS.range_rate,
         FLAGS.acceleration,

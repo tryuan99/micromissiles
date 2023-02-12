@@ -16,6 +16,18 @@ py_library(
 )
 
 py_library(
+    name = "doa_array_extension_estimator",
+    srcs = ["doa_array_extension_estimator.py"],
+    deps = [
+        ":doa_fft_estimator",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:spatial_samples",
+        requirement("numpy"),
+    ],
+)
+
+
+py_library(
     name = "doa_fft_estimator",
     srcs = ["doa_fft_estimator.py"],
     deps = [
