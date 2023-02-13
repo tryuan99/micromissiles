@@ -40,14 +40,15 @@ class DoaMusicEstimator(DoaEstimator):
         # Find the noise subspace, which is equivalent to the null subspace of
         # the covariance matrix.
         _, _, Vh = np.linalg.svd(covariance_matrix, hermitian=True)
-        noise_subspace_h = Vh[NUM_TARGETS:]
 
-        # Project the arrival vectors onto the noise subspace.
+        # Project the arrival vectors onto the signal subspace, which is
+        # orthogonal to the noise subspace.
+        signal_subspace_h = Vh[:NUM_TARGETS]
         arrival_vectors = self._get_arrival_vectors()
-        arrival_vectors_projection = arrival_vectors @ noise_subspace_h.T
+        arrival_vectors_projection = arrival_vectors @ signal_subspace_h.T
         arrival_vectors_projection_norm_squared = np.linalg.norm(
             arrival_vectors_projection, axis=2)**2
-        self.samples = Samples(1 / arrival_vectors_projection_norm_squared)
+        self.samples = Samples(arrival_vectors_projection_norm_squared)
 
     def estimate_doa(self) -> tuple[float, float]:
         """Estimates the direction-of-arrival.
