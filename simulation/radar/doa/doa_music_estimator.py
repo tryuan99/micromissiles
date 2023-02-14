@@ -27,12 +27,14 @@ class DoaMusicEstimator(DoaEstimator):
     index.
     """
 
-    def __init__(self,
-                 radar: Radar,
-                 samples: SpatialSamples,
-                 num_snapshots: int = 1):
-        super().__init__(radar, samples)
-        self.num_snapshots = num_snapshots
+    def __init__(self, radar: Radar,
+                 spatial_samples_snapshots: list[SpatialSamples]):
+        super().__init__(
+            radar,
+            Samples(
+                np.array([
+                    snapshot.samples for snapshot in spatial_samples_snapshots
+                ])))
 
     def process_spatial_samples(self) -> None:
         """Processes the spatial samples by running the MUSIC algorithm."""
@@ -67,10 +69,11 @@ class DoaMusicEstimator(DoaEstimator):
         Returns:
             Sensor covariance matrix.
         """
-        # TODO(titan): Use multiple snapshots to estimate the sensor covariance
-        # matrix.
-        return np.outer(self.samples.samples,
-                        np.conjugate(self.samples.samples))
+        covariance_matrices = [
+            np.outer(snapshot, np.conjugate(snapshot))
+            for snapshot in self.samples.samples
+        ]
+        return np.mean(covariance_matrices, axis=0)
 
     def _get_antenna_coordinates(self) -> tuple[np.ndarray]:
         """Gets the azimuth and elevation coordinates of the flattened virtual
@@ -81,7 +84,7 @@ class DoaMusicEstimator(DoaEstimator):
             azimuth) coordinates of each virtual antenna in units of lambda/2.
         """
         antenna_azimuth_coordinates, antenna_elevation_coordinates = np.meshgrid(
-            np.arange(self.samples.shape[1]), np.arange(self.samples.shape[0]))
+            np.arange(self.samples.shape[2]), np.arange(self.samples.shape[1]))
         antenna_azimuth_coordinates = antenna_azimuth_coordinates.flatten()
         antenna_elevation_coordinates = antenna_elevation_coordinates.flatten()
         return antenna_azimuth_coordinates, antenna_elevation_coordinates
@@ -113,9 +116,9 @@ class DoaMusicEstimator(DoaEstimator):
         direction_vectors = self._get_direction_vectors().coordinates
         arrival_vectors = np.zeros(
             (len(self.radar.el_axis), len(
-                self.radar.az_axis), self.samples.samples.size),
+                self.radar.az_axis), self.samples.samples[0].size),
             dtype=np.complex128)
-        for antenna_index in range(self.samples.samples.size):
+        for antenna_index in range(self.samples.samples[0].size):
             # Project the position vector of each virtual antenna onto the unit
             # direction vector to find the phase offset at each virtual antenna.
             antenna_azimuth_coordinate = antenna_azimuth_coordinates[

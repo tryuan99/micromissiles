@@ -7,7 +7,7 @@ py_library(
     srcs = ["doa_estimator.py"],
     deps = [
         "//simulation/radar/components:radar",
-        "//simulation/radar/components:spatial_samples",
+        "//simulation/radar/components:samples",
         "//utils/visualization:color_maps",
         "//utils:constants",
         requirement("matplotlib"),

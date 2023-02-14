@@ -25,6 +25,7 @@ def plot_doa_music_estimator_simo(
     temperature: float,
     oversampling: int,
     noise: bool,
+    num_snapshots: int,
 ) -> None:
     """Plots the direction-of-arrival spectrum for a SIMO radar.
 
@@ -38,6 +39,7 @@ def plot_doa_music_estimator_simo(
         temperature: Temperature in Celsius.
         oversampling: Oversampling factor.
         noise: If true, add noise.
+        num_snapshots: Number of snapshots.
     """
     radar = Radar(temperature=temperature, oversampling=oversampling)
     radar.N_tx = 1
@@ -51,19 +53,23 @@ def plot_doa_music_estimator_simo(
     )
     adc_data = AdcData(radar, target)
 
-    samples = Samples(adc_data)
-    if noise:
-        samples.add_samples(radar.generate_noise(adc_data.shape))
+    spatial_samples_snapshots = []
+    for _ in range(num_snapshots):
+        samples = Samples(adc_data)
+        if noise:
+            samples.add_samples(radar.generate_noise(adc_data.shape))
 
-    range_doppler_map = RangeDopplerMap(samples, radar)
-    range_doppler_map.apply_2d_window()
-    range_doppler_map.perform_2d_fft()
-    range_doppler_map.fft_shift()
+        range_doppler_map = RangeDopplerMap(samples, radar)
+        range_doppler_map.apply_2d_window()
+        range_doppler_map.perform_2d_fft()
+        range_doppler_map.fft_shift()
+
+        spatial_samples = SpatialSamples(radar, target, range_doppler_map)
+        spatial_samples_snapshots.append(spatial_samples)
 
     # Use a direction-of-arrival FFT estimator to perform direction-of-arrival
     # estimation.
-    spatial_samples = SpatialSamples(radar, target, range_doppler_map)
-    doa_estimator = DoaMusicEstimator(radar, spatial_samples)
+    doa_estimator = DoaMusicEstimator(radar, spatial_samples_snapshots)
     doa_estimator.process_spatial_samples()
     elevation_estimated, azimuth_estimated = doa_estimator.estimate_doa()
     logging.info("Estimated azimuth: %f rad, actual azimuth: %f rad.",
@@ -85,6 +91,7 @@ def main(argv):
         FLAGS.temperature,
         FLAGS.oversampling,
         FLAGS.noise,
+        FLAGS.num_snapshots,
     )
 
 
@@ -101,5 +108,6 @@ if __name__ == "__main__":
                          "Oversampling factor.",
                          lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
+    flags.DEFINE_integer("num_snapshots", 4, "Number of snapshots.")
 
     app.run(main)

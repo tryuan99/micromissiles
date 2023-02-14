@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.spatial_samples import SpatialSamples
+from simulation.radar.components.samples import Samples
 from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
@@ -18,7 +18,7 @@ from utils.visualization.color_maps import COLOR_MAPS
 class DoaEstimator(ABC):
     """Interface for direction-of-arrival estimators."""
 
-    def __init__(self, radar: Radar, samples: SpatialSamples):
+    def __init__(self, radar: Radar, samples: Samples):
         self.radar = radar
         self.samples = samples
 

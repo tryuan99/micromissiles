@@ -17,8 +17,8 @@ class DoaArrayExtensionEstimator(DoaFftEstimator):
     and performing a 2D FFT.
     """
 
-    def __init__(self, radar: Radar, samples: SpatialSamples):
-        super().__init__(radar, samples)
+    def __init__(self, radar: Radar, spatial_samples: SpatialSamples):
+        super().__init__(radar, spatial_samples)
 
     def process_spatial_samples(self) -> None:
         """Processes the spatial samples by performing a 2D FFT."""
