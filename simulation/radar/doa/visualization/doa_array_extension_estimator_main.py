@@ -62,8 +62,8 @@ def plot_doa_array_extension_estimator_simo(
     range_doppler_map.perform_2d_fft()
     range_doppler_map.fft_shift()
 
-    # Use a direction-of-arrival FFT estimator to perform direction-of-arrival
-    # estimation.
+    # Use a direction-of-arrival array extension estimator to perform
+    # direction-of-arrival estimation.
     spatial_samples = SpatialSamples(radar, target, range_doppler_map)
     doa_estimator = DoaArrayExtensionEstimator(radar, spatial_samples)
     doa_estimator.process_spatial_samples()

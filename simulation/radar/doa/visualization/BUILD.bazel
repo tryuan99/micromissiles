@@ -46,3 +46,20 @@ py_binary(
         requirement("absl-py"),
     ],
 )
+
+py_binary(
+    name = "doa_music_estimator_snapshot_main",
+    srcs = ["doa_music_estimator_snapshot_main.py"],
+    deps = [
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:range_doppler_map",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:spatial_samples",
+        "//simulation/radar/components:target",
+        "//simulation/radar/doa:doa_music_estimator",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)

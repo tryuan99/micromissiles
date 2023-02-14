@@ -1,5 +1,5 @@
-"""Simulates direction-of-arrival estimation with a 2D FFT and plots the
-direction-of-arrival spectrum for a SIMO radar.
+"""Simulates direction-of-arrival estimation using the MUSIC algorithm and plots
+the direction-of-arrival spectrum for a SIMO radar.
 """
 
 from absl import app, flags, logging
@@ -67,7 +67,7 @@ def plot_doa_music_estimator_simo(
         spatial_samples = SpatialSamples(radar, target, range_doppler_map)
         spatial_samples_snapshots.append(spatial_samples)
 
-    # Use a direction-of-arrival FFT estimator to perform direction-of-arrival
+    # Use a direction-of-arrival MUSIC estimator to perform direction-of-arrival
     # estimation.
     doa_estimator = DoaMusicEstimator(radar, spatial_samples_snapshots)
     doa_estimator.process_spatial_samples()
