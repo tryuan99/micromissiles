@@ -30,7 +30,6 @@ Converting to Cartesian coordinates:
 """
 
 from abc import ABC, abstractmethod
-from typing import Union
 
 import numpy as np
 
@@ -47,8 +46,8 @@ class Coordinates(ABC):
 class CartesianCoordinates(Coordinates):
     """Represents Cartesian coordinates."""
 
-    def __init__(self, x: Union[float, np.ndarray], y: Union[float, np.ndarray],
-                 z: Union[float, np.ndarray]):
+    def __init__(self, x: float | np.ndarray, y: float | np.ndarray,
+                 z: float | np.ndarray):
         self.x = x
         self.y = y
         self.z = z
@@ -73,9 +72,8 @@ class CartesianCoordinates(Coordinates):
 class PolarCoordinates(Coordinates):
     """Represents polar coordinates."""
 
-    def __init__(self, r: Union[float, np.ndarray],
-                 theta: Union[float, np.ndarray], phi: Union[float,
-                                                             np.ndarray]):
+    def __init__(self, r: float | np.ndarray, theta: float | np.ndarray,
+                 phi: float | np.ndarray):
         self.r = r
         self.theta = theta  # Azimuth.
         self.phi = phi  # Elevation.

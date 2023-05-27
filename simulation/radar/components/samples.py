@@ -1,14 +1,13 @@
 """The samples class is an interface for a collection of samples."""
 
-from typing import Union
-
 import numpy as np
 
 
 class Samples:
     """Represents a collection of samples."""
 
-    def __init__(self, samples: Union["Samples", np.ndarray]):
+    # TODO(titan): Change the type to "Samples" | np.ndarray.
+    def __init__(self, samples: "Samples"):
         if isinstance(samples, Samples):
             return Samples.__init__(self, samples.samples)
         self.samples = np.copy(samples)

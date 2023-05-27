@@ -3,9 +3,9 @@ the standard deviation of the estimated azimuth and elevation as a function of
 the number of snapshots.
 """
 
-from absl import app, flags, logging
 import matplotlib.pyplot as plt
 import numpy as np
+from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.radar import Radar
