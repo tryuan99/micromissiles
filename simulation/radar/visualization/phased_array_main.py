@@ -107,7 +107,11 @@ def simulate_phased_array_snr(
         azimuth: Azimuth in rad.
         elevation: Elevation in rad.
     """
-    target = Target(range=rnge, azimuth=azimuth, elevation=elevation)
+    target = Target(
+        range=rnge,
+        azimuth=azimuth,
+        elevation=elevation,
+    )
 
     # Simulate the range FFT for a SISO radar.
     siso_radar = Radar(oversampling=OVERSAMPLING)

@@ -41,7 +41,10 @@ def plot_doa_music_estimator_simo(
         noise: If true, add noise.
         num_snapshots: Number of snapshots.
     """
-    radar = Radar(temperature=temperature, oversampling=oversampling)
+    radar = Radar(
+        temperature=temperature,
+        oversampling=oversampling,
+    )
     radar.N_tx = 1
     target = Target(
         range=rnge,

@@ -38,13 +38,18 @@ def plot_range_doppler_map_siso(
         oversampling: Oversampling factor.
         noise: If true, add noise.
     """
-    radar = Radar(temperature=temperature, oversampling=oversampling)
+    radar = Radar(
+        temperature=temperature,
+        oversampling=oversampling,
+    )
     radar.N_tx = 1
     radar.N_rx = 1
-    target = Target(range=range,
-                    range_rate=range_rate,
-                    acceleration=acceleration,
-                    rcs=rcs)
+    target = Target(
+        range=range,
+        range_rate=range_rate,
+        acceleration=acceleration,
+        rcs=rcs,
+    )
     adc_data = AdcData(radar, target)
 
     samples = Samples(adc_data)

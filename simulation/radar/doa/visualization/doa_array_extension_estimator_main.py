@@ -41,7 +41,10 @@ def plot_doa_array_extension_estimator_simo(
         oversampling: Oversampling factor.
         noise: If true, add noise.
     """
-    radar = Radar(temperature=temperature, oversampling=oversampling)
+    radar = Radar(
+        temperature=temperature,
+        oversampling=oversampling,
+    )
     radar.N_tx = 1
     target = Target(
         range=rnge,
