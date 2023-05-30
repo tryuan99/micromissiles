@@ -61,8 +61,10 @@ def plot_range_doppler_map_siso(
         np.squeeze(range_doppler_map.get_abs_samples()))
 
     # Plot the range-Doppler map.
-    fig = plt.figure(figsize=(12, 8))
-    ax = plt.axes(projection="3d")
+    fig, ax = plt.subplots(
+        figsize=(12, 8),
+        subplot_kw={"projection": "3d"},
+    )
     surf = ax.plot_surface(
         *np.meshgrid(radar.v_axis, radar.r_axis),
         range_doppler_map_abs_db.T,

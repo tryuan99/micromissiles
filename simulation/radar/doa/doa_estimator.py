@@ -38,8 +38,10 @@ class DoaEstimator(ABC):
 
     def plot_2d_spectrum(self) -> None:
         """Plots the azimuth-elevation spectrum."""
-        fig = plt.figure(figsize=(12, 8))
-        ax = plt.axes(projection="3d")
+        fig, ax = plt.subplots(
+            figsize=(12, 8),
+            subplot_kw={"projection": "3d"},
+        )
         surf = ax.plot_surface(
             *np.meshgrid(self.radar.el_axis, self.radar.az_axis),
             constants.mag2db(self.samples.get_abs_samples()).T,
