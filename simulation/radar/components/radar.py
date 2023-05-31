@@ -124,7 +124,7 @@ class Radar:
     @property
     def duty_cycle(self) -> float:
         """Duty cycle."""
-        return self.N_r / self.fs / self.pri
+        return self.T0 / self.pri
 
     @property
     def t_axis(self) -> np.ndarray:
@@ -297,21 +297,21 @@ class Radar:
             target: Target.
             fft_shifted: If true, the Doppler axis is FFT-shifted.
         """
-        # TODO(titan): This could be made more accurate by considering velocity
-        # and acceleration.
-        average_range = (target.range +
-                         (target.range + target.range_rate * self.cpi +
-                          1 / 2 * target.acceleration * self.cpi**2)) / 2
-        average_range_rate = (
-            target.range_rate +
-            (target.range_rate + target.acceleration * self.cpi)) / 2
-        range_bin_index = (average_range * self.N_bins_r /
-                           self.r_max) % self.N_bins_r
-        doppler_bin_index = ((average_range_rate * self.N_bins_v / 2) /
-                             self.v_max) % self.N_bins_v
+        average_range = (target.range + 1 / 2 * target.range_rate * self.cpi +
+                         1 / 6 * target.acceleration * self.cpi**2)
+        average_range_rate = (target.range_rate +
+                              1 / 2 * target.acceleration * self.cpi)
+        # The range correction compensates for the Doppler shift.
+        range_correction = average_range_rate * self.f0 / self.mu
+        range_bin_index = ((
+            (average_range + range_correction) * self.N_bins_r / self.r_max) %
+                           self.N_bins_r)
+        doppler_bin_index = ((
+            (average_range_rate * self.N_bins_v / 2) / self.v_max) %
+                             self.N_bins_v)
         if fft_shifted:
-            doppler_bin_index = (doppler_bin_index +
-                                 self.N_bins_v // 2) % self.N_bins_v
+            doppler_bin_index = ((doppler_bin_index + self.N_bins_v // 2) %
+                                 self.N_bins_v)
         return int(np.round(range_bin_index)), int(np.round(doppler_bin_index))
 
     def generate_noise(self, shape: tuple[int, ...]) -> np.ndarray:
