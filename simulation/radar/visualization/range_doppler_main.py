@@ -26,6 +26,7 @@ def plot_range_doppler_map_siso(
     temperature: float,
     oversampling: int,
     noise: bool,
+    matched_filter: bool,
 ) -> None:
     """Plots the range-Doppler map using a 2D FFT for a SISO radar.
 
@@ -37,6 +38,7 @@ def plot_range_doppler_map_siso(
         temperature: Temperature in Celsius.
         oversampling: Oversampling factor.
         noise: If true, add noise.
+        matched_filter: If true, use a 2D matched filter instead of a 2D FFT.
     """
     radar = Radar(
         temperature=temperature,
@@ -60,8 +62,11 @@ def plot_range_doppler_map_siso(
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_2d_window()
-    range_doppler_map.perform_2d_fft()
-    range_doppler_map.fft_shift()
+    if matched_filter:
+        range_doppler_map.apply_2d_matched_filter()
+    else:
+        range_doppler_map.perform_2d_fft()
+        range_doppler_map.fft_shift()
     range_doppler_map_abs_db = constants.mag2db(
         np.squeeze(range_doppler_map.get_abs_samples()))
 
@@ -129,6 +134,7 @@ def main(argv):
         FLAGS.temperature,
         FLAGS.oversampling,
         FLAGS.noise,
+        FLAGS.matched_filter,
     )
 
 
@@ -143,5 +149,8 @@ if __name__ == "__main__":
                          "Oversampling factor.",
                          lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
+    flags.DEFINE_boolean(
+        "matched_filter", False,
+        "If true, use a 2D matched filter instead of a 2D FFT.")
 
     app.run(main)

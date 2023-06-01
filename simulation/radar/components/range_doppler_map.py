@@ -49,6 +49,29 @@ class RangeDopplerMap(Samples):
         self.samples = np.fft.fft2(self.samples,
                                    (self.radar.N_bins_v, self.radar.N_bins_r))
 
+    def apply_2d_matched_filter(self) -> None:
+        """Applies a 2D matched filter in the range and Doppler dimensions.
+
+        The 2D matched filter compensates for range cell migration and for the
+        Doppler shift.
+        The 2D matched filter is especially useful when v or mu is large.
+        """
+        matched_filter_out = np.zeros(
+            (len(self.samples), self.radar.N_bins_v, self.radar.N_bins_r),
+            dtype=np.complex128)
+        for v_index, v in enumerate(self.radar.v_axis):
+            for r_index, r in enumerate(self.radar.r_axis):
+                matched_filter = np.exp(
+                    -1j * 2 * np.pi * 2 / self.radar.c * np.multiply(
+                        r + v * self.radar.t_axis,
+                        self.radar.mu * np.repeat(
+                            [self.radar.t_axis_chirp], self.radar.N_v, axis=0) +
+                        self.radar.f0))
+                matched_filter_out[:, v_index, r_index] = np.sum(np.multiply(
+                    self.samples, matched_filter),
+                                                                 axis=(-2, -1))
+        self.samples = matched_filter_out
+
     def fft_shift(self) -> None:
         """Performs a FFT shift in the Doppler dimension."""
         self.samples = np.fft.fftshift(self.samples, axes=1)
