@@ -1,0 +1,19 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "transforms",
+    srcs = ["transforms.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "transforms_test",
+    srcs = ["transforms_test.py"],
+    deps = [
+        ":transforms",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
