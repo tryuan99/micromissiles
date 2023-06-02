@@ -5,6 +5,7 @@ import numpy as np
 from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
+from simulation.radar.components.chirp import ChirpType
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
@@ -26,6 +27,7 @@ def plot_range_doppler_map_siso(
     temperature: float,
     oversampling: int,
     noise: bool,
+    chirp_type: ChirpType,
     matched_filter: bool,
 ) -> None:
     """Plots the range-Doppler map using a 2D FFT for a SISO radar.
@@ -38,6 +40,7 @@ def plot_range_doppler_map_siso(
         temperature: Temperature in Celsius.
         oversampling: Oversampling factor.
         noise: If true, add noise.
+        chirp_type: Chirp type.
         matched_filter: If true, use a 2D matched filter instead of a 2D FFT.
     """
     radar = Radar(
@@ -52,7 +55,7 @@ def plot_range_doppler_map_siso(
         acceleration=acceleration,
         rcs=rcs,
     )
-    adc_data = AdcData(radar, target)
+    adc_data = AdcData(radar, target, chirp_type)
 
     samples = Samples(adc_data)
     noise_samples = Samples(np.zeros(samples.shape))
@@ -134,6 +137,7 @@ def main(argv):
         FLAGS.temperature,
         FLAGS.oversampling,
         FLAGS.noise,
+        FLAGS.chirp_type,
         FLAGS.matched_filter,
     )
 
@@ -149,6 +153,8 @@ if __name__ == "__main__":
                          "Oversampling factor.",
                          lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
+    flags.DEFINE_enum("chirp_type", ChirpType.LINEAR, ChirpType.values(),
+                      "Chirp type.")
     flags.DEFINE_boolean(
         "matched_filter", False,
         "If true, use a 2D matched filter instead of a 2D FFT.")

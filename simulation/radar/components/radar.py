@@ -81,6 +81,14 @@ class Radar:
         # Noise parameters.
         self.temperature = temperature
 
+        # Hypothetical chirp parameters.
+        # These parameters were chosen, so that each chirp sweeps the same
+        # bandwidth as that of a linear chirp.
+        self.a = 1e16  # Hypothetical quadratic coefficient of the quadratic chirp.
+        self.b = 5e10  # Hypothetical linear coefficient of the quadratic chirp.
+        self.alpha = 10000  # Hypothetical exponential rate of the exponential chirp.
+        self.beta = 3e7  # Hypothetical exponential coefficient of the exponential chirp.
+
     @property
     def lambda0(self) -> float:
         """Wavelength at the starting frequency in m."""
@@ -242,7 +250,7 @@ class Radar:
 
         # Project the 3D position of each antenna onto the unit direction vector
         # to find the length of the projection in units of lambda/2.
-        # The phase shift is the x / lambda, so divide the projection by 2.
+        # The phase shift is x / lambda, so divide the projection by 2.
         position_tx = np.vstack(
             (self.d_tx_hor, self.d_tx_ver, np.zeros(self.N_tx)))
         self.set_tx_phase_shifts(direction @ position_tx / 2)

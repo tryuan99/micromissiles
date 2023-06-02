@@ -5,6 +5,7 @@ from all transmitting TX antennas.
 
 import numpy as np
 
+from simulation.radar.components.chirp import CHIRP_MAP, ChirpType
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
@@ -14,16 +15,21 @@ from utils import constants
 class AdcData(Samples):
     """Represents the ADC samples of the IF signal received at all RX antennas."""
 
-    def __init__(self, radar: Radar, target: Target):
-        super().__init__(self.generate_adc_data_3d(radar, target))
+    def __init__(self,
+                 radar: Radar,
+                 target: Target,
+                 chirp_type: ChirpType = ChirpType.LINEAR):
+        super().__init__(self.generate_adc_data_3d(radar, target, chirp_type))
 
     @staticmethod
-    def generate_adc_data_3d(radar: Radar, target: Target) -> np.ndarray:
+    def generate_adc_data_3d(radar: Radar, target: Target,
+                             chirp_type: ChirpType) -> np.ndarray:
         """Generates the ADC samples for all RX antennas.
 
         Args:
             radar: Radar.
             target: Target.
+            chirp_type: Chirp type.
 
         Returns:
             3-dimensional ADC samples for all RX antennas with dimensions
@@ -34,8 +40,8 @@ class AdcData(Samples):
         return np.array([
             np.sum(
                 [
-                    AdcData.generate_adc_data_2d(radar, target, tx_antenna,
-                                                 rx_antenna)
+                    AdcData.generate_adc_data_2d(radar, target, chirp_type,
+                                                 tx_antenna, rx_antenna)
                     for tx_antenna in range(radar.N_tx)
                 ],
                 axis=0,
@@ -44,13 +50,15 @@ class AdcData(Samples):
         ])
 
     @staticmethod
-    def generate_adc_data_2d(radar: Radar, target: Target, tx_antenna: int,
+    def generate_adc_data_2d(radar: Radar, target: Target,
+                             chirp_type: ChirpType, tx_antenna: int,
                              rx_antenna: int) -> np.ndarray:
         """Generates the ADC samples for the given TX and RX antennas.
 
         Args:
             radar: Radar.
             target: Target.
+            chirp_type: Chirp type.
             tx_antenna: TX antenna index.
             rx_antenna: RX antenna index.
 
@@ -68,11 +76,11 @@ class AdcData(Samples):
 
         tau = (d_tx +
                d_rx) / radar.c  # Return time-of-flight for each sample in s.
-        f_sig = radar.mu * tau  # IF of each sample.
-        phi_sig = radar.f0 * tau - radar.mu / 2 * tau**2 + radar.phi_tx[
-            tx_antenna] + radar.phi_rx[rx_antenna]  # IF phase of each sample.
-        return AdcData.get_if_amplitude(radar, target) * np.exp(
-            1j * 2 * np.pi * (f_sig * radar.t_axis_chirp + phi_sig))
+        chirp = CHIRP_MAP[chirp_type](radar)
+        return AdcData.get_if_amplitude(
+            radar, target) * chirp.get_if_signal(tau) * np.exp(
+                1j * 2 * np.pi *
+                (radar.phi_tx[tx_antenna] + radar.phi_rx[rx_antenna]))
 
     @staticmethod
     def get_if_amplitude(radar: Radar, target: Target) -> float:

@@ -6,10 +6,20 @@ py_library(
     name = "adc_data",
     srcs = ["adc_data.py"],
     deps = [
+        ":chirp",
         ":radar",
         ":samples",
         ":target",
         "//utils:constants",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "chirp",
+    srcs = ["chirp.py"],
+    deps = [
+        ":radar",
         requirement("numpy"),
     ],
 )
