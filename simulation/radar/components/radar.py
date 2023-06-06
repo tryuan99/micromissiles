@@ -84,7 +84,7 @@ class Radar:
         # Hypothetical chirp parameters.
         # These parameters were chosen, so that each chirp sweeps the same
         # bandwidth as that of a linear chirp.
-        self.a = 1e16  # Hypothetical quadratic coefficient of the quadratic chirp.
+        self.a = 1e16  # Hypothetical quadratic coefficient of the quadratic chirp. For a pure quadratic chirp, use a = 1.417e16.
         self.b = 5e10  # Hypothetical linear coefficient of the quadratic chirp.
         self.alpha = 10000  # Hypothetical exponential rate of the exponential chirp.
         self.beta = 3e7  # Hypothetical exponential coefficient of the exponential chirp.
