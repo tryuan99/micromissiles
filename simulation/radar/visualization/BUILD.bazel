@@ -3,8 +3,8 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
-    name = "chirp_main",
-    srcs = ["chirp_main.py"],
+    name = "chirp_waveform_main",
+    srcs = ["chirp_waveform_main.py"],
     deps = [
         "//simulation/radar/components:chirp",
         "//simulation/radar/components:radar",

@@ -22,9 +22,13 @@ class Chirp(ABC):
         By definition, the instantaneous frequency is equal to 1/2pi * dphi/dt.
         """
 
-    @abstractmethod
     def get_phase(self) -> np.ndarray | float:
         """Returns the phase of the chirp."""
+        return (self.get_unwrapped_phase() + np.pi) % (2 * np.pi) - np.pi
+
+    @abstractmethod
+    def get_unwrapped_phase(self) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp."""
 
     def get_signal(self, real: bool = False) -> np.ndarray | float:
         """Returns the complex signal of the chirp.
@@ -33,8 +37,8 @@ class Chirp(ABC):
             real: If true, returns a real signal instead of a complex signal.
         """
         if real:
-            return np.cos(self.get_phase())
-        return np.exp(1j * self.get_phase())
+            return np.cos(self.get_unwrapped_phase())
+        return np.exp(1j * self.get_unwrapped_phase())
 
     @abstractmethod
     def get_if_frequency(self, tau: np.ndarray | float) -> np.ndarray | float:
@@ -46,9 +50,13 @@ class Chirp(ABC):
             tau: Return time-of-flight for each sample.
         """
 
+    def get_if_phase():
+        return (self.get_if_unwrapped_phase() + np.pi) % (2 * np.pi) - np.pi
+
     @abstractmethod
-    def get_if_phase(self, tau: np.ndarray | float) -> np.ndarray | float:
-        """Returns the phase of the IF of the chirp.
+    def get_if_unwrapped_phase(self,
+                               tau: np.ndarray | float) -> np.ndarray | float:
+        """Returns the unwrapped phase of the IF of the chirp.
 
         Args:
             tau: Return time-of-flight for each sample.
@@ -64,8 +72,8 @@ class Chirp(ABC):
             real: If true, returns a real signal instead of a complex signal.
         """
         if real:
-            return np.cos(self.get_if_phase(tau))
-        return np.exp(1j * self.get_if_phase(tau))
+            return np.cos(self.get_if_unwrapped_phase(tau))
+        return np.exp(1j * self.get_if_unwrapped_phase(tau))
 
 
 class LinearChirp(Chirp):
@@ -84,8 +92,8 @@ class LinearChirp(Chirp):
         """
         return self.radar.f0 + self.radar.mu * self.radar.t_axis_chirp
 
-    def get_phase(self) -> np.ndarray | float:
-        """Returns the phase of the chirp."""
+    def get_unwrapped_phase(self) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp."""
         return (2 * np.pi *
                 (self.radar.f0 * self.radar.t_axis_chirp +
                  1 / 2 * self.radar.mu * self.radar.t_axis_chirp**2))
@@ -100,8 +108,9 @@ class LinearChirp(Chirp):
         """
         return self.radar.mu * tau
 
-    def get_if_phase(self, tau: np.ndarray | float) -> np.ndarray | float:
-        """Returns the phase of the IF of the chirp.
+    def get_if_unwrapped_phase(self,
+                               tau: np.ndarray | float) -> np.ndarray | float:
+        """Returns the unwrapped phase of the IF of the chirp.
 
         Args:
             tau: Return time-of-flight for each sample.
@@ -128,8 +137,8 @@ class QuadraticChirp(Chirp):
         return (self.radar.f0 + self.radar.b * self.radar.t_axis_chirp +
                 1 / 2 * self.radar.a * self.radar.t_axis_chirp**2)
 
-    def get_phase(self) -> np.ndarray | float:
-        """Returns the phase of the chirp."""
+    def get_unwrapped_phase(self) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp."""
         return (2 * np.pi * (self.radar.f0 * self.radar.t_axis_chirp +
                              1 / 2 * self.radar.b * self.radar.t_axis_chirp**2 +
                              1 / 6 * self.radar.a * self.radar.t_axis_chirp**3))
@@ -146,8 +155,9 @@ class QuadraticChirp(Chirp):
                 self.radar.a * tau * self.radar.t_axis_chirp -
                 1 / 2 * self.radar.a * tau**2)
 
-    def get_if_phase(self, tau: np.ndarray | float) -> np.ndarray | float:
-        """Returns the phase of the IF of the chirp.
+    def get_if_unwrapped_phase(self,
+                               tau: np.ndarray | float) -> np.ndarray | float:
+        """Returns the unwrapped phase of the IF of the chirp.
 
         Args:
             tau: Return time-of-flight for each sample.
@@ -177,8 +187,8 @@ class ExponentialChirp(Chirp):
         return (self.radar.f0 + self.radar.beta *
                 (np.exp(self.radar.alpha * self.radar.t_axis_chirp) - 1))
 
-    def get_phase(self) -> np.ndarray | float:
-        """Returns the phase of the chirp."""
+    def get_unwrapped_phase(self) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp."""
         return (2 * np.pi *
                 (self.radar.f0 * self.radar.t_axis_chirp +
                  self.radar.beta / self.radar.alpha *
@@ -197,8 +207,9 @@ class ExponentialChirp(Chirp):
                 np.exp(self.radar.alpha * self.radar.t_axis_chirp) *
                 (1 - np.exp(-self.radar.alpha * tau)))
 
-    def get_if_phase(self, tau: np.ndarray | float) -> np.ndarray | float:
-        """Returns the phase of the IF of the chirp.
+    def get_if_unwrapped_phase(self,
+                               tau: np.ndarray | float) -> np.ndarray | float:
+        """Returns the unwrapped phase of the IF of the chirp.
 
         Args:
             tau: Return time-of-flight for each sample.
