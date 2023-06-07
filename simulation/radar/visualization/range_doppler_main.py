@@ -20,7 +20,7 @@ GUARD_LENGTH = 1
 
 
 def plot_range_doppler_map_siso(
-    range: float,
+    rnge: float,
     range_rate: float,
     acceleration: float,
     rcs: float,
@@ -33,7 +33,7 @@ def plot_range_doppler_map_siso(
     """Plots the range-Doppler map using a 2D FFT for a SISO radar.
 
     Args:
-        range: Range in m.
+        rnge: Range in m.
         range_rate: Range rate in m/s.
         acceleration: Acceleration in m/s^2.
         rcs: Radar cross section in dBsm.
@@ -50,7 +50,7 @@ def plot_range_doppler_map_siso(
     radar.N_tx = 1
     radar.N_rx = 1
     target = Target(
-        range=range,
+        rnge=rnge,
         range_rate=range_rate,
         acceleration=acceleration,
         rcs=rcs,

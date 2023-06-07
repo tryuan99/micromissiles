@@ -108,7 +108,7 @@ def simulate_phased_array_snr(
         elevation: Elevation in rad.
     """
     target = Target(
-        range=rnge,
+        rnge=rnge,
         azimuth=azimuth,
         elevation=elevation,
     )

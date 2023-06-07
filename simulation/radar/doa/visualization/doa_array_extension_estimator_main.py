@@ -47,7 +47,7 @@ def plot_doa_array_extension_estimator_simo(
     )
     radar.N_tx = 1
     target = Target(
-        range=rnge,
+        rnge=rnge,
         range_rate=range_rate,
         acceleration=acceleration,
         azimuth=azimuth,

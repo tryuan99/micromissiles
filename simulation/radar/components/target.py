@@ -16,14 +16,14 @@ class Target:
 
     def __init__(
         self,
-        range: float = 0,
+        rnge: float = 0,
         range_rate: float = 0,
         acceleration: float = 0,
         azimuth: float = 0,
         elevation: float = 0,
         rcs: float = 0,
     ):
-        self.range = range  # Range in m.
+        self.range = rnge  # Range in m.
         self.range_rate = range_rate  # Range rate in m/s.
         self.acceleration = acceleration  # Acceleration in m/s^2.
         self.azimuth = azimuth  # Azimuth in radians.
