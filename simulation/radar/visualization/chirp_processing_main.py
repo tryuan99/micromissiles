@@ -108,6 +108,7 @@ def _process_chirp_with_matched_filter(
     if chirp_type == ChirpType.LINEAR:
         r_max = radar.c * radar.fs / (2 * radar.mu)
         r_res = r_max / radar.N_r
+        window = radar.window_r
         matched_filter = np.exp(-1j * 2 * np.pi *
                                 np.arange(radar.N_bins_r)[:, np.newaxis] *
                                 r_axis / radar.r_max)
@@ -115,6 +116,13 @@ def _process_chirp_with_matched_filter(
         r_max = radar.c * radar.fs / (2 * radar.b)
         r_res = (radar.c * radar.fs /
                  (2 * (radar.b + radar.a * radar.Tc) * radar.N_bins_r))
+        n = (np.sqrt(radar.a / 2) * np.arange(radar.N_r + 2) / radar.fs +
+             radar.b / np.sqrt(2 * radar.a))**2
+        M = (np.sqrt(radar.a / 2) * (radar.N_r + 1) / radar.fs +
+             radar.b / np.sqrt(2 * radar.a))**2
+        window = (0.42 - 0.5 * np.cos(2 * np.pi * n / M) +
+                  0.08 * np.cos(4 * np.pi * n / M))[1:-1]
+        window /= np.linalg.norm(window)
         matched_filter = np.exp(
             -1j * 2 * np.pi *
             (np.sqrt(radar.a / 2) * np.arange(radar.N_bins_r)[:, np.newaxis] /
@@ -128,6 +136,11 @@ def _process_chirp_with_matched_filter(
                              (radar.beta * radar.N_r *
                               np.exp(radar.alpha *
                                      (radar.Tc - 2 * radar.r_max / radar.c))))))
+        n = np.exp(radar.alpha * np.arange(radar.N_r + 2) / radar.fs)
+        M = np.exp(radar.alpha * (radar.N_r + 1) / radar.fs)
+        window = (0.42 - 0.5 * np.cos(2 * np.pi * n / M) +
+                  0.08 * np.cos(4 * np.pi * n / M))[1:-1]
+        window /= np.linalg.norm(window)
         matched_filter = np.exp(
             -1j * 2 * np.pi *
             np.exp(radar.alpha * np.arange(radar.N_bins_r)[:, np.newaxis] /
@@ -141,7 +154,8 @@ def _process_chirp_with_matched_filter(
     logging.info("Maximum range: %f m.", r_max)
     logging.info("Range resolution: %f m.", r_res)
 
-    output = Samples(np.squeeze(samples.samples @ matched_filter))
+    windowed_samples = Samples(np.einsum("kij,j->kij", samples.samples, window))
+    output = Samples(np.squeeze(windowed_samples.samples @ matched_filter))
     output_magnitude_db = constants.mag2db(output.get_abs_samples())
 
     # Find the range bin with the peak.
