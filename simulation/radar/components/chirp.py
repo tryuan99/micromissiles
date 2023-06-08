@@ -50,8 +50,13 @@ class Chirp(ABC):
             tau: Return time-of-flight for each sample.
         """
 
-    def get_if_phase():
-        return (self.get_if_unwrapped_phase() + np.pi) % (2 * np.pi) - np.pi
+    def get_if_phase(self, tau: np.ndarray | float):
+        """Returns the phase of the IF of the chirp.
+
+        Args:
+            tau: Return time-of-flight for each sample.
+        """
+        return (self.get_if_unwrapped_phase(tau) + np.pi) % (2 * np.pi) - np.pi
 
     @abstractmethod
     def get_if_unwrapped_phase(self,
