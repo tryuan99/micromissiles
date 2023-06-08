@@ -57,11 +57,10 @@ def plot_range_doppler_map_siso(
     )
     adc_data = AdcData(radar, target, chirp_type)
 
-    samples = Samples(adc_data)
-    noise_samples = Samples(np.zeros(samples.shape))
-    if noise:
-        noise_samples.add_samples(radar.generate_noise(noise_samples.shape))
-    samples.add_samples(noise_samples)
+    samples = adc_data
+    noise_samples = radar.generate_noise(adc_data.shape) if noise else Samples(
+        np.zeros(adc_data.shape))
+    samples = adc_data + noise_samples
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_2d_window()

@@ -56,9 +56,9 @@ def plot_doa_array_extension_estimator_simo(
     )
     adc_data = AdcData(radar, target)
 
-    samples = Samples(adc_data)
+    samples = adc_data
     if noise:
-        samples.add_samples(radar.generate_noise(adc_data.shape))
+        samples += radar.generate_noise(adc_data.shape)
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_2d_window()

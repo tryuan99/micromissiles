@@ -58,9 +58,9 @@ def plot_doa_music_estimator_simo(
 
     spatial_samples_snapshots = []
     for _ in range(num_snapshots):
-        samples = Samples(adc_data)
+        samples = adc_data
         if noise:
-            samples.add_samples(radar.generate_noise(adc_data.shape))
+            samples += radar.generate_noise(adc_data.shape)
 
         range_doppler_map = RangeDopplerMap(samples, radar)
         range_doppler_map.apply_2d_window()

@@ -6,20 +6,18 @@ import numpy as np
 class Samples:
     """Represents a collection of samples."""
 
-    # TODO(titan): Change the type to "Samples" | np.ndarray.
-    def __init__(self, samples: "Samples"):
+    def __init__(self, samples: "Samples | np.ndarray"):
         if isinstance(samples, Samples):
             return Samples.__init__(self, samples.samples)
         self.samples = np.copy(samples)
+
+    def __add__(self, samples: "Samples"):
+        return Samples(np.add(self.samples, samples.samples))
 
     @property
     def shape(self) -> tuple[int, ...]:
         """Shape of the samples."""
         return self.samples.shape
-
-    def add_samples(self, samples: "Samples") -> None:
-        """Adds the samples."""
-        self.samples = self.samples + samples.samples
 
     def get_abs_samples(self) -> np.ndarray:
         """Returns the absolute value of the samples."""

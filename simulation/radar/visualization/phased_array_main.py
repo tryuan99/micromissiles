@@ -31,8 +31,7 @@ def _simulate_range_fft(radar: Radar, target: Target):
         Range-Doppler map after the range FFT.
     """
     adc_data = AdcData(radar, target)
-    samples = Samples(adc_data)
-    samples.add_samples(radar.generate_noise(adc_data.shape))
+    samples = adc_data + radar.generate_noise(adc_data.shape)
 
     range_doppler_map = RangeDopplerMap(samples, radar)
     range_doppler_map.apply_range_window()
