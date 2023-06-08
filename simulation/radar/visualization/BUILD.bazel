@@ -15,6 +15,22 @@ py_binary(
 )
 
 py_binary(
+    name = "chirp_processing_main",
+    srcs = ["chirp_processing_main.py"],
+    deps = [
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
     name = "phased_array_main",
     srcs = ["phased_array_main.py"],
     deps = [

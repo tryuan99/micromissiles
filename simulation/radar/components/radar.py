@@ -60,12 +60,6 @@ class Radar:
         assert len(self.phi_tx) == self.N_tx
         assert len(self.phi_rx) == self.N_rx
 
-        # Time axis.
-        self.t_axis_chirp = (np.arange(self.N_r) / self.fs
-                            )  # Time axis for the samples of a single chirp.
-        self.t_chirp_start = (np.arange(self.N_v) * self.Tc
-                             )  # Starting times for each chirp.
-
         # FFT parameters.
         self.N_bins_r = 256 * oversampling  # Number of range bins.
         self.N_bins_v = 512 * oversampling  # Number of Doppler bins.
@@ -133,6 +127,16 @@ class Radar:
     def duty_cycle(self) -> float:
         """Duty cycle."""
         return self.T0 / self.pri
+
+    @property
+    def t_axis_chirp(self) -> np.ndarray:
+        """Fast time axis for the samples of a single chirp."""
+        return np.arange(self.N_r) / self.fs
+
+    @property
+    def t_chirp_start(self) -> np.ndarray:
+        """Slow time axis for the starting times of each chirp."""
+        return np.arange(self.N_v) * self.Tc
 
     @property
     def t_axis(self) -> np.ndarray:

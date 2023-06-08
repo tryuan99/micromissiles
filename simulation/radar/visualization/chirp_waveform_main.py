@@ -29,7 +29,7 @@ def plot_all_chirps(rnge: float):
                  chirp.get_signal(real=True),
                  label=chirp_type.capitalize())
     ax.set_title("Chirp waveform")
-    ax.set_xlabel("Time [s]")
+    ax.set_xlabel("Time in s")
     ax.set_ylabel("Amplitude")
     plt.legend()
     plt.show()
@@ -42,8 +42,8 @@ def plot_all_chirps(rnge: float):
                  chirp.get_frequency(),
                  label=chirp_type.capitalize())
     ax.set_title("Instantaneous frequency of all chirps")
-    ax.set_xlabel("Time [s]")
-    ax.set_ylabel("Frequency [Hz]")
+    ax.set_xlabel("Time in s")
+    ax.set_ylabel("Frequency in Hz")
     plt.legend()
     plt.show()
 
@@ -55,7 +55,7 @@ def plot_all_chirps(rnge: float):
                  chirp.get_if_signal(tau, real=True),
                  label=chirp_type.capitalize())
     ax.set_title("IF waveform")
-    ax.set_xlabel("Time [s]")
+    ax.set_xlabel("Time in s")
     ax.set_ylabel("Amplitude")
     plt.legend()
     plt.show()
@@ -68,8 +68,8 @@ def plot_all_chirps(rnge: float):
                  chirp.get_if_frequency(tau),
                  label=chirp_type.capitalize())
     ax.set_title("Instantaneous frequency of the IF")
-    ax.set_xlabel("Time [s]")
-    ax.set_ylabel("Frequency [Hz]")
+    ax.set_xlabel("Time in s")
+    ax.set_ylabel("Frequency in Hz")
     plt.legend()
     plt.show()
 
@@ -92,7 +92,7 @@ def plot_chirp(
     fig, ax = plt.subplots(figsize=(12, 8))
     plt.plot(radar.t_axis_chirp, chirp.get_signal(real=True))
     ax.set_title(f"Waveform of a {chirp_type} chirp")
-    ax.set_xlabel("Time [s]")
+    ax.set_xlabel("Time in s")
     ax.set_ylabel("Amplitude")
     plt.show()
 
@@ -100,15 +100,15 @@ def plot_chirp(
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(radar.t_axis_chirp, chirp.get_frequency())
     ax.set_title(f"Instantaneous frequency of a {chirp_type} chirp")
-    ax.set_xlabel("Time [s]")
-    ax.set_ylabel("Frequency [Hz]")
+    ax.set_xlabel("Time in s")
+    ax.set_ylabel("Frequency in Hz")
     plt.show()
 
     # Plot the waveform of the IF of the chirp.
     fig, ax = plt.subplots(figsize=(12, 8))
     plt.plot(radar.t_axis_chirp, chirp.get_if_signal(tau, real=True))
     ax.set_title(f"IF waveform of a {chirp_type} chirp")
-    ax.set_xlabel("Time [s]")
+    ax.set_xlabel("Time in s")
     ax.set_ylabel("Amplitude")
     plt.show()
 
@@ -116,8 +116,8 @@ def plot_chirp(
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(radar.t_axis_chirp, chirp.get_if_frequency(tau))
     ax.set_title(f"Instantaneous frequency of the IF of a {chirp_type} chirp")
-    ax.set_xlabel("Time [s]")
-    ax.set_ylabel("Frequency [Hz]")
+    ax.set_xlabel("Time in s")
+    ax.set_ylabel("Frequency in Hz")
     plt.show()
 
 
