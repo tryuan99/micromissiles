@@ -109,9 +109,9 @@ def _process_chirp_with_matched_filter(
         r_max = radar.c * radar.fs / (2 * radar.mu)
         r_res = r_max / radar.N_r
         window = radar.window_r
-        matched_filter = np.exp(-1j * 2 * np.pi *
-                                np.arange(radar.N_bins_r)[:, np.newaxis] *
-                                r_axis / radar.r_max)
+        matched_filter = np.exp(
+            1j * 2 * np.pi * np.arange(radar.N_bins_r)[:, np.newaxis] * r_axis /
+            radar.r_max)
     elif chirp_type == ChirpType.QUADRATIC:
         r_max = radar.c * radar.fs / (2 * radar.b)
         r_res = (radar.c * radar.fs /
@@ -124,7 +124,7 @@ def _process_chirp_with_matched_filter(
                   0.08 * np.cos(4 * np.pi * n / M))[1:-1]
         window /= np.linalg.norm(window)
         matched_filter = np.exp(
-            -1j * 2 * np.pi *
+            1j * 2 * np.pi *
             (np.sqrt(radar.a / 2) * np.arange(radar.N_bins_r)[:, np.newaxis] /
              radar.fs + radar.b / np.sqrt(2 * radar.a))**2 *
             (2 * r_axis / radar.c))
@@ -142,7 +142,7 @@ def _process_chirp_with_matched_filter(
                   0.08 * np.cos(4 * np.pi * n / M))[1:-1]
         window /= np.linalg.norm(window)
         matched_filter = np.exp(
-            -1j * 2 * np.pi *
+            1j * 2 * np.pi *
             np.exp(radar.alpha * np.arange(radar.N_bins_r)[:, np.newaxis] /
                    radar.fs) *
             (radar.beta / radar.alpha *
@@ -155,7 +155,8 @@ def _process_chirp_with_matched_filter(
     logging.info("Range resolution: %f m.", r_res)
 
     windowed_samples = Samples(np.einsum("kij,j->kij", samples.samples, window))
-    output = Samples(np.squeeze(windowed_samples.samples @ matched_filter))
+    output = Samples(
+        np.squeeze(windowed_samples.samples @ np.conjugate(matched_filter)))
     output_magnitude_db = constants.mag2db(output.get_abs_samples())
 
     # Find the range bin with the peak.

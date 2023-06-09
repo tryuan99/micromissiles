@@ -16,29 +16,43 @@ class Chirp(ABC):
         self.radar = radar
 
     @abstractmethod
-    def get_frequency(self) -> np.ndarray | float:
+    def get_frequency(self, delay: float = 0) -> np.ndarray | float:
         """Returns the instantaneous frequency of the chirp.
 
         By definition, the instantaneous frequency is equal to 1/2pi * dphi/dt.
+
+        Args:
+            delay: Time delay in seconds.
         """
 
-    def get_phase(self) -> np.ndarray | float:
-        """Returns the phase of the chirp."""
-        return (self.get_unwrapped_phase() + np.pi) % (2 * np.pi) - np.pi
+    def get_phase(self, delay: float = 0) -> np.ndarray | float:
+        """Returns the phase of the chirp.
+
+        Args:
+            delay: Time delay in seconds.
+        """
+        return (self.get_unwrapped_phase(delay) + np.pi) % (2 * np.pi) - np.pi
 
     @abstractmethod
-    def get_unwrapped_phase(self) -> np.ndarray | float:
-        """Returns the unwrapped phase of the chirp."""
+    def get_unwrapped_phase(self, delay: float = 0) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp.
 
-    def get_signal(self, real: bool = False) -> np.ndarray | float:
+        Args:
+            delay: Time delay in seconds.
+        """
+
+    def get_signal(self,
+                   delay: float = 0,
+                   real: bool = False) -> np.ndarray | float:
         """Returns the complex signal of the chirp.
 
         Args:
+            delay: Time delay in seconds.
             real: If true, returns a real signal instead of a complex signal.
         """
         if real:
-            return np.cos(self.get_unwrapped_phase())
-        return np.exp(1j * self.get_unwrapped_phase())
+            return np.cos(self.get_unwrapped_phase(delay))
+        return np.exp(1j * self.get_unwrapped_phase(delay))
 
     @abstractmethod
     def get_if_frequency(self, tau: np.ndarray | float) -> np.ndarray | float:
@@ -90,18 +104,26 @@ class LinearChirp(Chirp):
     def __init__(self, radar: Radar):
         super().__init__(radar)
 
-    def get_frequency(self) -> np.ndarray | float:
+    def get_frequency(self, delay: float = 0) -> np.ndarray | float:
         """Returns the instantaneous frequency of the chirp.
 
         By definition, the instantaneous frequency is equal to 1/2pi * dphi/dt.
-        """
-        return self.radar.f0 + self.radar.mu * self.radar.t_axis_chirp
 
-    def get_unwrapped_phase(self) -> np.ndarray | float:
-        """Returns the unwrapped phase of the chirp."""
+        Args:
+            delay: Time delay in seconds.
+        """
+        t_axis = self.radar.t_axis_chirp - delay
+        return self.radar.f0 + self.radar.mu * t_axis
+
+    def get_unwrapped_phase(self, delay: float = 0) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp.
+
+        Args:
+            delay: Time delay in seconds.
+        """
+        t_axis = self.radar.t_axis_chirp - delay
         return (2 * np.pi *
-                (self.radar.f0 * self.radar.t_axis_chirp +
-                 1 / 2 * self.radar.mu * self.radar.t_axis_chirp**2))
+                (self.radar.f0 * t_axis + 1 / 2 * self.radar.mu * t_axis**2))
 
     def get_if_frequency(self, tau: np.ndarray | float) -> np.ndarray | float:
         """Returns the instantaneous frequency of the IF of the chirp.
@@ -134,19 +156,28 @@ class QuadraticChirp(Chirp):
     def __init__(self, radar: Radar):
         super().__init__(radar)
 
-    def get_frequency(self) -> np.ndarray | float:
+    def get_frequency(self, delay: float = 0) -> np.ndarray | float:
         """Returns the instantaneous frequency of the chirp.
 
         By definition, the instantaneous frequency is equal to 1/2pi * dphi/dt.
-        """
-        return (self.radar.f0 + self.radar.b * self.radar.t_axis_chirp +
-                1 / 2 * self.radar.a * self.radar.t_axis_chirp**2)
 
-    def get_unwrapped_phase(self) -> np.ndarray | float:
-        """Returns the unwrapped phase of the chirp."""
-        return (2 * np.pi * (self.radar.f0 * self.radar.t_axis_chirp +
-                             1 / 2 * self.radar.b * self.radar.t_axis_chirp**2 +
-                             1 / 6 * self.radar.a * self.radar.t_axis_chirp**3))
+        Args:
+            delay: Time delay in seconds.
+        """
+        t_axis = self.radar.t_axis_chirp - delay
+        return (self.radar.f0 + self.radar.b * t_axis +
+                1 / 2 * self.radar.a * t_axis**2)
+
+    def get_unwrapped_phase(self, delay: float = 0) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp.
+
+        Args:
+            delay: Time delay in seconds.
+        """
+        t_axis = self.radar.t_axis_chirp - delay
+        return (2 * np.pi *
+                (self.radar.f0 * t_axis + 1 / 2 * self.radar.b * t_axis**2 +
+                 1 / 6 * self.radar.a * t_axis**3))
 
     def get_if_frequency(self, tau: np.ndarray | float) -> np.ndarray | float:
         """Returns the instantaneous frequency of the IF of the chirp.
@@ -184,21 +215,28 @@ class ExponentialChirp(Chirp):
     def __init__(self, radar: Radar):
         super().__init__(radar)
 
-    def get_frequency(self) -> np.ndarray | float:
+    def get_frequency(self, delay: float = 0) -> np.ndarray | float:
         """Returns the instantaneous frequency of the chirp.
 
         By definition, the instantaneous frequency is equal to 1/2pi * dphi/dt.
-        """
-        return (self.radar.f0 + self.radar.beta *
-                (np.exp(self.radar.alpha * self.radar.t_axis_chirp) - 1))
 
-    def get_unwrapped_phase(self) -> np.ndarray | float:
-        """Returns the unwrapped phase of the chirp."""
+        Args:
+            delay: Time delay in seconds.
+        """
+        t_axis = self.radar.t_axis_chirp - delay
+        return (self.radar.f0 + self.radar.beta *
+                (np.exp(self.radar.alpha * t_axis) - 1))
+
+    def get_unwrapped_phase(self, delay: float = 0) -> np.ndarray | float:
+        """Returns the unwrapped phase of the chirp.
+
+        Args:
+            delay: Time delay in seconds.
+        """
+        t_axis = self.radar.t_axis_chirp - delay
         return (2 * np.pi *
-                (self.radar.f0 * self.radar.t_axis_chirp +
-                 self.radar.beta / self.radar.alpha *
-                 np.exp(self.radar.alpha * self.radar.t_axis_chirp) -
-                 self.radar.beta * self.radar.t_axis_chirp))
+                (self.radar.f0 * t_axis + self.radar.beta / self.radar.alpha *
+                 np.exp(self.radar.alpha * t_axis) - self.radar.beta * t_axis))
 
     def get_if_frequency(self, tau: np.ndarray | float) -> np.ndarray | float:
         """Returns the instantaneous frequency of the IF of the chirp.

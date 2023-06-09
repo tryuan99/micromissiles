@@ -3,6 +3,18 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
+    name = "chirp_mixing_main",
+    srcs = ["chirp_mixing_main.py"],
+    deps = [
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
     name = "chirp_waveform_main",
     srcs = ["chirp_waveform_main.py"],
     deps = [

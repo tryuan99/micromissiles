@@ -24,6 +24,17 @@ py_library(
     ],
 )
 
+py_test(
+    name = "chirp_test",
+    srcs = ["chirp_test.py"],
+    deps = [
+        ":chirp",
+        ":radar",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
 py_library(
     name = "coordinates",
     srcs = ["coordinates.py"],

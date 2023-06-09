@@ -62,13 +62,13 @@ class RangeDopplerMap(Samples):
         for v_index, v in enumerate(self.radar.v_axis):
             for r_index, r in enumerate(self.radar.r_axis):
                 matched_filter = np.exp(
-                    -1j * 2 * np.pi * 2 / self.radar.c * np.multiply(
+                    1j * 2 * np.pi * 2 / self.radar.c * np.multiply(
                         r + v * self.radar.t_axis,
                         self.radar.mu * np.repeat(
                             [self.radar.t_axis_chirp], self.radar.N_v, axis=0) +
                         self.radar.f0))
                 matched_filter_out[:, v_index, r_index] = np.sum(np.multiply(
-                    self.samples, matched_filter),
+                    self.samples, np.conjugate(matched_filter)),
                                                                  axis=(-2, -1))
         self.samples = matched_filter_out
 
