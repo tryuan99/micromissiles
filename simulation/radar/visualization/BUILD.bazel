@@ -15,18 +15,6 @@ py_binary(
 )
 
 py_binary(
-    name = "chirp_waveform_main",
-    srcs = ["chirp_waveform_main.py"],
-    deps = [
-        "//simulation/radar/components:chirp",
-        "//simulation/radar/components:radar",
-        requirement("absl-py"),
-        requirement("matplotlib"),
-        requirement("numpy"),
-    ],
-)
-
-py_binary(
     name = "chirp_processing_main",
     srcs = ["chirp_processing_main.py"],
     deps = [
@@ -36,6 +24,34 @@ py_binary(
         "//simulation/radar/components:samples",
         "//simulation/radar/components:target",
         "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "chirp_range_resolution_main",
+    srcs = ["chirp_range_resolution_main.py"],
+    deps = [
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "chirp_waveform_main",
+    srcs = ["chirp_waveform_main.py"],
+    deps = [
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),

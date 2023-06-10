@@ -62,7 +62,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_float("range", 50, "Range in m.", lower_bound=0.0)
+    flags.DEFINE_float("range", 20, "Range in m.", lower_bound=0.0)
     flags.DEFINE_enum("chirp_type", ChirpType.LINEAR, ChirpType.values(),
                       "Chirp type.")
 

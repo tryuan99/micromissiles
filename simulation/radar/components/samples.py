@@ -11,8 +11,15 @@ class Samples:
             return Samples.__init__(self, samples.samples)
         self.samples = np.copy(samples)
 
-    def __add__(self, samples: "Samples"):
-        return Samples(np.add(self.samples, samples.samples))
+    def __add__(self, samples: "Samples | np.ndarray | float"):
+        if isinstance(samples, Samples):
+            return self.__add__(samples.samples)
+        return Samples(np.add(self.samples, samples))
+
+    def __mul__(self, samples: "Samples | np.ndarray | float"):
+        if isinstance(samples, Samples):
+            return self.__mul__(samples.samples)
+        return Samples(np.multiply(self.samples, samples))
 
     @property
     def shape(self) -> tuple[int, ...]:
