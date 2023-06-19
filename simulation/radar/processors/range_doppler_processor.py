@@ -37,6 +37,18 @@ class RangeDopplerProcessor(SignalProcessor, ABC):
         """Returns the Doppler axis."""
         return self.radar.r_axis
 
+    def accumulate_log_magnitude(self) -> Samples:
+        """Returns the log magnitude of the samples accumulated over all RX antennas.
+
+        The accumulated range-Doppler map is intended for CFAR.
+        The third-to-last dimension is for the RX antennas.
+        """
+        # mmWave SDK uses a logarithmic CFAR with a base-2 logarithm.
+        return Samples(
+            np.squeeze(
+                np.apply_over_axes(np.sum, np.log2(np.abs(self.samples)),
+                                   (0, -3))))
+
 
 class RangeDopplerFftProcessor(FftProcessor, RangeDopplerProcessor):
     """Performs range and Doppler processing using a 2D FFT."""

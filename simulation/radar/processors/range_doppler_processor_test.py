@@ -90,6 +90,24 @@ class RangeDopplerFftProcessorTestCase(RangeDopplerProcessorTestCase):
                     [8, 4 - 4j, 0, 4 + 4j],
                 ])))
 
+    def test_accumulate_log_magnitude(self):
+        a = self.samples.samples[np.newaxis, np.newaxis, ...]
+        range_doppler_fft_processor = RangeDopplerFftProcessor(
+            Samples(self.samples.samples[np.newaxis, np.newaxis, ...]),
+            self.radar)
+        range_doppler_fft_processor.process_2d_samples()
+        accumulated_range_doppler_map = range_doppler_fft_processor.accumulate_log_magnitude(
+        )
+        self.assertIsNone(
+            np.testing.assert_allclose(
+                accumulated_range_doppler_map.samples,
+                np.array([
+                    [-np.inf, -np.inf, -np.inf, -np.inf],
+                    [-np.inf, -np.inf, -np.inf, -np.inf],
+                    [-np.inf, -np.inf, -np.inf, -np.inf],
+                    [3, 2.5, -np.inf, 2.5],
+                ])))
+
 
 class RangeDopplerMatchedFilterProcessorTestCase(RangeDopplerProcessorTestCase):
 
