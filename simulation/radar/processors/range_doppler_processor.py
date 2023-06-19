@@ -58,7 +58,7 @@ class RangeDopplerFftProcessor(FftProcessor, RangeDopplerProcessor):
 
     def process_2d_samples(self) -> None:
         """Processes the 2D samples."""
-        super()._apply_2d_fft()
+        super().apply_2d_fft()
         # Perform an FFT shift in the Doppler dimension.
         super().fft_shift_axis1()
 

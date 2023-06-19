@@ -20,21 +20,21 @@ class FftProcessor(SignalProcessor, ABC):
 
     def process_2d_samples(self) -> None:
         """Processes the 2D samples."""
-        self._apply_2d_fft()
+        self.apply_2d_fft()
 
-    def _apply_fft_axis1(self) -> None:
+    def apply_fft_axis1(self) -> None:
         """Applies an FFT along the first dimension."""
         self.samples = np.fft.fft(self.samples,
                                   self.get_output_shape()[0],
                                   axis=-2)
 
-    def _apply_fft_axis2(self) -> None:
+    def apply_fft_axis2(self) -> None:
         """Applies an FFT along the second dimension."""
         self.samples = np.fft.fft(self.samples,
                                   self.get_output_shape()[1],
                                   axis=-1)
 
-    def _apply_2d_fft(self) -> None:
+    def apply_2d_fft(self) -> None:
         """Applies a 2D FFT."""
         self.samples = np.fft.fft2(self.samples, self.get_output_shape())
 

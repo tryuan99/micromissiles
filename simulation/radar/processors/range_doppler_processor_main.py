@@ -7,9 +7,10 @@ from absl import app, flags, logging
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.chirp import ChirpType
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
+from simulation.radar.processors.range_doppler_processor import (
+    RangeDopplerFftProcessor, RangeDopplerMatchedFilterProcessor)
 from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
@@ -62,13 +63,12 @@ def plot_range_doppler_map_siso(
         np.zeros(adc_data.shape))
     samples = adc_data + noise_samples
 
-    range_doppler_map = RangeDopplerMap(samples, radar)
-    range_doppler_map.apply_2d_window()
     if matched_filter:
-        range_doppler_map.apply_2d_matched_filter()
+        range_doppler_map = RangeDopplerMatchedFilterProcessor(samples, radar)
     else:
-        range_doppler_map.perform_2d_fft()
-        range_doppler_map.fft_shift()
+        range_doppler_map = RangeDopplerFftProcessor(samples, radar)
+    range_doppler_map.apply_2d_window()
+    range_doppler_map.process_2d_samples()
     range_doppler_map_abs_db = constants.mag2db(
         np.squeeze(range_doppler_map.get_abs_samples()))
 

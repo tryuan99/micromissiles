@@ -6,9 +6,10 @@ from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
+from simulation.radar.processors.range_doppler_processor import \
+    RangeDopplerFftProcessor
 from utils import constants
 
 FLAGS = flags.FLAGS
@@ -20,7 +21,8 @@ OVERSAMPLING = 4
 GUARD_LENGTH = 4
 
 
-def _simulate_range_fft(radar: Radar, target: Target):
+def _simulate_range_fft(radar: Radar,
+                        target: Target) -> RangeDopplerFftProcessor:
     """Simulates the range FFT for the given radar and target.
 
     Args:
@@ -28,14 +30,14 @@ def _simulate_range_fft(radar: Radar, target: Target):
         target: Target.
 
     Returns:
-        Range-Doppler map after the range FFT.
+        Range-Doppler FFT processor after the range FFT.
     """
     adc_data = AdcData(radar, target)
     samples = adc_data + radar.generate_noise(adc_data.shape)
 
-    range_doppler_map = RangeDopplerMap(samples, radar)
-    range_doppler_map.apply_range_window()
-    range_doppler_map.perform_range_fft()
+    range_doppler_map = RangeDopplerFftProcessor(samples, radar)
+    range_doppler_map.apply_window_axis2()
+    range_doppler_map.apply_fft_axis2()
     return range_doppler_map
 
 

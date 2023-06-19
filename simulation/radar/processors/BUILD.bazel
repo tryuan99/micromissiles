@@ -49,6 +49,39 @@ py_test(
     ],
 )
 
+py_binary(
+    name = "range_doppler_processor_main",
+    srcs = ["range_doppler_processor_main.py"],
+    deps = [
+        ":range_doppler_processor",
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "range_fft_phased_array_main",
+    srcs = ["range_fft_phased_array_main.py"],
+    deps = [
+        ":range_doppler_processor",
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
 py_library(
     name = "signal_processor",
     srcs = ["signal_processor.py"],
