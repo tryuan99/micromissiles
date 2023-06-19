@@ -15,12 +15,12 @@ from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
 
-class DoaEstimator(ABC):
+class DoaEstimator(Samples, ABC):
     """Interface for direction-of-arrival estimators."""
 
     def __init__(self, radar: Radar, samples: Samples):
+        super().__init__(samples)
         self.radar = radar
-        self.samples = samples
 
     @abstractmethod
     def process_spatial_samples(self) -> None:

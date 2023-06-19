@@ -11,6 +11,8 @@ MAX_IF_EPSILON = 5e-8
 
 class ChirpTestCase(absltest.TestCase):
 
+    radar = Radar()
+
     def compare_if_signals(self, radar: Radar, chirp: Chirp):
         rnge = 100
         tau = 2 * rnge / radar.c
@@ -37,25 +39,22 @@ class ChirpTestCase(absltest.TestCase):
 class LinearChirpTestCase(ChirpTestCase):
 
     def test_if_signal(self):
-        radar = Radar()
-        chirp = LinearChirp(radar)
-        self.compare_if_signals(radar, chirp)
+        chirp = LinearChirp(self.radar)
+        self.compare_if_signals(self.radar, chirp)
 
 
 class QuadraticChirpTestCase(ChirpTestCase):
 
     def test_if_signal(self):
-        radar = Radar()
-        chirp = QuadraticChirp(radar)
-        self.compare_if_signals(radar, chirp)
+        chirp = QuadraticChirp(self.radar)
+        self.compare_if_signals(self.radar, chirp)
 
 
 class ExponentialChirpTestCase(ChirpTestCase):
 
     def test_if_signal(self):
-        radar = Radar()
-        chirp = ExponentialChirp(radar)
-        self.compare_if_signals(radar, chirp)
+        chirp = ExponentialChirp(self.radar)
+        self.compare_if_signals(self.radar, chirp)
 
 
 if __name__ == "__main__":

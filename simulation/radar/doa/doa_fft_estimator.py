@@ -57,5 +57,5 @@ class DoaFftEstimator(DoaEstimator):
         self.samples.samples = np.flip(self.samples.samples, axis=0)
 
     def _fft_shift(self) -> None:
-        """Performs a FFT shift in the azimuth and elevation dimensions."""
+        """Performs an FFT shift in the azimuth and elevation dimensions."""
         self.samples.samples = np.fft.fftshift(self.samples.samples)

@@ -1,0 +1,60 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "fft_processor",
+    srcs = ["fft_processor.py"],
+    deps = [
+        ":signal_processor",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "matched_filter_processor",
+    srcs = ["matched_filter_processor.py"],
+    deps = [
+        ":signal_processor",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "range_doppler_processor",
+    srcs = ["range_doppler_processor.py"],
+    deps = [
+        ":fft_processor",
+        ":matched_filter_processor",
+        ":signal_processor",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "range_doppler_processor_test",
+    srcs = ["range_doppler_processor_test.py"],
+    deps = [
+        ":range_doppler_processor",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "signal_processor",
+    srcs = ["signal_processor.py"],
+    deps = [
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)

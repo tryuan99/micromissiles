@@ -73,5 +73,5 @@ class RangeDopplerMap(Samples):
         self.samples = matched_filter_out
 
     def fft_shift(self) -> None:
-        """Performs a FFT shift in the Doppler dimension."""
+        """Performs an FFT shift in the Doppler dimension."""
         self.samples = np.fft.fftshift(self.samples, axes=1)
