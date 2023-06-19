@@ -6,11 +6,12 @@ from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.components.target import Target
 from simulation.radar.doa.doa_fft_estimator import DoaFftEstimator
+from simulation.radar.processors.range_doppler_processor import \
+    RangeDopplerFftProcessor
 
 FLAGS = flags.FLAGS
 
@@ -58,10 +59,9 @@ def plot_doa_fft_estimator_simo(
     if noise:
         samples += radar.generate_noise(adc_data.shape)
 
-    range_doppler_map = RangeDopplerMap(samples, radar)
+    range_doppler_map = RangeDopplerFftProcessor(samples, radar)
     range_doppler_map.apply_2d_window()
-    range_doppler_map.perform_2d_fft()
-    range_doppler_map.fft_shift()
+    range_doppler_map.process_2d_samples()
 
     # Use a direction-of-arrival FFT estimator to perform direction-of-arrival
     # estimation.

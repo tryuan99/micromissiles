@@ -10,16 +10,17 @@ antenna.
 import numpy as np
 
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
+from simulation.radar.processors.range_doppler_processor import \
+    RangeDopplerProcessor
 
 
 class SpatialSamples(Samples):
     """Represents spatial samples."""
 
     def __init__(self, radar: Radar, target: Target,
-                 range_doppler_map: RangeDopplerMap):
+                 range_doppler_map: RangeDopplerProcessor):
         range_bin_index, doppler_bin_index = radar.get_range_doppler_bin_indices(
             target)
         spatial_samples = np.zeros(

@@ -50,7 +50,7 @@ class DoaMusicEstimator(DoaEstimator):
         arrival_vectors_projection = arrival_vectors @ signal_subspace_h.T
         arrival_vectors_projection_norm_squared = np.linalg.norm(
             arrival_vectors_projection, axis=2)**2
-        self.samples = Samples(arrival_vectors_projection_norm_squared)
+        self.samples = arrival_vectors_projection_norm_squared
 
     def estimate_doa(self) -> tuple[float, float]:
         """Estimates the direction-of-arrival.
@@ -59,7 +59,7 @@ class DoaMusicEstimator(DoaEstimator):
             A tuple consisting of the estimated (elevation, azimuth) in rad.
         """
         elevation_bin_index, azimuth_bin_index = np.unravel_index(
-            np.argmax(self.samples.get_abs_samples()), self.samples.shape)
+            np.argmax(self.get_abs_samples()), self.shape)
         return self.radar.el_axis[elevation_bin_index], self.radar.az_axis[
             azimuth_bin_index]
 
@@ -71,7 +71,7 @@ class DoaMusicEstimator(DoaEstimator):
         """
         covariance_matrices = [
             np.outer(snapshot, np.conjugate(snapshot))
-            for snapshot in self.samples.samples
+            for snapshot in self.samples
         ]
         return np.mean(covariance_matrices, axis=0)
 
@@ -84,7 +84,7 @@ class DoaMusicEstimator(DoaEstimator):
             azimuth) coordinates of each virtual antenna in units of lambda/2.
         """
         antenna_azimuth_coordinates, antenna_elevation_coordinates = np.meshgrid(
-            np.arange(self.samples.shape[2]), np.arange(self.samples.shape[1]))
+            np.arange(self.shape[2]), np.arange(self.shape[1]))
         antenna_azimuth_coordinates = antenna_azimuth_coordinates.flatten()
         antenna_elevation_coordinates = antenna_elevation_coordinates.flatten()
         return antenna_azimuth_coordinates, antenna_elevation_coordinates
@@ -114,11 +114,10 @@ class DoaMusicEstimator(DoaEstimator):
         (antenna_azimuth_coordinates,
          antenna_elevation_coordinates) = self._get_antenna_coordinates()
         direction_vectors = self._get_direction_vectors().coordinates
-        arrival_vectors = np.zeros(
-            (len(self.radar.el_axis), len(
-                self.radar.az_axis), self.samples.samples[0].size),
-            dtype=np.complex128)
-        for antenna_index in range(self.samples.samples[0].size):
+        arrival_vectors = np.zeros((len(
+            self.radar.el_axis), len(self.radar.az_axis), self.samples[0].size),
+                                   dtype=np.complex128)
+        for antenna_index in range(self.samples[0].size):
             # Project the position vector of each virtual antenna onto the unit
             # direction vector to find the phase offset at each virtual antenna.
             antenna_azimuth_coordinate = antenna_azimuth_coordinates[

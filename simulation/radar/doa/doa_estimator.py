@@ -44,7 +44,7 @@ class DoaEstimator(Samples, ABC):
         )
         surf = ax.plot_surface(
             *np.meshgrid(self.radar.el_axis, self.radar.az_axis),
-            constants.mag2db(self.samples.get_abs_samples()).T,
+            constants.mag2db(self.get_abs_samples()).T,
             cmap=COLOR_MAPS["parula"],
             antialiased=False,
         )

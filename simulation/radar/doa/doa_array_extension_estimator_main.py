@@ -1,21 +1,24 @@
-"""Simulates direction-of-arrival estimation using the MUSIC algorithm and plots
-the direction-of-arrival spectrum for a SIMO radar.
+"""Simulates direction-of-arrival estimation by extending the virtual antenna
+array and performing a 2D FFT and plots the direction-of-arrival spectrum for a
+SIMO radar.
 """
 
 from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.range_doppler_map import RangeDopplerMap
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.components.target import Target
-from simulation.radar.doa.doa_music_estimator import DoaMusicEstimator
+from simulation.radar.doa.doa_array_extension_estimator import \
+    DoaArrayExtensionEstimator
+from simulation.radar.processors.range_doppler_processor import \
+    RangeDopplerFftProcessor
 
 FLAGS = flags.FLAGS
 
 
-def plot_doa_music_estimator_simo(
+def plot_doa_array_extension_estimator_simo(
     rnge: float,
     range_rate: float,
     acceleration: float,
@@ -25,7 +28,6 @@ def plot_doa_music_estimator_simo(
     temperature: float,
     oversampling: int,
     noise: bool,
-    num_snapshots: int,
 ) -> None:
     """Plots the direction-of-arrival spectrum for a SIMO radar.
 
@@ -39,7 +41,6 @@ def plot_doa_music_estimator_simo(
         temperature: Temperature in Celsius.
         oversampling: Oversampling factor.
         noise: If true, add noise.
-        num_snapshots: Number of snapshots.
     """
     radar = Radar(
         temperature=temperature,
@@ -56,23 +57,18 @@ def plot_doa_music_estimator_simo(
     )
     adc_data = AdcData(radar, target)
 
-    spatial_samples_snapshots = []
-    for _ in range(num_snapshots):
-        samples = adc_data
-        if noise:
-            samples += radar.generate_noise(adc_data.shape)
+    samples = adc_data
+    if noise:
+        samples += radar.generate_noise(adc_data.shape)
 
-        range_doppler_map = RangeDopplerMap(samples, radar)
-        range_doppler_map.apply_2d_window()
-        range_doppler_map.perform_2d_fft()
-        range_doppler_map.fft_shift()
+    range_doppler_map = RangeDopplerFftProcessor(samples, radar)
+    range_doppler_map.apply_2d_window()
+    range_doppler_map.process_2d_samples()
 
-        spatial_samples = SpatialSamples(radar, target, range_doppler_map)
-        spatial_samples_snapshots.append(spatial_samples)
-
-    # Use a direction-of-arrival MUSIC estimator to perform direction-of-arrival
-    # estimation.
-    doa_estimator = DoaMusicEstimator(radar, spatial_samples_snapshots)
+    # Use a direction-of-arrival array extension estimator to perform
+    # direction-of-arrival estimation.
+    spatial_samples = SpatialSamples(radar, target, range_doppler_map)
+    doa_estimator = DoaArrayExtensionEstimator(radar, spatial_samples)
     doa_estimator.process_spatial_samples()
     elevation_estimated, azimuth_estimated = doa_estimator.estimate_doa()
     logging.info("Estimated azimuth: %f rad, actual azimuth: %f rad.",
@@ -84,7 +80,7 @@ def plot_doa_music_estimator_simo(
 
 def main(argv):
     assert len(argv) == 1, argv
-    plot_doa_music_estimator_simo(
+    plot_doa_array_extension_estimator_simo(
         FLAGS.range,
         FLAGS.range_rate,
         FLAGS.acceleration,
@@ -94,7 +90,6 @@ def main(argv):
         FLAGS.temperature,
         FLAGS.oversampling,
         FLAGS.noise,
-        FLAGS.num_snapshots,
     )
 
 
@@ -111,6 +106,5 @@ if __name__ == "__main__":
                          "Oversampling factor.",
                          lower_bound=1)
     flags.DEFINE_boolean("noise", True, "If true, add noise.")
-    flags.DEFINE_integer("num_snapshots", 4, "Number of snapshots.")
 
     app.run(main)

@@ -27,7 +27,7 @@ class DoaFftEstimator(DoaEstimator):
             A tuple consisting of the estimated (elevation, azimuth) in rad.
         """
         elevation_bin_index, azimuth_bin_index = np.unravel_index(
-            np.argmax(self.samples.get_abs_samples()), self.samples.shape)
+            np.argmax(self.get_abs_samples()), self.shape)
         return self.radar.el_axis[elevation_bin_index], self.radar.az_axis[
             azimuth_bin_index]
 
@@ -36,26 +36,22 @@ class DoaFftEstimator(DoaEstimator):
         # The FFT outputs a positive spatial frequency if the phase increases
         # in the positive x-direction. In our coordinate system, the phase
         # increases in the positive x-direction.
-        self.samples.samples = np.fft.fft(self.samples.samples,
-                                          self.radar.N_bins_az,
-                                          axis=1)
+        self.samples = np.fft.fft(self.samples, self.radar.N_bins_az, axis=1)
 
     def _perform_elevation_fft(self) -> None:
         """Performs the FFT in the elevation dimension."""
         # The FFT outputs a positive spatial frequency if the phase increases
         # in the positive y-direction. In our coordinate system, the phase
         # increases in the negative y-direction.
-        self.samples.samples = np.fft.fft(self.samples.samples,
-                                          self.radar.N_bins_el,
-                                          axis=0)
-        self.samples.samples = np.flip(self.samples.samples, axis=0)
+        self.samples = np.fft.fft(self.samples, self.radar.N_bins_el, axis=0)
+        self.samples = np.flip(self.samples, axis=0)
 
     def _perform_2d_fft(self) -> None:
         """Performs the FFT in the azimuth and elevation dimensions."""
-        self.samples.samples = np.fft.fft2(
-            self.samples.samples, (self.radar.N_bins_el, self.radar.N_bins_az))
-        self.samples.samples = np.flip(self.samples.samples, axis=0)
+        self.samples = np.fft.fft2(self.samples,
+                                   (self.radar.N_bins_el, self.radar.N_bins_az))
+        self.samples = np.flip(self.samples, axis=0)
 
     def _fft_shift(self) -> None:
         """Performs an FFT shift in the azimuth and elevation dimensions."""
-        self.samples.samples = np.fft.fftshift(self.samples.samples)
+        self.samples = np.fft.fftshift(self.samples)

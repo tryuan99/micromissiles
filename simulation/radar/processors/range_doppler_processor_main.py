@@ -78,7 +78,8 @@ def plot_range_doppler_map_siso(
         subplot_kw={"projection": "3d"},
     )
     surf = ax.plot_surface(
-        *np.meshgrid(radar.v_axis, radar.r_axis),
+        *np.meshgrid(range_doppler_map.get_output_axis1(),
+                     range_doppler_map.get_output_axis2()),
         range_doppler_map_abs_db.T,
         cmap=COLOR_MAPS["parula"],
         antialiased=False,

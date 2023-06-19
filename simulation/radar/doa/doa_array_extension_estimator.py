@@ -32,25 +32,22 @@ class DoaArrayExtensionEstimator(DoaFftEstimator):
         u_k = y_0 * y_k for 0 <= k <= K - 1
         u_k = y_{K - 1} * y_{k - K + 1} for K <= k <= 2K - 1
         """
-        num_elevation_antennas, num_azimuth_antennas = self.samples.shape
-        extended_spatial_samples = np.zeros(2 * np.array(self.samples.shape) -
-                                            1,
-                                            dtype=self.samples.samples.dtype)
+        num_elevation_antennas, num_azimuth_antennas = self.shape
+        extended_spatial_samples = np.zeros(2 * np.array(self.shape) - 1,
+                                            dtype=self.samples.dtype)
 
         # Extend in the azimuth dimension.
         extended_spatial_samples[:num_elevation_antennas, :
                                  num_azimuth_antennas] = (
-                                     self.samples.
-                                     samples[:num_elevation_antennas,
-                                             0][:, np.newaxis] * self.samples.
-                                     samples[:num_elevation_antennas])
+                                     self.samples[:num_elevation_antennas,
+                                                  0][:, np.newaxis] *
+                                     self.samples[:num_elevation_antennas])
         extended_spatial_samples[:num_elevation_antennas,
                                  num_azimuth_antennas:] = (
-                                     self.samples.
-                                     samples[:num_elevation_antennas,
-                                             num_azimuth_antennas -
-                                             1][:, np.newaxis] * self.samples.
-                                     samples[:num_elevation_antennas, 1:])
+                                     self.samples[:num_elevation_antennas,
+                                                  num_azimuth_antennas -
+                                                  1][:, np.newaxis] *
+                                     self.samples[:num_elevation_antennas, 1:])
 
         # Extend in the elevation dimension.
         extended_azimuth_spatial_samples = (
