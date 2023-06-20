@@ -23,17 +23,17 @@ class DoaEstimator(SignalProcessor2D):
 
     @property
     def title(self) -> str:
-        """Returns the title of the 2D spectrum."""
+        """Title of the 2D spectrum."""
         return "Azimuth-elevation spectrum"
 
     @property
     def label_axis1(self) -> str:
-        """Returns the label of the elevation axis."""
+        """Label of the elevation axis."""
         return "Elevation in rad"
 
     @property
     def label_axis2(self) -> str:
-        """Returns the label of the azimuth axis."""
+        """Label of the azimuth axis."""
         return "Azimuth in rad"
 
     def get_window_axis1(self) -> np.ndarray:

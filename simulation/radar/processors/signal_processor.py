@@ -27,7 +27,7 @@ class SignalProcessor(Samples, ABC):
     @property
     @abstractmethod
     def title(self) -> str:
-        """Returns the title of the spectrum."""
+        """Title of the spectrum."""
 
     @abstractmethod
     def get_output_shape(self) -> tuple[int, ...]:
@@ -62,7 +62,7 @@ class SignalProcessor1D(SignalProcessor):
     @property
     @abstractmethod
     def label_axis(self) -> str:
-        """Returns the label of the dimension to be processed."""
+        """Label of the dimension to be processed."""
 
     @abstractmethod
     def get_window(self) -> np.ndarray:
@@ -112,12 +112,12 @@ class SignalProcessor2D(SignalProcessor):
     @property
     @abstractmethod
     def label_axis1(self) -> str:
-        """Returns the label of the first dimension."""
+        """Label of the first dimension."""
 
     @property
     @abstractmethod
     def label_axis2(self) -> str:
-        """Returns the label of the second dimension."""
+        """Label of the second dimension."""
 
     @abstractmethod
     def get_window_axis1(self) -> np.ndarray:

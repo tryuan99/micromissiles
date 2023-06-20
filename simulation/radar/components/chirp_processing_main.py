@@ -5,10 +5,12 @@ import numpy as np
 from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
-from simulation.radar.components.chirp import CHIRP_MAP, ChirpType
+from simulation.radar.components.chirp import ChirpType
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
+from simulation.radar.processors.chirp_processor import (
+    ChirpMatchedFilterProcessorFactory, ChirpProcessor)
 from utils import constants
 
 FLAGS = flags.FLAGS
@@ -48,6 +50,7 @@ def process_chirp(
     radar.N_rx = 1
     radar.N_v = 1
     radar.N_bins_v = 1
+    radar.r_axis = np.arange(0, radar.r_max * 2, 0.01)
     targets = [
         Target(
             rnge=rnge,
@@ -65,15 +68,16 @@ def process_chirp(
 
     # Plot the range spectrum for each chirp type.
     fig, ax = plt.subplots(figsize=(12, 8))
-
-    r_axis = np.arange(0, radar.r_max * 2, 0.01)
     chirp_types = (ChirpType.values()
                    if chirp_type == ALL_CHIRPS else [chirp_type])
     for chirp_type in chirp_types:
-        output = _process_chirp_with_matched_filter(radar, targets, r_axis,
-                                                    noise, chirp_type)
-        output_magnitude_db = constants.mag2db(output.get_abs_samples())
-        plt.plot(r_axis, output_magnitude_db, label=chirp_type.capitalize())
+        chirp_processor = _process_chirp_with_matched_filter(
+            radar, targets, noise, chirp_type)
+        output_magnitude_db = constants.mag2db(
+            chirp_processor.get_abs_samples())
+        plt.plot(chirp_processor.get_output_axis(),
+                 output_magnitude_db,
+                 label=chirp_type.capitalize())
     ax.set_title(f"Range spectrum using a nonlinear chirp")
     ax.set_xlabel("Range in m")
     ax.set_ylabel("Magnitude in dB")
@@ -84,16 +88,14 @@ def process_chirp(
 def _process_chirp_with_matched_filter(
     radar: Radar,
     targets: list[Target],
-    r_axis: np.ndarray,
     noise: bool,
     chirp_type: ChirpType,
-) -> Samples:
+) -> ChirpProcessor:
     """Performs range processing on the given chirp type with a matched filter.
 
     Args:
         radar: Radar.
         targets: List of targets.
-        r_axis: Range axis.
         noise: If true, add noise.
         chirp_type: Chirp type.
 
@@ -105,65 +107,19 @@ def _process_chirp_with_matched_filter(
     if noise:
         samples += radar.generate_noise(samples.shape)
 
-    if chirp_type == ChirpType.LINEAR:
-        r_max = radar.c * radar.fs / (2 * radar.mu)
-        r_res = r_max / radar.N_r
-        window = radar.window_r
-        matched_filter = np.exp(1j * 2 * np.pi *
-                                np.arange(radar.N_bins_r)[..., np.newaxis] *
-                                r_axis / radar.r_max)
-    elif chirp_type == ChirpType.QUADRATIC:
-        r_max = radar.c * radar.fs / (2 * radar.b)
-        r_res = (radar.c * radar.fs /
-                 (2 * (radar.b + radar.a * radar.Tc) * radar.N_bins_r))
-        n = (np.sqrt(radar.a / 2) * np.arange(radar.N_r + 2) / radar.fs +
-             radar.b / np.sqrt(2 * radar.a))**2
-        M = (np.sqrt(radar.a / 2) * (radar.N_r + 1) / radar.fs +
-             radar.b / np.sqrt(2 * radar.a))**2
-        window = (0.42 - 0.5 * np.cos(2 * np.pi * n / M) +
-                  0.08 * np.cos(4 * np.pi * n / M))[1:-1]
-        window /= np.linalg.norm(window)
-        matched_filter = np.exp(
-            1j * 2 * np.pi *
-            (np.sqrt(radar.a / 2) * np.arange(radar.N_bins_r)[..., np.newaxis] /
-             radar.fs + radar.b / np.sqrt(2 * radar.a))**2 *
-            (2 * r_axis / radar.c))
-    elif chirp_type == ChirpType.EXPONENTIAL:
-        r_max = (radar.c / (2 * radar.alpha) *
-                 np.log(1 / (1 - radar.fs / radar.beta)))
-        r_res = (radar.c / (2 * radar.alpha) *
-                 np.log(1 / (1 - radar.fs /
-                             (radar.beta * radar.N_r *
-                              np.exp(radar.alpha *
-                                     (radar.Tc - 2 * radar.r_max / radar.c))))))
-        n = np.exp(radar.alpha * np.arange(radar.N_r + 2) / radar.fs)
-        M = np.exp(radar.alpha * (radar.N_r + 1) / radar.fs)
-        window = (0.42 - 0.5 * np.cos(2 * np.pi * n / M) +
-                  0.08 * np.cos(4 * np.pi * n / M))[1:-1]
-        window /= np.linalg.norm(window)
-        matched_filter = np.exp(
-            1j * 2 * np.pi *
-            np.exp(radar.alpha * np.arange(radar.N_bins_r)[..., np.newaxis] /
-                   radar.fs) *
-            (radar.beta / radar.alpha *
-             (1 - np.exp(-radar.alpha * 2 * r_axis / radar.c))))
-    else:
-        raise ValueError(f"Unimplemented chirp type: {chirp_type}.")
+    chirp_processor = ChirpMatchedFilterProcessorFactory.create(
+        chirp_type, samples, radar)
+    chirp_processor.apply_window()
+    chirp_processor.process_samples()
 
     logging.info("%s chirp:", chirp_type.capitalize())
-    logging.info("Maximum range: %f m.", r_max)
-    logging.info("Range resolution: %f m.", r_res)
+    logging.info("Maximum range: %f m.", chirp_processor.r_max)
+    logging.info("Range resolution: %f m.", chirp_processor.r_res)
 
-    windowed_samples = Samples(samples.samples * window[..., np.newaxis, :])
-    output = Samples(
-        np.squeeze(windowed_samples.samples @ np.conjugate(matched_filter)))
-    output_magnitude_db = constants.mag2db(output.get_abs_samples())
-
-    # Find the range bin with the peak.
-    range_bin_index = np.argmax(output_magnitude_db)
-    logging.info("Peak location at range bin %d (%f m).", range_bin_index,
-                 r_axis[range_bin_index])
-    return output
+    # Estimate the range of the peak.
+    range_estimated = chirp_processor.estimate_peak()
+    logging.info("Peak location at range: %f m.", range_estimated)
+    return chirp_processor
 
 
 def main(argv):

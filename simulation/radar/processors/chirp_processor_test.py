@@ -3,7 +3,8 @@ from absl.testing import absltest
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from simulation.radar.processors.chirp_processor import ChirpFftProcessor
+from simulation.radar.processors.chirp_processor import (ChirpFftProcessor,
+                                                         LinearChirpProcessor)
 
 
 class ChirpProcessorTestCase(absltest.TestCase):
@@ -40,6 +41,14 @@ class ChirpFftProcessorTestCase(ChirpProcessorTestCase):
         self.assertTupleEqual(chirp_fft_processor.get_output_shape(),
                               (self.radar.N_bins_r,))
 
+    def test_r_max(self):
+        chirp_fft_processor = ChirpFftProcessor(self.samples, self.radar)
+        self.assertEqual(chirp_fft_processor.r_max, self.radar.r_max)
+
+    def test_r_res(self):
+        chirp_fft_processor = ChirpFftProcessor(self.samples, self.radar)
+        self.assertEqual(chirp_fft_processor.r_res, self.radar.r_res)
+
     def test_process_samples(self):
         chirp_fft_processor = ChirpFftProcessor(self.samples, self.radar)
         chirp_fft_processor.process_samples()
@@ -53,6 +62,16 @@ class ChirpFftProcessorTestCase(ChirpProcessorTestCase):
         self.assertIsNone(
             np.testing.assert_allclose(chirp_fft_processor.estimate_peak(),
                                        (self.radar.r_max / 2)))
+
+
+class LinearChirpProcessorTestCase(ChirpProcessorTestCase):
+
+    def test_process_samples(self):
+        linear_chirp_processor = LinearChirpProcessor(self.samples, self.radar)
+        linear_chirp_processor.process_samples()
+        self.assertIsNone(
+            np.testing.assert_allclose(linear_chirp_processor.samples,
+                                       np.array([0, 1 + 1j, 2, 1 - 1j])))
 
 
 if __name__ == "__main__":

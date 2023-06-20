@@ -21,17 +21,17 @@ class RangeDopplerProcessor(SignalProcessor2D):
 
     @property
     def title(self) -> str:
-        """Returns the title of the 2D spectrum."""
+        """Title of the 2D spectrum."""
         return "Range-Doppler map"
 
     @property
     def label_axis1(self) -> str:
-        """Returns the label of the Doppler axis."""
+        """Label of the Doppler axis."""
         return "Range rate in m/s"
 
     @property
     def label_axis2(self) -> str:
-        """Returns the label of the range axis."""
+        """Label of the range axis."""
         return "Range in m"
 
     def get_window_axis1(self) -> np.ndarray:
@@ -90,7 +90,7 @@ class RangeDopplerMatchedFilterProcessor(MatchedFilterProcessor2D,
 
     def generate_matched_filter(self, axis1_value: float,
                                 axis2_value: float) -> np.ndarray:
-        """Generates the 2D matched filter against which the ADC samples will be correlated.
+        """Generates the 2D matched filter against which the samples will be correlated.
 
         Args:
             axis1_value: Doppler value.

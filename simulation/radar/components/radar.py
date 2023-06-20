@@ -34,6 +34,9 @@ class Radar:
         self.N_r = 256  # Number of ADC samples.
         self.N_v = 512  # Number of chirps.
 
+        self.r_axis_override = None  # type: np.ndarray
+        self.v_axis_override = None  # type: np.ndarray
+
         # Antenna parameters.
         self.N_tx = 3  # Number of TX antennas.
         self.N_rx = 4  # Number of RX antennas.
@@ -160,7 +163,15 @@ class Radar:
     @property
     def r_axis(self) -> np.ndarray:
         """Range axis in m."""
+        if self.r_axis_override is not None:
+            return self.r_axis_override
         return np.linspace(0, self.r_max, self.N_bins_r, endpoint=False)
+
+    @r_axis.setter
+    def r_axis(self, r_axis: np.ndarray) -> None:
+        """Set the range axis in m."""
+        self.N_bins_r = len(r_axis)
+        self.r_axis_override = r_axis
 
     @property
     def v_res(self) -> float:
@@ -174,11 +185,19 @@ class Radar:
 
     @property
     def v_axis(self) -> np.ndarray:
-        """Doppler axis in m/s."""
+        """Range rate axis in m/s."""
+        if self.v_axis_override is not None:
+            return self.v_axis_override
         return np.linspace(-self.v_max,
                            self.v_max,
                            self.N_bins_v,
                            endpoint=False)
+
+    @v_axis.setter
+    def v_axis(self, v_axis: np.ndarray) -> None:
+        """Set the range rate axis in m/s."""
+        self.N_bins_v = len(v_axis)
+        self.v_axis_override = v_axis
 
     @property
     def az_res(self) -> float:
