@@ -1,0 +1,22 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "linear_model",
+    srcs = ["linear_model.py"],
+    deps = [
+        requirement("numpy"),
+        requirement("scikit-learn"),
+    ],
+)
+
+py_test(
+    name = "linear_model_test",
+    srcs = ["linear_model_test.py"],
+    deps = [
+        ":linear_model",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

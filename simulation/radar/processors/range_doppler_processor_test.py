@@ -133,7 +133,6 @@ class RangeDopplerMatchedFilterProcessorTestCase(RangeDopplerProcessorTestCase):
                     [0, 0, 0, 0],
                     [8, 4 - 4j, 0, 4 + 4j],
                 ]),
-                rtol=0.01,
                 atol=0.05))
 
 
