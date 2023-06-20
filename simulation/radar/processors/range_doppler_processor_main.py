@@ -1,6 +1,5 @@
 """Simulates the radar datapath processing and plots the range-Doppler map for a SISO radar."""
 
-import matplotlib.pyplot as plt
 import numpy as np
 from absl import app, flags, logging
 
@@ -12,7 +11,6 @@ from simulation.radar.components.target import Target
 from simulation.radar.processors.range_doppler_processor import (
     RangeDopplerFftProcessor, RangeDopplerMatchedFilterProcessor)
 from utils import constants
-from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
 
@@ -71,25 +69,13 @@ def plot_range_doppler_map_siso(
     range_doppler_map.process_2d_samples()
     range_doppler_map_abs_db = constants.mag2db(
         np.squeeze(range_doppler_map.get_abs_samples()))
-
-    # Plot the range-Doppler map.
-    fig, ax = plt.subplots(
-        figsize=(12, 8),
-        subplot_kw={"projection": "3d"},
+    range_doppler_map.plot_2d_spectrum()
+    range_rate_estimated, range_estimated = range_doppler_map.estimate_peak_bins(
     )
-    surf = ax.plot_surface(
-        *np.meshgrid(range_doppler_map.get_output_axis1(),
-                     range_doppler_map.get_output_axis2()),
-        range_doppler_map_abs_db.T,
-        cmap=COLOR_MAPS["parula"],
-        antialiased=False,
-    )
-    ax.set_title("Range-Doppler map")
-    ax.set_xlabel("v in m/s")
-    ax.set_ylabel("d in m")
-    ax.view_init(45, -45)
-    plt.colorbar(surf)
-    plt.show()
+    logging.info("Estimated range: %f m, actual range: %f m.", range_estimated,
+                 rnge)
+    logging.info("Estimated range rate: %f m/s, actual range rate: %f m/s.",
+                 range_rate_estimated, range_rate)
 
     # Calculate the theoretical SNR.
     signal_amplitude_db = constants.mag2db(adc_data.get_amplitude())

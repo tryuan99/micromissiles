@@ -8,9 +8,7 @@ py_library(
     deps = [
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
-        "//utils/visualization:color_maps",
-        "//utils:constants",
-        requirement("matplotlib"),
+        "//simulation/radar/processors:signal_processor",
         requirement("numpy"),
     ],
 )
@@ -33,7 +31,6 @@ py_binary(
         ":doa_array_extension_estimator",
         "//simulation/radar/components:adc_data",
         "//simulation/radar/components:radar",
-        "//simulation/radar/components:samples",
         "//simulation/radar/components:spatial_samples",
         "//simulation/radar/components:target",
         "//simulation/radar/processors:range_doppler_processor",
@@ -48,6 +45,7 @@ py_library(
         ":doa_estimator",
         "//simulation/radar/components:radar",
         "//simulation/radar/components:spatial_samples",
+        "//simulation/radar/processors:fft_processor",
         requirement("numpy"),
     ],
 )
@@ -59,7 +57,6 @@ py_binary(
         ":doa_fft_estimator",
         "//simulation/radar/components:adc_data",
         "//simulation/radar/components:radar",
-        "//simulation/radar/components:samples",
         "//simulation/radar/components:spatial_samples",
         "//simulation/radar/components:target",
         "//simulation/radar/processors:range_doppler_processor",
@@ -72,6 +69,7 @@ py_library(
     srcs = ["doa_music_estimator.py"],
     deps = [
         ":doa_estimator",
+        "//simulation/radar/components:coordinates",
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
         "//simulation/radar/components:spatial_samples",
@@ -86,7 +84,6 @@ py_binary(
         ":doa_music_estimator",
         "//simulation/radar/components:adc_data",
         "//simulation/radar/components:radar",
-        "//simulation/radar/components:samples",
         "//simulation/radar/components:spatial_samples",
         "//simulation/radar/components:target",
         "//simulation/radar/processors:range_doppler_processor",
@@ -101,7 +98,6 @@ py_binary(
         ":doa_music_estimator",
         "//simulation/radar/components:adc_data",
         "//simulation/radar/components:radar",
-        "//simulation/radar/components:samples",
         "//simulation/radar/components:spatial_samples",
         "//simulation/radar/components:target",
         "//simulation/radar/processors:range_doppler_processor",

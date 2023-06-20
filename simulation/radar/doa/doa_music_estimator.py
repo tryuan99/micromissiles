@@ -27,16 +27,15 @@ class DoaMusicEstimator(DoaEstimator):
     index.
     """
 
-    def __init__(self, radar: Radar,
-                 spatial_samples_snapshots: list[SpatialSamples]):
+    def __init__(self, spatial_samples_snapshots: list[SpatialSamples],
+                 radar: Radar):
         super().__init__(
-            radar,
             Samples(
                 np.array([
                     snapshot.samples for snapshot in spatial_samples_snapshots
-                ])))
+                ])), radar)
 
-    def process_spatial_samples(self) -> None:
+    def process_2d_samples(self) -> None:
         """Processes the spatial samples by running the MUSIC algorithm."""
         covariance_matrix = self._get_covariance_matrix()
         # Find the noise subspace, which is equivalent to the null subspace of
@@ -51,17 +50,6 @@ class DoaMusicEstimator(DoaEstimator):
         arrival_vectors_projection_norm_squared = np.linalg.norm(
             arrival_vectors_projection, axis=2)**2
         self.samples = arrival_vectors_projection_norm_squared
-
-    def estimate_doa(self) -> tuple[float, float]:
-        """Estimates the direction-of-arrival.
-
-        Returns:
-            A tuple consisting of the estimated (elevation, azimuth) in rad.
-        """
-        elevation_bin_index, azimuth_bin_index = np.unravel_index(
-            np.argmax(self.get_abs_samples()), self.shape)
-        return self.radar.el_axis[elevation_bin_index], self.radar.az_axis[
-            azimuth_bin_index]
 
     def _get_covariance_matrix(self) -> np.ndarray:
         """Calculates the sensor covariance matrix.
@@ -84,7 +72,7 @@ class DoaMusicEstimator(DoaEstimator):
             azimuth) coordinates of each virtual antenna in units of lambda/2.
         """
         antenna_azimuth_coordinates, antenna_elevation_coordinates = np.meshgrid(
-            np.arange(self.shape[2]), np.arange(self.shape[1]))
+            np.arange(self.shape[-1]), np.arange(self.shape[-2]))
         antenna_azimuth_coordinates = antenna_azimuth_coordinates.flatten()
         antenna_elevation_coordinates = antenna_elevation_coordinates.flatten()
         return antenna_azimuth_coordinates, antenna_elevation_coordinates
@@ -96,28 +84,29 @@ class DoaMusicEstimator(DoaEstimator):
         Returns:
             The Cartesian coordinates of the unit direction vectors.
         """
-        elevation, azimuth = np.meshgrid(self.radar.el_axis, self.radar.az_axis)
+        elevation, azimuth = np.meshgrid(self.get_output_axis1(),
+                                         self.get_output_axis2())
         polar_coordinates = PolarCoordinates(1, azimuth, elevation)
         return polar_coordinates.transform_to_cartesian()
 
     def _get_arrival_vectors(self) -> np.ndarray:
         """Gets the arrival vectors for every azimuth and elevation hypothesis.
 
-        Returns:
-            The arrival vectors for every azimuth and elevation hypothesis and
-            every virtual antenna.
-
         The arrival vector contains the relative theoretical phase offset at
         each virtual antenna of a signal from a target at the given azimuth and
         elevation.
+
+        Returns:
+            The arrival vectors for every azimuth and elevation hypothesis and
+            every virtual antenna.
         """
+        num_antennas = np.multiply.reduce(self.shape[-2:])
         (antenna_azimuth_coordinates,
          antenna_elevation_coordinates) = self._get_antenna_coordinates()
         direction_vectors = self._get_direction_vectors().coordinates
-        arrival_vectors = np.zeros((len(
-            self.radar.el_axis), len(self.radar.az_axis), self.samples[0].size),
+        arrival_vectors = np.zeros((*self.get_output_shape(), num_antennas),
                                    dtype=np.complex128)
-        for antenna_index in range(self.samples[0].size):
+        for antenna_index in range(num_antennas):
             # Project the position vector of each virtual antenna onto the unit
             # direction vector to find the phase offset at each virtual antenna.
             antenna_azimuth_coordinate = antenna_azimuth_coordinates[

@@ -1,7 +1,5 @@
 """The range-Doppler processor performs the range and Doppler processing on the ADC samples."""
 
-from abc import ABC
-
 import numpy as np
 
 from simulation.radar.components.radar import Radar
@@ -12,7 +10,7 @@ from simulation.radar.processors.matched_filter_processor import \
 from simulation.radar.processors.signal_processor import SignalProcessor
 
 
-class RangeDopplerProcessor(SignalProcessor, ABC):
+class RangeDopplerProcessor(SignalProcessor):
     """Interface for a range-Doppler processor.
 
     The first dimension is Doppler, and the second dimension is range.
@@ -20,6 +18,21 @@ class RangeDopplerProcessor(SignalProcessor, ABC):
 
     def __init__(self, samples: Samples, radar: Radar):
         super().__init__(samples, radar)
+
+    @property
+    def title(self) -> str:
+        """Returns the title of the 2D spectrum."""
+        return "Range-Doppler map"
+
+    @property
+    def label_axis1(self) -> str:
+        """Returns the label of the Doppler axis."""
+        return "Range rate in m/s"
+
+    @property
+    def label_axis2(self) -> str:
+        """Returns the label of the range axis."""
+        return "Range in m"
 
     def get_window_axis1(self) -> np.ndarray:
         """Returns the Doppler window."""
@@ -58,9 +71,9 @@ class RangeDopplerFftProcessor(FftProcessor, RangeDopplerProcessor):
 
     def process_2d_samples(self) -> None:
         """Processes the 2D samples."""
-        super().apply_2d_fft()
+        self.apply_2d_fft()
         # Perform an FFT shift in the Doppler dimension.
-        super().fft_shift_axis1()
+        self.fft_shift_axis1()
 
 
 class RangeDopplerMatchedFilterProcessor(MatchedFilterProcessor,

@@ -6,7 +6,6 @@ from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.radar import Radar
-from simulation.radar.components.samples import Samples
 from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.components.target import Target
 from simulation.radar.doa.doa_music_estimator import DoaMusicEstimator
@@ -72,9 +71,9 @@ def plot_doa_music_estimator_simo(
 
     # Use a direction-of-arrival MUSIC estimator to perform direction-of-arrival
     # estimation.
-    doa_estimator = DoaMusicEstimator(radar, spatial_samples_snapshots)
-    doa_estimator.process_spatial_samples()
-    elevation_estimated, azimuth_estimated = doa_estimator.estimate_doa()
+    doa_estimator = DoaMusicEstimator(spatial_samples_snapshots, radar)
+    doa_estimator.process_2d_samples()
+    elevation_estimated, azimuth_estimated = doa_estimator.estimate_peak_bins()
     logging.info("Estimated azimuth: %f rad, actual azimuth: %f rad.",
                  azimuth_estimated, azimuth)
     logging.info("Estimated elevation: %f radar, actual elevation: %f rad.",

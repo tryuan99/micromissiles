@@ -1,56 +1,53 @@
 """The direction-of-arrival estimator estimates the azimuth and elevation of
 the target relative to the radar's boresight.
 
-The direction-of-arrival estimator takes in spatial samples as its input.
+The direction-of-arrival estimator takes in spatial samples as its input and
+processes them to perform direction-of-arrival estimation.
 """
 
-from abc import ABC, abstractmethod
-
-import matplotlib.pyplot as plt
 import numpy as np
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from utils import constants
-from utils.visualization.color_maps import COLOR_MAPS
+from simulation.radar.processors.signal_processor import SignalProcessor
 
 
-class DoaEstimator(Samples, ABC):
-    """Interface for direction-of-arrival estimators."""
+class DoaEstimator(SignalProcessor):
+    """Interface for a direction-of-arrival estimator.
 
-    def __init__(self, radar: Radar, samples: Samples):
-        super().__init__(samples)
-        self.radar = radar
+    The first dimension is elevation, and the second dimension is azimuth.
+    """
 
-    @abstractmethod
-    def process_spatial_samples(self) -> None:
-        """Performs direction-of-arrival estimation by processing the spatial
-        samples.
-        """
+    def __init__(self, samples: Samples, radar: Radar):
+        super().__init__(samples, radar)
 
-    @abstractmethod
-    def estimate_doa(self) -> tuple[float, float]:
-        """Estimates the direction-of-arrival.
+    @property
+    def title(self) -> str:
+        """Returns the title of the 2D spectrum."""
+        return "Azimuth-elevation spectrum"
 
-        Returns:
-            A tuple consisting of the estimated (elevation, azimuth) in rad.
-        """
+    @property
+    def label_axis1(self) -> str:
+        """Returns the label of the elevation axis."""
+        return "Elevation in rad"
 
-    def plot_2d_spectrum(self) -> None:
-        """Plots the azimuth-elevation spectrum."""
-        fig, ax = plt.subplots(
-            figsize=(12, 8),
-            subplot_kw={"projection": "3d"},
-        )
-        surf = ax.plot_surface(
-            *np.meshgrid(self.radar.el_axis, self.radar.az_axis),
-            constants.mag2db(self.get_abs_samples()).T,
-            cmap=COLOR_MAPS["parula"],
-            antialiased=False,
-        )
-        ax.set_title("Azimuth-elevation spectrum")
-        ax.set_xlabel("Elevation in rad")
-        ax.set_ylabel("Azimuth in rad")
-        ax.view_init(45, -45)
-        plt.colorbar(surf)
-        plt.show()
+    @property
+    def label_axis2(self) -> str:
+        """Returns the label of the azimuth axis."""
+        return "Azimuth in rad"
+
+    def get_window_axis1(self) -> np.ndarray:
+        """Returns the elevation window."""
+        return np.ones(self.sample.shape[-2])
+
+    def get_window_axis2(self) -> np.ndarray:
+        """Returns the azimuth window."""
+        return np.ones(self.sample.shape[-1])
+
+    def get_output_axis1(self) -> np.ndarray:
+        """Returns the elevation axis."""
+        return self.radar.el_axis
+
+    def get_output_axis2(self) -> np.ndarray:
+        """Returns the azimuth axis."""
+        return self.radar.az_axis

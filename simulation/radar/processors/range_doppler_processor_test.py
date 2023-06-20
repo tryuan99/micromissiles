@@ -90,6 +90,15 @@ class RangeDopplerFftProcessorTestCase(RangeDopplerProcessorTestCase):
                     [8, 4 - 4j, 0, 4 + 4j],
                 ])))
 
+    def test_estimate_peak_bins(self):
+        range_doppler_fft_processor = RangeDopplerFftProcessor(
+            self.samples, self.radar)
+        range_doppler_fft_processor.process_2d_samples()
+        self.assertIsNone(
+            np.testing.assert_allclose(
+                range_doppler_fft_processor.estimate_peak_bins(),
+                (self.radar.v_max / 2, 0)))
+
     def test_accumulate_log_magnitude(self):
         a = self.samples.samples[np.newaxis, np.newaxis, ...]
         range_doppler_fft_processor = RangeDopplerFftProcessor(

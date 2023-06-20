@@ -1,6 +1,6 @@
 """The matched filter processor is an interface for a 2D matched filter processor."""
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 import numpy as np
 
@@ -9,7 +9,7 @@ from simulation.radar.components.samples import Samples
 from simulation.radar.processors.signal_processor import SignalProcessor
 
 
-class MatchedFilterProcessor(SignalProcessor, ABC):
+class MatchedFilterProcessor(SignalProcessor):
     """Interface for a 2D matched filter processor."""
 
     def __init__(self, samples: Samples, radar: Radar):

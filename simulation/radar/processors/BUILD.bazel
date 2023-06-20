@@ -59,9 +59,7 @@ py_binary(
         "//simulation/radar/components:samples",
         "//simulation/radar/components:target",
         "//utils:constants",
-        "//utils/visualization:color_maps",
         requirement("absl-py"),
-        requirement("matplotlib"),
         requirement("numpy"),
     ],
 )
@@ -88,6 +86,9 @@ py_library(
     deps = [
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        requirement("matplotlib"),
         requirement("numpy"),
     ],
 )

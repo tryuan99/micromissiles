@@ -3,8 +3,6 @@
 The FFT processor applies a 2D FFT to process the samples.
 """
 
-from abc import ABC, abstractmethod
-
 import numpy as np
 
 from simulation.radar.components.radar import Radar
@@ -12,7 +10,7 @@ from simulation.radar.components.samples import Samples
 from simulation.radar.processors.signal_processor import SignalProcessor
 
 
-class FftProcessor(SignalProcessor, ABC):
+class FftProcessor(SignalProcessor):
     """Interface for a 2D FFT processor."""
 
     def __init__(self, samples: Samples, radar: Radar):
