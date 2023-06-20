@@ -53,6 +53,56 @@ class SignalProcessor(Samples, ABC):
         """Plots the processeds spectrum."""
 
 
+class SignalProcessor1D(SignalProcessor):
+    """Interface for a 1D signal processor."""
+
+    def __init__(self, samples: Samples, radar: Radar):
+        super().__init__(samples, radar)
+
+    @property
+    @abstractmethod
+    def label_axis(self) -> str:
+        """Returns the label of the dimension to be processed."""
+
+    @abstractmethod
+    def get_window(self) -> np.ndarray:
+        """Returns the window for the samples."""
+
+    def apply_window(self) -> None:
+        """Applies a window to the samples to be processed."""
+        self.samples = self.samples * self.get_window()
+
+    @abstractmethod
+    def get_output_axis(self) -> np.ndarray:
+        """Returns the axis for the output."""
+
+    def get_output_shape(self) -> tuple[int]:
+        """Returns the 1D output shape after processing."""
+        return len(self.get_output_axis()),
+
+    def estimate_peak(self) -> tuple[float]:
+        """Estimates the bin corresponding the peak.
+
+        This function should only be used if there is a unique peak in the 1D
+        spectrum.
+
+        Returns:
+            A tuple consisting of the estimated bin value at the peak.
+        """
+        index = np.argmax(np.squeeze(self.get_abs_samples()))
+        return self.get_output_axis()[index]
+
+    def plot_spectrum(self) -> None:
+        """Plots the processed 1D spectrum."""
+        fig, ax = plt.subplots(figsize=(12, 8))
+        plt.plot(self.get_output_axis(),
+                 constants.mag2db(np.squeeze(self.get_abs_samples())))
+        ax.set_title(self.title)
+        ax.set_xlabel(self.label_axis)
+        ax.set_ylabel("Magnitude in dB")
+        plt.show()
+
+
 class SignalProcessor2D(SignalProcessor):
     """Interface for a 2D signal processor."""
 

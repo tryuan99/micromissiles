@@ -1,12 +1,32 @@
-"""The FFT processor is an interface that applies a 2D FFT to process the
-samples, e.g., a range-Doppler map.
+"""The FFT processor is an interface that applies a FFT to process the samples,
+e.g., a range-Doppler map.
 """
 
 import numpy as np
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from simulation.radar.processors.signal_processor import SignalProcessor2D
+from simulation.radar.processors.signal_processor import (SignalProcessor1D,
+                                                          SignalProcessor2D)
+
+
+class FftProcessor1D(SignalProcessor1D):
+    """Interface for a 1D FFT processor."""
+
+    def __init__(self, samples: Samples, radar: Radar):
+        super().__init__(samples, radar)
+
+    def process_samples(self) -> None:
+        """Processes the 1D samples."""
+        self.apply_fft()
+
+    def apply_fft(self) -> None:
+        """Applies a 1D FFT."""
+        self.samples = np.fft.fft(self.samples, *self.get_output_shape())
+
+    def fft_shift(self) -> None:
+        """Performs an FFT shift."""
+        self.samples = np.fft.fftshift(self.samples)
 
 
 class FftProcessor2D(SignalProcessor2D):

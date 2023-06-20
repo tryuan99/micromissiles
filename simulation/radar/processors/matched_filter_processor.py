@@ -6,7 +6,41 @@ import numpy as np
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from simulation.radar.processors.signal_processor import SignalProcessor2D
+from simulation.radar.processors.signal_processor import (SignalProcessor1D,
+                                                          SignalProcessor2D)
+
+
+class MatchedFilterProcessor1D(SignalProcessor1D):
+    """Interface for a 1D matched filter processor."""
+
+    def __init__(self, samples: Samples, radar: Radar):
+        super().__init__(samples, radar)
+
+    def process_samples(self) -> None:
+        """Processes the 1D samples."""
+        self._apply_matched_filter()
+
+    @abstractmethod
+    def generate_matched_filter(self, value: float) -> np.ndarray:
+        """Generates the 1D matched filter against which the samples will be correlated.
+
+        The size of the matched filter should be compatible with the samples.
+
+        Args:
+            value: Value for the dimension to be processed.
+
+        Returns:
+            A 1D matched filter for the given axis value.
+        """
+
+    def _apply_matched_filter(self) -> None:
+        """Applies a 1D matched filter."""
+        matched_filter_out = np.zeros(
+            (*self.samples.shape[:-1], *self.get_output_shape()),
+            dtype=np.complex128)
+        matched_filter = self.generate_matched_filter(
+            self.get_output_axis()[..., np.newaxis])
+        self.samples = np.conjugate(matched_filter) @ np.squeeze(self.samples)
 
 
 class MatchedFilterProcessor2D(SignalProcessor2D):

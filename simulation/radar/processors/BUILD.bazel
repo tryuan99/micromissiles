@@ -3,6 +3,33 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "chirp_processor",
+    srcs = ["chirp_processor.py"],
+    deps = [
+        ":fft_processor",
+        ":matched_filter_processor",
+        ":signal_processor",
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+        requirement("matplotlib"),
+    ],
+)
+
+py_test(
+    name = "chirp_processor_test",
+    srcs = ["chirp_processor_test.py"],
+    deps = [
+        ":chirp_processor",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "fft_processor",
     srcs = ["fft_processor.py"],
     deps = [
