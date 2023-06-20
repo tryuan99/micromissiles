@@ -35,7 +35,7 @@ class DoaMusicEstimator(DoaEstimator):
                     snapshot.samples for snapshot in spatial_samples_snapshots
                 ])), radar)
 
-    def process_2d_samples(self) -> None:
+    def process_samples(self) -> None:
         """Processes the spatial samples by running the MUSIC algorithm."""
         covariance_matrix = self._get_covariance_matrix()
         # Find the noise subspace, which is equivalent to the null subspace of

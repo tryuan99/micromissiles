@@ -20,12 +20,12 @@ class DoaArrayExtensionEstimator(DoaFftEstimator):
     def __init__(self, spatial_samples: SpatialSamples, radar: Radar):
         super().__init__(spatial_samples, radar)
 
-    def process_2d_samples(self) -> None:
+    def process_samples(self) -> None:
         """Processes the 2D spatial samples by performing a 2D FFT on the
         virtually extended array.
         """
         self._perform_virtual_array_extension()
-        super().process_2d_samples()
+        super().process_samples()
 
     def _perform_virtual_array_extension(self) -> None:
         """Extends the virtual array using simple multiplication.

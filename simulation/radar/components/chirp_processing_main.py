@@ -109,9 +109,9 @@ def _process_chirp_with_matched_filter(
         r_max = radar.c * radar.fs / (2 * radar.mu)
         r_res = r_max / radar.N_r
         window = radar.window_r
-        matched_filter = np.exp(
-            1j * 2 * np.pi * np.arange(radar.N_bins_r)[:, np.newaxis] * r_axis /
-            radar.r_max)
+        matched_filter = np.exp(1j * 2 * np.pi *
+                                np.arange(radar.N_bins_r)[..., np.newaxis] *
+                                r_axis / radar.r_max)
     elif chirp_type == ChirpType.QUADRATIC:
         r_max = radar.c * radar.fs / (2 * radar.b)
         r_res = (radar.c * radar.fs /
@@ -125,7 +125,7 @@ def _process_chirp_with_matched_filter(
         window /= np.linalg.norm(window)
         matched_filter = np.exp(
             1j * 2 * np.pi *
-            (np.sqrt(radar.a / 2) * np.arange(radar.N_bins_r)[:, np.newaxis] /
+            (np.sqrt(radar.a / 2) * np.arange(radar.N_bins_r)[..., np.newaxis] /
              radar.fs + radar.b / np.sqrt(2 * radar.a))**2 *
             (2 * r_axis / radar.c))
     elif chirp_type == ChirpType.EXPONENTIAL:
@@ -143,7 +143,7 @@ def _process_chirp_with_matched_filter(
         window /= np.linalg.norm(window)
         matched_filter = np.exp(
             1j * 2 * np.pi *
-            np.exp(radar.alpha * np.arange(radar.N_bins_r)[:, np.newaxis] /
+            np.exp(radar.alpha * np.arange(radar.N_bins_r)[..., np.newaxis] /
                    radar.fs) *
             (radar.beta / radar.alpha *
              (1 - np.exp(-radar.alpha * 2 * r_axis / radar.c))))
@@ -154,7 +154,7 @@ def _process_chirp_with_matched_filter(
     logging.info("Maximum range: %f m.", r_max)
     logging.info("Range resolution: %f m.", r_res)
 
-    windowed_samples = Samples(np.einsum("kij,j->kij", samples.samples, window))
+    windowed_samples = Samples(samples.samples * window[..., np.newaxis, :])
     output = Samples(
         np.squeeze(windowed_samples.samples @ np.conjugate(matched_filter)))
     output_magnitude_db = constants.mag2db(output.get_abs_samples())
@@ -183,7 +183,7 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_float("range", 20, "Range in m.", lower_bound=0.0)
-    flags.DEFINE_float("delta_r", 0.2, "Range difference in m.")
+    flags.DEFINE_float("delta_r", 0, "Range difference in m.")
     flags.DEFINE_float("range_rate", 0, "Range rate in m/s.")
     flags.DEFINE_float("acceleration", 0, "Acceleration in m/s^2.")
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")

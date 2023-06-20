@@ -1,8 +1,9 @@
-"""The signal processor is an interface for a 2D signal processor, e.g., a
-range-Doppler map.
+"""The signal processor is an interface for a signal processor, e.g., a range-
+Doppler map.
 
-The two dimensions that will be processed are the last two dimensions of the
-samples matrix.
+The dimensions that will be processed are the last dimensions of the samples
+matrix, i.e., for a 2D signal processor, the last two dimensions of the
+samples matrix will be processed.
 """
 
 from abc import ABC, abstractmethod
@@ -17,7 +18,7 @@ from utils.visualization.color_maps import COLOR_MAPS
 
 
 class SignalProcessor(Samples, ABC):
-    """Interface for a 2D signal processor."""
+    """Interface for a signal processor."""
 
     def __init__(self, samples: Samples, radar: Radar):
         super().__init__(samples)
@@ -26,17 +27,47 @@ class SignalProcessor(Samples, ABC):
     @property
     @abstractmethod
     def title(self) -> str:
-        """Returns the title of the 2D spectrum."""
+        """Returns the title of the spectrum."""
+
+    @abstractmethod
+    def get_output_shape(self) -> tuple[int, ...]:
+        """Returns the output shape after processing."""
+
+    @abstractmethod
+    def process_samples(self) -> None:
+        """Processes the samples."""
+
+    @abstractmethod
+    def estimate_peak(self) -> tuple[float, ...]:
+        """Estimates the bin(s) corresponding the peak.
+
+        This function should only be used if there is a unique peak in the
+        spectrum.
+
+        Returns:
+            A tuple consisting of the estimated axis values at the peak.
+        """
+
+    @abstractmethod
+    def plot_spectrum(self) -> None:
+        """Plots the processeds spectrum."""
+
+
+class SignalProcessor2D(SignalProcessor):
+    """Interface for a 2D signal processor."""
+
+    def __init__(self, samples: Samples, radar: Radar):
+        super().__init__(samples, radar)
 
     @property
     @abstractmethod
     def label_axis1(self) -> str:
-        """Returns the label of axis 1."""
+        """Returns the label of the first dimension."""
 
     @property
     @abstractmethod
     def label_axis2(self) -> str:
-        """Returns the label of axis 2."""
+        """Returns the label of the second dimension."""
 
     @abstractmethod
     def get_window_axis1(self) -> np.ndarray:
@@ -79,11 +110,7 @@ class SignalProcessor(Samples, ABC):
         """
         return (len(self.get_output_axis1()), len(self.get_output_axis2()))
 
-    @abstractmethod
-    def process_2d_samples(self) -> None:
-        """Processes the 2D samples."""
-
-    def estimate_peak_bins(self) -> tuple[float, float]:
+    def estimate_peak(self) -> tuple[float, float]:
         """Estimates the 2D bins corresponding the peak.
 
         This function should only be used if there is a unique peak in the 2D
@@ -98,7 +125,7 @@ class SignalProcessor(Samples, ABC):
         return (self.get_output_axis1()[axis1_index],
                 self.get_output_axis2()[axis2_index])
 
-    def plot_2d_spectrum(self) -> None:
+    def plot_spectrum(self) -> None:
         """Plots the processed 2D spectrum."""
         fig, ax = plt.subplots(
             figsize=(12, 8),

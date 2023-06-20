@@ -6,18 +6,18 @@ import numpy as np
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from simulation.radar.processors.signal_processor import SignalProcessor
+from simulation.radar.processors.signal_processor import SignalProcessor2D
 
 
-class MatchedFilterProcessor(SignalProcessor):
+class MatchedFilterProcessor2D(SignalProcessor2D):
     """Interface for a 2D matched filter processor."""
 
     def __init__(self, samples: Samples, radar: Radar):
         super().__init__(samples, radar)
 
-    def process_2d_samples(self) -> None:
+    def process_samples(self) -> None:
         """Processes the 2D samples."""
-        self._apply_2d_matched_filter()
+        self._apply_matched_filter()
 
     @abstractmethod
     def generate_matched_filter(self, axis1_value: float,
@@ -28,14 +28,14 @@ class MatchedFilterProcessor(SignalProcessor):
         of the samples.
 
         Args:
-            axis1_value: Value for axis 1.
-            axis2_value: Value for axis 2.
+            axis1_value: Value for the first dimension.
+            axis2_value: Value for the second dimension.
 
         Returns:
-            A 2D matched filter for the given axis 1 and axis 2 values.
+            A 2D matched filter for the given first and second dimension values.
         """
 
-    def _apply_2d_matched_filter(self) -> None:
+    def _apply_matched_filter(self) -> None:
         """Applies a 2D matched filter."""
         matched_filter_out = np.zeros(
             (*self.samples.shape[:-2], *self.get_output_shape()),

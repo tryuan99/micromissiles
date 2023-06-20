@@ -7,16 +7,16 @@ import numpy as np
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.doa.doa_estimator import DoaEstimator
-from simulation.radar.processors.fft_processor import FftProcessor
+from simulation.radar.processors.fft_processor import FftProcessor2D
 
 
-class DoaFftEstimator(DoaEstimator, FftProcessor):
+class DoaFftEstimator(DoaEstimator, FftProcessor2D):
     """Performs direction-of-arrival estimation using a 2D FFT."""
 
     def __init__(self, spatial_samples: SpatialSamples, radar: Radar):
         super().__init__(spatial_samples, radar)
 
-    def process_2d_samples(self) -> None:
+    def process_samples(self) -> None:
         """Processes the 2D spatial samples."""
         # For elevation, the FFT outputs a positive spatial frequency if the
         # phase increases in the positive y-direction. In our coordinate system,

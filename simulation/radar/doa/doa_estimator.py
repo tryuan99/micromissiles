@@ -9,10 +9,10 @@ import numpy as np
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from simulation.radar.processors.signal_processor import SignalProcessor
+from simulation.radar.processors.signal_processor import SignalProcessor2D
 
 
-class DoaEstimator(SignalProcessor):
+class DoaEstimator(SignalProcessor2D):
     """Interface for a direction-of-arrival estimator.
 
     The first dimension is elevation, and the second dimension is azimuth.

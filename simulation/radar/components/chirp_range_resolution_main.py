@@ -167,7 +167,7 @@ def _process_chirp_with_matched_filter(
     else:
         raise ValueError(f"Unimplemented chirp type: {chirp_type}.")
 
-    windowed_samples = Samples(np.einsum("kij,j->kij", samples.samples, window))
+    windowed_samples = Samples(samples.samples * window[..., np.newaxis, :])
     return Samples(
         np.squeeze(windowed_samples.samples @ np.conjugate(matched_filter)))
 

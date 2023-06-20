@@ -66,12 +66,11 @@ def plot_range_doppler_map_siso(
     else:
         range_doppler_map = RangeDopplerFftProcessor(samples, radar)
     range_doppler_map.apply_2d_window()
-    range_doppler_map.process_2d_samples()
+    range_doppler_map.process_samples()
     range_doppler_map_abs_db = constants.mag2db(
         np.squeeze(range_doppler_map.get_abs_samples()))
-    range_doppler_map.plot_2d_spectrum()
-    range_rate_estimated, range_estimated = range_doppler_map.estimate_peak_bins(
-    )
+    range_doppler_map.plot_spectrum()
+    range_rate_estimated, range_estimated = range_doppler_map.estimate_peak()
     logging.info("Estimated range: %f m, actual range: %f m.", range_estimated,
                  rnge)
     logging.info("Estimated range rate: %f m/s, actual range rate: %f m/s.",

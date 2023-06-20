@@ -64,7 +64,7 @@ def plot_doa_music_estimator_simo(
 
         range_doppler_map = RangeDopplerFftProcessor(samples, radar)
         range_doppler_map.apply_2d_window()
-        range_doppler_map.process_2d_samples()
+        range_doppler_map.process_samples()
 
         spatial_samples = SpatialSamples(radar, target, range_doppler_map)
         spatial_samples_snapshots.append(spatial_samples)
@@ -72,13 +72,13 @@ def plot_doa_music_estimator_simo(
     # Use a direction-of-arrival MUSIC estimator to perform direction-of-arrival
     # estimation.
     doa_estimator = DoaMusicEstimator(spatial_samples_snapshots, radar)
-    doa_estimator.process_2d_samples()
-    elevation_estimated, azimuth_estimated = doa_estimator.estimate_peak_bins()
+    doa_estimator.process_samples()
+    elevation_estimated, azimuth_estimated = doa_estimator.estimate_peak()
     logging.info("Estimated azimuth: %f rad, actual azimuth: %f rad.",
                  azimuth_estimated, azimuth)
     logging.info("Estimated elevation: %f radar, actual elevation: %f rad.",
                  elevation_estimated, elevation)
-    doa_estimator.plot_2d_spectrum()
+    doa_estimator.plot_spectrum()
 
 
 def main(argv):

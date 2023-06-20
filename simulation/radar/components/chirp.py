@@ -276,7 +276,7 @@ class ChirpType(str, Enum):
         return list(cls._value2member_map_.keys())
 
 
-# Map from chirp type to chirp clas.
+# Map from chirp type to chirp class.
 CHIRP_MAP = {
     ChirpType.LINEAR: LinearChirp,
     ChirpType.QUADRATIC: QuadraticChirp,

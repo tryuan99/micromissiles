@@ -4,13 +4,13 @@ import numpy as np
 
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
-from simulation.radar.processors.fft_processor import FftProcessor
+from simulation.radar.processors.fft_processor import FftProcessor2D
 from simulation.radar.processors.matched_filter_processor import \
-    MatchedFilterProcessor
-from simulation.radar.processors.signal_processor import SignalProcessor
+    MatchedFilterProcessor2D
+from simulation.radar.processors.signal_processor import SignalProcessor2D
 
 
-class RangeDopplerProcessor(SignalProcessor):
+class RangeDopplerProcessor(SignalProcessor2D):
     """Interface for a range-Doppler processor.
 
     The first dimension is Doppler, and the second dimension is range.
@@ -63,20 +63,20 @@ class RangeDopplerProcessor(SignalProcessor):
                                    (0, -3))))
 
 
-class RangeDopplerFftProcessor(FftProcessor, RangeDopplerProcessor):
+class RangeDopplerFftProcessor(FftProcessor2D, RangeDopplerProcessor):
     """Performs range and Doppler processing using a 2D FFT."""
 
     def __init__(self, samples: Samples, radar: Radar):
         super().__init__(samples, radar)
 
-    def process_2d_samples(self) -> None:
+    def process_samples(self) -> None:
         """Processes the 2D samples."""
         self.apply_2d_fft()
         # Perform an FFT shift in the Doppler dimension.
         self.fft_shift_axis1()
 
 
-class RangeDopplerMatchedFilterProcessor(MatchedFilterProcessor,
+class RangeDopplerMatchedFilterProcessor(MatchedFilterProcessor2D,
                                          RangeDopplerProcessor):
     """Performs range and Doppler processor using a 2D matched filter.
 

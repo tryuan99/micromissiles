@@ -76,10 +76,10 @@ class RangeDopplerFftProcessorTestCase(RangeDopplerProcessorTestCase):
         self.assertTupleEqual(range_doppler_fft_processor.get_output_shape(),
                               (self.radar.N_bins_v, self.radar.N_bins_r))
 
-    def test_process_2d_samples(self):
+    def test_process_samples(self):
         range_doppler_fft_processor = RangeDopplerFftProcessor(
             self.samples, self.radar)
-        range_doppler_fft_processor.process_2d_samples()
+        range_doppler_fft_processor.process_samples()
         self.assertIsNone(
             np.testing.assert_allclose(
                 range_doppler_fft_processor.samples,
@@ -90,13 +90,13 @@ class RangeDopplerFftProcessorTestCase(RangeDopplerProcessorTestCase):
                     [8, 4 - 4j, 0, 4 + 4j],
                 ])))
 
-    def test_estimate_peak_bins(self):
+    def test_estimate_peak(self):
         range_doppler_fft_processor = RangeDopplerFftProcessor(
             self.samples, self.radar)
-        range_doppler_fft_processor.process_2d_samples()
+        range_doppler_fft_processor.process_samples()
         self.assertIsNone(
             np.testing.assert_allclose(
-                range_doppler_fft_processor.estimate_peak_bins(),
+                range_doppler_fft_processor.estimate_peak(),
                 (self.radar.v_max / 2, 0)))
 
     def test_accumulate_log_magnitude(self):
@@ -104,7 +104,7 @@ class RangeDopplerFftProcessorTestCase(RangeDopplerProcessorTestCase):
         range_doppler_fft_processor = RangeDopplerFftProcessor(
             Samples(self.samples.samples[np.newaxis, np.newaxis, ...]),
             self.radar)
-        range_doppler_fft_processor.process_2d_samples()
+        range_doppler_fft_processor.process_samples()
         accumulated_range_doppler_map = range_doppler_fft_processor.accumulate_log_magnitude(
         )
         self.assertIsNone(
@@ -120,10 +120,10 @@ class RangeDopplerFftProcessorTestCase(RangeDopplerProcessorTestCase):
 
 class RangeDopplerMatchedFilterProcessorTestCase(RangeDopplerProcessorTestCase):
 
-    def test_process_2d_samples(self):
+    def test_process_samples(self):
         range_doppler_matched_filter_processor = RangeDopplerMatchedFilterProcessor(
             self.samples, self.radar)
-        range_doppler_matched_filter_processor.process_2d_samples()
+        range_doppler_matched_filter_processor.process_samples()
         self.assertIsNone(
             np.testing.assert_allclose(
                 range_doppler_matched_filter_processor.samples,
