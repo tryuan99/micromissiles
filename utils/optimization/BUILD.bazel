@@ -6,6 +6,7 @@ py_library(
     name = "linear_model",
     srcs = ["linear_model.py"],
     deps = [
+        requirement("cvxpy"),
         requirement("numpy"),
         requirement("scikit-learn"),
     ],
