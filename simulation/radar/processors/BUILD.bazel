@@ -9,6 +9,7 @@ py_library(
         ":fft_processor",
         ":matched_filter_processor",
         ":signal_processor",
+        ":sparse_processor",
         "//simulation/radar/components:chirp",
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
@@ -25,6 +26,57 @@ py_test(
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
         requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "chirp_matched_filter_processor_main",
+    srcs = ["chirp_matched_filter_processor_main.py"],
+    deps = [
+        ":chirp_processor",
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "chirp_sparse_processor_main",
+    srcs = ["chirp_sparse_processor_main.py"],
+    deps = [
+        ":chirp_processor",
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "chirp_range_resolution_main",
+    srcs = ["chirp_range_resolution_main.py"],
+    deps = [
+        ":chirp_processor",
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:chirp",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
         requirement("numpy"),
     ],
 )
@@ -116,6 +168,19 @@ py_library(
         "//utils:constants",
         "//utils/visualization:color_maps",
         requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "sparse_processor",
+    srcs = ["sparse_processor.py"],
+    deps = [
+        ":signal_processor",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//utils/optimization:linear_model",
+        requirement("absl-py"),
         requirement("numpy"),
     ],
 )

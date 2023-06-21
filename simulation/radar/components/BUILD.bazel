@@ -49,40 +49,6 @@ py_binary(
 )
 
 py_binary(
-    name = "chirp_processing_main",
-    srcs = ["chirp_processing_main.py"],
-    deps = [
-        ":adc_data",
-        ":chirp",
-        ":radar",
-        ":samples",
-        ":target",
-        "//simulation/radar/processors:chirp_processor",
-        "//utils:constants",
-        requirement("absl-py"),
-        requirement("matplotlib"),
-        requirement("numpy"),
-    ],
-)
-
-py_binary(
-    name = "chirp_range_resolution_main",
-    srcs = ["chirp_range_resolution_main.py"],
-    deps = [
-        ":adc_data",
-        ":chirp",
-        ":radar",
-        ":samples",
-        ":target",
-        "//simulation/radar/processors:chirp_processor",
-        "//utils:constants",
-        requirement("absl-py"),
-        requirement("matplotlib"),
-        requirement("numpy"),
-    ],
-)
-
-py_binary(
     name = "chirp_waveform_main",
     srcs = ["chirp_waveform_main.py"],
     deps = [

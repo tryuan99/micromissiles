@@ -1,4 +1,4 @@
-"""Performs range processing on various chirps."""
+"""Performs range processing on various chirps using a sparse processor."""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,7 +10,7 @@ from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
 from simulation.radar.processors.chirp_processor import (
-    ChirpMatchedFilterProcessorFactory, ChirpProcessor)
+    SparseChirpProcessor, SparseChirpProcessorFactory)
 from utils import constants
 
 FLAGS = flags.FLAGS
@@ -18,7 +18,7 @@ FLAGS = flags.FLAGS
 ALL_CHIRPS = "all"
 
 
-def process_chirp(
+def process_sparse_chirp(
     rnge: float,
     delta_r: float,
     range_rate: float,
@@ -50,7 +50,7 @@ def process_chirp(
     radar.N_rx = 1
     radar.N_v = 1
     radar.N_bins_v = 1
-    radar.r_axis = np.arange(0, radar.r_max * 2, 0.01)
+    radar.r_axis = np.arange(0, radar.r_max, 0.1)
     targets = [
         Target(
             rnge=rnge,
@@ -71,27 +71,29 @@ def process_chirp(
     chirp_types = (ChirpType.values()
                    if chirp_type == ALL_CHIRPS else [chirp_type])
     for chirp_type in chirp_types:
-        chirp_processor = _process_chirp_with_matched_filter(
-            radar, targets, noise, chirp_type)
+        chirp_processor = _process_sparse_chirp(radar, targets, noise,
+                                                chirp_type)
         output_magnitude_db = constants.mag2db(
             chirp_processor.get_abs_samples())
-        plt.plot(chirp_processor.get_output_axis(),
-                 output_magnitude_db,
-                 label=chirp_type.capitalize())
-    ax.set_title(f"Range spectrum using a nonlinear chirp")
+        plt.scatter(chirp_processor.get_output_axis(),
+                    output_magnitude_db,
+                    label=chirp_type.capitalize())
+    ax.set_title("Range spectrum of a nonlinear chirp with sparse processing")
     ax.set_xlabel("Range in m")
     ax.set_ylabel("Magnitude in dB")
+    ax.set_xlim((np.min(radar.r_axis), np.max(radar.r_axis)))
     plt.legend()
     plt.show()
 
 
-def _process_chirp_with_matched_filter(
+def _process_sparse_chirp(
     radar: Radar,
     targets: list[Target],
     noise: bool,
     chirp_type: ChirpType,
-) -> ChirpProcessor:
-    """Performs range processing on the given chirp type with a matched filter.
+) -> SparseChirpProcessor:
+    """Performs range processing on the given chirp type using a sparse chirp
+    processor.
 
     Args:
         radar: Radar.
@@ -107,7 +109,7 @@ def _process_chirp_with_matched_filter(
     if noise:
         samples += radar.generate_noise(samples.shape)
 
-    chirp_processor = ChirpMatchedFilterProcessorFactory.create(
+    chirp_processor = SparseChirpProcessorFactory.create(
         chirp_type, samples, radar)
     chirp_processor.apply_window()
     chirp_processor.process_samples()
@@ -124,7 +126,7 @@ def _process_chirp_with_matched_filter(
 
 def main(argv):
     assert len(argv) == 1, argv
-    process_chirp(
+    process_sparse_chirp(
         FLAGS.range,
         FLAGS.delta_r,
         FLAGS.range_rate,

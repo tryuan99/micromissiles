@@ -1,5 +1,5 @@
-"""The FFT processor is an interface that applies a FFT to process the samples,
-e.g., a range-Doppler map.
+"""The FFT processor is an interface for a processor that applies a FFT to
+process the samples, e.g., a range-Doppler map.
 """
 
 import numpy as np

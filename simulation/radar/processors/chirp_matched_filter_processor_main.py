@@ -1,13 +1,8 @@
-"""Simulates the range resolution of a chirp.
-
-The simulation sweeps the phase difference between targets while plotting the
-range spectrum.
-"""
+"""Performs range processing on various chirps using a matched filter."""
 
 import matplotlib.pyplot as plt
 import numpy as np
-from absl import app, flags
-from matplotlib import animation
+from absl import app, flags, logging
 
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.chirp import ChirpType
@@ -15,16 +10,15 @@ from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.target import Target
 from simulation.radar.processors.chirp_processor import (
-    ChirpMatchedFilterProcessorFactory, ChirpProcessor)
+    ChirpMatchedFilterProcessor, ChirpMatchedFilterProcessorFactory)
 from utils import constants
 
 FLAGS = flags.FLAGS
 
-# Animation interval in milliseconds.
-ANIMATION_INTERVAL = 20  # milliseconds
+ALL_CHIRPS = "all"
 
 
-def plot_range_resolution(
+def process_chirp_with_matched_filter(
     rnge: float,
     delta_r: float,
     range_rate: float,
@@ -35,7 +29,7 @@ def plot_range_resolution(
     noise: bool,
     chirp_type: ChirpType,
 ) -> None:
-    """Plots the range spectrum after range processing on the chirp.
+    """Performs range processing on the chirp.
 
     Args:
         rnge: Range in m.
@@ -56,7 +50,7 @@ def plot_range_resolution(
     radar.N_rx = 1
     radar.N_v = 1
     radar.N_bins_v = 1
-    radar.r_axis = np.arange(np.max(rnge - 10, 0), rnge + 10, 0.01)
+    radar.r_axis = np.arange(0, radar.r_max * 2, 0.01)
     targets = [
         Target(
             rnge=rnge,
@@ -72,66 +66,44 @@ def plot_range_resolution(
         )
     ]
 
-    # Plot the range spectrum.
-    theta_axis = np.linspace(0, 2 * np.pi, 360, endpoint=False)
+    # Plot the range spectrum for each chirp type.
     fig, ax = plt.subplots(figsize=(12, 8))
-    line, = ax.plot(radar.r_axis, np.log(np.zeros(radar.r_axis.shape)))
-
-    def init_animation() -> None:
-        """Initializes the animation."""
-        ax.set_title("Range spectrum using a nonlinear chirp")
-        ax.set_xlabel("Range in m")
-        ax.set_ylabel("Magnitude in dB")
-        ax.set_xlim((np.max(rnge - 10, 0), rnge + 10))
-        ax.set_ylim((-300, -100))
-
-    def update_animation(frame: float) -> None:
-        """Updates the animation for the next frame.
-
-        Args:
-            frame: Phase offet to plot.
-        """
+    chirp_types = (ChirpType.values()
+                   if chirp_type == ALL_CHIRPS else [chirp_type])
+    for chirp_type in chirp_types:
         chirp_processor = _process_chirp_with_matched_filter(
-            radar, targets, frame, noise, chirp_type)
+            radar, targets, noise, chirp_type)
         output_magnitude_db = constants.mag2db(
             chirp_processor.get_abs_samples())
-        line.set_data(chirp_processor.get_output_axis(), output_magnitude_db)
-        ax.set_title(
-            f"Range spectrum using a {chirp_type} chirp (theta = {frame})")
-
-    anim = animation.FuncAnimation(
-        fig,
-        update_animation,
-        frames=theta_axis,
-        init_func=init_animation,
-        interval=ANIMATION_INTERVAL,
-    )
+        plt.plot(chirp_processor.get_output_axis(),
+                 output_magnitude_db,
+                 label=chirp_type.capitalize())
+    ax.set_title("Range spectrum of a nonlinear chirp using a matched filter")
+    ax.set_xlabel("Range in m")
+    ax.set_ylabel("Magnitude in dB")
+    plt.legend()
     plt.show()
 
 
 def _process_chirp_with_matched_filter(
     radar: Radar,
     targets: list[Target],
-    theta: float,
     noise: bool,
     chirp_type: ChirpType,
-) -> ChirpProcessor:
+) -> ChirpMatchedFilterProcessor:
     """Performs range processing on the given chirp type with a matched filter.
 
     Args:
         radar: Radar.
         targets: List of targets.
-        theta: Phase offset between the targets.
         noise: If true, add noise.
         chirp_type: Chirp type.
 
     Returns:
         Samples after range processing.
     """
-    samples = np.add.reduce([
-        AdcData(radar, target, chirp_type) * np.exp(1j * theta * i)
-        for i, target in enumerate(targets)
-    ])
+    samples = np.add.reduce(
+        [AdcData(radar, target, chirp_type) for target in targets])
     if noise:
         samples += radar.generate_noise(samples.shape)
 
@@ -139,12 +111,20 @@ def _process_chirp_with_matched_filter(
         chirp_type, samples, radar)
     chirp_processor.apply_window()
     chirp_processor.process_samples()
+
+    logging.info("%s chirp:", chirp_type.capitalize())
+    logging.info("Maximum range: %f m.", chirp_processor.r_max)
+    logging.info("Range resolution: %f m.", chirp_processor.r_res)
+
+    # Estimate the range of the peak.
+    range_estimated = chirp_processor.estimate_peak()
+    logging.info("Peak location at range: %f m.", range_estimated)
     return chirp_processor
 
 
 def main(argv):
     assert len(argv) == 1, argv
-    plot_range_resolution(
+    process_chirp_with_matched_filter(
         FLAGS.range,
         FLAGS.delta_r,
         FLAGS.range_rate,
@@ -159,7 +139,7 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_float("range", 20, "Range in m.", lower_bound=0.0)
-    flags.DEFINE_float("delta_r", 0.2, "Range difference in m.")
+    flags.DEFINE_float("delta_r", 0, "Range difference in m.")
     flags.DEFINE_float("range_rate", 0, "Range rate in m/s.")
     flags.DEFINE_float("acceleration", 0, "Acceleration in m/s^2.")
     flags.DEFINE_float("rcs", -10, "Radar cross section in dBsm.")
@@ -169,7 +149,7 @@ if __name__ == "__main__":
                          "Oversampling factor.",
                          lower_bound=1)
     flags.DEFINE_boolean("noise", False, "If true, add noise.")
-    flags.DEFINE_enum("chirp_type", ChirpType.LINEAR, ChirpType.values(),
-                      "Chirp type.")
+    flags.DEFINE_enum("chirp_type", ChirpType.LINEAR,
+                      ChirpType.values() + [ALL_CHIRPS], "Chirp type.")
 
     app.run(main)

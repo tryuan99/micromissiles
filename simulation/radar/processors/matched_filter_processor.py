@@ -1,4 +1,6 @@
-"""The matched filter processor is an interface for a 2D matched filter processor."""
+"""The matched filter processor is an interface for a processor that applies a
+matched fitler to process the samples.
+"""
 
 from abc import abstractmethod
 
