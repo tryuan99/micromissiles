@@ -4,4 +4,5 @@ compile_pip_requirements(
     name = "pip_requirements",
     requirements_in = "//deps:pip_requirements.in",
     requirements_txt = "//deps:pip_requirements.txt",
+    extra_args = ["--allow-unsafe"],
 )
