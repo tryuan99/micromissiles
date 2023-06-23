@@ -62,11 +62,11 @@ class SparseProcessor1D(SignalProcessor1D):
         M = np.empty(0)
 
         while len(M) < self.sparsity:
-            alpha = (
+            lmbda = (
                 (1 - F) *
                 self._get_kth_largest_peak_by_magnitude(r, self.sparsity) + F *
                 self._get_kth_largest_peak_by_magnitude(r, self.sparsity + 1))
-            lasso_model = ComplexLassoModel(X, y, alpha)
+            lasso_model = ComplexLassoModel(X, y, lmbda)
             lasso_model.solve()
             w = lasso_model.get_coefficients()
             r = np.conjugate(X).T @ (y - X @ w)
@@ -82,4 +82,4 @@ class SparseProcessor1D(SignalProcessor1D):
         w = np.zeros(X.shape[-1])
         w[M] = np.linalg.pinv(X[:, M]) @ y
         self.samples = w * X.shape[-1]
-        logging.debug("Alpha: %f, |M|: %d.", alpha, len(M))
+        logging.debug("Lambda: %f, |M|: %d.", lmbda, len(M))

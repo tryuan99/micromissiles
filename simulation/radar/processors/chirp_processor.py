@@ -133,6 +133,13 @@ class ExponentialChirpProcessor(ChirpProcessor):
                      (self.radar.Tc - 2 * self.radar.r_max / self.radar.c))))))
 
 
+class LinearChirpFftProcessor(ChirpFftProcessor, LinearChirpProcessor):
+    """Performs range processing on a linear chirp using a 1D FFT."""
+
+    def __init__(self, samples: Samples, radar: Radar):
+        super().__init__(samples, radar)
+
+
 class LinearChirpMatchedFilterProcessor(ChirpMatchedFilterProcessor,
                                         LinearChirpProcessor):
     """Performs range processing on a linear chirp using a matched filter."""

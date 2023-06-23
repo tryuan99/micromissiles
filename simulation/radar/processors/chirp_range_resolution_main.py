@@ -74,7 +74,7 @@ def plot_range_resolution_with_matched_filter(
     ]
 
     # Plot the range spectrum.
-    theta_axis = np.linspace(0, 2 * np.pi, 360, endpoint=False)
+    theta_axis = np.linspace(0, 2 * np.pi, 100, endpoint=False)
     fig, ax = plt.subplots(figsize=(12, 8))
     line, = ax.plot(radar.r_axis, np.log(np.zeros(radar.r_axis.shape)))
 

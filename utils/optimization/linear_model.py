@@ -50,12 +50,12 @@ class LassoModel(LinearModel):
     """Linear model with L1 regularization (LASSO).
 
     The optimization objective is:
-    (1 / (2 * num_samples)) * ||y - Xw||_2^2 + alpha * ||w||_1.
+    (1 / (2 * num_samples)) * ||y - Xw||_2^2 + lambda * ||w||_1.
     """
 
-    def __init__(self, X: np.ndarray, y: np.ndarray, alpha: float):
+    def __init__(self, X: np.ndarray, y: np.ndarray, lmbda: float):
         super().__init__(X, y)
-        self.model = linear_model.Lasso(alpha=alpha, fit_intercept=False)
+        self.model = linear_model.Lasso(alpha=lmbda, fit_intercept=False)
 
     def solve(self) -> None:
         """Solves the linear model with L1 regularization (LASSO)."""
@@ -70,14 +70,14 @@ class ComplexLassoModel(LinearModel):
     """Linear model with L1 regularization (LASSO) that supports complex values.
 
     The optimization objective is:
-    (1 / (2 * num_samples)) * ||y - Xw||_2^2 + alpha * ||w||_1.
+    (1 / (2 * num_samples)) * ||y - Xw||_2^2 + lambda * ||w||_1.
 
     To support complex values, we split all matrices and vectors into real and
     imaginary components and formulate the problem as a second-order cone problem.
     See https://stats.stackexchange.com/a/469660 for more details.
     """
 
-    def __init__(self, X: np.ndarray, y: np.ndarray, alpha: float):
+    def __init__(self, X: np.ndarray, y: np.ndarray, lmbda: float):
         super().__init__(X, y)
         # Number of features.
         self.n = self.X.shape[-1]
@@ -103,7 +103,7 @@ class ComplexLassoModel(LinearModel):
         self.problem = cp.Problem(
             cp.Minimize(1 / (2 * self.n) *
                         cp.sum_squares(self.y - self.X @ self.w) +
-                        alpha * cp.sum(self.t)), constraints)
+                        lmbda * cp.sum(self.t)), constraints)
 
     def solve(self) -> None:
         """Solves the linear model with L1 regularization (LASSO)."""
