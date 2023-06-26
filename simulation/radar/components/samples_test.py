@@ -62,6 +62,9 @@ class SamplesTestCase(absltest.TestCase):
     def test_size(self):
         self.assertEqual(self.samples.size, 6)
 
+    def test_dtype(self):
+        self.assertEqual(self.samples.dtype, np.complex128)
+
     def test_get_abs_samples(self):
         self.assertIsNone(
             np.testing.assert_allclose(

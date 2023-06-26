@@ -38,8 +38,7 @@ class MatchedFilterProcessor1D(SignalProcessor1D):
     def _apply_matched_filter(self) -> None:
         """Applies a 1D matched filter."""
         matched_filter_out = np.zeros(
-            (*self.samples.shape[:-1], *self.get_output_shape()),
-            dtype=np.complex128)
+            (*self.shape[:-1], *self.get_output_shape()), dtype=np.complex128)
         matched_filter = self.generate_matched_filter(
             self.get_output_axis()[..., np.newaxis])
         self.samples = np.conjugate(matched_filter) @ np.squeeze(self.samples)
@@ -74,8 +73,7 @@ class MatchedFilterProcessor2D(SignalProcessor2D):
     def _apply_matched_filter(self) -> None:
         """Applies a 2D matched filter."""
         matched_filter_out = np.zeros(
-            (*self.samples.shape[:-2], *self.get_output_shape()),
-            dtype=np.complex128)
+            (*self.shape[:-2], *self.get_output_shape()), dtype=np.complex128)
         for axis1_index, axis1_value in enumerate(self.get_output_axis1()):
             for axis2_index, axis2_value in enumerate(self.get_output_axis2()):
                 matched_filter = self.generate_matched_filter(

@@ -35,7 +35,7 @@ class DoaArrayExtensionEstimator(DoaFftEstimator):
         """
         num_elevation_antennas, num_azimuth_antennas = self.shape
         extended_spatial_samples = np.zeros(2 * np.array(self.shape) - 1,
-                                            dtype=self.samples.dtype)
+                                            dtype=self.dtype)
 
         # Extend in the azimuth dimension.
         extended_spatial_samples[:num_elevation_antennas, :

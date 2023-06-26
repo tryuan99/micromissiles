@@ -30,7 +30,7 @@ class SpatialSamples(Samples):
                 np.max(radar.d_tx_hor[:radar.N_tx]) +
                 np.max(radar.d_rx_hor[:radar.N_rx]) + 1,
             ),
-            dtype=range_doppler_map.samples.dtype,
+            dtype=range_doppler_map.dtype,
         )
         spatial_samples[
             radar.d_rx_ver[:radar.N_rx],

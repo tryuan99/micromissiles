@@ -36,6 +36,11 @@ class Samples:
         """Number of samples."""
         return self.samples.size
 
+    @property
+    def dtype(self) -> np.dtype:
+        """Data type of the samples."""
+        return self.samples.dtype
+
     def get_abs_samples(self) -> np.ndarray:
         """Returns the absolute value of the samples."""
         return np.abs(self.samples)
