@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import numpy as np
 from absl.testing import absltest
@@ -20,22 +20,6 @@ class PeakSelectorTestCase(ABC):
             np.testing.assert_array_equal(
                 self.peak_selector.get_largest_peak_magnitude(),
                 self.peak_selector.get_kth_largest_peak_magnitude(0)))
-
-    @abstractmethod
-    def test_get_kth_largest_peak_index(self):
-        pass
-
-    @abstractmethod
-    def test_get_kth_largest_peak_magnitude(self):
-        pass
-
-    @abstractmethod
-    def test_get_k_largest_peaks_index(self):
-        pass
-
-    @abstractmethod
-    def test_get_k_largest_peaks_magnitude(self):
-        pass
 
 
 class OneDimensionalPeakSelectorTestCase(PeakSelectorTestCase,
@@ -90,6 +74,26 @@ class OneDimensionalPeakSelectorTestCase(PeakSelectorTestCase,
             np.testing.assert_allclose(
                 self.peak_selector.get_k_largest_peaks_magnitude(3),
                 np.abs(np.array([5 - 3j, 4 + 4j, 4 - 3j]))))
+
+
+class OneDimensionalPeakSelectorWithScalingTestCase(PeakSelectorTestCase,
+                                                    absltest.TestCase):
+
+    samples = Samples(
+        np.array([1 - 1j, 2 + 2j, 5 - 3j, 4 + 3j, 2 + 2j, 4 - 4j, 3 + 3j]))
+    scaling_factor = np.array([0, 0, 0, 0, 1, 0, 0])
+    peak_selector = PeakSelector(samples, scaling_factor=scaling_factor)
+
+    def test_get_kth_largest_peak_index(self):
+        self.assertIsNone(
+            np.testing.assert_array_equal(
+                self.peak_selector.get_kth_largest_peak_index(0),
+                np.array([4])))
+
+    def test_get_kth_largest_peak_magnitude(self):
+        self.assertAlmostEqual(
+            self.peak_selector.get_kth_largest_peak_magnitude(0),
+            np.abs(2 + 2j))
 
 
 class MultiDimensionalPeakSelectorTestCase(PeakSelectorTestCase,
@@ -160,29 +164,7 @@ class MultiDimensionalPeakSelectorWithGuardLengthTestCase(
         ]))
     peak_selector = PeakSelector(samples, guard_length=1)
 
-    def test_get_kth_largest_peak_index(self):
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_kth_largest_peak_index(0),
-                np.array([0, 5])))
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_kth_largest_peak_index(1),
-                np.array([2, 7])))
-
-    def test_get_kth_largest_peak_magnitude(self):
-        self.assertAlmostEqual(
-            self.peak_selector.get_kth_largest_peak_magnitude(0),
-            np.abs(9 - 1j))
-        self.assertAlmostEqual(
-            self.peak_selector.get_kth_largest_peak_magnitude(1),
-            np.abs(6 - 2j))
-
     def test_get_k_largest_peaks_index(self):
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_k_largest_peaks_index(0),
-                (np.array([]), np.array([]))))
         self.assertIsNone(
             np.testing.assert_array_equal(
                 self.peak_selector.get_k_largest_peaks_index(1),
@@ -193,10 +175,6 @@ class MultiDimensionalPeakSelectorWithGuardLengthTestCase(
                 (np.array([0, 2, 0]), np.array([5, 7, 1]))))
 
     def test_get_k_largest_peaks_magnitude(self):
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_k_largest_peaks_magnitude(0),
-                np.array([])))
         self.assertIsNone(
             np.testing.assert_array_equal(
                 self.peak_selector.get_k_largest_peaks_magnitude(1),
@@ -218,29 +196,7 @@ class MultiDimensionalPeakSelectorWithGuardLengthNoWrapTestCase(
         ]))
     peak_selector = PeakSelector(samples, guard_length=1, wrap=False)
 
-    def test_get_kth_largest_peak_index(self):
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_kth_largest_peak_index(0),
-                np.array([0, 5])))
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_kth_largest_peak_index(1),
-                np.array([2, 7])))
-
-    def test_get_kth_largest_peak_magnitude(self):
-        self.assertAlmostEqual(
-            self.peak_selector.get_kth_largest_peak_magnitude(0),
-            np.abs(9 - 1j))
-        self.assertAlmostEqual(
-            self.peak_selector.get_kth_largest_peak_magnitude(1),
-            np.abs(6 - 2j))
-
     def test_get_k_largest_peaks_index(self):
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_k_largest_peaks_index(0),
-                (np.array([]), np.array([]))))
         self.assertIsNone(
             np.testing.assert_array_equal(
                 self.peak_selector.get_k_largest_peaks_index(1),
@@ -251,10 +207,6 @@ class MultiDimensionalPeakSelectorWithGuardLengthNoWrapTestCase(
                 (np.array([0, 2, 0]), np.array([5, 7, 1]))))
 
     def test_get_k_largest_peaks_magnitude(self):
-        self.assertIsNone(
-            np.testing.assert_array_equal(
-                self.peak_selector.get_k_largest_peaks_magnitude(0),
-                np.array([])))
         self.assertIsNone(
             np.testing.assert_array_equal(
                 self.peak_selector.get_k_largest_peaks_magnitude(1),

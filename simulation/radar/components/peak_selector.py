@@ -13,10 +13,14 @@ class PeakSelector(Samples):
     def __init__(self,
                  samples: Samples,
                  guard_length: int = 0,
-                 wrap: bool = True):
+                 wrap: bool = True,
+                 scaling_factor: np.ndarray | float = 1):
         super().__init__(samples)
         self.guard_length = guard_length
         self.wrap = wrap
+        # The scaling factor matrix should match the dimensions of the samples
+        # and is multiplied with the samples prior to peak selection.
+        self.scaling_factor = scaling_factor
 
     def get_largest_peak_index(self) -> np.ndarray:
         """Returns the index of the largest peak."""
@@ -84,7 +88,8 @@ class PeakSelector(Samples):
             The dimensions are (number of dimensions in the samples) x k.
         """
         # Copy the samples because we will mutate them.
-        samples_abs = Samples(self.get_abs_samples())
+        samples_abs = Samples(
+            np.multiply(self.scaling_factor, self.get_abs_samples()))
         peak_indices = np.zeros((samples_abs.ndim, k), dtype=np.int64)
         for i in range(k):
             peak_index = np.unravel_index(np.argmax(samples_abs.samples),
