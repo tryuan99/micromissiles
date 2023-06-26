@@ -9,6 +9,7 @@ from abc import abstractmethod
 import numpy as np
 from absl import logging
 
+from simulation.radar.components.peak_selector import PeakSelector
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
 from simulation.radar.processors.signal_processor import SignalProcessor1D
@@ -22,11 +23,14 @@ class SparseProcessor1D(SignalProcessor1D):
                  samples: Samples,
                  radar: Radar,
                  sparsity: int = 3,
-                 epsilon: float = 0.1):
+                 guard_length: int = 1,
+                 epsilon: float = 0.9):
         super().__init__(samples, radar)
         self.sparsity = sparsity
-        # The objective function is argmin ||x||_1 subject to ||y - Xw||_2 <=
-        # epsilon, so epsilon specifies the relative noise level.
+        # The guard length is the minimum number of bins in each dimension
+        # between peaks.
+        self.guard_length = guard_length
+        # Epsilon specifies when the iterative LASSO algorithm should halt.
         self.epsilon = epsilon
 
     def process_samples(self) -> None:
@@ -44,12 +48,11 @@ class SparseProcessor1D(SignalProcessor1D):
             The sensing matrix.
         """
 
-    @staticmethod
-    def _get_kth_largest_peak_by_magnitude(array: np.ndarray, k: int) -> float:
-        """Returns the kth largest peak by magnitude."""
-        assert k < len(np.squeeze(array))
-        sorted_array = np.sort(np.abs(array))
-        return sorted_array[-k]
+    def _get_kth_largest_peak_magnitude(self, array: np.ndarray,
+                                        k: int) -> float:
+        """Returns the magnitude of the kth largest peak."""
+        peak_selector = PeakSelector(array, self.guard_length, wrap=False)
+        return peak_selector.get_kth_largest_peak_magnitude(k)
 
     def _apply_lasso(self) -> None:
         """Applies a LASSO model to find a sparse solution."""
@@ -64,8 +67,8 @@ class SparseProcessor1D(SignalProcessor1D):
         while len(M) < self.sparsity:
             lmbda = (
                 (1 - F) *
-                self._get_kth_largest_peak_by_magnitude(r, self.sparsity) + F *
-                self._get_kth_largest_peak_by_magnitude(r, self.sparsity + 1))
+                self._get_kth_largest_peak_magnitude(r, self.sparsity) +
+                F * self._get_kth_largest_peak_magnitude(r, self.sparsity + 1))
             lasso_model = ComplexLassoModel(X, y, lmbda)
             lasso_model.solve()
             w = lasso_model.get_coefficients()
@@ -74,10 +77,8 @@ class SparseProcessor1D(SignalProcessor1D):
                 np.argwhere(
                     np.abs(w) > self.epsilon * np.linalg.norm(w, np.inf)))
         if len(M) > self.sparsity:
-            M = np.squeeze(
-                np.argwhere(
-                    np.abs(w) > self._get_kth_largest_peak_by_magnitude(
-                        np.abs(w), self.sparsity)))
+            peak_selector = PeakSelector(w, self.guard_length, wrap=False)
+            M = peak_selector.get_k_largest_peaks_index(self.sparsity)[0]
 
         w = np.zeros(X.shape[-1])
         w[M] = np.linalg.pinv(X[:, M]) @ y

@@ -67,7 +67,7 @@ def process_sparse_chirp(
     ]
 
     # Plot the range spectrum for each chirp type.
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(8, 6))
     chirp_types = (ChirpType.values()
                    if chirp_type == ALL_CHIRPS else [chirp_type])
     for chirp_type in chirp_types:

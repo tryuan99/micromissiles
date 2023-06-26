@@ -177,6 +177,7 @@ py_library(
     srcs = ["sparse_processor.py"],
     deps = [
         ":signal_processor",
+        "//simulation/radar/components:peak_selector",
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
         "//utils/optimization:linear_model",
