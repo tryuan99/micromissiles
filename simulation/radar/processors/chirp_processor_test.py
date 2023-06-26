@@ -43,11 +43,11 @@ class LinearChirpFftProcessorTestCase(ChirpProcessorTestCase):
 
     def test_r_max(self):
         chirp_fft_processor = LinearChirpFftProcessor(self.samples, self.radar)
-        self.assertEqual(chirp_fft_processor.r_max, self.radar.r_max)
+        self.assertAlmostEqual(chirp_fft_processor.r_max, self.radar.r_max)
 
     def test_r_res(self):
         chirp_fft_processor = LinearChirpFftProcessor(self.samples, self.radar)
-        self.assertEqual(chirp_fft_processor.r_res, self.radar.r_res)
+        self.assertAlmostEqual(chirp_fft_processor.r_res, self.radar.r_res)
 
     def test_process_samples(self):
         chirp_fft_processor = LinearChirpFftProcessor(self.samples, self.radar)

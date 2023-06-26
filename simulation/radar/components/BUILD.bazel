@@ -76,6 +76,26 @@ py_library(
 )
 
 py_library(
+    name = "peak_selector",
+    srcs = ["peak_selector.py"],
+    deps = [
+        ":samples",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "peak_selector_test",
+    srcs = ["peak_selector_test.py"],
+    deps = [
+        ":peak_selector",
+        ":samples",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "radar",
     srcs = ["radar.py"],
     deps = [

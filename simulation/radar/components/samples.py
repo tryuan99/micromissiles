@@ -26,6 +26,16 @@ class Samples:
         """Shape of the samples."""
         return self.samples.shape
 
+    @property
+    def ndim(self) -> int:
+        """Number of dimensions in the samples."""
+        return self.samples.ndim
+
+    @property
+    def size(self) -> int:
+        """Number of samples."""
+        return self.samples.size
+
     def get_abs_samples(self) -> np.ndarray:
         """Returns the absolute value of the samples."""
         return np.abs(self.samples)
