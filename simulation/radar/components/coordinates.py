@@ -63,9 +63,9 @@ class CartesianCoordinates(Coordinates):
         Returns:
             Polar coordinates.
         """
-        r = np.sqrt(x**2 + y**2 + z**2)
-        theta = np.arcan(-x / z)
-        phi = np.arctan(y / np.sqrt(x**2 + z**2))
+        r = np.sqrt(self.x**2 + self.y**2 + self.z**2)
+        theta = np.arctan(-self.x / self.z)
+        phi = np.arctan(self.y / np.sqrt(self.x**2 + self.z**2))
         return PolarCoordinates(r, theta, phi)
 
 

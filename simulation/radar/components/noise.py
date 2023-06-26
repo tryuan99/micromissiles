@@ -13,7 +13,6 @@ class Noise(Samples, ABC):
     @abstractmethod
     def get_mean(self) -> float:
         """Returns the mean of the noise."""
-        pass
 
 
 class GaussianNoise(Noise):

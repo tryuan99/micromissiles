@@ -66,6 +66,16 @@ py_library(
     deps = [requirement("numpy")],
 )
 
+py_test(
+    name = "coordinates_test",
+    srcs = ["coordinates_test.py"],
+    deps = [
+        ":coordinates",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
 py_library(
     name = "noise",
     srcs = ["noise.py"],
@@ -112,6 +122,16 @@ py_library(
     name = "samples",
     srcs = ["samples.py"],
     deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "samples_test",
+    srcs = ["samples_test.py"],
+    deps = [
+        ":samples",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
 )
 
 py_library(
