@@ -17,6 +17,15 @@ FLAGS = flags.FLAGS
 
 ALL_CHIRPS = "all"
 
+# Sparsity level.
+SPARSITY = 3
+
+# Guard length for peak selection.
+GUARD_LENGTH = 1
+
+# Epsilon for the iterative LASSO algorithm.
+EPSILON = 0.8
+
 
 def process_sparse_chirp(
     rnge: float,
@@ -67,7 +76,7 @@ def process_sparse_chirp(
     ]
 
     # Plot the range spectrum for each chirp type.
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))
     chirp_types = (ChirpType.values()
                    if chirp_type == ALL_CHIRPS else [chirp_type])
     for chirp_type in chirp_types:
@@ -110,7 +119,7 @@ def _process_sparse_chirp(
         samples += radar.generate_noise(samples.shape)
 
     chirp_processor = SparseChirpProcessorFactory.create(
-        chirp_type, samples, radar)
+        chirp_type, samples, radar, SPARSITY, GUARD_LENGTH, EPSILON)
     chirp_processor.apply_window()
     chirp_processor.process_samples()
 

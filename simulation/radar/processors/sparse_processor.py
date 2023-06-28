@@ -19,12 +19,8 @@ from utils.optimization.linear_model import ComplexLassoModel
 class SparseProcessor1D(SignalProcessor1D):
     """Interface for a 1D sparse processor."""
 
-    def __init__(self,
-                 samples: Samples,
-                 radar: Radar,
-                 sparsity: int = 3,
-                 guard_length: int = 1,
-                 epsilon: float = 0.9):
+    def __init__(self, samples: Samples, radar: Radar, sparsity: int,
+                 guard_length: int, epsilon: float):
         super().__init__(samples, radar)
         self.sparsity = sparsity
         # The guard length is the minimum number of bins in each dimension
@@ -51,7 +47,7 @@ class SparseProcessor1D(SignalProcessor1D):
     def _get_kth_largest_peak_magnitude(self, array: np.ndarray,
                                         k: int) -> float:
         """Returns the magnitude of the kth largest peak."""
-        peak_selector = PeakSelector(array, self.guard_length, wrap=False)
+        peak_selector = PeakSelector(array, self.guard_length, False)
         return peak_selector.get_kth_largest_peak_magnitude(k)
 
     def _apply_lasso(self) -> None:
@@ -77,10 +73,13 @@ class SparseProcessor1D(SignalProcessor1D):
                 np.argwhere(
                     np.abs(w) > self.epsilon * np.linalg.norm(w, np.inf)))
         if len(M) > self.sparsity:
-            peak_selector = PeakSelector(w, self.guard_length, wrap=False)
+            # TODO(titan): Figure out a better way to compensate for the path loss.
+            scaling_factor = np.sqrt(self.radar.r_axis**4)
+            peak_selector = PeakSelector(w, self.guard_length, False,
+                                         scaling_factor)
             M = peak_selector.get_k_largest_peaks_index(self.sparsity)[0]
 
-        w = np.zeros(X.shape[-1])
+        w = np.zeros(X.shape[-1], dtype=np.complex128)
         w[M] = np.linalg.pinv(X[:, M]) @ y
         self.samples = w * X.shape[-1]
         logging.debug("Lambda: %f, |M|: %d.", lmbda, len(M))

@@ -69,8 +69,8 @@ class ChirpMatchedFilterProcessor(MatchedFilterProcessor1D, ChirpProcessor):
 class SparseChirpProcessor(SparseProcessor1D, ChirpProcessor):
     """Interface for a chirp processor using compressed sensing."""
 
-    def __init__(self, samples: Samples, radar: Radar):
-        super().__init__(samples, radar)
+    def __init__(self, samples: Samples, radar: Radar, *args, **kwargs):
+        super().__init__(samples, radar, *args, **kwargs)
 
 
 class LinearChirpProcessor(ChirpProcessor):
@@ -164,8 +164,8 @@ class LinearChirpMatchedFilterProcessor(ChirpMatchedFilterProcessor,
 class LinearSparseChirpProcessor(SparseChirpProcessor, LinearChirpProcessor):
     """Performs range processing on a linear chirp using compressed sensing."""
 
-    def __init__(self, samples: Samples, radar: Radar):
-        super().__init__(samples, radar)
+    def __init__(self, samples: Samples, radar: Radar, *args, **kwargs):
+        super().__init__(samples, radar, *args, **kwargs)
 
     def generate_sensing_matrix(self) -> np.ndarray:
         """Generates the sensing matrix mapping the sources to the observations.
@@ -220,8 +220,8 @@ class QuadraticSparseChirpProcessor(SparseChirpProcessor,
                                     QuadraticChirpProcessor):
     """Performs range processing on a quadratic chirp using compressed sensing."""
 
-    def __init__(self, samples: Samples, radar: Radar):
-        super().__init__(samples, radar)
+    def __init__(self, samples: Samples, radar: Radar, *args, **kwargs):
+        super().__init__(samples, radar, *args, **kwargs)
 
     def generate_sensing_matrix(self) -> np.ndarray:
         """Generates the sensing matrix mapping the sources to the observations.
@@ -276,8 +276,8 @@ class ExponentialSparseChirpProcessor(SparseChirpProcessor,
                                       ExponentialChirpProcessor):
     """Performs range processing on an exponential chirp using compressed sensing."""
 
-    def __init__(self, samples: Samples, radar: Radar):
-        super().__init__(samples, radar)
+    def __init__(self, samples: Samples, radar: Radar, *args, **kwargs):
+        super().__init__(samples, radar, *args, **kwargs)
 
     def generate_sensing_matrix(self) -> np.ndarray:
         """Generates the sensing matrix mapping the sources to the observations.
