@@ -3,6 +3,16 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
+    name = "compressed_sensing_main",
+    srcs = ["compressed_sensing_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
     name = "windowing_loss_main",
     srcs = ["windowing_loss_main.py"],
     deps = [
