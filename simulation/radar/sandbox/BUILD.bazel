@@ -13,6 +13,16 @@ py_binary(
 )
 
 py_binary(
+    name = "non_uniform_sampling_main",
+    srcs = ["non_uniform_sampling_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
     name = "windowing_loss_main",
     srcs = ["windowing_loss_main.py"],
     deps = [
