@@ -1,0 +1,12 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "patch_antenna_design_main",
+    srcs = ["patch_antenna_design_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

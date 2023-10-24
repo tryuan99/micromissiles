@@ -50,6 +50,19 @@ class SparseProcessor1D(SignalProcessor1D):
         peak_selector = PeakSelector(array, self.guard_length, False)
         return peak_selector.get_kth_largest_peak_magnitude(k)
 
+    def _apply_pocs(self) -> None:
+        """Applies a projection over convex sets (POCS) algorithm.
+
+        The signal is sparse int he frequency domain, and we use the Fourier
+        transform as an incoherent basis. We undersample in the time domain and
+        estimate the signal with LASSO.
+
+        See https://people.eecs.berkeley.edu/~mlustig/CS/CS_ex.pdf for more
+        details.
+        """
+        X = self.generate_sensing_matrix().T
+        y = np.squeeze(self.samples)
+
     def _apply_lasso(self) -> None:
         """Applies a LASSO model to find a sparse solution."""
         X = self.generate_sensing_matrix().T
