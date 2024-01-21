@@ -5,6 +5,6 @@ repos:
       - id: yapf
         args: [-i]
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.1
+    rev: 5.13.2
     hooks:
       - id: isort
