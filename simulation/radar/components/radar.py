@@ -34,8 +34,8 @@ class Radar:
         self.N_r = 256  # Number of ADC samples.
         self.N_v = 512  # Number of chirps.
 
-        self.r_axis_override = None  # type: np.ndarray
-        self.v_axis_override = None  # type: np.ndarray
+        self.r_axis_override: np.ndarray = None
+        self.v_axis_override: np.ndarray = None
 
         # Antenna parameters.
         self.N_tx = 3  # Number of TX antennas.
