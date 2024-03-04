@@ -2,6 +2,53 @@ load("@pip_deps//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//visibility:public"])
 
+py_library(
+    name = "antenna_array",
+    srcs = ["antenna_array.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "antenna_array_test",
+    srcs = ["antenna_array_test.py"],
+    deps = [
+        ":antenna_array",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "antenna_array_spectrum",
+    srcs = ["antenna_array_spectrum.py"],
+    deps = [
+        ":antenna_array",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "linear_antenna_array_spectrum",
+    srcs = ["linear_antenna_array_spectrum.py"],
+    deps = [
+        ":antenna_array",
+        ":antenna_array_spectrum",
+        requirement("numpy")],
+)
+
+py_binary(
+    name = "linear_antenna_array_spectrum_main",
+    srcs = ["linear_antenna_array_spectrum_main.py"],
+    deps = [
+        ":antenna_array",
+        ":linear_antenna_array_spectrum",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots")
+    ],
+)
+
 py_binary(
     name = "patch_antenna_design_main",
     srcs = ["patch_antenna_design_main.py"],
