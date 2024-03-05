@@ -7,6 +7,9 @@ planar antenna array will lie in the x-y plane.
 
 import numpy as np
 
+from simulation.antenna.antenna import Antenna
+from simulation.antenna.isotropic_antenna import IsotropicAntenna
+
 
 class AntennaArrayElement:
     """Antenna array element.
@@ -17,10 +20,18 @@ class AntennaArrayElement:
         z: z-coordinate in units of lambda.
     """
 
-    def __init__(self, x: float = 0, y: float = 0, z: float = 0) -> None:
+    def __init__(self,
+                 x: float = 0,
+                 y: float = 0,
+                 z: float = 0,
+                 antenna: Antenna = None) -> None:
         self.x = x
         self.y = y
         self.z = z
+        self.antenna = antenna
+
+        if self.antenna is None:
+            self.antenna = IsotropicAntenna()
 
     @property
     def coordinates(self) -> np.ndarray:
@@ -82,8 +93,9 @@ class AntennaArray:
             return spatial_samples
         return self._get_spatial_samples_for_arrival(arrivals, amplitude)
 
-    def _get_spatial_samples_for_arrival(self, arrival: AntennaArrayArrival,
-                                         amplitude: float | np.ndarray) -> np.ndarray:
+    def _get_spatial_samples_for_arrival(
+            self, arrival: AntennaArrayArrival,
+            amplitude: float | np.ndarray) -> np.ndarray:
         """Returns the spatial samples for the given arrival.
 
         Args:
@@ -99,6 +111,8 @@ class AntennaArray:
         y = np.tan(arrival.elevation) * np.sqrt(x**2 + z**2)
         direction = np.array([x, y, z])
         return amplitude * arrival.amplitude * np.array([
+            element.antenna.calculate_pattern(arrival.azimuth,
+                                              arrival.elevation) *
             np.exp(-1j * (2 * np.pi * np.dot(element.coordinates, direction) +
                           arrival.offset)) for element in self.elements
         ])

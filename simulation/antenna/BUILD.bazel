@@ -3,9 +3,50 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "antenna",
+    srcs = ["antenna.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "isotropic_antenna",
+    srcs = ["isotropic_antenna.py"],
+    deps = [
+        ":antenna",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "patch_antenna",
+    srcs = ["patch_antenna.py"],
+    deps = [
+        ":antenna",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "patch_antenna_main",
+    srcs = ["patch_antenna_main.py"],
+    deps = [
+        ":patch_antenna",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
     name = "antenna_array",
     srcs = ["antenna_array.py"],
-    deps = [requirement("numpy")],
+    deps = [
+        ":antenna",
+        ":isotropic_antenna",
+        requirement("numpy"),
+    ],
 )
 
 py_test(
