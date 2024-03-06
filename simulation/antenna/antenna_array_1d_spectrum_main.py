@@ -9,8 +9,7 @@ from matplotlib import animation
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayArrival,
                                               AntennaArrayElement)
-from simulation.antenna.linear_antenna_array_spectrum import \
-    LinearAntennaArraySpectrum
+from simulation.antenna.antenna_array_1d_spectrum import AntennaArray1DSpectrum
 
 FLAGS = flags.FLAGS
 
@@ -29,7 +28,7 @@ def sweep_azimuth_spectrum(num_antennas: int, antenna_spacing: float) -> None:
         AntennaArrayElement(x=antenna_spacing * i) for i in range(num_antennas)
     ]
     array = AntennaArray(elements)
-    spectrum = LinearAntennaArraySpectrum(array)
+    spectrum = AntennaArray1DSpectrum(array)
 
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     theta = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
@@ -81,7 +80,7 @@ def sweep_azimuth_spectrum_resolution(num_antennas: int, antenna_spacing: float,
         AntennaArrayElement(x=antenna_spacing * i) for i in range(num_antennas)
     ]
     array = AntennaArray(elements)
-    spectrum = LinearAntennaArraySpectrum(array)
+    spectrum = AntennaArray1DSpectrum(array)
 
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     theta = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)

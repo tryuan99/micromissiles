@@ -69,8 +69,8 @@ py_library(
 )
 
 py_library(
-    name = "linear_antenna_array_spectrum",
-    srcs = ["linear_antenna_array_spectrum.py"],
+    name = "antenna_array_1d_spectrum",
+    srcs = ["antenna_array_1d_spectrum.py"],
     deps = [
         ":antenna_array",
         ":antenna_array_spectrum",
@@ -78,11 +78,11 @@ py_library(
 )
 
 py_binary(
-    name = "linear_antenna_array_spectrum_main",
-    srcs = ["linear_antenna_array_spectrum_main.py"],
+    name = "antenna_array_1d_spectrum_main",
+    srcs = ["antenna_array_1d_spectrum_main.py"],
     deps = [
         ":antenna_array",
-        ":linear_antenna_array_spectrum",
+        ":antenna_array_1d_spectrum",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),

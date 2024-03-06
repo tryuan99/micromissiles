@@ -1,5 +1,5 @@
-"""The linear antenna array spectrum calculates the azimuth spectrum of a 1D
-antenna array.
+"""The 1D antenna array spectrum calculates the azimuth spectrum of an antenna
+array on a horizontal plane.
 """
 
 import numpy as np
@@ -8,14 +8,15 @@ from simulation.antenna.antenna_array import AntennaArray, AntennaArrayArrival
 from simulation.antenna.antenna_array_spectrum import AntennaArraySpectrum
 
 
-class LinearAntennaArraySpectrum(AntennaArraySpectrum):
-    """Linear antenna spectrum."""
+class AntennaArray1DSpectrum(AntennaArraySpectrum):
+    """1D antenna spectrum."""
 
     def __init__(self, array: AntennaArray) -> None:
         for element in array.elements:
-            if element.y != 0 or element.z != 0:
+            if element.y != 0:
                 raise ValueError(
-                    "All antenna array elements must lie on the x-axis.")
+                    "All antenna array elements must lie on a horizontal plane."
+                )
         super().__init__(array)
 
     def calculate_azimuth_spectrum(self, arrivals: AntennaArrayArrival |
