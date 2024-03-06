@@ -24,8 +24,8 @@ x-z plane, where a positive elevation denotes a positive y-coordinate
 and a negative elevation denotes a negative y-coordinate.
     elevation = arctan(y / sqrt(x^2 + z^2))
 Converting to Cartesian coordinates:
-    x = -tan(azimuth) * z
-    y = tan(elevation) * sqrt(x^2 + z^2)
+    x = -tan(azimuth) * z = -r * sin(azimuth) * cos(elevation)
+    y = tan(elevation) * sqrt(x^2 + z^2) = r * sin(elevation)
     z = r * cos(azimuth) * cos(elevation)
 """
 
@@ -87,9 +87,9 @@ class PolarCoordinates(Coordinates):
         """Transforms the coordinates to Cartesian coordinates.
 
         Returns:
-            Carteisn coordinates.
+            Cartesian coordinates.
         """
+        x = -self.r * np.sin(self.theta) * np.cos(self.phi)
+        y = self.r * np.sin(self.phi)
         z = self.r * np.cos(self.theta) * np.cos(self.phi)
-        x = -np.tan(self.theta) * z
-        y = np.tan(self.phi) * np.sqrt(x**2 + z**2)
         return CartesianCoordinates(x, y, z)

@@ -106,9 +106,9 @@ class AntennaArray:
             Spatial samples for each antenna array element.
         """
         # Calculate the unit direction vector.
+        x = -np.sin(arrival.azimuth) * np.cos(arrival.elevation)
+        y = np.sin(arrival.elevation)
         z = np.cos(arrival.azimuth) * np.cos(arrival.elevation)
-        x = -np.tan(arrival.azimuth) * z
-        y = np.tan(arrival.elevation) * np.sqrt(x**2 + z**2)
         direction = np.array([x, y, z])
         return amplitude * arrival.amplitude * np.array([
             element.antenna.calculate_pattern(arrival.azimuth,
