@@ -2,7 +2,7 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 compile_pip_requirements(
     name = "pip_requirements",
+    extra_args = ["--allow-unsafe"],
     requirements_in = "//deps:pip_requirements.in",
     requirements_txt = "//deps:pip_requirements.txt",
-    extra_args = ["--allow-unsafe"],
 )

@@ -154,7 +154,8 @@ py_library(
         ":samples",
         ":target",
         "//simulation/radar/processors:range_doppler_processor",
-        requirement("numpy")],
+        requirement("numpy"),
+    ],
 )
 
 py_library(
