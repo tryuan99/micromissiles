@@ -53,7 +53,6 @@ class PeakSelector(Samples):
 
         Args:
             k: Index of the largest peak.
-            guard_length: Number of indices between peaks.
 
         Returns:
             A tuple of the indices of the k largest peaks in order of decreasing
@@ -68,7 +67,6 @@ class PeakSelector(Samples):
 
         Args:
             k: Index of the largest peak.
-            guard_length: Number of indices between peaks.
 
         Returns:
             The magnitudes of the k largest peaks in order of decreasing
@@ -81,7 +79,6 @@ class PeakSelector(Samples):
 
         Args:
             k: Index of the largest peak.
-            guard_length: Number of indices between peaks.
 
         Returns:
             The indices of the k largest peaks in order of decreasing magnitude.

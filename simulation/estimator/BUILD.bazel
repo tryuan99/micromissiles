@@ -1,0 +1,68 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "fft_frequency_estimator",
+    srcs = ["fft_frequency_estimator.py"],
+    deps = [
+        ":frequency_estimator",
+        "//simulation/radar/components:peak_selector",
+        "//simulation/radar/components:samples",
+        "//utils/regression:parabolic_regression",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "fft_frequency_estimator_test",
+    srcs = ["fft_frequency_estimator_test.py"],
+    deps = [
+        ":fft_frequency_estimator",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "fft_frequency_estimator_main",
+    srcs = ["fft_frequency_estimator_main.py"],
+    deps = [
+        ":fft_frequency_estimator",
+        ":sinusoid",
+        requirement("absl-py"),
+        requirement("SciencePlots"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "frequency_estimator",
+    srcs = ["frequency_estimator.py"],
+    deps = [
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "sinusoid",
+    srcs = ["sinusoid.py"],
+    deps = [
+        "//simulation/radar/components:noise",
+        "//simulation/radar/components:samples",
+        "//utils:constants",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "sinusoid_test",
+    srcs = ["sinusoid_test.py"],
+    deps = [
+        ":sinusoid",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
