@@ -1,7 +1,7 @@
 import numpy as np
 from absl.testing import absltest
 
-from simulation.estimator.fft_frequency_estimator import (
+from simulation.estimator.fft.fft_frequency_estimator import (
     FftJacobsenFrequencyEstimator, FftParabolicInterpolationFrequencyEstimator,
     FftPeakFrequencyEstimator, FftTwoPointDtftFrequencyEstimator, FftWindow,
     FftWindowedJacobsenFrequencyEstimator)

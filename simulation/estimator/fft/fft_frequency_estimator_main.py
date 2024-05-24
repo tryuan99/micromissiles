@@ -5,7 +5,7 @@ import numpy as np
 import scienceplots
 from absl import app, flags
 
-from simulation.estimator.fft_frequency_estimator import (
+from simulation.estimator.fft.fft_frequency_estimator import (
     FftJacobsenFrequencyEstimator, FftParabolicInterpolationFrequencyEstimator,
     FftPeakFrequencyEstimator, FftTwoPointDtftFrequencyEstimator)
 from simulation.estimator.sinusoid import Sinusoid
