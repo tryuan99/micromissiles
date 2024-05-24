@@ -1,0 +1,38 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "solver",
+    srcs = ["solver.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "solver_test",
+    srcs = ["solver_test.py"],
+    deps = [
+        ":solver",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "least_squares_solver",
+    srcs = ["least_squares_solver.py"],
+    deps = [
+        ":solver",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "least_squares_solver_test",
+    srcs = ["least_squares_solver_test.py"],
+    deps = [
+        ":least_squares_solver",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

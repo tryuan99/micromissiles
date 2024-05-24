@@ -30,7 +30,8 @@ class WeightedLinearRegression(LinearRegression):
 
     def __init__(self, x: np.ndarray, y: np.ndarray, weights: np.ndarray):
         self.weights = np.copy(weights)
-        assert np.all(self.weights >= 0)
+        if not np.all(self.weights >= 0):
+            raise ValueError("Weights must be non-negative.")
         super().__init__(x, y)
 
     @property
@@ -79,5 +80,5 @@ class WeightedLinearRegression(LinearRegression):
         y_weighted = self.y * W
         result, residuals = np.linalg.lstsq(A_weighted, y_weighted,
                                             rcond=None)[:2]
-        self.coeffs = np.squeeze(result)
+        self.coeffs = result
         self.residuals = residuals[0] if len(residuals) > 0 else 0
