@@ -29,7 +29,7 @@ py_binary(
     srcs = ["fft_frequency_estimator_main.py"],
     deps = [
         ":fft_frequency_estimator",
-        "//simulation/estimator:sinusoid",
+        "//simulation/estimator:complex_exponential",
         requirement("absl-py"),
         requirement("SciencePlots"),
         requirement("matplotlib"),

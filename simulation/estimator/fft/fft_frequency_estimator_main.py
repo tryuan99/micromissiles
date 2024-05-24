@@ -5,10 +5,10 @@ import numpy as np
 import scienceplots
 from absl import app, flags
 
+from simulation.estimator.complex_exponential import ComplexExponential
 from simulation.estimator.fft.fft_frequency_estimator import (
     FftJacobsenFrequencyEstimator, FftParabolicInterpolationFrequencyEstimator,
     FftPeakFrequencyEstimator, FftTwoPointDtftFrequencyEstimator)
-from simulation.estimator.sinusoid import Sinusoid
 from utils import constants
 
 FLAGS = flags.FLAGS
@@ -51,12 +51,13 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
                 # Generate a sinusoid with a random frequency.
                 frequency = np.random.uniform(-0.5, 0.5)
                 phase = np.random.uniform(0, 2 * np.pi)
-                sinusoid = Sinusoid(fs=1,
-                                    num_samples=NUM_SAMPLES,
-                                    frequency=frequency,
-                                    phase=phase,
-                                    amplitude=1,
-                                    snr=snr)
+                sinusoid = ComplexExponential(fs=1,
+                                              num_samples=NUM_SAMPLES,
+                                              frequency=frequency,
+                                              phase=phase,
+                                              amplitude=1,
+                                              alpha=0,
+                                              snr=snr)
                 # Estimate the frequency.
                 estimator = fft_frequency_estimator(sinusoid,
                                                     fs=1,
@@ -98,12 +99,13 @@ def plot_normalized_estimation_error_histogram() -> None:
             frequency = np.random.uniform(-0.5, 0.5)
             phase = np.random.uniform(0, 2 * np.pi)
             snr = np.random.randint(-40, 5 + 1)
-            sinusoid = Sinusoid(fs=1,
-                                num_samples=num_samples,
-                                frequency=frequency,
-                                phase=phase,
-                                amplitude=1,
-                                snr=snr)
+            sinusoid = ComplexExponential(fs=1,
+                                          num_samples=num_samples,
+                                          frequency=frequency,
+                                          phase=phase,
+                                          amplitude=1,
+                                          alpha=0,
+                                          snr=snr)
             # Estimate the frequency.
             estimator = fft_frequency_estimator(sinusoid,
                                                 fs=1,

@@ -3,17 +3,8 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
-    name = "frequency_estimator",
-    srcs = ["frequency_estimator.py"],
-    deps = [
-        "//simulation/radar/components:samples",
-        requirement("numpy"),
-    ],
-)
-
-py_library(
-    name = "sinusoid",
-    srcs = ["sinusoid.py"],
+    name = "complex_exponential",
+    srcs = ["complex_exponential.py"],
     deps = [
         "//simulation/radar/components:noise",
         "//simulation/radar/components:samples",
@@ -23,11 +14,20 @@ py_library(
 )
 
 py_test(
-    name = "sinusoid_test",
-    srcs = ["sinusoid_test.py"],
+    name = "complex_exponential_test",
+    srcs = ["complex_exponential_test.py"],
     deps = [
-        ":sinusoid",
+        ":complex_exponential",
         requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "frequency_estimator",
+    srcs = ["frequency_estimator.py"],
+    deps = [
+        "//simulation/radar/components:samples",
         requirement("numpy"),
     ],
 )
