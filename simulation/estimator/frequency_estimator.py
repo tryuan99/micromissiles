@@ -6,18 +6,15 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from simulation.estimator.estimator import Estimator1D
 from simulation.radar.components.samples import Samples
 
 
-class FrequencyEstimator(Samples, ABC):
+class FrequencyEstimator(Estimator1D, ABC):
     """Interface for a frequency estimator."""
 
     def __init__(self, samples: Samples, fs: float) -> None:
-        super().__init__(samples)
-        self.fs = fs
-
-        if self.ndim != 1:
-            raise ValueError("Only signals of dimension 1 are supported.")
+        super().__init__(samples, fs)
 
     @abstractmethod
     def estimate_single_frequency(self) -> float:

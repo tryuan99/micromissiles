@@ -1,0 +1,76 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "prony_complex_exponential_estimator",
+    srcs = ["prony_complex_exponential_estimator.py"],
+    deps = [
+        "//simulation/estimator:complex_exponential",
+        "//simulation/estimator:complex_exponential_estimator",
+        "//simulation/radar/components:samples",
+        "//utils/solver:least_squares_solver",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "prony_complex_exponential_estimator_main",
+    srcs = ["prony_complex_exponential_estimator_main.py"],
+    deps = [
+        ":prony_mpm_complex_exponential_estimator",
+        ":prony_polynomial_complex_exponential_estimator",
+        "//simulation/estimator:complex_exponential",
+        "//utils/solver:least_squares_solver",
+        requirement("absl-py"),
+        requirement("SciencePlots"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "prony_mpm_complex_exponential_estimator",
+    srcs = ["prony_mpm_complex_exponential_estimator.py"],
+    deps = [
+        ":prony_complex_exponential_estimator",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_test(
+    name = "prony_mpm_complex_exponential_estimator_test",
+    srcs = ["prony_mpm_complex_exponential_estimator_test.py"],
+    deps = [
+        ":prony_mpm_complex_exponential_estimator",
+        "//simulation/estimator:complex_exponential",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "prony_polynomial_complex_exponential_estimator",
+    srcs = ["prony_polynomial_complex_exponential_estimator.py"],
+    deps = [
+        ":prony_complex_exponential_estimator",
+        "//simulation/radar/components:samples",
+        "//utils/solver",
+        "//utils/solver:least_squares_solver",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_test(
+    name = "prony_polynomial_complex_exponential_estimator_test",
+    srcs = ["prony_polynomial_complex_exponential_estimator_test.py"],
+    deps = [
+        ":prony_polynomial_complex_exponential_estimator",
+        "//simulation/estimator:complex_exponential",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

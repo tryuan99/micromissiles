@@ -24,9 +24,30 @@ py_test(
 )
 
 py_library(
+    name = "estimator",
+    srcs = ["estimator.py"],
+    deps = [
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "complex_exponential_estimator",
+    srcs = ["complex_exponential_estimator.py"],
+    deps = [
+        ":complex_exponential",
+        ":estimator",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "frequency_estimator",
     srcs = ["frequency_estimator.py"],
     deps = [
+        ":estimator",
         "//simulation/radar/components:samples",
         requirement("numpy"),
     ],

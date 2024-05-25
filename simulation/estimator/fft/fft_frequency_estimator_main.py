@@ -13,12 +13,6 @@ from utils import constants
 
 FLAGS = flags.FLAGS
 
-# Number of samples.
-NUM_SAMPLES = 64
-
-# FFT length.
-FFT_LENGTH = 256
-
 # FFT frequency estimators.
 FFT_FREQUENCY_ESTIMATORS = {
     "FFT Peak": FftPeakFrequencyEstimator,
@@ -41,8 +35,9 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
     """
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
-    for (fft_frequency_estimator_label, fft_frequency_estimator), marker in zip(
-            FFT_FREQUENCY_ESTIMATORS.items(), "o^sv"):
+    for (fft_frequency_estimator_label,
+         fft_frequency_estimator_cls), marker in zip(
+             FFT_FREQUENCY_ESTIMATORS.items(), "o^sv"):
         rms_error_over_snr = np.zeros(len(snrs))
         for snr_index, snr in enumerate(snrs):
             # Simulate the estimation error in units of FFT bins.
@@ -52,20 +47,21 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
                 frequency = np.random.uniform(-0.5, 0.5)
                 phase = np.random.uniform(0, 2 * np.pi)
                 sinusoid = ComplexExponential(fs=1,
-                                              num_samples=NUM_SAMPLES,
+                                              num_samples=num_samples,
                                               frequency=frequency,
                                               phase=phase,
                                               amplitude=1,
                                               alpha=0,
                                               snr=snr)
                 # Estimate the frequency.
-                estimator = fft_frequency_estimator(sinusoid,
-                                                    fs=1,
-                                                    fft_length=FFT_LENGTH,
-                                                    window=np.ones(NUM_SAMPLES))
+                estimator = fft_frequency_estimator_cls(
+                    sinusoid,
+                    fs=1,
+                    fft_length=fft_length,
+                    window=np.ones(num_samples))
                 estimated_frequency = estimator.estimate_single_frequency()
                 # Convert from units of Hz to units of FFT bins.
-                errors[i] = (estimated_frequency - frequency) * FFT_LENGTH
+                errors[i] = (estimated_frequency - frequency) * fft_length
             # Calculate the RMS error for the SNR.
             rms_error_over_snr[snr_index] = np.sqrt(np.mean(errors**2))
         # Plot the RMS error over SNR for the estimator.
@@ -76,8 +72,8 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
     ax.set_xlabel("SNR [dB]")
     ax.set_ylabel("Frequency estimator RMS error [FFT bin]")
     ax.set_title(
-        f"Frequency estimator RMS error (number of samples={NUM_SAMPLES}, "
-        f"FFT length={FFT_LENGTH})")
+        f"Frequency estimator RMS error (number of samples={num_samples}, "
+        f"FFT length={fft_length})")
     ax.legend()
     plt.show()
 
@@ -90,6 +86,7 @@ def plot_normalized_estimation_error_histogram() -> None:
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     num_iterations = 1000000
+    bins = np.linspace(-10, 10, 1000)
     for (fft_frequency_estimator_label,
          fft_frequency_estimator) in FFT_FREQUENCY_ESTIMATORS.items():
         normalized_frequency_errors = np.zeros(num_iterations)
@@ -118,7 +115,6 @@ def plot_normalized_estimation_error_histogram() -> None:
             normalized_frequency_error = frequency_error / crlb
             normalized_frequency_errors[i] = normalized_frequency_error
         # Plot a histogram of the normalized frequency errors.
-        bins = np.linspace(-10, 10, 1000)
         ax.hist(normalized_frequency_errors,
                 bins=bins,
                 label=fft_frequency_estimator_label,

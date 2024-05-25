@@ -9,6 +9,20 @@ from simulation.radar.components.samples import Samples
 from utils import constants
 
 
+class ComplexExponentialParams:
+    """Complex exponential parameters."""
+
+    def __init__(self,
+                 frequency: float = 0,
+                 phase: float = 0,
+                 amplitude: float = 1,
+                 alpha: float = 0) -> None:
+        self.frequency = frequency
+        self.phase = phase
+        self.amplitude = amplitude
+        self.alpha = alpha
+
+
 class ComplexExponential(Samples):
     """Complex exponential of the form
     A * exp(jtheta) * exp((alpha + j * 2pi * f) * t).
@@ -21,10 +35,11 @@ class ComplexExponential(Samples):
                  phase: float = 0,
                  amplitude: float = 1,
                  alpha: float = 0,
+                 params: ComplexExponentialParams = None,
                  snr: float = np.inf) -> None:
         super().__init__(
             self.generate_signal(fs, num_samples, frequency, phase, amplitude,
-                                 alpha, snr))
+                                 alpha, params, snr))
 
     @staticmethod
     def generate_signal(fs: float,
@@ -33,6 +48,7 @@ class ComplexExponential(Samples):
                         phase: float = 0,
                         amplitude: float = 1,
                         alpha: float = 0,
+                        params: ComplexExponentialParams = None,
                         snr: float = np.inf) -> np.ndarray:
         """Generates the signal.
 
@@ -51,6 +67,12 @@ class ComplexExponential(Samples):
         The SNR is the signal-to-noise ratio at the initial amplitude of the
         signal.
         """
+        if params is not None:
+            frequency = params.frequency
+            phase = params.phase
+            amplitude = params.amplitude
+            alpha = params.alpha
+
         if snr == np.inf:
             noise_amplitude = 0
         else:

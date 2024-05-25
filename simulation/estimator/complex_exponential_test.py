@@ -1,7 +1,8 @@
 import numpy as np
 from absl.testing import absltest
 
-from simulation.estimator.complex_exponential import ComplexExponential
+from simulation.estimator.complex_exponential import (ComplexExponential,
+                                                      ComplexExponentialParams)
 
 # Sampling frequency in Hz.
 SAMPLING_FREQUENCY = 1  # Hz
@@ -42,6 +43,23 @@ class ComplexExponentialTestCase(absltest.TestCase):
                                                   phase=0,
                                                   amplitude=2,
                                                   alpha=np.log(0.5),
+                                                  snr=np.inf)
+        self.assertIsNone(
+            np.testing.assert_allclose(decaying_exponential.samples,
+                                       np.array([2, 1, 0.5, 0.25])))
+
+    def test_params(self):
+        params = ComplexExponentialParams(frequency=0,
+                                          phase=0,
+                                          amplitude=2,
+                                          alpha=np.log(0.5))
+        decaying_exponential = ComplexExponential(SAMPLING_FREQUENCY,
+                                                  NUM_SAMPLES,
+                                                  frequency=1,
+                                                  phase=1,
+                                                  amplitude=3,
+                                                  alpha=0,
+                                                  params=params,
                                                   snr=np.inf)
         self.assertIsNone(
             np.testing.assert_allclose(decaying_exponential.samples,
