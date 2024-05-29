@@ -70,10 +70,10 @@ class ComplexLassoRegressionTestCase(LassoRegressionTestCase):
         lasso_model = ComplexLassoModel(X, y, 0.01)
         lasso_model.solve()
         self.assertIsNone(
-            np.testing.assert_allclose(lasso_model.get_coefficients(),
-                                       np.array(
-                                           [0.9988 + 0.92j, -1.871 - 0.9971j]),
-                                       atol=1e-4))
+            np.testing.assert_allclose(
+                lasso_model.get_coefficients(),
+                np.array([0.9988 + 0.9200j, -1.8711 - 0.9971j]),
+                atol=1e-4))
 
         lasso_model = ComplexLassoModel(X, y, 1e-6)
         lasso_model.solve()
