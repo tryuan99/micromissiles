@@ -44,7 +44,9 @@ class SerialInterface:
         self,
         port: str,
         baudrate: int,
-        timeout: float = SERIAL_READ_TIMEOUT,
+        read_terminator: bytes = b"\n",
+        write_terminator: bytes = b"",
+        read_timeout: float = SERIAL_READ_TIMEOUT,
         write_timeout: float = SERIAL_WRITE_TIMEOUT,
         verbose: bool = False,
         **kwargs,
@@ -54,13 +56,25 @@ class SerialInterface:
         self.serial = serial.Serial(
             port=port,
             baudrate=baudrate,
-            timeout=timeout,
+            timeout=read_timeout,
             write_timeout=write_timeout,
             **kwargs,
         )
         time.sleep(SERIAL_OPEN_TIMEOUT)
 
+        self.read_terminator = read_terminator
+        self.write_terminator = write_terminator
         self.verbose = verbose
+
+    @property
+    def num_bytes_in_waiting(self) -> int:
+        """Returns the number of bytes in the input buffer."""
+        return self.serial.in_waiting
+
+    @property
+    def num_bytes_out_waiting(self) -> int:
+        """Returns the number of bytes in the output buffer."""
+        return self.serial.out_waiting
 
     def write(self, data: bytes) -> None:
         """Writes the data to the serial port.
@@ -70,27 +84,37 @@ class SerialInterface:
         """
         if len(data) <= 0:
             return
+        write_data = data + self.write_terminator
         num_bytes_written = 0
-        while num_bytes_written < len(data):
+        while num_bytes_written < len(write_data):
             num_bytes_to_write = min(SERIAL_PACKET_SIZE,
-                                     len(data) - num_bytes_written)
+                                     len(write_data) - num_bytes_written)
             num_bytes_sent = self.serial.write(
-                data[num_bytes_written:num_bytes_written + num_bytes_to_write])
+                write_data[num_bytes_written:num_bytes_written +
+                           num_bytes_to_write])
             if self.verbose:
                 logging.info("Wrote %d bytes to %s.", num_bytes_sent, self.port)
             num_bytes_written += num_bytes_sent
             time.sleep(SERIAL_PACKET_WRITE_TIMEOUT)
 
-    def read(self, num_bytes: int = None) -> bytes:
-        """Reads the data from the serial port.
+    def read(self, num_bytes: int = None, terminator: str = None) -> bytes:
+        """Reads the data from the serial port until the read terminator, the
+        number of bytes has been read, or timeout occurs.
 
         Args:
-            num_bytes: Number of bytes to read. If None, reads until the next newline.
+            num_bytes: Maximum number of bytes to read.
+            terminator: Read terminator override.
 
         Returns:
             The data that has been read.
         """
-        read_data = self.serial.read_until(size=num_bytes)
+        if terminator is None:
+            terminator = self.read_terminator
+        read_data = self.serial.read_until(expected=terminator, size=num_bytes)
         if self.verbose:
             logging.info("Read %d bytes from %s.", len(read_data), self.port)
         return read_data
+
+    def read_all(self) -> bytes:
+        """Reads all data from the serial port."""
+        return self.serial.read_all()
