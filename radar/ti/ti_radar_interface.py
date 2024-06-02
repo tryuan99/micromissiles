@@ -10,6 +10,7 @@ from absl import logging
 
 from radar.ti.ti_radar_config import (TiCliCommand, TiCliCommandString,
                                       TiRadarConfig)
+from radar.ti.ti_radar_handler import TiRadarHandler
 from utils.serial.serial_interface import SerialInterface
 
 # TI radar UART baud rates.
@@ -39,18 +40,39 @@ class TiRadarInterface:
                                            data_baudrate,
                                            read_timeout=TI_DATA_READ_TIMEOUT)
 
+        # Initialize the radar data handlers.
+        self.config_handlers: list[TiRadarHandler] = []
+        self.data_handlers: list[TiRadarHandler] = []
+
         # Create threads to listen for data from the radar.
-        self.serial_listen_threads = [
-            Thread(target=self._read_from_serial, args=(serial,))
-            for serial in (self.config_serial, self.data_serial)
+        self.serial_threads = [
+            Thread(target=self._read_data, args=(serial, handlers))
+            for serial, handlers in ((self.config_serial, self.config_handlers),
+                                     (self.data_serial, self.data_handlers))
         ]
-        for thread in self.serial_listen_threads:
+        for thread in self.serial_threads:
             thread.start()
 
     def __del__(self):
-        for thread in self.serial_listen_threads:
+        for thread in self.serial_threads:
             if thread.is_alive():
                 thread.join()
+
+    def add_config_handler(self, handler: TiRadarHandler) -> None:
+        """Adds a radar data handler to the config port.
+
+        Args:
+            handler: Config data handler.
+        """
+        self.config_handlers.append(handler)
+
+    def add_data_handler(self, handler: TiRadarHandler) -> None:
+        """Adds a radar data handler to the config port.
+
+        Args:
+            handler: Data handler.
+        """
+        self.data_handlers.append(handler)
 
     def configure(self, config: TiRadarConfig) -> None:
         """Configures the radar.
@@ -91,11 +113,17 @@ class TiRadarInterface:
         self.config_serial.write(str(command).encode())
 
     @staticmethod
-    def _read_from_serial(serial: SerialInterface) -> None:
+    def _read_data(serial: SerialInterface,
+                   handlers: list[TiRadarHandler]) -> None:
+        """Reads data from the serial port and forwards it to the radar data
+        handlers.
+
+        Args:
+            serial: Serial interface.
+            handlers: Radar data handlers.
+        """
         while True:
             read_data = serial.read_all()
             if len(read_data) > 0:
-                try:
-                    logging.info(read_data.decode().strip())
-                except:
-                    logging.info(read_data)
+                for handler in handlers:
+                    handler.receive_data(read_data)

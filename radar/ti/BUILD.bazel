@@ -8,10 +8,16 @@ py_library(
 )
 
 py_library(
+    name = "ti_radar_data_handler",
+    srcs = ["ti_radar_data_handler.py"],
+)
+
+py_library(
     name = "ti_radar_interface",
     srcs = ["ti_radar_interface.py"],
     deps = [
         ":ti_radar_config",
+        ":ti_radar_data_handler",
         "//utils/serial:serial_interface",
         requirement("absl-py"),
     ],
@@ -23,6 +29,16 @@ py_binary(
     deps = [
         ":ti_radar_config",
         ":ti_radar_interface",
+        ":ti_radar_logger",
+        requirement("absl-py"),
+    ],
+)
+
+py_library(
+    name = "ti_radar_logger",
+    srcs = ["ti_radar_logger.py"],
+    deps = [
+        ":ti_radar_data_handler",
         requirement("absl-py"),
     ],
 )

@@ -5,6 +5,7 @@ from absl import app, flags
 from radar.ti.ti_radar_config import RADAR_CONFIGS
 from radar.ti.ti_radar_interface import (TI_CONFIG_BAUDRATE, TI_DATA_BAUDRATE,
                                          TiRadarInterface)
+from radar.ti.ti_radar_logger import TiRadarLogger
 
 FLAGS = flags.FLAGS
 
@@ -15,6 +16,8 @@ def main(argv):
     radar_interface = TiRadarInterface(FLAGS.config_port, FLAGS.data_port,
                                        FLAGS.config_baudrate,
                                        FLAGS.data_baudrate)
+    radar_interface.add_config_handler(TiRadarLogger())
+    radar_interface.add_data_handler(TiRadarLogger())
     radar_interface.start(RADAR_CONFIGS[FLAGS.board]())
 
 
