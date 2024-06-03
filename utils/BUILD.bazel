@@ -7,3 +7,17 @@ py_library(
     srcs = ["constants.py"],
     deps = [requirement("numpy")],
 )
+
+py_library(
+    name = "struct",
+    srcs = ["struct.py"],
+)
+
+py_test(
+    name = "struct_test",
+    srcs = ["struct_test.py"],
+    deps = [
+        ":struct",
+        requirement("absl-py"),
+    ],
+)
