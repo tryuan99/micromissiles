@@ -146,6 +146,25 @@ class TiRadarSubframeDataDetectedObjectSpherical(Struct):
         }
 
 
+class TiRadarSubframeDataDetectedObject(Struct):
+    """TI radar subframe data detected object."""
+
+    @classmethod
+    def fields(cls) -> StructFields:
+        """Returns a dictionary mapping each field name to its size in bytes,
+        the array length, and an optional struct.
+        """
+        return {
+            "range": (StructFieldType.FLOAT, 1),
+            "doppler": (StructFieldType.FLOAT, 1),
+            "azimuth": (StructFieldType.FLOAT, 1),
+            "elevation": (StructFieldType.FLOAT, 1),
+            "x": (StructFieldType.FLOAT, 1),
+            "y": (StructFieldType.FLOAT, 1),
+            "z": (StructFieldType.FLOAT, 1),
+        }
+
+
 class TiRadarSubframeDataDetectedObjects(Struct):
     """TI radar subframe data detected objects."""
 
@@ -157,7 +176,7 @@ class TiRadarSubframeDataDetectedObjects(Struct):
         return {
             "objects": (StructFieldType.STRUCT,
                         TI_RADAR_SUBFRAME_MAX_NUM_DETECTED_OBJECTS,
-                        TiRadarSubframeDataDetectedObjectCartesian),
+                        TiRadarSubframeDataDetectedObject),
         }
 
 
