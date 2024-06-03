@@ -155,13 +155,12 @@ class TiRadarSubframeDataDetectedObject(Struct):
         the array length, and an optional struct.
         """
         return {
+            "range_bin": (StructFieldType.UINT16, 1),
+            "doppler_bin": (StructFieldType.UINT16, 1),
             "range": (StructFieldType.FLOAT, 1),
             "doppler": (StructFieldType.FLOAT, 1),
             "azimuth": (StructFieldType.FLOAT, 1),
             "elevation": (StructFieldType.FLOAT, 1),
-            "x": (StructFieldType.FLOAT, 1),
-            "y": (StructFieldType.FLOAT, 1),
-            "z": (StructFieldType.FLOAT, 1),
         }
 
 

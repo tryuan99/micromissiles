@@ -27,9 +27,9 @@ class TiRadarSubframeDataLogger(TiRadarSubframeDataHandler):
         logging.info("Platform: %X, version: %08x", header.get("platform"),
                      header.get("version"))
         logging.info(
-            ("Received subframe data for frame number %d and subframe number "
-             "%d. Number of detected objects: %d, number of TLVs: %d, packet "
-             "length: %d."), header.get("frame_number"),
+            ("Received subframe data for frame number %u and subframe number "
+             "%u. Number of detected objects: %u, number of TLVs: %u, packet "
+             "length: %u."), header.get("frame_number"),
             header.get("subframe_number"), header.get("num_detected_objects"),
             header.get("num_tlvs"), header.get("packet_length"))
 
@@ -40,6 +40,10 @@ class TiRadarSubframeDataLogger(TiRadarSubframeDataHandler):
         for i in range(num_detected_objects):
             detected_object = detected_objects.get("objects", i)
             logging.info(
-                "Detected object %d: x: %f, y: %f, z: %f, Doppler: %f.", i + 1,
-                detected_object.get("x"), detected_object.get("y"),
-                detected_object.get("z"), detected_object.get("doppler"))
+                ("Detected object %d: range bin: %u, Doppler bin: %u, "
+                 "range: %f, Doppler: %f, azimuth: %f, elevation: %f."), i + 1,
+                detected_object.get("range_bin"),
+                detected_object.get("doppler_bin"),
+                detected_object.get("range"), detected_object.get("doppler"),
+                detected_object.get("azimuth"),
+                detected_object.get("elevation"))
