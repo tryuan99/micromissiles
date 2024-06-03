@@ -1,16 +1,16 @@
-"""The TI radar logger is a radar data handler that logs data received from the
-radar.
+"""The TI radar data logger is a radar data handler that logs data received
+from the radar.
 """
 
 from absl import logging
 
-from radar.ti.ti_radar_handler import TiRadarHandler
+from radar.ti.ti_radar_data_handler import TiRadarDataHandler
 
 
-class TiRadarLogger(TiRadarHandler):
-    """TI radar logger.
+class TiRadarDataLogger(TiRadarDataHandler):
+    """TI radar data logger.
 
-    The radar logger logs all received data.
+    The radar data logger logs all received data.
     """
 
     def receive_data(self, data: bytes) -> None:

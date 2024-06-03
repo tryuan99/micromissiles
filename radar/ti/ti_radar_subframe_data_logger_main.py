@@ -1,11 +1,14 @@
-"""Runs the TI radar interface."""
+"""Runs the TI radar subframe data logger."""
 
 from absl import app, flags
 
 from radar.ti.ti_radar_config import RADAR_CONFIGS
+from radar.ti.ti_radar_data_logger import TiRadarDataLogger
 from radar.ti.ti_radar_interface import (TI_CONFIG_BAUDRATE, TI_DATA_BAUDRATE,
                                          TiRadarInterface)
-from radar.ti.ti_radar_logger import TiRadarLogger
+from radar.ti.ti_radar_subframe_data_aggregator import \
+    TiRadarSubframeDataAggregator
+from radar.ti.ti_radar_subframe_data_logger import TiRadarSubframeDataLogger
 
 FLAGS = flags.FLAGS
 
@@ -16,8 +19,11 @@ def main(argv):
     radar_interface = TiRadarInterface(FLAGS.config_port, FLAGS.data_port,
                                        FLAGS.config_baudrate,
                                        FLAGS.data_baudrate)
-    radar_interface.add_config_handler(TiRadarLogger())
-    radar_interface.add_data_handler(TiRadarLogger())
+    radar_interface.add_config_handler(TiRadarDataLogger())
+    subframe_data_aggregator = TiRadarSubframeDataAggregator()
+    subframe_data_aggregator.add_subframe_data_handler(
+        TiRadarSubframeDataLogger())
+    radar_interface.add_data_handler(subframe_data_aggregator)
     radar_interface.start(RADAR_CONFIGS[FLAGS.board]())
 
 

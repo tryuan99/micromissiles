@@ -23,22 +23,75 @@ py_library(
     ],
 )
 
+py_library(
+    name = "ti_radar_data_logger",
+    srcs = ["ti_radar_data_logger.py"],
+    deps = [
+        ":ti_radar_data_handler",
+        requirement("absl-py"),
+    ],
+)
+
 py_binary(
-    name = "ti_radar_interface_main",
-    srcs = ["ti_radar_interface_main.py"],
+    name = "ti_radar_data_logger_main",
+    srcs = ["ti_radar_data_logger_main.py"],
     deps = [
         ":ti_radar_config",
+        ":ti_radar_data_logger",
         ":ti_radar_interface",
-        ":ti_radar_logger",
         requirement("absl-py"),
     ],
 )
 
 py_library(
-    name = "ti_radar_logger",
-    srcs = ["ti_radar_logger.py"],
+    name = "ti_radar_subframe_data",
+    srcs = ["ti_radar_subframe_data.py"],
+    deps = ["//utils:struct"],
+)
+
+py_library(
+    name = "ti_radar_subframe_data_aggregator",
+    srcs = ["ti_radar_subframe_data_aggregator.py"],
     deps = [
         ":ti_radar_data_handler",
+        ":ti_radar_subframe_data",
+        ":ti_radar_subframe_data_handler",
+        ":ti_radar_subframe_data_parser",
         requirement("absl-py"),
     ],
+)
+
+py_library(
+    name = "ti_radar_subframe_data_handler",
+    srcs = ["ti_radar_subframe_data_handler.py"],
+    deps = [":ti_radar_subframe_data"],
+)
+
+py_library(
+    name = "ti_radar_subframe_data_logger",
+    srcs = ["ti_radar_subframe_data_logger.py"],
+    deps = [
+        ":ti_radar_subframe_data",
+        ":ti_radar_subframe_data_handler",
+        requirement("absl-py"),
+    ],
+)
+
+py_binary(
+    name = "ti_radar_subframe_data_logger_main",
+    srcs = ["ti_radar_subframe_data_logger_main.py"],
+    deps = [
+        ":ti_radar_config",
+        ":ti_radar_data_logger",
+        ":ti_radar_interface",
+        ":ti_radar_subframe_data_aggregator",
+        ":ti_radar_subframe_data_logger",
+        requirement("absl-py"),
+    ],
+)
+
+py_library(
+    name = "ti_radar_subframe_data_parser",
+    srcs = ["ti_radar_subframe_data_parser.py"],
+    deps = [":ti_radar_subframe_data"],
 )
