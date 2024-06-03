@@ -44,6 +44,33 @@ py_binary(
 )
 
 py_library(
+    name = "ti_radar_range_doppler_map_plotter",
+    srcs = ["ti_radar_range_doppler_map_plotter.py"],
+    deps = [
+        ":ti_radar_subframe_data",
+        ":ti_radar_subframe_data_handler",
+        "//utils/visualization:color_maps",
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "ti_radar_range_doppler_map_plotter_main",
+    srcs = ["ti_radar_range_doppler_map_plotter_main.py"],
+    deps = [
+        ":ti_radar_config",
+        ":ti_radar_data_logger",
+        ":ti_radar_interface",
+        ":ti_radar_range_doppler_map_plotter",
+        ":ti_radar_subframe_data_aggregator",
+        ":ti_radar_subframe_data_logger",
+        requirement("absl-py"),
+    ],
+)
+
+py_library(
     name = "ti_radar_subframe_data",
     srcs = ["ti_radar_subframe_data.py"],
     deps = ["//utils:struct"],
