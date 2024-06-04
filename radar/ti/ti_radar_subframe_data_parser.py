@@ -9,9 +9,6 @@ from radar.ti.ti_radar_subframe_data import (TiRadarSubframeData,
                                              TiRadarSubframeDataType,
                                              TiRadarSubframeDataTypeLength)
 
-# TI radar subframe data packet length multiple in bytes.
-TI_RADAR_SUBFRAME_DATA_PACKET_LENGTH_MULTIPLE = 32  # bytes
-
 
 class TiRadarSubframeDataParser:
     """TI radar subframe data parser."""
@@ -37,8 +34,7 @@ class TiRadarSubframeDataParser:
 
         # Parse the TLVs.
         index = TiRadarSubframeDataHeader.size()
-        while index <= (len(data) -
-                        TI_RADAR_SUBFRAME_DATA_PACKET_LENGTH_MULTIPLE):
+        while index < len(data):
             # Parse the data type and length.
             data_type_length = TiRadarSubframeDataTypeLength(
                 data[index:index + TiRadarSubframeDataTypeLength.size()])
