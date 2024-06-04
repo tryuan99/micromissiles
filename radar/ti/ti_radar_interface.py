@@ -54,10 +54,10 @@ class TiRadarInterface:
             thread.start()
 
     def __del__(self):
-        self.stop()
         for thread in self.serial_threads:
             if thread.is_alive():
                 thread.join()
+        self.stop()
 
     def add_config_handler(self, handler: TiRadarDataHandler) -> None:
         """Adds a radar data handler to the config port.
