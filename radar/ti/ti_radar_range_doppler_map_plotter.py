@@ -41,9 +41,16 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
         range_doppler_map_bytes = subframe_data.get_data(
             TiRadarSubframeDataType.RANGE_DOPPLER_MAP)
         range_doppler_map = np.frombuffer(range_doppler_map_bytes,
-                                          dtype=np.uint16).reshape(
-                                              (self.num_range_bins,
-                                               self.num_doppler_bins))
+                                          dtype=np.uint16)
+        if (len(range_doppler_map)
+                != self.num_range_bins * self.num_doppler_bins):
+            raise ValueError(
+                f"Incorrect number of range-Doppler bins. "
+                f"Expected: {self.num_range_bins * self.num_doppler_bins}, "
+                F"actual: {len(range_doppler_map)}.")
+        range_doppler_map = range_doppler_map.reshape(
+            (self.num_range_bins, self.num_doppler_bins))
+
         detection_range_doppler_bins = None
         if self.mark_detections:
             num_detected_objects = subframe_data.get_data(

@@ -19,7 +19,8 @@ class TiRadarSubframeDataParser:
     def __init__(self, data: bytes) -> None:
         self.subframe_data = self._parse_data(data)
 
-    def _parse_data(self, data: bytes) -> TiRadarSubframeData:
+    @staticmethod
+    def _parse_data(data: bytes) -> TiRadarSubframeData:
         """Parses the bytes into the individual radar subframe data types.
 
         Args:
@@ -44,24 +45,11 @@ class TiRadarSubframeDataParser:
             index += TiRadarSubframeDataTypeLength.size()
             data_type = data_type_length.get("type")
             length = data_type_length.get("length")
-
-            # Validate the data type.
-            # TODO(titan): In Python 3.12, use the in statement.
             try:
-                TiRadarSubframeDataType(data_type)
-            except ValueError:
-                logging.warning("TLV contains an invalid data type: %u.",
-                                data_type)
-                break
-            if (TiRadarSubframeDataType(data_type) ==
-                    TiRadarSubframeDataType.HEADER):
-                logging.warning("TLV contains an invalid data type: %u.",
-                                data_type)
-                break
-
-            # Validate the length.
-            if index + length > len(data):
-                logging.warning("TLV contains an invalid length: %u.", length)
+                TiRadarSubframeDataParser._validate_tlv(data_type, length,
+                                                        index, len(data))
+            except Exception as e:
+                logging.exception("Failed to parse TLV: %s", e)
                 break
 
             # Parse the corresponding data.
@@ -69,3 +57,32 @@ class TiRadarSubframeDataParser:
                                    data[index:index + length])
             index += length
         return subframe_data
+
+    @staticmethod
+    def _validate_tlv(data_type: int, length: int, index: int,
+                      data_length: int) -> None:
+        """Validates the data type and the length.
+
+        Args:
+            data_type: Subframe data type.
+            length: Length of the data type.
+            index: Index within the data buffer.
+            data_length: Data buffer length.
+
+        Raises:
+            ValueError: If the data type or the length fails validation.
+        """
+        # Validate the data type.
+        # TODO(titan): In Python 3.12, use the in statement.
+        try:
+            TiRadarSubframeDataType(data_type)
+        except ValueError as e:
+            raise ValueError(
+                f"TLV contains an invalid data type: {data_type}.") from e
+        if (TiRadarSubframeDataType(data_type) == (
+                TiRadarSubframeDataType.HEADER)):
+            raise ValueError(f"TLV contains an invalid data type: {data_type}.")
+
+        # Validate the length.
+        if index + length > data_length:
+            raise ValueError(f"TLV contains an invalid length: {length}.")

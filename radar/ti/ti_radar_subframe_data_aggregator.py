@@ -74,7 +74,8 @@ class TiRadarSubframeDataAggregator(TiRadarDataHandler):
                         try:
                             self._validate_header(header)
                         except Exception as e:
-                            logging.error("Failed to validate header: %s.", e)
+                            logging.exception("Failed to validate header: %s",
+                                              e)
                             self._reset_for_the_next_subframe()
                         else:
                             if self.remaining_subframe_data_length > 0:
@@ -97,7 +98,11 @@ class TiRadarSubframeDataAggregator(TiRadarDataHandler):
                 # Handle the subframe data.
                 # TODO(titan): This can be multithreaded for better performance.
                 for handler in self.subframe_data_handlers:
-                    handler.handle_subframe_data(subframe_data)
+                    try:
+                        handler.handle_subframe_data(subframe_data)
+                    except Exception as e:
+                        logging.exception("Failed to handle subframe data: %s",
+                                          e)
 
                 # Reset for the next subframe.
                 self._reset_for_next_subframe()
