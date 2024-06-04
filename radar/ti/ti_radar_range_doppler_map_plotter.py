@@ -19,14 +19,16 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
     """TI radar range-Doppler map plotter."""
 
     def __init__(self, num_range_bins: int, num_doppler_bins: int,
-                 animation_interval: float) -> None:
+                 animation_interval: float, mark_detections: bool) -> None:
         super().__init__()
         self.num_range_bins = num_range_bins
         self.num_doppler_bins = num_doppler_bins
         self.animation_interval = animation_interval
+        self.mark_detections = mark_detections
 
         self.range_doppler_map = np.zeros(
             (self.num_range_bins, self.num_doppler_bins))
+        self.detection_range_doppler_bins: np.ndarray = None
         self.range_doppler_map_has_updated = False
         self.range_doppler_map_lock = Lock()
 
@@ -42,9 +44,22 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
                                           dtype=np.uint16).reshape(
                                               (self.num_range_bins,
                                                self.num_doppler_bins))
+        detection_range_doppler_bins = None
+        if self.mark_detections:
+            num_detected_objects = subframe_data.get_data(
+                TiRadarSubframeDataType.HEADER).get("num_detected_objects")
+            detection_range_doppler_bins = np.array([[
+                subframe_data.get_data(
+                    TiRadarSubframeDataType.DETECTED_OBJECTS).get(
+                        "objects", i).get("doppler_bin"),
+                subframe_data.get_data(
+                    TiRadarSubframeDataType.DETECTED_OBJECTS).get(
+                        "objects", i).get("range_bin")
+            ] for i in range(num_detected_objects)])
 
         with self.range_doppler_map_lock:
             self.range_doppler_map = range_doppler_map
+            self.detection_range_doppler_bins = detection_range_doppler_bins
             self.range_doppler_map_has_updated = True
 
     def plot(self) -> None:
@@ -71,9 +86,10 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
             origin="lower",
             extent=extent,
         )
+        detections = ax.scatter([], [], color="red", marker="D")
 
-        def update_heatmap(frame: int) -> tuple[artist.Artist]:
-            """Updates the heatmap.
+        def update_range_doppler_map(frame: int) -> tuple[artist.Artist]:
+            """Updates the range-Doppler map.
 
             Args:
                 frame: Frame number.
@@ -88,16 +104,23 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
                                                         self.num_doppler_bins //
                                                         2,
                                                         axis=1)
+                    detection_range_doppler_bins_signed = (
+                        self.detection_range_doppler_bins)
                     self.range_doppler_map_has_updated = False
 
             if has_updated:
                 heatmap.set_data(range_doppler_map_shifted)
                 heatmap.autoscale()
-            return heatmap,
+                if self.mark_detections:
+                    detection_range_doppler_bins_signed[(
+                        detection_range_doppler_bins_signed[:, 0] >=
+                        self.num_doppler_bins // 2), 0] -= self.num_doppler_bins
+                    detections.set_offsets(detection_range_doppler_bins_signed)
+            return heatmap, detections
 
         anim = animation.FuncAnimation(
             fig,
-            update_heatmap,
+            update_range_doppler_map,
             interval=self.animation_interval,
             blit=True,
             cache_frame_data=False,
