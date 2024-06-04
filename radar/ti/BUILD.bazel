@@ -120,5 +120,8 @@ py_binary(
 py_library(
     name = "ti_radar_subframe_data_parser",
     srcs = ["ti_radar_subframe_data_parser.py"],
-    deps = [":ti_radar_subframe_data"],
+    deps = [
+        ":ti_radar_subframe_data",
+        requirement("absl-py"),
+    ],
 )
