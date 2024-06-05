@@ -45,8 +45,8 @@ if __name__ == "__main__":
     flags.DEFINE_string("data_port", "/dev/tty.SLAB_USBtoUART2", "Data port.")
     flags.DEFINE_integer("data_baudrate", TI_DATA_BAUDRATE, "Data baud rate.")
 
-    flags.DEFINE_integer("num_range_bins", 512, "Number of range bins.")
-    flags.DEFINE_integer("num_doppler_bins", 16, "Number of Doppler bins.")
+    flags.DEFINE_integer("num_range_bins", 128, "Number of range bins.")
+    flags.DEFINE_integer("num_doppler_bins", 128, "Number of Doppler bins.")
     flags.DEFINE_float("animation_interval", 100,
                        "Animation interval in milliseconds.")
     flags.DEFINE_bool("mark_detections", True,

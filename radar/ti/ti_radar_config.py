@@ -314,16 +314,16 @@ class TiRadarConfig(ABC):
                 [
                     0,  # Profile index.
                     60,  # Start frequency in GHz.
-                    216,  # Idle time in us.
+                    87,  # Idle time in us.
                     7,  # ADC start time in us.
-                    200,  # Ramp end time in us.
+                    75,  # Ramp end time in us.
                     0 << 16 | 0 << 8 | 0,  # TX output power backoff code.
                     self.translate_phase(0) << 18 |
                     self.translate_phase(0) << 10 |
                     self.translate_phase(0) << 2,  # TX phase shifter.
-                    20,  # Frequency slope in MHz/us.
+                    49.97,  # Frequency slope in MHz/us.
                     1,  # TX start time in us.
-                    384,  # Number of ADC samples.
+                    128,  # Number of ADC samples.
                     2000,  # Digital sampling frequency in kHz.
                     TiHighPassFilter1CornerFrequency.
                     CORNER_FREQUENCY_175_KHZ,  # High-pass filter 1 corner frequency.
@@ -372,7 +372,7 @@ class TiRadarConfig(ABC):
                 [
                     0,  # Chirp start index.
                     2,  # Chirp end index.
-                    16,  # Number of loops.
+                    96,  # Number of loops.
                     0,  # Number of frames.
                     500,  # Frame periodicity in ms.
                     TiTriggerSelect.SOFTWARE_TRIGGER,  # Trigger select.
