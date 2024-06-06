@@ -24,20 +24,20 @@ py_test(
 )
 
 py_library(
-    name = "estimator",
-    srcs = ["estimator.py"],
+    name = "complex_exponential_estimator",
+    srcs = ["complex_exponential_estimator.py"],
     deps = [
+        ":complex_exponential",
+        ":estimator",
         "//simulation/radar/components:samples",
         requirement("numpy"),
     ],
 )
 
 py_library(
-    name = "complex_exponential_estimator",
-    srcs = ["complex_exponential_estimator.py"],
+    name = "estimator",
+    srcs = ["estimator.py"],
     deps = [
-        ":complex_exponential",
-        ":estimator",
         "//simulation/radar/components:samples",
         requirement("numpy"),
     ],
@@ -50,5 +50,34 @@ py_library(
         ":estimator",
         "//simulation/radar/components:samples",
         requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "real_exponential",
+    srcs = ["real_exponential.py"],
+    deps = [
+        ":complex_exponential",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "real_exponential_test",
+    srcs = ["real_exponential_test.py"],
+    deps = [
+        ":real_exponential",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "real_exponential_estimator",
+    srcs = ["real_exponential_estimator.py"],
+    deps = [
+        ":complex_exponential_estimator",
+        ":real_exponential",
+        "//simulation/radar/components:samples",
     ],
 )

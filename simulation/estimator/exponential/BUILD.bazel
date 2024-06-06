@@ -1,0 +1,99 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "exponential_regression_decaying_exponential_estimator",
+    srcs = ["exponential_regression_decaying_exponential_estimator.py"],
+    deps = [
+        ":regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        "//simulation/radar/components:samples",
+        "//utils/regression:exponential_regression",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "exponential_regression_decaying_exponential_estimator_test",
+    srcs = ["exponential_regression_decaying_exponential_estimator_test.py"],
+    deps = [
+        ":exponential_regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "regression_decaying_exponential_estimator",
+    srcs = ["regression_decaying_exponential_estimator.py"],
+    deps = [
+        "//simulation/estimator:real_exponential",
+        "//simulation/estimator:real_exponential_estimator",
+        "//simulation/radar/components:samples",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "regression_decaying_exponential_estimator_main",
+    srcs = ["regression_decaying_exponential_estimator_main.py"],
+    deps = [
+        ":exponential_regression_decaying_exponential_estimator",
+        ":linear_regression_decaying_exponential_estimator",
+        ":weighted_linear_regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        "//simulation/estimator/prony:prony_mpm_complex_exponential_estimator",
+        requirement("numpy"),
+        requirement("matplotlib"),
+        requirement("absl-py"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
+    name = "linear_regression_decaying_exponential_estimator",
+    srcs = ["linear_regression_decaying_exponential_estimator.py"],
+    deps = [
+        ":regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        "//simulation/radar/components:samples",
+        "//utils/regression:linear_regression",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "linear_regression_decaying_exponential_estimator_test",
+    srcs = ["linear_regression_decaying_exponential_estimator_test.py"],
+    deps = [
+        ":linear_regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "weighted_linear_regression_decaying_exponential_estimator",
+    srcs = ["weighted_linear_regression_decaying_exponential_estimator.py"],
+    deps = [
+        ":regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        "//simulation/radar/components:samples",
+        "//utils/regression:linear_regression",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "weighted_linear_regression_decaying_exponential_estimator_test",
+    srcs = ["weighted_linear_regression_decaying_exponential_estimator_test.py"],
+    deps = [
+        ":weighted_linear_regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

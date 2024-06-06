@@ -18,8 +18,11 @@ class Noise(Samples, ABC):
 class GaussianNoise(Noise):
     """Represents complex white Gaussian noise."""
 
-    def __init__(self, shape: tuple[int, ...], amplitude: float = 1):
-        super().__init__(self.generate_noise_samples(shape, amplitude))
+    def __init__(self,
+                 shape: tuple[int, ...],
+                 amplitude: float = 1,
+                 real: bool = False):
+        super().__init__(self.generate_noise_samples(shape, amplitude, real))
 
     def get_mean(self) -> float:
         """Returns the mean of the noise."""
@@ -27,16 +30,20 @@ class GaussianNoise(Noise):
 
     @staticmethod
     def generate_noise_samples(shape: tuple[int, ...],
-                               amplitude: float) -> np.ndarray:
+                               amplitude: float,
+                               real: bool = False) -> np.ndarray:
         """Generates noise samples.
 
         Args:
             shape: Shape of the noise.
             amplitude: Noise amplitude.
+            real: If true, generate only real samples.
 
         Returns:
             Noise samples.
         """
+        if real:
+            return amplitude * np.random.normal(size=shape)
         return (
             amplitude / np.sqrt(2) *
             (np.random.normal(size=shape) + 1j * np.random.normal(size=shape)))

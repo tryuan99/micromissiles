@@ -49,7 +49,8 @@ class ComplexExponential(Samples):
                         amplitude: float = 1,
                         alpha: float = 0,
                         params: ComplexExponentialParams = None,
-                        snr: float = np.inf) -> np.ndarray:
+                        snr: float = np.inf,
+                        real: bool = False) -> np.ndarray:
         """Generates the signal.
 
         Args:
@@ -60,6 +61,7 @@ class ComplexExponential(Samples):
             amplitude: Complex exponential amplitude (A).
             alpha: Complex exponential damping factor (alpha).
             snr: SNR in dB.
+            real: If true, generate only real samples.
 
         Returns:
             The samples of the complex sinusoid.
@@ -78,7 +80,10 @@ class ComplexExponential(Samples):
         else:
             noise_amplitude = amplitude / constants.db2mag(snr)
         noise = GaussianNoise.generate_noise_samples(num_samples,
-                                                     noise_amplitude)
-        return amplitude * np.exp(1j * phase) * np.exp(
+                                                     noise_amplitude, real)
+        samples = amplitude * np.exp(1j * phase) * np.exp(
             (alpha + 1j * 2 * np.pi * frequency) * np.arange(num_samples) /
             fs) + noise
+        if real:
+            return np.real(samples)
+        return samples

@@ -84,12 +84,11 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
                                                   alpha=damping_factor)
                 # Maximum 1000 samples per complex exponential.
                 num_samples = min(int(-3 / damping_factor), 1000)
-                sinusoid = ComplexExponential(fs=1,
-                                              num_samples=num_samples,
-                                              params=params,
-                                              snr=snr)
+                complex_exponential = ComplexExponential(
+                    fs=1, num_samples=num_samples, params=params, snr=snr)
                 # Estimate the parameters of the complex exponential.
-                estimator = complex_exponential_estimator_cls(sinusoid, fs=1)
+                estimator = complex_exponential_estimator_cls(
+                    complex_exponential, fs=1)
                 estimated_params = estimator.estimate_single_exponential()
                 for param in COMPLEX_EXPONENTIAL_PARAMETERS:
                     params_errors[param][i] = (
