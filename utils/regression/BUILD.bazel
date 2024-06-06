@@ -3,6 +3,17 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "exponential_regression",
+    srcs = ["exponential_regression.py"],
+    deps = [
+        ":regression",
+        requirement("absl-py"),
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_library(
     name = "linear_regression",
     srcs = ["linear_regression.py"],
     deps = [
@@ -18,6 +29,17 @@ py_test(
         ":linear_regression",
         requirement("absl-py"),
         requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "logarithmic_regression",
+    srcs = ["logarithmic_regression.py"],
+    deps = [
+        ":regression",
+        requirement("absl-py"),
+        requirement("numpy"),
+        requirement("scipy"),
     ],
 )
 
