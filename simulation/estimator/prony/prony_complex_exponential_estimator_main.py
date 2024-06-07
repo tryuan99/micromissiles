@@ -17,6 +17,9 @@ from utils.solver.least_squares_solver import \
 
 FLAGS = flags.FLAGS
 
+# Maximum number of samples of the complex exponential.
+COMPLEX_EXPONENTIAL_MAX_NUM_SAMPLES = 1000
+
 # Prony complex exponential estimators.
 PRONY_COMPLEX_EXPONENTIAL_ESTIMATORS = {
     "Prony Polynomial Least Squares":
@@ -82,8 +85,8 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
                                                   phase=phase,
                                                   amplitude=1,
                                                   alpha=damping_factor)
-                # Maximum 1000 samples per complex exponential.
-                num_samples = min(int(-3 / damping_factor), 1000)
+                num_samples = min(int(-3 / damping_factor),
+                                  COMPLEX_EXPONENTIAL_MAX_NUM_SAMPLES)
                 complex_exponential = ComplexExponential(
                     fs=1, num_samples=num_samples, params=params, snr=snr)
                 # Estimate the parameters of the complex exponential.

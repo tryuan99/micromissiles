@@ -15,8 +15,11 @@ class LinearRegressionDecayingExponentialEstimator(
         RegressionDecayingExponentialEstimator):
     """Decaying exponential estimator using a linear regression."""
 
-    def __init__(self, samples: Samples, fs: float) -> None:
-        super().__init__(samples, fs)
+    def __init__(self,
+                 samples: Samples,
+                 fs: float,
+                 offset: bool = False) -> None:
+        super().__init__(samples, fs, offset)
 
     def _run_regression(self, t_axis: np.ndarray,
                         samples: np.ndarray) -> RealExponentialParams:

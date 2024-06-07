@@ -9,7 +9,7 @@ from simulation.estimator.real_exponential import RealExponential
 SAMPLING_FREQUENCY = 100  # Hz
 
 # Number of samples.
-NUM_SAMPLES = 1000
+NUM_SAMPLES = 10000
 
 
 class LinearRegressionDecayingExponentialEstimatorTestCase(absltest.TestCase):
@@ -22,6 +22,26 @@ class LinearRegressionDecayingExponentialEstimatorTestCase(absltest.TestCase):
                                                snr=np.inf)
         estimator = LinearRegressionDecayingExponentialEstimator(
             decaying_exponential, SAMPLING_FREQUENCY)
+        params = estimator.estimate_single_exponential()
+        self.assertIsNone(np.testing.assert_allclose(params.amplitude, 2))
+        self.assertIsNone(np.testing.assert_allclose(params.alpha, np.log(0.5)))
+
+    def test_decaying_exponential_with_offset(self):
+        decaying_exponential_with_offset = RealExponential(
+            SAMPLING_FREQUENCY,
+            NUM_SAMPLES,
+            amplitude=2,
+            alpha=np.log(0.5),
+            snr=np.inf,
+        ) + RealExponential(
+            SAMPLING_FREQUENCY,
+            NUM_SAMPLES,
+            amplitude=1,
+            alpha=0,
+            snr=np.inf,
+        )
+        estimator = LinearRegressionDecayingExponentialEstimator(
+            decaying_exponential_with_offset, SAMPLING_FREQUENCY, offset=True)
         params = estimator.estimate_single_exponential()
         self.assertIsNone(np.testing.assert_allclose(params.amplitude, 2))
         self.assertIsNone(np.testing.assert_allclose(params.alpha, np.log(0.5)))

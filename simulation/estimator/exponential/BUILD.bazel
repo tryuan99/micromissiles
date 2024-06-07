@@ -52,6 +52,24 @@ py_binary(
     ],
 )
 
+py_binary(
+    name = "regression_decaying_exponential_estimator_with_offset_main",
+    srcs = ["regression_decaying_exponential_estimator_with_offset_main.py"],
+    deps = [
+        ":exponential_regression_decaying_exponential_estimator",
+        ":linear_regression_decaying_exponential_estimator",
+        ":regression_decaying_exponential_estimator",
+        ":weighted_linear_regression_decaying_exponential_estimator",
+        "//simulation/estimator:real_exponential",
+        "//simulation/estimator/prony:prony_complex_exponential_estimator",
+        "//simulation/estimator/prony:prony_mpm_complex_exponential_estimator",
+        requirement("numpy"),
+        requirement("matplotlib"),
+        requirement("absl-py"),
+        requirement("SciencePlots"),
+    ],
+)
+
 py_library(
     name = "linear_regression_decaying_exponential_estimator",
     srcs = ["linear_regression_decaying_exponential_estimator.py"],

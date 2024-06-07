@@ -18,8 +18,12 @@ NUM_AVERAGES_FOR_MIN_ADC_OUTPUT = 10
 class RegressionDecayingExponentialEstimator(RealExponentialEstimator, ABC):
     """Decaying exponential estimator using a regression."""
 
-    def __init__(self, samples: Samples, fs: float) -> None:
+    def __init__(self,
+                 samples: Samples,
+                 fs: float,
+                 offset: bool = False) -> None:
         super().__init__(samples, fs)
+        self.offset = offset
 
     def estimate_single_exponential(self) -> RealExponentialParams:
         """Estimates the parameters of a single decaying exponential.
@@ -43,15 +47,8 @@ class RegressionDecayingExponentialEstimator(RealExponentialEstimator, ABC):
         Returns:
             The estimated parameters of the decaying exponentials.
         """
-        raise AttributeError(("Estimating multiple decaying exponentials is "
-                              "not supported."))
-
-    def _get_min_sample(self) -> float:
-        """Returns the minimum exponential sample."""
-        # TODO(titan): Average the last few exponential samples if there is a
-        # vertical offset.
-        # return np.mean(self.samples[-NUM_AVERAGES_FOR_MIN_ADC_OUTPUT:])
-        return 0
+        raise AttributeError("Estimating multiple decaying exponentials is "
+                             "not supported.")
 
     @abstractmethod
     def _run_regression(self, t_axis: np.ndarray,
@@ -65,6 +62,14 @@ class RegressionDecayingExponentialEstimator(RealExponentialEstimator, ABC):
         Returns:
             The parameters of the decaying exponential.
         """
+
+    def _get_min_sample(self) -> float:
+        """Returns the minimum exponential sample."""
+        if self.offset:
+            # Average the last few exponential samples if there is a vertical
+            # offset.
+            return np.mean(self.samples[-NUM_AVERAGES_FOR_MIN_ADC_OUTPUT:])
+        return 0
 
     def _get_max_sample(self) -> float:
         """Returns the maximum exponential sample."""
