@@ -74,7 +74,7 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
 
         This function blocks and should be called from the main thread.
         """
-        plt.style.use(["science"])
+        plt.style.use("science")
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.set_xlabel("Doppler bin")
         ax.set_ylabel("Range bin")

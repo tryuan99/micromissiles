@@ -39,7 +39,7 @@ def plot_radiation_pattern(width: float, length: float) -> None:
     m.set_array([])
 
     # Plot the radiation pattern.
-    plt.style.use(["science"])
+    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 8),
         subplot_kw={"projection": "3d"},
