@@ -13,6 +13,9 @@ from utils import constants
 
 FLAGS = flags.FLAGS
 
+# Sampling frequency in Hz.
+SAMPLING_FREQUENCY = 1
+
 # FFT frequency estimators.
 FFT_FREQUENCY_ESTIMATORS = {
     "FFT Peak": FftPeakFrequencyEstimator,
@@ -20,6 +23,25 @@ FFT_FREQUENCY_ESTIMATORS = {
     "FFT Jacobsen": FftJacobsenFrequencyEstimator,
     "FFT Two-Point DTFT": FftTwoPointDtftFrequencyEstimator,
 }
+
+
+def _calculate_frequency_error(fs: float, estimated_frequency: float,
+                               actual_frequency: float) -> float:
+    """Calculates the frequency error.
+
+    Args:
+        fs: Sampling frequency in Hz.
+        estimated_frequency: Estimated frequency in Hz.
+        actual_frequency: Actual frequency in HZ.
+
+    Returns:
+        The frequency error in Hz.
+    """
+    # Account for possible wraparound.
+    estimated_frequency_aliases = (estimated_frequency +
+                                   np.array([-1, 0, 1]) * fs)
+    frequency_errors = estimated_frequency_aliases - actual_frequency
+    return min(frequency_errors, key=np.abs)
 
 
 def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
@@ -44,9 +66,10 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
             errors = np.zeros(num_iterations)
             for i in range(num_iterations):
                 # Generate a sinusoid with a random frequency.
-                frequency = np.random.uniform(-0.5, 0.5)
+                frequency = np.random.uniform(-SAMPLING_FREQUENCY / 2,
+                                              SAMPLING_FREQUENCY / 2)
                 phase = np.random.uniform(0, 2 * np.pi)
-                sinusoid = ComplexExponential(fs=1,
+                sinusoid = ComplexExponential(fs=SAMPLING_FREQUENCY,
                                               num_samples=num_samples,
                                               frequency=frequency,
                                               phase=phase,
@@ -56,12 +79,14 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
                 # Estimate the frequency.
                 estimator = fft_frequency_estimator_cls(
                     sinusoid,
-                    fs=1,
-                    fft_length=fft_length,
+                    SAMPLING_FREQUENCY,
+                    fft_length,
                     window=np.ones(num_samples))
                 estimated_frequency = estimator.estimate_single_frequency()
+                frequency_error = _calculate_frequency_error(
+                    SAMPLING_FREQUENCY, estimated_frequency, frequency)
                 # Convert from units of Hz to units of FFT bins.
-                errors[i] = (estimated_frequency - frequency) * fft_length
+                errors[i] = frequency_error * fft_length
             # Calculate the RMS error for the SNR.
             rms_error_over_snr[snr_index] = np.sqrt(np.mean(errors**2))
         # Plot the RMS error over SNR for the estimator.
@@ -93,10 +118,11 @@ def plot_normalized_estimation_error_histogram() -> None:
         for i in range(num_iterations):
             # Generate a sinusoid with a random frequency.
             num_samples = np.random.randint(10, 1000 + 1)
-            frequency = np.random.uniform(-0.5, 0.5)
+            frequency = np.random.uniform(-SAMPLING_FREQUENCY / 2,
+                                          SAMPLING_FREQUENCY / 2)
             phase = np.random.uniform(0, 2 * np.pi)
             snr = np.random.randint(-40, 5 + 1)
-            sinusoid = ComplexExponential(fs=1,
+            sinusoid = ComplexExponential(fs=SAMPLING_FREQUENCY,
                                           num_samples=num_samples,
                                           frequency=frequency,
                                           phase=phase,
@@ -105,20 +131,22 @@ def plot_normalized_estimation_error_histogram() -> None:
                                           snr=snr)
             # Estimate the frequency.
             estimator = fft_frequency_estimator(sinusoid,
-                                                fs=1,
-                                                fft_length=num_samples,
+                                                SAMPLING_FREQUENCY,
+                                                num_samples,
                                                 window=np.ones(num_samples))
             estimated_frequency = estimator.estimate_single_frequency()
+            frequency_error = _calculate_frequency_error(
+                SAMPLING_FREQUENCY, estimated_frequency, frequency)
             # Convert from units of Hz to units of radians.
-            frequency_error = 2 * np.pi * (estimated_frequency - frequency)
+            frequency_error_rad = 2 * np.pi * frequency_error
             crlb = np.sqrt(12) / (num_samples**(3 / 2) * constants.db2mag(snr))
-            normalized_frequency_error = frequency_error / crlb
+            normalized_frequency_error = frequency_error_rad / crlb
             normalized_frequency_errors[i] = normalized_frequency_error
         # Plot a histogram of the normalized frequency errors.
         ax.hist(normalized_frequency_errors,
                 bins=bins,
                 label=fft_frequency_estimator_label,
-                alpha=0.5,
+                alpha=0.4,
                 density=True)
     ax.set_xlabel("Normalized frequency estimator error")
     ax.set_ylabel("PDF")

@@ -21,6 +21,9 @@ from simulation.estimator.real_exponential import (RealExponential,
 
 FLAGS = flags.FLAGS
 
+# Sampling frequency in Hz.
+SAMPLING_FREQUENCY = 1
+
 # Maximum number of samples of the decaying exponential.
 DECAYING_EXPONENTIAL_MAX_NUM_SAMPLES = 1000
 
@@ -86,22 +89,22 @@ def compare_decaying_exponential_estimators(snrs: np.ndarray,
                                                alpha=damping_factor)
                 num_samples = min(int(-5 / damping_factor),
                                   DECAYING_EXPONENTIAL_MAX_NUM_SAMPLES)
-                decaying_exponential = RealExponential(fs=1,
+                decaying_exponential = RealExponential(fs=SAMPLING_FREQUENCY,
                                                        num_samples=num_samples,
                                                        params=params,
                                                        snr=snr)
                 # Estimate the parameters of the decaying exponential.
                 estimator = decaying_exponential_estimator_cls(
-                    decaying_exponential, fs=1)
+                    decaying_exponential, SAMPLING_FREQUENCY)
                 estimated_params = estimator.estimate_single_exponential()
                 for param in DECAYING_EXPONENTIAL_PARAMETERS:
-                    params_errors[param][i] = (
-                        getattr(estimated_params, param) -
-                        getattr(params, param))
+                    estimated_param = getattr(estimated_params, param)
+                    actual_param = getattr(params, param)
+                    param_error = estimated_param - actual_param
+                    params_errors[param][i] = param_error
                     params_normalized_errors[param][
                         snr_index * num_iterations +
-                        i] = (getattr(estimated_params, param) -
-                              getattr(params, param)) / getattr(params, param)
+                        i] = param_error / actual_param
             # Calculate the RMS error for each parameter for the SNR.
             for param in DECAYING_EXPONENTIAL_PARAMETERS:
                 params_rms_errors_over_snr[param][snr_index] = np.sqrt(
@@ -139,7 +142,7 @@ def compare_decaying_exponential_estimators(snrs: np.ndarray,
                 decaying_exponential_estimator_label][param],
                     bins=bins,
                     label=decaying_exponential_estimator_label,
-                    alpha=0.5,
+                    alpha=0.4,
                     density=True)
         ax.set_xlabel(f"Normalized {DECAYING_EXPONENTIAL_PARAMETERS[param]} "
                       f"error")

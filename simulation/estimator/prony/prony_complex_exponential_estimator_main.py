@@ -17,6 +17,9 @@ from utils.solver.least_squares_solver import \
 
 FLAGS = flags.FLAGS
 
+# Sampling frequency in Hz.
+SAMPLING_FREQUENCY = 1
+
 # Maximum number of samples of the complex exponential.
 COMPLEX_EXPONENTIAL_MAX_NUM_SAMPLES = 1000
 
@@ -42,10 +45,29 @@ COMPLEX_EXPONENTIAL_PARAMETERS = {
 
 # Histogram bins of complex exponential parameters.
 COMPLEX_EXPONENTIAL_PARAMETER_HISTOGRAM_BINS = {
-    "frequency": np.linspace(-0.0025, 0.0025, 1000),
+    "frequency": np.linspace(-0.001, 0.001, 1000),
     "amplitude": np.linspace(-0.025, 0.025, 1000),
     "alpha": np.linspace(-0.05, 0.05, 1000),
 }
+
+
+def _calculate_frequency_error(fs: float, estimated_frequency: float,
+                               actual_frequency: float) -> float:
+    """Calculates the frequency error.
+
+    Args:
+        fs: Sampling frequency in Hz.
+        estimated_frequency: Estimated frequency in Hz.
+        actual_frequency: Actual frequency in HZ.
+
+    Returns:
+        The frequency error in Hz.
+    """
+    # Account for possible wraparound.
+    estimated_frequency_aliases = (estimated_frequency +
+                                   np.array([-1, 0, 1]) * fs)
+    frequency_errors = estimated_frequency_aliases - actual_frequency
+    return min(frequency_errors, key=np.abs)
 
 
 def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
@@ -77,7 +99,8 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
             for i in range(num_iterations):
                 # Generate a complex exponential with a random frequency, phase,
                 # and damping factor.
-                frequency = np.random.uniform(-0.5, 0.5)
+                frequency = np.random.uniform(-SAMPLING_FREQUENCY / 2,
+                                              SAMPLING_FREQUENCY / 2)
                 phase = np.random.uniform(0, 2 * np.pi)
                 # At least 10 samples are needed before decaying by 3tau.
                 damping_factor = np.random.uniform(-3 / 10, 0)
@@ -88,19 +111,26 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
                 num_samples = min(int(-3 / damping_factor),
                                   COMPLEX_EXPONENTIAL_MAX_NUM_SAMPLES)
                 complex_exponential = ComplexExponential(
-                    fs=1, num_samples=num_samples, params=params, snr=snr)
+                    fs=SAMPLING_FREQUENCY,
+                    num_samples=num_samples,
+                    params=params,
+                    snr=snr)
                 # Estimate the parameters of the complex exponential.
                 estimator = complex_exponential_estimator_cls(
-                    complex_exponential, fs=1)
+                    complex_exponential, SAMPLING_FREQUENCY)
                 estimated_params = estimator.estimate_single_exponential()
                 for param in COMPLEX_EXPONENTIAL_PARAMETERS:
-                    params_errors[param][i] = (
-                        getattr(estimated_params, param) -
-                        getattr(params, param))
+                    estimated_param = getattr(estimated_params, param)
+                    actual_param = getattr(params, param)
+                    if param == "frequency":
+                        param_error = _calculate_frequency_error(
+                            SAMPLING_FREQUENCY, estimated_param, actual_param)
+                    else:
+                        param_error = estimated_param - actual_param
+                    params_errors[param][i] = param_error
                     params_normalized_errors[param][
                         snr_index * num_iterations +
-                        i] = (getattr(estimated_params, param) -
-                              getattr(params, param)) / getattr(params, param)
+                        i] = param_error / actual_param
             # Calculate the RMS error for each parameter for the SNR.
             for param in COMPLEX_EXPONENTIAL_PARAMETERS:
                 params_rms_errors_over_snr[param][snr_index] = np.sqrt(
@@ -138,7 +168,7 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
                 complex_exponential_estimator_label][param],
                     bins=bins,
                     label=complex_exponential_estimator_label,
-                    alpha=0.5,
+                    alpha=0.4,
                     density=True)
         ax.set_xlabel(f"Normalized {COMPLEX_EXPONENTIAL_PARAMETERS[param]} "
                       f"error")
