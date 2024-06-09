@@ -120,9 +120,9 @@ def plot_normalized_estimation_error_histogram() -> None:
                 label=fft_frequency_estimator_label,
                 alpha=0.5,
                 density=True)
-    ax.set_xlabel("Normalized frequency estimator RMS error")
+    ax.set_xlabel("Normalized frequency estimator error")
     ax.set_ylabel("PDF")
-    ax.set_title("PDF of normalized frequency estimator RMS error")
+    ax.set_title("PDF of normalized frequency estimator error")
     ax.legend()
     plt.show()
 

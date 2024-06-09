@@ -142,10 +142,10 @@ def compare_decaying_exponential_estimators(snrs: np.ndarray,
                     alpha=0.5,
                     density=True)
         ax.set_xlabel(f"Normalized {DECAYING_EXPONENTIAL_PARAMETERS[param]} "
-                      f"RMS error")
+                      f"error")
         ax.set_ylabel("PDF")
         ax.set_title(f"PDF of normalized decaying exponential estimator "
-                     f"{DECAYING_EXPONENTIAL_PARAMETERS[param]} RMS error")
+                     f"{DECAYING_EXPONENTIAL_PARAMETERS[param]} error")
         ax.legend()
         plt.show()
 

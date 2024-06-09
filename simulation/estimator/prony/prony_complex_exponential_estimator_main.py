@@ -141,10 +141,10 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
                     alpha=0.5,
                     density=True)
         ax.set_xlabel(f"Normalized {COMPLEX_EXPONENTIAL_PARAMETERS[param]} "
-                      f"RMS error")
+                      f"error")
         ax.set_ylabel("PDF")
         ax.set_title(f"PDF of normalized complex exponential estimator "
-                     f"{COMPLEX_EXPONENTIAL_PARAMETERS[param]} RMS error")
+                     f"{COMPLEX_EXPONENTIAL_PARAMETERS[param]} error")
         ax.legend()
         plt.show()
 
