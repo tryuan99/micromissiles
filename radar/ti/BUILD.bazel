@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 py_library(
     name = "ti_radar_config",
     srcs = ["ti_radar_config.py"],
+    deps = [requirement("absl-py")],
 )
 
 py_library(

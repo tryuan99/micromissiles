@@ -6,6 +6,15 @@ from abc import ABC, abstractmethod
 from enum import IntEnum, StrEnum
 from typing import Any
 
+from absl import flags
+
+FLAGS = flags.FLAGS
+
+flags.DEFINE_integer("frame_periodicity", 500,
+                     "Frame periodicity in milliseconds.")
+flags.DEFINE_boolean("range_doppler_map_output", False,
+                     "If true, enable the range-Doppler map output.")
+
 # TI CLI subframe index for all subframes.
 TI_CLI_SUBFRAME_INDEX_ALL = -1
 
@@ -374,7 +383,7 @@ class TiRadarConfig(ABC):
                     2,  # Chirp end index.
                     96,  # Number of loops.
                     0,  # Number of frames.
-                    500,  # Frame periodicity in ms.
+                    FLAGS.frame_periodicity,  # Frame periodicity in ms.
                     TiTriggerSelect.SOFTWARE_TRIGGER,  # Trigger select.
                     0,  # Trigger delay.
                 ]),
@@ -392,7 +401,8 @@ class TiRadarConfig(ABC):
                     TiGuiSelect.DISABLED,  # Log magnitude range array.
                     TiGuiSelect.DISABLED,  # Noise floor profile.
                     TiGuiSelect.DISABLED,  # Range-azimuth heat map.
-                    TiGuiSelect.ENABLED,  # Range-Doppler heat map.
+                    TiGuiSelect.ENABLED if FLAGS.range_doppler_map_output else
+                    TiGuiSelect.DISABLED,  # Range-Doppler heat map.
                     TiGuiSelect.ENABLED,  # Statistics.
                 ]),
             TiCliCommand(
