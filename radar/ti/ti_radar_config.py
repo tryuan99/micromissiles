@@ -435,7 +435,7 @@ class TiRadarConfig(ABC):
                 TiCliCommandString.MULTI_OBJECT_BEAM_FORMING,
                 [
                     TI_CLI_SUBFRAME_INDEX_ALL,  # Subframe index.
-                    TiMultiObjectBeamForming.ENABLED,  # Enabled.
+                    TiMultiObjectBeamForming.DISABLED,  # Enabled.
                     0.5,  # Multiple peak threshold in dB.
                 ]),
             TiCliCommand(
