@@ -169,7 +169,9 @@ def compare_decaying_exponential_estimators(snrs: np.ndarray,
                                                    alpha=damping_factor)
                     num_samples = min(int(-5 / damping_factor),
                                       DECAYING_EXPONENTIAL_MAX_NUM_SAMPLES)
-                    offset = np.random.uniform(0, 10)
+                    # The vertical offset is around 1/10 of the decaying
+                    # exponential's amplitude.
+                    offset = np.random.uniform(1 / 11, 1 / 8)
                     decaying_exponential = RealExponential(
                         fs=SAMPLING_FREQUENCY,
                         num_samples=num_samples,
