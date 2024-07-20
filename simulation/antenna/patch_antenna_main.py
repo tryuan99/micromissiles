@@ -21,7 +21,7 @@ def plot_radiation_pattern_3d(width: float, length: float) -> None:
         width: Width in units of lambda.
         length: Length in units of lambda.
     """
-    azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
+    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
     theta, phi = np.meshgrid(azimuth, elevation)
 
@@ -73,7 +73,7 @@ def plot_radiation_pattern_2d(width: float, length: float) -> None:
     patch_antenna = PatchAntenna(width, length)
 
     # Plot the radiation pattern along zero elevation.
-    azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
+    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
     pattern = patch_antenna.calculate_pattern(azimuth=azimuth, elevation=0)
     plt.style.use("science")
     fig, ax = plt.subplots(

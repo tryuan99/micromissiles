@@ -12,6 +12,7 @@ py_binary(
     name = "antenna_single_reflection_path_main",
     srcs = ["antenna_single_reflection_path_main.py"],
     deps = [
+        ":antenna",
         ":horn_antenna",
         ":patch_antenna",
         "//utils:constants",
