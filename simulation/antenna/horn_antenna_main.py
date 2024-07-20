@@ -8,6 +8,7 @@ from absl import app, flags
 from matplotlib import cm
 
 from simulation.antenna.horn_antenna import HornAntenna
+from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
@@ -33,7 +34,7 @@ def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
     pattern = horn_antenna.calculate_pattern(theta, phi)
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = 10 * np.log10(pattern + 1)
+    r = constants.power2db(pattern + 1)
     x = -r * np.sin(theta) * np.cos(phi)
     y = r * np.sin(phi)
     z = r * np.cos(theta) * np.cos(phi)
@@ -89,7 +90,7 @@ def plot_radiation_pattern_2d(a: float, b: float, a1: float, b1: float,
         figsize=(12, 8),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(azimuth, 10 * np.log10(pattern + 1))
+    ax.plot(azimuth, constants.power2db(pattern + 1))
     ax.set_xlabel(r"Azimuth $\theta$")
     plt.show()
 
@@ -101,7 +102,7 @@ def plot_radiation_pattern_2d(a: float, b: float, a1: float, b1: float,
         figsize=(12, 8),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(elevation, 10 * np.log10(pattern + 1))
+    ax.plot(elevation, constants.power2db(pattern + 1))
     ax.set_xlabel(r"Elevation $\phi$")
     plt.show()
 
@@ -116,13 +117,31 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_float("a", 0.5, "Width in units of lambda before the flare.")
-    flags.DEFINE_float("b", 0.25, "Height in units of lambda before the flare.")
-    flags.DEFINE_float("a1", 5.5, "Width in units of lambda after the flare.")
-    flags.DEFINE_float("b1", 2.75, "Height in units of lambda after the flare.")
+    flags.DEFINE_float("a",
+                       0.5,
+                       "Width in units of lambda before the flare.",
+                       lower_bound=0.0)
+    flags.DEFINE_float("b",
+                       0.25,
+                       "Height in units of lambda before the flare.",
+                       lower_bound=0.0)
+    flags.DEFINE_float("a1",
+                       5.5,
+                       "Width in units of lambda after the flare.",
+                       lower_bound=0.0)
+    flags.DEFINE_float("b1",
+                       2.75,
+                       "Height in units of lambda after the flare.",
+                       lower_bound=0.0)
     flags.DEFINE_float(
-        "rho1", 6, "Depth of the pyramid in the y-z plane in units of lambda.")
+        "rho1",
+        6,
+        "Depth of the pyramid in the y-z plane in units of lambda.",
+        lower_bound=0.0)
     flags.DEFINE_float(
-        "rho2", 6, "Depth of the pyramid in the x-z plane in units of lambda.")
+        "rho2",
+        6,
+        "Depth of the pyramid in the x-z plane in units of lambda.",
+        lower_bound=0.0)
 
     app.run(main)

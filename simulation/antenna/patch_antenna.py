@@ -38,7 +38,10 @@ class PatchAntenna(Antenna):
         z = np.cos(azimuth) * np.cos(elevation)
         azimuth_pattern = np.arccos(y / np.sqrt(x**2 + y**2))
         azimuth_pattern = np.nan_to_num(azimuth_pattern)
-        azimuth_pattern[x > 0] *= -1
+        if isinstance(azimuth_pattern, np.ndarray):
+            azimuth_pattern[x > 0] *= -1
+        elif x > 0:
+            azimuth_pattern *= -1
         elevation_pattern = np.arccos(z)
         return self._calculate_pattern(azimuth_pattern, elevation_pattern)
 

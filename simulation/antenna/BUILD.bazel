@@ -8,6 +8,20 @@ py_library(
     deps = [requirement("numpy")],
 )
 
+py_binary(
+    name = "antenna_single_reflection_path_main",
+    srcs = ["antenna_single_reflection_path_main.py"],
+    deps = [
+        ":horn_antenna",
+        ":patch_antenna",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
 py_library(
     name = "horn_antenna",
     srcs = ["horn_antenna.py"],
@@ -23,6 +37,7 @@ py_binary(
     srcs = ["horn_antenna_main.py"],
     deps = [
         ":horn_antenna",
+        "//utils:constants",
         "//utils/visualization:color_maps",
         requirement("absl-py"),
         requirement("matplotlib"),
@@ -54,6 +69,7 @@ py_binary(
     srcs = ["patch_antenna_main.py"],
     deps = [
         ":patch_antenna",
+        "//utils:constants",
         "//utils/visualization:color_maps",
         requirement("absl-py"),
         requirement("matplotlib"),

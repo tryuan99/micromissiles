@@ -8,6 +8,7 @@ from absl import app, flags
 from matplotlib import cm
 
 from simulation.antenna.patch_antenna import PatchAntenna
+from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
@@ -28,7 +29,7 @@ def plot_radiation_pattern_3d(width: float, length: float) -> None:
     pattern = patch_antenna.calculate_pattern(theta, phi)
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = 10 * np.log10(pattern + 1)
+    r = constants.power2db(pattern + 1)
     x = -r * np.sin(theta) * np.cos(phi)
     y = r * np.sin(phi)
     z = r * np.cos(theta) * np.cos(phi)
@@ -79,7 +80,7 @@ def plot_radiation_pattern_2d(width: float, length: float) -> None:
         figsize=(12, 8),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(azimuth, 10 * np.log10(pattern + 1))
+    ax.plot(azimuth, constants.power2db(pattern + 1))
     ax.set_xlabel(r"Azimuth $\theta$")
     plt.show()
 
@@ -91,7 +92,7 @@ def plot_radiation_pattern_2d(width: float, length: float) -> None:
         figsize=(12, 8),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(elevation, 10 * np.log10(pattern + 1))
+    ax.plot(elevation, constants.power2db(pattern + 1))
     ax.set_xlabel(r"Elevation $\phi$")
     plt.show()
 
@@ -104,7 +105,13 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_float("width", 0.5, "Width in units of lambda.")
-    flags.DEFINE_float("length", 0.5, "Length in units of lambda.")
+    flags.DEFINE_float("width",
+                       0.5,
+                       "Width in units of lambda.",
+                       lower_bound=0.0)
+    flags.DEFINE_float("length",
+                       0.5,
+                       "Length in units of lambda.",
+                       lower_bound=0.0)
 
     app.run(main)
