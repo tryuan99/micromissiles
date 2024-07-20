@@ -13,8 +13,8 @@ from utils.visualization.color_maps import COLOR_MAPS
 FLAGS = flags.FLAGS
 
 
-def plot_radiation_pattern(width: float, length: float) -> None:
-    """Plots the radiation pattern of a patch antenna.
+def plot_radiation_pattern_3d(width: float, length: float) -> None:
+    """Plots the 3D radiation pattern of a patch antenna.
 
     Args:
         width: Width in units of lambda.
@@ -55,15 +55,52 @@ def plot_radiation_pattern(width: float, length: float) -> None:
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
     ax.set_zlabel(r"$z$")
+    ax.set_aspect("equal", adjustable="box")
     ax.view_init(30, -45)
     plt.colorbar(m, ax=ax)
+    plt.show()
+
+
+def plot_radiation_pattern_2d(width: float, length: float) -> None:
+    """Plots the 2D radiation pattern of a patch antenna along zero elevation
+    and along zero azimuth.
+
+    Args:
+        width: Width in units of lambda.
+        length: Length in units of lambda.
+    """
+    patch_antenna = PatchAntenna(width, length)
+
+    # Plot the radiation pattern along zero elevation.
+    azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
+    pattern = patch_antenna.calculate_pattern(azimuth=azimuth, elevation=0)
+    plt.style.use("science")
+    fig, ax = plt.subplots(
+        figsize=(12, 8),
+        subplot_kw={"projection": "polar"},
+    )
+    ax.plot(azimuth, 10 * np.log10(pattern + 1))
+    ax.set_xlabel(r"Azimuth $\theta$")
+    plt.show()
+
+    # Plot the radiation pattern along zero azimuth.
+    elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    pattern = patch_antenna.calculate_pattern(azimuth=0, elevation=elevation)
+    plt.style.use("science")
+    fig, ax = plt.subplots(
+        figsize=(12, 8),
+        subplot_kw={"projection": "polar"},
+    )
+    ax.plot(elevation, 10 * np.log10(pattern + 1))
+    ax.set_xlabel(r"Elevation $\phi$")
     plt.show()
 
 
 def main(argv):
     assert len(argv) == 1, argv
 
-    plot_radiation_pattern(FLAGS.width, FLAGS.length)
+    plot_radiation_pattern_3d(FLAGS.width, FLAGS.length)
+    plot_radiation_pattern_2d(FLAGS.width, FLAGS.length)
 
 
 if __name__ == "__main__":

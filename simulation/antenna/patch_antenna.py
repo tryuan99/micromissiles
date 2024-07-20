@@ -32,16 +32,14 @@ class PatchAntenna(Antenna):
         Returns:
             The magnitude of the radiation pattern.
         """
-        # Transform coordinate systems.
+        # Transform the coordinate systems.
         x = -np.sin(azimuth) * np.cos(elevation)
         y = np.sin(elevation)
         z = np.cos(azimuth) * np.cos(elevation)
-        x_pattern = y
-        y_pattern = z
-        z_pattern = x
-        azimuth_pattern = np.arctan(y_pattern / x_pattern) % np.pi
-        elevation_pattern = np.arctan(z_pattern /
-                                      np.sqrt(x_pattern**2 + y_pattern**2))
+        azimuth_pattern = np.arccos(y / np.sqrt(x**2 + y**2))
+        azimuth_pattern = np.nan_to_num(azimuth_pattern)
+        azimuth_pattern[x > 0] *= -1
+        elevation_pattern = np.arccos(z)
         return self._calculate_pattern(azimuth_pattern, elevation_pattern)
 
     def _calculate_pattern(self, azimuth: float | np.ndarray,
@@ -49,9 +47,11 @@ class PatchAntenna(Antenna):
         """Calculates the radiation pattern of the antenna.
 
         Adapted from https://www.antenna-theory.com/antennas/patches/antenna.php.
-        The field equation assumes that the patch antenna lies in the x-z plane,
-        fed in the x-direction (W parallel to the z-axis and L parallel to the
-        x-axis).
+        The equation assumes that the patch antenna lies in the x-y plane, fed
+        in the y-direction (W parallel to the x-axis and L parallel to the
+        y-axis). The azimuth is the angle on the x-y plane measured
+        counterclockwise from the y-axis, and the elevation is the angle
+        measured from the z-axis.
 
         Args:
             azimuth: Azimuth in radians.
@@ -65,4 +65,4 @@ class PatchAntenna(Antenna):
                 np.pi * self.length * np.cos(azimuth) * np.sin(elevation))
         E_azimuth = -projected_sinc * np.sin(azimuth) * np.cos(elevation)
         E_elevation = projected_sinc * np.cos(azimuth)
-        return np.sqrt(E_azimuth**2 + E_elevation**2)
+        return np.sqrt(np.abs(E_azimuth)**2 + np.abs(E_elevation)**2)
