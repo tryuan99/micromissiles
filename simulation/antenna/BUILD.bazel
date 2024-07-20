@@ -23,6 +23,30 @@ py_binary(
 )
 
 py_library(
+    name = "dipole_antenna",
+    srcs = ["dipole_antenna.py"],
+    deps = [
+        ":antenna",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_binary(
+    name = "dipole_antenna_main",
+    srcs = ["dipole_antenna_main.py"],
+    deps = [
+        ":dipole_antenna",
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
     name = "horn_antenna",
     srcs = ["horn_antenna.py"],
     deps = [
