@@ -1,0 +1,49 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "phase_noise",
+    srcs = ["phase_noise.py"],
+    deps = [
+        "//simulation/radar/components:noise",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_binary(
+    name = "radar_if_noise_main",
+    srcs = ["radar_if_noise_main.py"],
+    deps = [
+        ":phase_noise",
+        "//simulation/radar/components:adc_data",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:samples",
+        "//simulation/radar/components:target",
+        "//simulation/radar/processors:range_doppler_processor",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "radar_if_phase_noise_main",
+    srcs = ["radar_if_phase_noise_main.py"],
+    deps = [
+        ":phase_noise",
+        "//simulation/radar/components:radar",
+        "//simulation/radar/components:target",
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)

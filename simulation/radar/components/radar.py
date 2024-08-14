@@ -77,6 +77,11 @@ class Radar:
 
         # Noise parameters.
         self.temperature = temperature
+        # See https://e2e.ti.com/support/sensors-group/sensors/f/sensors-forum/926316/ccs-iwr6843aop-phase-noise-performance-for-1khz-and-10khz
+        # for more details.
+        self.phase_noise_offsets = [(1e3, -59), (1e4, -70), (1e6, -92)]
+        assert sorted(self.phase_noise_offsets,
+                      key=lambda x: x[0]) == self.phase_noise_offsets
 
         # Hypothetical chirp parameters.
         # These parameters were chosen, so that each chirp sweeps the same
