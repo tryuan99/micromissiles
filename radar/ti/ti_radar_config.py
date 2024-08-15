@@ -479,8 +479,8 @@ class TiRadarConfig(ABC):
                 TiCliCommandString.RANGE_BIAS_AND_RX_CHANNEL_PHASE_COMPENSATION,
                 [
                     0.0,  # Range bias in m.
-                    *([-1, 0, 1, 0, -1, 0, 1, 0] * self.num_tx_antennas(
-                    )  # RX1 and RX3 are out of phase with respect to RX2 and RX4 by 180 degrees.
+                    *([1, 0, -1, 0, 1, 0, -1, 0] * self.num_tx_antennas(
+                    )  # RX2 and RX4 are 180 degrees out of phase with respect to the TX antennas.
                      ),  # Real and imaginary components for RX channel phase compensation.
                 ]),
             TiCliCommand(

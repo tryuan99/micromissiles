@@ -161,6 +161,7 @@ class TiRadarSubframeDataDetectedObject(Struct):
             "doppler": (StructFieldType.FLOAT, 1),
             "azimuth": (StructFieldType.FLOAT, 1),
             "elevation": (StructFieldType.FLOAT, 1),
+            "spatial_samples": (StructFieldType.INT32, 24),
         }
 
 
