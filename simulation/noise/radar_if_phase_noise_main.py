@@ -39,9 +39,9 @@ def plot_if_phase_noise_psd(rnge: float) -> None:
 
     # Plot the phase noise level.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))
     ax.semilogx(lo_offsets, lo_phase_noise_level, label="LO")
-    ax.semilogx(if_offsets, if_phase_noise_level, label=f"IF")
+    ax.semilogx(if_offsets, if_phase_noise_level, label="IF")
     ax.set_xlabel("Frequency offset [Hz]")
     ax.set_ylabel("Phase noise level [dBc/Hz]")
     ax.legend()
@@ -61,7 +61,7 @@ def plot_generated_phase_noise_spectrum(rnge: float) -> None:
     # Generate IF phase noise for a target at the given range.
     if_phase_noise = IFPhaseNoise(radar=radar, target=target)
     noise_samples = if_phase_noise.generate_noise_samples(
-        amplitude=1, length=NUM_PHASE_NOISE_SAMPLES)
+        amplitude=1 / NUM_PHASE_NOISE_SAMPLES, length=NUM_PHASE_NOISE_SAMPLES)
 
     # Plot the generated phase noise.
     plt.style.use(["science", "grid"])

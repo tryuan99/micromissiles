@@ -68,7 +68,7 @@ class PhaseNoise:
 
         # Generate white Gaussian noise and filter it.
         gaussian_noise = GaussianNoise.generate_noise_samples(
-            length, amplitude / np.sqrt(length))
+            length, amplitude * np.sqrt(length))
         # Use a circular convolution.
         phase_noise = np.fft.ifft(
             np.fft.fft(gaussian_noise) * np.fft.fft(fir_filter))
