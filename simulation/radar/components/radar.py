@@ -382,9 +382,7 @@ class Radar:
 
     def get_thermal_noise_amplitude(self) -> float:
         """Returns the thermal noise amplitude."""
-        # The sqrt(2) factor is because the I and Q samples are sampled
-        # independently and added together.
         return constants.power2mag(
             scipy.constants.k * scipy.constants.convert_temperature(
-                self.temperature, "Celsius", "Kelvin") * self.fs / 2 *
-            np.sqrt(2) * self.noise_factor)
+                self.temperature, "Celsius", "Kelvin") * self.fs / self.N_r *
+            self.noise_factor)
