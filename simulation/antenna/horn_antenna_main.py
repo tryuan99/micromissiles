@@ -28,7 +28,7 @@ def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
     """
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    theta, phi = np.meshgrid(azimuth, elevation)
+    theta, phi = np.meshgrid(azimuth, elevation, indexing="ij")
 
     horn_antenna = HornAntenna(a, b, a1, b1, rho1, rho2)
     pattern = horn_antenna.calculate_pattern(theta, phi)

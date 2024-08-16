@@ -114,7 +114,7 @@ class PeakSelector(Samples):
             np.arange(-self.guard_length, self.guard_length + 1)
             for _ in range(self.ndim)
         ]
-        neighbor_indices = np.meshgrid(*diffs)
+        neighbor_indices = np.meshgrid(*diffs, indexing="ij")
         num_dims = len(neighbor_indices)
         neighbor_indices = [
             neighbor_indices[i].flatten() + index[i] for i in range(num_dims)

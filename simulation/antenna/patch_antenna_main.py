@@ -23,7 +23,7 @@ def plot_radiation_pattern_3d(width: float, length: float) -> None:
     """
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    theta, phi = np.meshgrid(azimuth, elevation)
+    theta, phi = np.meshgrid(azimuth, elevation, indexing="ij")
 
     patch_antenna = PatchAntenna(width, length)
     pattern = patch_antenna.calculate_pattern(theta, phi)

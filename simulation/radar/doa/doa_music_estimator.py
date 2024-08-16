@@ -72,7 +72,7 @@ class DoaMusicEstimator(DoaEstimator):
             azimuth) coordinates of each virtual antenna in units of lambda/2.
         """
         antenna_azimuth_coordinates, antenna_elevation_coordinates = np.meshgrid(
-            np.arange(self.shape[-1]), np.arange(self.shape[-2]))
+            np.arange(self.shape[-1]), np.arange(self.shape[-2]), indexing="ij")
         antenna_azimuth_coordinates = antenna_azimuth_coordinates.flatten()
         antenna_elevation_coordinates = antenna_elevation_coordinates.flatten()
         return antenna_azimuth_coordinates, antenna_elevation_coordinates
@@ -85,7 +85,8 @@ class DoaMusicEstimator(DoaEstimator):
             The Cartesian coordinates of the unit direction vectors.
         """
         elevation, azimuth = np.meshgrid(self.get_output_axis1(),
-                                         self.get_output_axis2())
+                                         self.get_output_axis2(),
+                                         indexing="ij")
         polar_coordinates = PolarCoordinates(1, azimuth, elevation)
         return polar_coordinates.transform_to_cartesian()
 

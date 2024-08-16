@@ -22,7 +22,7 @@ def plot_radiation_pattern_3d(length: float) -> None:
     """
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    theta, phi = np.meshgrid(azimuth, elevation)
+    theta, phi = np.meshgrid(azimuth, elevation, indexing="ij")
 
     dipole_antenna = DipoleAntenna(length)
     pattern = dipole_antenna.calculate_pattern(theta, phi)

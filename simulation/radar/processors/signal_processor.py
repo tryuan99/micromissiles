@@ -182,8 +182,10 @@ class SignalProcessor2D(SignalProcessor):
             subplot_kw={"projection": "3d"},
         )
         surf = ax.plot_surface(
-            *np.meshgrid(self.get_output_axis1(), self.get_output_axis2()),
-            constants.mag2db(np.squeeze(self.get_abs_samples())).T,
+            *np.meshgrid(self.get_output_axis1(),
+                         self.get_output_axis2(),
+                         indexing="ij"),
+            constants.mag2db(np.squeeze(self.get_abs_samples())),
             cmap=COLOR_MAPS["parula"],
             antialiased=False,
         )
