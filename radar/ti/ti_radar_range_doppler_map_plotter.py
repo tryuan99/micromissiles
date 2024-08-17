@@ -95,7 +95,8 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
         )
         detections = ax.scatter([], [], color="red", marker="D")
 
-        def update_range_doppler_map(frame: int) -> tuple[artist.Artist]:
+        def update_range_doppler_map(
+                frame: int) -> tuple[artist.Artist, artist.Artist]:
             """Updates the range-Doppler map.
 
             Args:

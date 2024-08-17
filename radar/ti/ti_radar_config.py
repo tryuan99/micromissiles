@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from enum import IntEnum, StrEnum
 from typing import Any
 
+import numpy as np
 from absl import flags
 
 FLAGS = flags.FLAGS
@@ -560,13 +561,25 @@ class TiRadarConfig(ABC):
 
     @classmethod
     @abstractmethod
-    def num_tx_antennas(cls) -> float:
+    def num_tx_antennas(cls) -> int:
         """Returns the number of TX antennas."""
 
     @classmethod
     @abstractmethod
-    def num_rx_channels(cls) -> float:
+    def num_rx_channels(cls) -> int:
         """Returns the number of RX channels."""
+
+    @classmethod
+    def num_virtual_antennas(cls) -> int:
+        """Returns the number of virtual antennas."""
+        return cls.num_tx_antennas() * cls.num_rx_channels()
+
+    @classmethod
+    @abstractmethod
+    def virtual_antenna_array(cls) -> tuple[np.ndarray, np.array]:
+        """Returns the coordinates of each virtual antenna element in units of
+        lambda/2.
+        """
 
     @classmethod
     def translate_frequency(cls, frequency: float) -> int:
@@ -640,14 +653,23 @@ class TiIWR68XXRadarConfig(TiRadarConfig):
         return 2.7
 
     @classmethod
-    def num_tx_antennas(cls) -> float:
+    def num_tx_antennas(cls) -> int:
         """Returns the number of TX antennas."""
         return 3
 
     @classmethod
-    def num_rx_channels(cls) -> float:
+    def num_rx_channels(cls) -> int:
         """Returns the number of RX channels."""
         return 4
+
+    @classmethod
+    def virtual_antenna_array(cls) -> tuple[np.ndarray, np.array]:
+        """Returns the coordinates of each virtual antenna element in units of
+        lambda/2.
+        """
+        azimuth_coordinates = np.array([2, 2, 3, 3, 0, 0, 1, 1, 2, 2, 3, 3])
+        elevation_coordinates = np.array([2, 3, 2, 3, 0, 1, 0, 1, 0, 1, 0, 1])
+        return azimuth_coordinates, elevation_coordinates
 
 
 # Map from TI radar board to radar config.

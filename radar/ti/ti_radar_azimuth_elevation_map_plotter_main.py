@@ -1,13 +1,13 @@
-"""Runs the TI radar range-Doppler map plotter."""
+"""Runs the TI radar azimuth-elevation map plotter."""
 
 from absl import app, flags
 
+from radar.ti.ti_radar_azimuth_elevation_map_plotter import \
+    TiRadarAzimuthElevationMapPlotter
 from radar.ti.ti_radar_config import RADAR_CONFIGS
 from radar.ti.ti_radar_data_logger import TiRadarDataLogger
 from radar.ti.ti_radar_interface import (TI_CONFIG_BAUDRATE, TI_DATA_BAUDRATE,
                                          TiRadarInterface)
-from radar.ti.ti_radar_range_doppler_map_plotter import \
-    TiRadarRangeDopplerMapPlotter
 from radar.ti.ti_radar_subframe_data_aggregator import \
     TiRadarSubframeDataAggregator
 from radar.ti.ti_radar_subframe_data_logger import TiRadarSubframeDataLogger
@@ -18,6 +18,7 @@ FLAGS = flags.FLAGS
 def main(argv):
     assert len(argv) == 1, argv
 
+    radar_config = RADAR_CONFIGS[FLAGS.board]()
     radar_interface = TiRadarInterface(FLAGS.config_port, FLAGS.data_port,
                                        FLAGS.config_baudrate,
                                        FLAGS.data_baudrate)
@@ -25,13 +26,14 @@ def main(argv):
     subframe_data_aggregator = TiRadarSubframeDataAggregator()
     subframe_data_aggregator.add_subframe_data_handler(
         TiRadarSubframeDataLogger())
-    plotter = TiRadarRangeDopplerMapPlotter(FLAGS.num_range_bins,
-                                            FLAGS.num_doppler_bins,
-                                            FLAGS.animation_interval,
-                                            FLAGS.mark_detections)
+    plotter = TiRadarAzimuthElevationMapPlotter(radar_config, FLAGS.range,
+                                                FLAGS.num_azimuth_bins,
+                                                FLAGS.num_elevation_bins,
+                                                FLAGS.animation_interval,
+                                                FLAGS.mark_peak)
     subframe_data_aggregator.add_subframe_data_handler(plotter)
     radar_interface.add_data_handler(subframe_data_aggregator)
-    radar_interface.start(RADAR_CONFIGS[FLAGS.board]())
+    radar_interface.start(radar_config)
     plotter.plot()
 
 
@@ -45,11 +47,12 @@ if __name__ == "__main__":
     flags.DEFINE_string("data_port", "/dev/tty.SLAB_USBtoUART1", "Data port.")
     flags.DEFINE_integer("data_baudrate", TI_DATA_BAUDRATE, "Data baud rate.")
 
-    flags.DEFINE_integer("num_range_bins", 128, "Number of range bins.")
-    flags.DEFINE_integer("num_doppler_bins", 128, "Number of Doppler bins.")
+    flags.DEFINE_float("range", 1.7, "Expected target range in meters.")
+    flags.DEFINE_integer("num_azimuth_bins", 64, "Number of azimuth bins.")
+    flags.DEFINE_integer("num_elevation_bins", 64, "Number of elevation bins.")
     flags.DEFINE_float("animation_interval", 100,
                        "Animation interval in milliseconds.")
-    flags.DEFINE_bool("mark_detections", True,
-                      "If true, mark the detections in the range-Doppler map.")
+    flags.DEFINE_bool("mark_peak", True,
+                      "If true, mark the peak in the azimuth-elevation map.")
 
     app.run(main)

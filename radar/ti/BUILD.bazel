@@ -5,7 +5,39 @@ package(default_visibility = ["//visibility:public"])
 py_library(
     name = "ti_radar_config",
     srcs = ["ti_radar_config.py"],
-    deps = [requirement("absl-py")],
+    deps = [
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "ti_radar_azimuth_elevation_map_plotter",
+    srcs = ["ti_radar_azimuth_elevation_map_plotter.py"],
+    deps = [
+        ":ti_radar_config",
+        ":ti_radar_subframe_data",
+        ":ti_radar_subframe_data_handler",
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "ti_radar_azimuth_elevation_map_plotter_main",
+    srcs = ["ti_radar_azimuth_elevation_map_plotter_main.py"],
+    deps = [
+        ":ti_radar_azimuth_elevation_map_plotter",
+        ":ti_radar_config",
+        ":ti_radar_data_logger",
+        ":ti_radar_interface",
+        ":ti_radar_subframe_data_aggregator",
+        ":ti_radar_subframe_data_logger",
+        requirement("absl-py"),
+    ],
 )
 
 py_library(

@@ -12,7 +12,7 @@ from utils.struct import Struct, StructFields, StructFieldType
 TI_RADAR_SUBFRAME_DATA_HEADER_MAGIC_WORD = b"\x02\x01\x04\x03\x06\x05\x08\x07"
 
 # Maximum number of detected objects within a subframe.
-TI_RADAR_SUBFRAME_MAX_NUM_DETECTED_OBJECTS = 500
+TI_RADAR_SUBFRAME_MAX_NUM_DETECTED_OBJECTS = 50
 
 
 class TiRadarSubframeDataType(IntEnum):
@@ -77,6 +77,22 @@ class TiRadarSubframeData:
         """
         if data_type not in self.data:
             raise KeyError(f"Radar subframe data type {data_type} not found.")
+
+
+class TiRadarComplexRealImaginary32(Struct):
+    """TI radar complex number struct with 32-bit real and imaginary
+    components.
+    """
+
+    @classmethod
+    def fields(cls) -> StructFields:
+        """Returns a dictionary mapping each field name to its size in bytes,
+        the array length, and an optional struct.
+        """
+        return {
+            "real": (StructFieldType.INT32, 1),
+            "imaginary": (StructFieldType.INT32, 1),
+        }
 
 
 class TiRadarSubframeDataHeader(Struct):
@@ -161,7 +177,8 @@ class TiRadarSubframeDataDetectedObject(Struct):
             "doppler": (StructFieldType.FLOAT, 1),
             "azimuth": (StructFieldType.FLOAT, 1),
             "elevation": (StructFieldType.FLOAT, 1),
-            "spatial_samples": (StructFieldType.INT32, 24),
+            "spatial_samples":
+                (StructFieldType.STRUCT, 12, TiRadarComplexRealImaginary32),
         }
 
 
@@ -192,7 +209,6 @@ class TiRadarSubframeDataDetectedObjectInfo(Struct):
             "snr": (StructFieldType.INT16, 1),
             "noise": (StructFieldType.INT16, 1),
         }
-        TI_RADAR_SUBFRAME_MAX_NUM_DETECTED_OBJECTS
 
 
 class TiRadarSubframeDataDetectedObjectInfos(Struct):

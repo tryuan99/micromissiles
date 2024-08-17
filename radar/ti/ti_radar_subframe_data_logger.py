@@ -39,14 +39,17 @@ class TiRadarSubframeDataLogger(TiRadarSubframeDataHandler):
             TiRadarSubframeDataType.DETECTED_OBJECTS)
         for i in range(num_detected_objects):
             detected_object = detected_objects.get("objects", i)
-            logging.info(
-                ("Detected object %d: range bin: %u, Doppler bin: %u, "
-                 "range: %f, Doppler: %f, azimuth: %f, elevation: %f, "
-                 "spatial samples: %d+1j*%d, %d+1j*%d, %d+1j*%d, %d+1j*%d, "
-                 "%d+1j*%d, %d+1j*%d, %d+1j*%d, %d+1j*%d, %d+1j*%d, %d+1j*%d, "
-                 "%d+1j*%d, %d+1j*%d"), i + 1, detected_object.get("range_bin"),
-                detected_object.get("doppler_bin"),
-                detected_object.get("range"), detected_object.get("doppler"),
-                detected_object.get("azimuth"),
-                detected_object.get("elevation"),
-                *detected_object.get("spatial_samples"))
+            spatial_samples = detected_object.get("spatial_samples")
+            spatial_samples_str = ", ".join([
+                f"{sample.get('real')} + 1j * {sample.get('imaginary')}"
+                for sample in spatial_samples
+            ])
+            logging.info(("Detected object %d: range bin: %u, Doppler bin: %u, "
+                          "range: %f, Doppler: %f, azimuth: %f, elevation: %f, "
+                          "spatial samples: %s"), i + 1,
+                         detected_object.get("range_bin"),
+                         detected_object.get("doppler_bin"),
+                         detected_object.get("range"),
+                         detected_object.get("doppler"),
+                         detected_object.get("azimuth"),
+                         detected_object.get("elevation"), spatial_samples_str)
