@@ -518,7 +518,7 @@ class TiRadarConfig(ABC):
                 [
                     TiAnalogMonitor.DISABLED,  # Saturation monitor enabled.
                     TiAnalogMonitor.
-                    DISABLED,  # Signal imaeg band monitor enabled.
+                    DISABLED,  # Signal image band monitor enabled.
                 ]),
             TiCliCommand(
                 TiCliCommandString.AOA_FIELD_OF_VIEW_CONFIG,
@@ -667,7 +667,7 @@ class TiIWR68XXRadarConfig(TiRadarConfig):
         """Returns the coordinates of each virtual antenna element in units of
         lambda/2.
         """
-        azimuth_coordinates = np.array([2, 2, 3, 3, 0, 0, 1, 1, 2, 2, 3, 3])
+        azimuth_coordinates = np.array([1, 1, 0, 0, 3, 3, 2, 2, 1, 1, 0, 0])
         elevation_coordinates = np.array([2, 3, 2, 3, 0, 1, 0, 1, 0, 1, 0, 1])
         return azimuth_coordinates, elevation_coordinates
 
