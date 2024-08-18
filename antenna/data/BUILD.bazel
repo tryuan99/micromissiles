@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "ti_radar_radiation_pattern_data",
+    srcs = glob(["*_radiation_pattern_data_*.csv"]),
+)

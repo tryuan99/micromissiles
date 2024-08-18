@@ -1,0 +1,17 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "ti_radar_elevation_radiation_pattern_main",
+    srcs = ["ti_radar_elevation_radiation_pattern_main.py"],
+    data = ["//antenna/data:ti_radar_radiation_pattern_data"],
+    deps = [
+        "//utils:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("SciencePlots"),
+    ],
+)
