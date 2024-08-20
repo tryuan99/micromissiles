@@ -49,7 +49,8 @@ if __name__ == "__main__":
     flags.DEFINE_integer("num_doppler_bins", 128, "Number of Doppler bins.")
     flags.DEFINE_float("animation_interval", 100,
                        "Animation interval in milliseconds.")
-    flags.DEFINE_bool("mark_detections", True,
-                      "If true, mark the detections in the range-Doppler map.")
+    flags.DEFINE_boolean(
+        "mark_detections", True,
+        "If true, mark the detections in the range-Doppler map.")
 
     app.run(main)

@@ -33,3 +33,13 @@ def power2mag(power: Any) -> Any:
 def mag2power(magnitude: Any) -> Any:
     """Converts magnitude to power using P = V^2 / 50 ohms."""
     return magnitude**2 / 50
+
+
+def deg2rad(degree: Any) -> Any:
+    """Converts degrees to radians."""
+    return degree * np.pi / 180
+
+
+def rad2deg(radians: Any) -> Any:
+    """Converts radians to degrees."""
+    return radians * 180 / np.pi

@@ -2,8 +2,8 @@
 
 from absl import app, flags
 
-from radar.ti.ti_radar_azimuth_elevation_map_plotter import \
-    TiRadarAzimuthElevationMapPlotter
+from radar.ti.ti_radar_azimuth_elevation_map_plotter import (
+    TiRadarAzimuthElevationMapPlotter2D, TiRadarAzimuthElevationMapPlotter3D)
 from radar.ti.ti_radar_config import RADAR_CONFIGS
 from radar.ti.ti_radar_data_logger import TiRadarDataLogger
 from radar.ti.ti_radar_interface import (TI_CONFIG_BAUDRATE, TI_DATA_BAUDRATE,
@@ -26,11 +26,20 @@ def main(argv):
     subframe_data_aggregator = TiRadarSubframeDataAggregator()
     subframe_data_aggregator.add_subframe_data_handler(
         TiRadarSubframeDataLogger())
-    plotter = TiRadarAzimuthElevationMapPlotter(radar_config, FLAGS.range,
-                                                FLAGS.num_azimuth_bins,
-                                                FLAGS.num_elevation_bins,
-                                                FLAGS.animation_interval,
-                                                FLAGS.mark_peak)
+    if FLAGS.plot_3d:
+        plotter = TiRadarAzimuthElevationMapPlotter3D(radar_config, FLAGS.range,
+                                                      FLAGS.num_azimuth_bins,
+                                                      FLAGS.num_elevation_bins,
+                                                      FLAGS.animation_interval,
+                                                      FLAGS.mark_detections,
+                                                      FLAGS.mark_peak)
+    else:
+        plotter = TiRadarAzimuthElevationMapPlotter2D(radar_config, FLAGS.range,
+                                                      FLAGS.num_azimuth_bins,
+                                                      FLAGS.num_elevation_bins,
+                                                      FLAGS.animation_interval,
+                                                      FLAGS.mark_detections,
+                                                      FLAGS.mark_peak)
     subframe_data_aggregator.add_subframe_data_handler(plotter)
     radar_interface.add_data_handler(subframe_data_aggregator)
     radar_interface.start(radar_config)
@@ -47,12 +56,18 @@ if __name__ == "__main__":
     flags.DEFINE_string("data_port", "/dev/tty.SLAB_USBtoUART1", "Data port.")
     flags.DEFINE_integer("data_baudrate", TI_DATA_BAUDRATE, "Data baud rate.")
 
+    flags.DEFINE_boolean("plot_3d", False,
+                         "If true, plot in 3D. Otherwise, plot in 2D.")
     flags.DEFINE_float("range", 1.7, "Expected target range in meters.")
     flags.DEFINE_integer("num_azimuth_bins", 64, "Number of azimuth bins.")
     flags.DEFINE_integer("num_elevation_bins", 64, "Number of elevation bins.")
     flags.DEFINE_float("animation_interval", 100,
                        "Animation interval in milliseconds.")
-    flags.DEFINE_bool("mark_peak", True,
-                      "If true, mark the peak in the azimuth-elevation map.")
+    flags.DEFINE_boolean(
+        "mark_detections", True,
+        "If true, mark the detections in the range-Doppler map.")
+    flags.DEFINE_boolean(
+        "mark_peak", True,
+        "If true, mark the peak in the azimuth-elevation map.")
 
     app.run(main)
