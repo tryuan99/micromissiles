@@ -43,11 +43,11 @@ def plot_reflectance_for_single_reflection_path_at_boresight(
     fig, ax = plt.subplots(figsize=(12, 8))
     for rcs_index, rcs in enumerate(RADAR_CROSS_SECTIONS):
         azimuth_reflectance = constants.power2db(
-            tx_antenna.calculate_pattern(azimuth=-alpha, elevation=0) *
-            rx_antenna.calculate_pattern(azimuth=alpha, elevation=0) /
-            (tx_antenna.calculate_pattern(azimuth=0, elevation=0) *
-             rx_antenna.calculate_pattern(azimuth=0, elevation=0)) * range**2 /
-            (4 * np.pi * r**4)) + rcs
+            (tx_antenna.calculate_pattern(azimuth=-alpha, elevation=0) *
+             rx_antenna.calculate_pattern(azimuth=alpha, elevation=0) /
+             (tx_antenna.calculate_pattern(azimuth=0, elevation=0) *
+              rx_antenna.calculate_pattern(azimuth=0, elevation=0)))**2 *
+            range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(DISTANCES,
                 azimuth_reflectance,
                 color=f"C{rcs_index}",
@@ -55,11 +55,11 @@ def plot_reflectance_for_single_reflection_path_at_boresight(
                 label=rf"$\sigma = {rcs}$ dBsm (azimuth)")
 
         elevation_reflectance = constants.power2db(
-            tx_antenna.calculate_pattern(azimuth=0, elevation=alpha) *
-            rx_antenna.calculate_pattern(azimuth=0, elevation=alpha) /
-            (tx_antenna.calculate_pattern(azimuth=0, elevation=0) *
-             rx_antenna.calculate_pattern(azimuth=0, elevation=0)) * range**2 /
-            (4 * np.pi * r**4)) + rcs
+            (tx_antenna.calculate_pattern(azimuth=0, elevation=alpha) *
+             rx_antenna.calculate_pattern(azimuth=0, elevation=alpha) /
+             (tx_antenna.calculate_pattern(azimuth=0, elevation=0) *
+              rx_antenna.calculate_pattern(azimuth=0, elevation=0)))**2 *
+            range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(DISTANCES,
                 elevation_reflectance,
                 color=f"C{rcs_index}",
@@ -92,11 +92,11 @@ def plot_reflectance_for_single_reflection_path_over_azimuth(
     fig, ax = plt.subplots(figsize=(12, 8))
     for azimuth in AZIMUTHS:
         azimuth_reflectance = constants.power2db(
-            tx_antenna.calculate_pattern(azimuth=azimuth - alpha, elevation=0) *
-            rx_antenna.calculate_pattern(azimuth=alpha, elevation=0) /
-            (tx_antenna.calculate_pattern(azimuth=azimuth, elevation=0) *
-             rx_antenna.calculate_pattern(azimuth=0, elevation=0)) * range**2 /
-            (4 * np.pi * r**4)) + rcs
+            (tx_antenna.calculate_pattern(azimuth=azimuth - alpha, elevation=0)
+             * rx_antenna.calculate_pattern(azimuth=alpha, elevation=0) /
+             (tx_antenna.calculate_pattern(azimuth=azimuth, elevation=0) *
+              rx_antenna.calculate_pattern(azimuth=0, elevation=0)))**2 *
+            range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(DISTANCES,
                 azimuth_reflectance,
                 linestyle="--",
@@ -128,11 +128,12 @@ def plot_reflectance_for_single_reflection_path_over_elevation(
     fig, ax = plt.subplots(figsize=(12, 8))
     for elevation in ELEVATIONS:
         elevation_reflectance = constants.power2db(
-            tx_antenna.calculate_pattern(azimuth=0, elevation=elevation - alpha)
-            * rx_antenna.calculate_pattern(azimuth=0, elevation=-alpha) /
-            (tx_antenna.calculate_pattern(azimuth=0, elevation=elevation) *
-             rx_antenna.calculate_pattern(azimuth=0, elevation=0)) * range**2 /
-            (4 * np.pi * r**4)) + rcs
+            (tx_antenna.calculate_pattern(azimuth=0,
+                                          elevation=elevation - alpha) *
+             rx_antenna.calculate_pattern(azimuth=0, elevation=-alpha) /
+             (tx_antenna.calculate_pattern(azimuth=0, elevation=elevation) *
+              rx_antenna.calculate_pattern(azimuth=0, elevation=0)))**2 *
+            range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(DISTANCES,
                 elevation_reflectance,
                 linestyle="--",
@@ -166,12 +167,12 @@ def plot_reflectance_for_single_reflection_path_over_azimuth_and_elevation(
     for azimuth in AZIMUTHS[-2:]:
         for elevation in ELEVATIONS[-2:]:
             reflectance = constants.power2db(
-                tx_antenna.calculate_pattern(azimuth=azimuth - alpha,
-                                             elevation=elevation - alpha) *
-                rx_antenna.calculate_pattern(azimuth=alpha, elevation=-alpha) /
-                (tx_antenna.calculate_pattern(azimuth=azimuth,
-                                              elevation=elevation) *
-                 rx_antenna.calculate_pattern(azimuth=0, elevation=0)) *
+                (tx_antenna.calculate_pattern(azimuth=azimuth - alpha,
+                                              elevation=elevation - alpha) *
+                 rx_antenna.calculate_pattern(azimuth=alpha, elevation=-alpha) /
+                 (tx_antenna.calculate_pattern(azimuth=azimuth,
+                                               elevation=elevation) *
+                  rx_antenna.calculate_pattern(azimuth=0, elevation=0)))**2 *
                 range**2 / (4 * np.pi * r**4)) + rcs
             ax.plot(DISTANCES,
                     reflectance,
