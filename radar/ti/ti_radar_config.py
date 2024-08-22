@@ -56,7 +56,12 @@ class TiCliCommandString(StrEnum):
 
 
 class TiCliCommand:
-    """TI CLI command."""
+    """TI CLI command.
+
+    Attributes:
+        command: A TI CLI command string.
+        args: A list of arguments for the CLI command.
+    """
 
     def __init__(self,
                  command: TiCliCommandString,
@@ -280,7 +285,11 @@ class TiCalibrationDataRestore(IntEnum):
 
 
 class TiRadarConfig(ABC):
-    """Interface for the TI radar configuration."""
+    """Interface for the TI radar configuration.
+
+    Attributes:
+        commands: A list of TI CLI commands.
+    """
 
     def __init__(self) -> None:
         self.commands = [

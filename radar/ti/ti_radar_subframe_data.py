@@ -30,7 +30,12 @@ class TiRadarSubframeDataType(IntEnum):
 
 
 class TiRadarSubframeData:
-    """TI radar subframe data."""
+    """TI radar subframe data.
+
+    Attributes:
+        data: A map from the TI radar subframe data type to the corresponding
+          data struct.
+    """
 
     def __init__(self) -> None:
         self.data: dict[TiRadarSubframeDataType, Any] = {}

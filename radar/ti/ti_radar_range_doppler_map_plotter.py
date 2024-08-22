@@ -16,7 +16,23 @@ from utils.visualization.color_maps import COLOR_MAPS
 
 
 class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
-    """TI radar range-Doppler map plotter."""
+    """TI radar range-Doppler map plotter.
+
+    Attributes:
+        num_range_bins: An integer denoting the number of range bins.
+        num_doppler_bins: An integer denoting the number of Doppler bins.
+        animation_interval: An integer denoting the animation interval in
+          milliseconds.
+        mark_detections: A boolean indicating whether to mark the azimuth and
+          elevation of the detected object.
+        range_doppler_map: A complex 2D array containing the samples of the
+          range-Doppler map.
+        detection_range_doppler_bins: A 2D array containing the range and
+          Doppler bins of all detected objects.
+        range_doppler_map_has_updated: A boolean indicating whether the range-
+          Doppler map has been updated.
+        range_doppler_map_lock: A lock protecting the range-Doppler map.
+    """
 
     def __init__(self, num_range_bins: int, num_doppler_bins: int,
                  animation_interval: float, mark_detections: bool) -> None:

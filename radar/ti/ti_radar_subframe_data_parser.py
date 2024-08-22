@@ -11,7 +11,11 @@ from radar.ti.ti_radar_subframe_data import (TiRadarSubframeData,
 
 
 class TiRadarSubframeDataParser:
-    """TI radar subframe data parser."""
+    """TI radar subframe data parser.
+
+    Attributes:
+        subframe_data: The parsed subframe data.
+    """
 
     def __init__(self, data: bytes) -> None:
         self.subframe_data = self._parse_data(data)

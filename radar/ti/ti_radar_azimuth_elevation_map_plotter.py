@@ -20,7 +20,29 @@ from utils.visualization.color_maps import COLOR_MAPS
 
 
 class TiRadarAzimuthElevationMapPlotter(TiRadarSubframeDataHandler, ABC):
-    """TI radar azimuth-elevation map plotter."""
+    """TI radar azimuth-elevation map plotter.
+
+    Attributes:
+        config: The radar configuration.
+        range: A float denoting the range in meters of the target for which to
+          plot the azimuth-elevation map.
+        num_azimuth_bins: An integer denoting the number of azimuth bins.
+        num_elevation_bins: An integer denoting the number of elevation bins.
+        animation_interval: An integer denoting the animation interval in
+          milliseconds.
+        mark_detections: A boolean indicating whether to mark the azimuth and
+          elevation of the detected object.
+        mark_peak: A boolean indicating whether to mark the peak in the
+          azimuth-elevation map.
+        detected_object: The detected object for which to plot the azimuth-
+          elevation map.
+        azimuth_elevation_map: A complex 2D array containing the samples of the
+          azimuth-elevation map.
+        azimuth_elevation_map_has_updated: A boolean indicating whether the
+          azimuth-elevation map has been updated.
+        azimuth_elevation_map_lock: A lock protecting the azimuth-elevation
+          map.
+    """
 
     def __init__(self, config: TiRadarConfig, rnge: float,
                  num_azimuth_bins: int, num_elevation_bins: int,

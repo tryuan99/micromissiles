@@ -24,10 +24,25 @@ class TiRadarSubframeDataAggregatorState(Enum):
 
 
 class TiRadarSubframeDataAggregator(TiRadarDataHandler):
-    """TI radar subframe data aggregator."""
+    """TI radar subframe data aggregator.
+
+    Attributes:
+        buffer: A bytearray containing the received bytes for the subframe
+          data.
+        state: The current aggregator state.
+        remaining_header_length: An integer denoting the number of remaining
+          bytes for the header.
+        remaining_subframe_data_length: An integer denoting the number of
+          remaining bytes for the subframe data.
+        subframe_data_handlers: A list of TI radar subframe handlers to handle
+          the received subframe data.
+    """
 
     def __init__(self) -> None:
+        self.buffer: bytearray = None
+        self.state: TiRadarSubframeDataAggregatorState = None
         self._reset_for_next_subframe()
+
         self.remaining_header_length = 0
         self.remaining_subframe_data_length = 0
         self.subframe_data_handlers: list[TiRadarSubframeDataHandler] = []

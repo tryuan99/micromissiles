@@ -25,7 +25,17 @@ TI_CLI_START_STOP_GUARD_TIME = 0.1  # seconds
 
 
 class TiRadarInterface:
-    """Interface for configuring and receiving data from TI radars."""
+    """Interface for configuring and receiving data from TI radars.
+
+    Attributes:
+        config_serial: The serial interface to the configuration port.
+        data_serial: The serial interface to the data port.
+        config_handlers: A list of TI radar data handlers for data received via
+          the configuration port.
+        data_handlers: A list of TI radar data handlers for data received via
+          the data port.
+        serial_threads: A list of threads that are running.
+    """
 
     def __init__(self,
                  config_port: str,
