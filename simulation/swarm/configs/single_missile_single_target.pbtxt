@@ -1,0 +1,38 @@
+missile_configs {
+    initial_state {
+        position {
+            x: 10000
+            y: 0
+            z: 0
+        }
+        velocity {
+            x: -1000
+            y: 0
+            z: 0
+        }
+        acceleration {
+            x: 0
+            y: 0
+            z: 0
+        }
+    }
+}
+target_configs {
+    initial_state {
+        position {
+            x: 0
+            y: 0
+            z: 0
+        }
+        velocity {
+            x: 1000
+            y: 1000
+            z: 0
+        }
+        acceleration {
+            x: 0
+            y: 0
+            z: 0
+        }
+    }
+}

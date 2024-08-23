@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "simulator_configs",
+    srcs = ["single_missile_single_target.pbtxt"],
+)

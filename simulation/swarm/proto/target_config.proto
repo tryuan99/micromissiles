@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package swarm;
+
+import "simulation/swarm/proto/state.proto";
+
+// Target configuration.
+message TargetConfig {
+    // Initial state.
+    State initial_state = 1;
+}

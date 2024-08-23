@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package swarm;
+
+import "simulation/swarm/proto/state.proto";
+
+// Missile configuration.
+message MissileConfig {
+    // Initial state.
+    State initial_state = 1;
+}
