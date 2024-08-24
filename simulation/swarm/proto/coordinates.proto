@@ -4,33 +4,33 @@ package swarm;
 
 // Cartesian coordinates.
 message CartesianCoordinates {
-    // x-coordinate.
-    float x = 1;
+  // x-coordinate.
+  float x = 1;
 
-    // y-coordinate.
-    float y = 2;
+  // y-coordinate.
+  float y = 2;
 
-    // z-coordinate.
-    float z = 3;
+  // z-coordinate.
+  float z = 3;
 
-    // Roll.
-    float roll = 4;
+  // Roll.
+  float roll = 4;
 
-    // Pitch.
-    float pitch = 5;
+  // Pitch.
+  float pitch = 5;
 
-    // Yaw.
-    float yaw = 6;
+  // Yaw.
+  float yaw = 6;
 }
 
 // Spherical coordinates.
 message SphericalCoordinates {
-    // Distance.
-    float distance = 1;
+  // Range.
+  float range = 1;
 
-    // Azimuth.
-    float azimuth = 2;
+  // Azimuth.
+  float azimuth = 2;
 
-    // Elevation.
-    float elevation = 3;
+  // Elevation.
+  float elevation = 3;
 }

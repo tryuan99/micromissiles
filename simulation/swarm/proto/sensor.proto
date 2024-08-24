@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package swarm;
+
+import "simulation/swarm/proto/coordinates.proto";
+
+// Sensor output.
+message SensorOutput {
+  // Range in m, azimuth and elevation in rad.
+  SphericalCoordinates position = 1;
+
+  // Range rate in m/s, azimuth and elevation rate in rad/s.
+  SphericalCoordinates velocity = 2;
+}

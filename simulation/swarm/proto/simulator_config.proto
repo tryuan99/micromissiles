@@ -7,9 +7,9 @@ import "simulation/swarm/proto/target_config.proto";
 
 // Simulator configuration.
 message SimulatorConfig {
-    // Missile configurations.
-    repeated MissileConfig missile_configs = 1;
+  // Missile configurations.
+  repeated MissileConfig missile_configs = 1;
 
-    // Target configurations.
-    repeated TargetConfig target_configs = 2;
+  // Target configurations.
+  repeated TargetConfig target_configs = 2;
 }

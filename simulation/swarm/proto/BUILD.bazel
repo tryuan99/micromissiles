@@ -25,14 +25,14 @@ py_proto_library(
 )
 
 proto_library(
-    name = "state_proto",
-    srcs = ["state.proto"],
+    name = "sensor_proto",
+    srcs = ["sensor.proto"],
     deps = [":coordinates_proto"],
 )
 
 py_proto_library(
-    name = "state_py_proto",
-    deps = [":state_proto"],
+    name = "sensor_py_proto",
+    deps = [":sensor_proto"],
 )
 
 proto_library(
@@ -47,6 +47,17 @@ proto_library(
 py_proto_library(
     name = "simulator_config_py_proto",
     deps = [":simulator_config_proto"],
+)
+
+proto_library(
+    name = "state_proto",
+    srcs = ["state.proto"],
+    deps = [":coordinates_proto"],
+)
+
+py_proto_library(
+    name = "state_py_proto",
+    deps = [":state_proto"],
 )
 
 proto_library(

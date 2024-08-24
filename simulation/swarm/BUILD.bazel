@@ -1,0 +1,80 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "agent",
+    srcs = ["agent.py"],
+    deps = [
+        "//simulation/swarm/proto:state_py_proto",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_library(
+    name = "missile",
+    srcs = ["missile.py"],
+    deps = [
+        ":agent",
+        ":sensor",
+        ":target",
+        "//simulation/swarm/proto:missile_config_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "plotter",
+    srcs = ["plotter.py"],
+    deps = [
+        ":agent",
+        ":missile",
+        ":target",
+        requirement("matplotlib"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
+    name = "sensor",
+    srcs = ["sensor.py"],
+    deps = [
+        ":agent",
+        "//simulation/swarm/proto:sensor_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "simulator",
+    srcs = ["simulator.py"],
+    deps = [
+        ":missile",
+        ":plotter",
+        ":target",
+        "//simulation/swarm/proto:simulator_config_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "simulator_main",
+    srcs = ["simulator_main.py"],
+    data = ["//simulation/swarm/configs:simulator_configs"],
+    deps = [
+        ":simulator",
+        "//simulation/swarm/proto:simulator_config_py_proto",
+        requirement("absl-py"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "target",
+    srcs = ["target.py"],
+    deps = [
+        ":agent",
+        "//simulation/swarm/proto:target_config_py_proto",
+    ],
+)

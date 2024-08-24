@@ -6,12 +6,12 @@ import "simulation/swarm/proto/coordinates.proto";
 
 // Agent stage.
 message State {
-// Position in m.
-CartesianCoordinates position = 1;
+  // Position in m.
+  CartesianCoordinates position = 1;
 
-// Velocity in m/s.
-CartesianCoordinates velocity = 2;
+  // Velocity in m/s.
+  CartesianCoordinates velocity = 2;
 
-// Acceleration in m/s^2.
-CartesianCoordinates acceleration = 3;
+  // Acceleration in m/s^2.
+  CartesianCoordinates acceleration = 3;
 }
