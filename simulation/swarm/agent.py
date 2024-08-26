@@ -21,6 +21,31 @@ class Agent(ABC):
         self.history = [(0, State())]
         self.history[-1][1].CopyFrom(initial_state)
 
+    def get_principal_axes(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Returns the principal axes of the agent.
+
+        The principal axis directions have not been normalized.
+        The roll axis is assumed to be aligned with the agent's velocity vector,
+        and the lateral axis points to the starboard of the agent.
+        TODO(titan): The roll axis does not necessarily have to be aligned with
+        the agent's velocity vector.
+
+        Returns:
+            A 3-tuple consisting of the roll, lateral, and yaw axes.
+        """
+        # The roll axis is assumed to be aligned with the agent's velocity
+        # vector.
+        roll = np.array([
+            self.state.velocity.x,
+            self.state.velocity.y,
+            self.state.velocity.z,
+        ])
+        # The lateral axis is to the agent's starboard.
+        lateral = np.array([roll[1], -roll[0], 0])
+        # The yaw axis points upwards relative to the agent's roll-lateral plane.
+        yaw = np.cross(lateral, roll)
+        return roll, lateral, yaw
+
     def step(self, t_start: float, t_step: float) -> None:
         """Steps forward the simulation by simulating the dynamics of the
         agent.
@@ -106,3 +131,18 @@ class Agent(ABC):
     @abstractmethod
     def update(self) -> None:
         """Updates the agent's state according to the environment."""
+
+
+class StaticAgent(Agent):
+    """Static agent.
+
+    A static agent maintains its initial state and does not update its state
+    according to its environment.
+    """
+
+    def __init__(self, initial_state: State) -> None:
+        super().__init__(initial_state)
+
+    def update(self) -> None:
+        """Updates the agent's state according to the environment."""
+        return
