@@ -8,12 +8,14 @@ FLAGS = flags.FLAGS
 
 
 def simulate_missile_swarm_and_targets(swarm_config: str, output: str,
-                                       animation: str, t_end: float) -> None:
+                                       animate: bool, animation: str,
+                                       t_end: float) -> None:
     """Simulates the swarm of missiles and the targets.
 
     Args:
         swarm_config: Swarm configuration.
         output: Output file.
+        animate: If true, animate the trajectories.
         animation: Animation file.
         t_end: Simulation end time in seconds.
     """
@@ -24,7 +26,7 @@ def simulate_missile_swarm_and_targets(swarm_config: str, output: str,
 
     simulator = SwarmSimulator(swarm_config)
     simulator.run(t_end)
-    simulator.plot(animation)
+    simulator.plot(animate, animation)
 
 
 def main(argv):
@@ -33,6 +35,7 @@ def main(argv):
     simulate_missile_swarm_and_targets(
         FLAGS.swarm_config,
         FLAGS.output,
+        FLAGS.animate,
         FLAGS.animation,
         FLAGS.t_end,
     )
@@ -41,6 +44,7 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string("swarm_config", None, "Swarm configuration file.")
     flags.DEFINE_string("output", None, "output file.")
+    flags.DEFINE_boolean("animate", None, "If true, animate the trajectories.")
     flags.DEFINE_string("animation", None, "Animation file.")
     flags.DEFINE_float("t_end", 10, "Simulation end time in seconds.")
     flags.mark_flag_as_required("swarm_config")

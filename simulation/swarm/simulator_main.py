@@ -8,12 +8,14 @@ FLAGS = flags.FLAGS
 
 
 def simulate_missiles_and_targets(simulator_config: str, output: str,
-                                  animation: str, t_end: float) -> None:
+                                  animate: bool, animation: str,
+                                  t_end: float) -> None:
     """Simulates the missiles and the targets.
 
     Args:
         simulator_config: Simulator configuration.
         output: Output file.
+        animate: If true, animate the trajectories.
         animation: Animation file.
         t_end: Simulation end time in seconds.
     """
@@ -24,7 +26,7 @@ def simulate_missiles_and_targets(simulator_config: str, output: str,
 
     simulator = Simulator(simulator_config)
     simulator.run(t_end)
-    simulator.plot(animation)
+    simulator.plot(animate, animation)
 
 
 def main(argv):
@@ -33,6 +35,7 @@ def main(argv):
     simulate_missiles_and_targets(
         FLAGS.simulator_config,
         FLAGS.output,
+        FLAGS.animate,
         FLAGS.animation,
         FLAGS.t_end,
     )
@@ -42,6 +45,7 @@ if __name__ == "__main__":
     flags.DEFINE_string("simulator_config", None,
                         "Simulator configuration file.")
     flags.DEFINE_string("output", None, "output file.")
+    flags.DEFINE_boolean("animate", None, "If true, animate the trajectories.")
     flags.DEFINE_string("animation", None, "Animation file.")
     flags.DEFINE_float("t_end", 10, "Simulation end time in seconds.")
     flags.mark_flag_as_required("simulator_config")

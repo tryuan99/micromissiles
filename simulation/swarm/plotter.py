@@ -31,7 +31,7 @@ class Plotter:
         self.missiles = missiles
         self.targets = targets
 
-    def plot(self, animation_file: str = None) -> None:
+    def plot(self, animate: bool = True, animation_file: str = None) -> None:
         """Plots the trajectories of the missiles and the targets.
 
         Args:
@@ -61,6 +61,11 @@ class Plotter:
             *[len(missile.history) for missile in self.missiles],
             *[len(target.history) for target in self.targets],
         ])
+
+        # Plot the trajectories if no animation is required.
+        if not animate:
+            plt.show()
+            return
 
         def update_trajectories(frame: int) -> tuple[artist.Artist, ...]:
             """Updates the trajectories.

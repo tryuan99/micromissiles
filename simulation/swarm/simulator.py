@@ -48,11 +48,12 @@ class Simulator:
             for agent in [*self.missiles, *self.targets]:
                 agent.step(t, self.t_step)
 
-    def plot(self, animation_file: str) -> None:
+    def plot(self, animate: bool, animation_file: str) -> None:
         """Plots the agent trajectories over time.
 
         Args:
+            animate: If true, animate the trajectories.
             animation_file: Animation file.
         """
         plotter = Plotter(self.t_step, self.missiles, self.targets)
-        plotter.plot(animation_file)
+        plotter.plot(animate, animation_file)
