@@ -14,17 +14,15 @@ class Missile(Agent):
     Attributes:
         sensor: The sensor mounted on the missile.
         target: The target assigned to the missile.
-        bearing: The azimuth and elevation to the target.
     """
 
     # Proportional coefficient for the controller.
-    KP = 10000
+    KP = 100000
 
     def __init__(self, missile_config: MissileConfig) -> None:
         super().__init__(missile_config.initial_state)
         self.sensor = IdealSensor(self)
         self.target: Target = None
-        self.bearing: tuple[float, float] = None
 
     def assign(self, target: Target) -> None:
         """Assigns the given target to the missile.
@@ -39,44 +37,35 @@ class Missile(Agent):
 
         The missile uses proportional navigation to intercept the target, i.e.,
         it should maintain a constant azimuth and elevation to the target.
+
+        TODO(titan): Add limitations to the steering capabilities of the
+        missile.
         """
         if self.target is None:
             return
 
         # Sense the target.
         sensor_output = self.sensor.sense([self.target])[0]
-        azimuth = sensor_output.position.azimuth
-        elevation = sensor_output.position.elevation
 
-        if self.bearing is None:
-            self.bearing = (azimuth, elevation)
-            return
+        # In proportional navigation, the acceleration vector should be
+        # proportional to the rate of change of the bearing.
+        error_azimuth_velocity = sensor_output.velocity.azimuth
+        error_elevation_velocity = sensor_output.velocity.elevation
 
-        # TODO(titan): Add limitations to the steering capabilities of the
-        # missile.
-        azimuth_prev, elevation_prev = self.bearing
-        error_azimuth = azimuth - azimuth_prev
-        error_elevation = elevation - elevation_prev
-
-        # Find the normal vector to the missile's plane.
-        roll = np.array([
-            self.state.velocity.x,
-            self.state.velocity.y,
-            self.state.velocity.z,
-        ])
-        # The lateral axis is to the missile's starboard.
-        lateral = np.array([roll[1], -roll[0], 0])
-        normal = np.cross(lateral, roll)
+        # Get the principal axes of the missile.
+        roll, lateral, yaw = self.get_principal_axes()
 
         # Normalize the vectors pointing in the three axes.
         normalized_roll = roll / np.linalg.norm(roll)
         normalized_lateral = lateral / np.linalg.norm(lateral)
-        normalized_yaw = normal / np.linalg.norm(normal)
+        normalized_yaw = yaw / np.linalg.norm(yaw)
 
         # Calculate the components along the three axes.
-        roll_coefficient = np.cos(error_elevation) * np.cos(error_azimuth)
-        lateral_coefficient = np.cos(error_elevation) * np.sin(error_azimuth)
-        yaw_coefficient = np.sin(error_elevation)
+        roll_coefficient = np.cos(error_elevation_velocity) * np.cos(
+            error_azimuth_velocity)
+        lateral_coefficient = np.cos(error_elevation_velocity) * np.sin(
+            error_azimuth_velocity)
+        yaw_coefficient = np.sin(error_elevation_velocity)
 
         # Calculate the desired acceleration vector.
         acceleration_vector = (roll_coefficient * normalized_roll +

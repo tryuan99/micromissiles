@@ -10,11 +10,6 @@ missile_configs {
       y: 0
       z: 1000
     }
-    acceleration {
-      x: 0
-      y: 0
-      z: 0
-    }
   }
 }
 missile_configs {
@@ -28,11 +23,6 @@ missile_configs {
       x: 1
       y: 0
       z: 1000
-    }
-    acceleration {
-      x: 0
-      y: 0
-      z: 0
     }
   }
 }
@@ -48,11 +38,6 @@ missile_configs {
       y: 0
       z: 1000
     }
-    acceleration {
-      x: 0
-      y: 0
-      z: 0
-    }
   }
 }
 missile_configs {
@@ -67,27 +52,17 @@ missile_configs {
       y: 0
       z: 1000
     }
-    acceleration {
-      x: 0
-      y: 0
-      z: 0
-    }
   }
 }
 target_configs {
   initial_state {
     position {
-      x: 20000
+      x: 200000
       y: 0
-      z: 150
+      z: 40000
     }
     velocity {
-      x: -200
-      y: 0
-      z: 0
-    }
-    acceleration {
-      x: 0
+      x: -1000
       y: 0
       z: 0
     }

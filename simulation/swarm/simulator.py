@@ -44,6 +44,7 @@ class Simulator:
         for t in np.arange(0, t_end, t_step):
             for agent in [*self.missiles, *self.targets]:
                 agent.update()
+            for agent in [*self.missiles, *self.targets]:
                 agent.step(t, t_step)
 
     def plot(self) -> None:

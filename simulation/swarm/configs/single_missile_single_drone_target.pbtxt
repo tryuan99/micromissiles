@@ -10,11 +10,6 @@ missile_configs {
       y: 0
       z: 1000
     }
-    acceleration {
-      x: 0
-      y: 0
-      z: 0
-    }
   }
 }
 target_configs {
@@ -26,12 +21,7 @@ target_configs {
     }
     velocity {
       x: -40
-      y: 0
-      z: 0
-    }
-    acceleration {
-      x: 0
-      y: 0
+      y: -20
       z: 0
     }
   }
