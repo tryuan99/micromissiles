@@ -124,16 +124,20 @@ class IdealSensor(Sensor):
             relative_position_projection_on_roll_lateral_plane -
             relative_position_projection_on_roll)
 
-        # Determine the sign of the azimuth.
-        if np.dot(relative_position_projection_on_lateral, lateral) >= 0:
-            azimuth_sign = 1
-        else:
-            azimuth_sign = -1
+        if (np.linalg.norm(relative_position_projection_on_lateral) > 0 or
+                np.linalg.norm(relative_position_projection_on_roll) > 0):
+            # Determine the sign of the azimuth.
+            if np.dot(relative_position_projection_on_lateral, lateral) >= 0:
+                azimuth_sign = 1
+            else:
+                azimuth_sign = -1
 
-        # Calculate the azimuth to the target.
-        position_sensor_output.position.azimuth = (azimuth_sign * np.arctan(
-            np.linalg.norm(relative_position_projection_on_lateral) /
-            np.linalg.norm(relative_position_projection_on_roll)))
+            # Calculate the azimuth to the target.
+            position_sensor_output.position.azimuth = (azimuth_sign * np.arctan(
+                np.linalg.norm(relative_position_projection_on_lateral) /
+                np.linalg.norm(relative_position_projection_on_roll)))
+        else:
+            position_sensor_output.position.azimuth = 0
         return position_sensor_output
 
     def sense_velocity(self, target: Agent) -> SensorOutput:
@@ -176,7 +180,8 @@ class IdealSensor(Sensor):
         ])
         target_relative_velocity = target_velocity - velocity
 
-        # Project the velocity vector onto the relative position vector.
+        # Project the relative velocity vector onto the relative position
+        # vector.
         velocity_projection_on_relative_position = (
             np.dot(target_relative_velocity, target_relative_position) /
             np.linalg.norm(target_relative_position)**2 *
@@ -194,8 +199,8 @@ class IdealSensor(Sensor):
             range_rate_sign *
             np.linalg.norm(velocity_projection_on_relative_position))
 
-        # Project the velocity vector onto the sphere passing through the
-        # target.
+        # Project the relative velocity vector onto the sphere passing through
+        # the target.
         velocity_projection_on_azimuth_elevation_sphere = (
             target_relative_velocity - velocity_projection_on_relative_position)
 
@@ -203,8 +208,22 @@ class IdealSensor(Sensor):
         # vector and points to the starboard of the target along the azimuth-
         # elevation sphere.
         target_azimuth = np.cross(target_relative_position, yaw)
-        # Project the velocity vector on the azimuth-elevation sphere onto
-        # the target azimuth vector.
+        # The target elevation vector is orthogonal to the relative position
+        # vector and points upwards from the target along the azimuth-
+        # elevation sphere.
+        target_elevation = np.cross(lateral, target_relative_position)
+        # If the relative position vector is parallel to the yaw or lateral
+        # axis, the target azimuth vector or the target elevation vector will
+        # undefined.
+        if np.linalg.norm(target_azimuth) == 0:
+            target_azimuth = np.cross(target_relative_position,
+                                      target_elevation)
+        elif np.linalg.norm(target_elevation) == 0:
+            target_elevation = np.cross(target_azimuth,
+                                        target_relative_position)
+
+        # Project the relative velocity vector on the azimuth-elevation sphere
+        # onto the target azimuth vector.
         velocity_projection_on_target_azimuth = (
             np.dot(velocity_projection_on_azimuth_elevation_sphere,
                    target_azimuth) / np.linalg.norm(target_azimuth)**2 *
@@ -222,10 +241,6 @@ class IdealSensor(Sensor):
             np.linalg.norm(velocity_projection_on_target_azimuth) /
             np.linalg.norm(target_relative_position))
 
-        # The target elevation vector is orthogonal to the relative position
-        # vector and points upwards from the target along the azimuth-
-        # elevation sphere.
-        target_elevation = np.cross(target_azimuth, target_relative_position)
         # Project the velocity vector on the azimuth-elevation sphere onto
         # the target elevation vector.
         velocity_projection_on_target_elevation = (
