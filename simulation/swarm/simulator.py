@@ -12,11 +12,13 @@ class Simulator:
     """Simulator.
 
     Attributes:
+        t_step: Simulation step time in seconds.
         missiles: List of missiles.
         targets: List of targets.
     """
 
     def __init__(self, simulator_config: SimulatorConfig) -> None:
+        self.t_step = simulator_config.step_time
         self.missiles = [
             Missile(missile_config)
             for missile_config in simulator_config.missile_configs
@@ -26,13 +28,12 @@ class Simulator:
             for target_config in simulator_config.target_configs
         ]
 
-    def run(self, t_end: float, t_step: float) -> None:
+    def run(self, t_end: float) -> None:
         """Runs the simulation for the given time span in increments of the
         given step time.
 
         Args:
             t_end: Time span in seconds.
-            t_step: Step time in seconds.
         """
         # Assign the targets to the missiles.
         # TODO(titan): Implement some optimal matching algorithm.
@@ -41,13 +42,17 @@ class Simulator:
             missile.assign(self.targets[target_index])
 
         # Step through the simulation.
-        for t in np.arange(0, t_end, t_step):
+        for t in np.arange(0, t_end, self.t_step):
             for agent in [*self.missiles, *self.targets]:
                 agent.update()
             for agent in [*self.missiles, *self.targets]:
-                agent.step(t, t_step)
+                agent.step(t, self.t_step)
 
-    def plot(self) -> None:
-        """Plots the agent trajectories over time."""
-        plotter = Plotter(self.missiles, self.targets)
-        plotter.plot()
+    def plot(self, animation_file: str) -> None:
+        """Plots the agent trajectories over time.
+
+        Args:
+            animation_file: Animation file.
+        """
+        plotter = Plotter(self.t_step, self.missiles, self.targets)
+        plotter.plot(animation_file)

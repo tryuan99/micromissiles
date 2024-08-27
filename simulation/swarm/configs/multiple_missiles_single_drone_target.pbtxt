@@ -1,3 +1,4 @@
+step_time: 0.001
 missile_configs {
   initial_state {
     position {
