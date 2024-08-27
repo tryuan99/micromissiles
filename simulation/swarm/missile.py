@@ -17,9 +17,6 @@ class Missile(Agent):
         target: The target assigned to the missile.
     """
 
-    # Maximum acceleration in m/s^2.
-    MAX_ACCELERATION = 300 * constants.STANDARD_GRAVITY
-
     # Coefficient for proportional navigation.
     PROPORTIONAL_NAVIGATION_COEFFICIENT = 3
 
@@ -75,9 +72,29 @@ class Missile(Agent):
 
         # Limit the acceleration vector.
         acceleration_input_vector /= np.linalg.norm(acceleration_input_vector)
-        acceleration_input_vector *= self.MAX_ACCELERATION
+        acceleration_input_vector *= self._get_max_acceleration()
 
         # Set the acceleration according to the feedback law.
         acceleration_vector = acceleration_input_vector
         (self.state.acceleration.x, self.state.acceleration.y,
          self.state.acceleration.z) = acceleration_vector
+
+    def _get_max_acceleration(self) -> float:
+        """Calculates the maximum acceleration of the missile based on its
+        velocity.
+
+        Returns:
+            The maximum acceleration in m/s^2.
+        """
+        # Maximum acceleration in m/s^2 at 1 km/s.
+        max_reference_acceleration = 300 * constants.STANDARD_GRAVITY
+        reference_speed = 1000
+
+        # Calculate the velocity.
+        velocity = np.array([
+            self.state.velocity.x,
+            self.state.velocity.y,
+            self.state.velocity.z,
+        ])
+        speed = np.linalg.norm(velocity)
+        return (speed / reference_speed)**2 * max_reference_acceleration
