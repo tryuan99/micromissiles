@@ -12,9 +12,6 @@ from simulation.swarm.target import Target
 # Animation interval in fps.
 PLOTTER_ANIMATION_FPS = 50
 
-# Animation speed factor.
-PLOTTER_ANIMATION_SPEED_FACTOR = 0.1
-
 
 class Plotter:
     """Plotter for the agent trajectories.
@@ -88,15 +85,13 @@ class Plotter:
 
         # Animate at a frame rate of at most 50 fps.
         num_steps_per_frame = int(
-            np.ceil(PLOTTER_ANIMATION_SPEED_FACTOR /
-                    (PLOTTER_ANIMATION_FPS * self.t_step)))
-        effective_fps = (PLOTTER_ANIMATION_SPEED_FACTOR /
-                         (num_steps_per_frame * self.t_step))
+            np.ceil(1 / (PLOTTER_ANIMATION_FPS * self.t_step)))
+        effective_fps = 1 / (num_steps_per_frame * self.t_step)
         anim = animation.FuncAnimation(
             fig,
             update_trajectories,
             frames=np.arange(0, num_time_steps, num_steps_per_frame),
-            interval=1 / effective_fps,
+            interval=1000 / effective_fps,
             blit=True,
             cache_frame_data=False,
         )

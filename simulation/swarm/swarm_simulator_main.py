@@ -44,7 +44,7 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string("swarm_config", None, "Swarm configuration file.")
     flags.DEFINE_string("output", None, "output file.")
-    flags.DEFINE_boolean("animate", None, "If true, animate the trajectories.")
+    flags.DEFINE_boolean("animate", True, "If true, animate the trajectories.")
     flags.DEFINE_string("animation", None, "Animation file.")
     flags.DEFINE_float("t_end", 10, "Simulation end time in seconds.")
     flags.mark_flag_as_required("swarm_config")

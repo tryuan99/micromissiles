@@ -1,4 +1,4 @@
-step_time: 0.001
+step_time: 0.01
 num_missiles: 20
 missile_swarm_config {
   mean {
