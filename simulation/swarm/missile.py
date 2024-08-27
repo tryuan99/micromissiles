@@ -2,6 +2,7 @@
 
 import numpy as np
 
+from simulation.swarm import constants
 from simulation.swarm.agent import Agent
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.sensor import IdealSensor
@@ -61,17 +62,25 @@ class Missile(Agent):
         normalized_yaw = yaw / np.linalg.norm(yaw)
 
         # Calculate the components along the three axes.
-        roll_coefficient = np.cos(error_elevation_velocity) * np.cos(
-            error_azimuth_velocity)
-        lateral_coefficient = np.cos(error_elevation_velocity) * np.sin(
-            error_azimuth_velocity)
+        roll_coefficient = (np.cos(error_elevation_velocity) *
+                            np.cos(error_azimuth_velocity))
+        lateral_coefficient = (np.cos(error_elevation_velocity) *
+                               np.sin(error_azimuth_velocity))
         yaw_coefficient = np.sin(error_elevation_velocity)
 
         # Calculate the desired acceleration vector.
-        acceleration_vector = (roll_coefficient * normalized_roll +
-                               lateral_coefficient * normalized_lateral +
-                               yaw_coefficient * normalized_yaw)
+        normalized_acceleration_input_vector = (
+            roll_coefficient * normalized_roll +
+            lateral_coefficient * normalized_lateral +
+            yaw_coefficient * normalized_yaw)
+        acceleration_input_vector = (self.KP *
+                                     normalized_acceleration_input_vector)
+
+        # Add gravity.
+        gravity_vector = np.array(
+            [0, 0, -constants.gravity_at_altitude(self.state.position.z)])
 
         # Set the acceleration according to the feedback law.
+        acceleration_vector = acceleration_input_vector + gravity_vector
         (self.state.acceleration.x, self.state.acceleration.y,
-         self.state.acceleration.z) = self.KP * acceleration_vector
+         self.state.acceleration.z) = acceleration_vector

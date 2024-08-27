@@ -24,10 +24,20 @@ py_test(
 )
 
 py_library(
+    name = "constants",
+    srcs = ["constants.py"],
+    deps = [
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_library(
     name = "missile",
     srcs = ["missile.py"],
     deps = [
         ":agent",
+        ":constants",
         ":sensor",
         ":target",
         "//simulation/swarm/proto:missile_config_py_proto",
