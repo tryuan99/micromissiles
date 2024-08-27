@@ -1,0 +1,55 @@
+step_time: 0.001
+num_missiles: 20
+missile_swarm_config {
+  mean {
+    position {
+      x: 0
+      y: 0
+      z: 100
+    }
+    velocity {
+      x: 1
+      y: 0
+      z: 1000
+    }
+  }
+  standard_deviation {
+    position {
+      x: 100
+      y: 2000
+      z: 0
+    }
+    velocity {
+      x: 0
+      y: 0
+      z: 0
+    }
+  }
+}
+num_targets: 8
+target_swarm_config {
+  mean {
+    position {
+      x: 15000
+      y: 0
+      z: 200
+    }
+    velocity {
+      x: -40
+      y: 0
+      z: 0
+    }
+  }
+  standard_deviation {
+    position {
+      x: 2000
+      y: 10000
+      z: 50
+    }
+    velocity {
+      x: 20
+      y: 50
+      z: 0
+    }
+  }
+}

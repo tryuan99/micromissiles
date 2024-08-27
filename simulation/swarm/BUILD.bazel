@@ -95,6 +95,30 @@ py_binary(
 )
 
 py_library(
+    name = "swarm_simulator",
+    srcs = ["swarm_simulator.py"],
+    deps = [
+        ":simulator",
+        "//simulation/swarm/proto:simulator_config_py_proto",
+        "//simulation/swarm/proto:state_py_proto",
+        "//simulation/swarm/proto:swarm_config_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "swarm_simulator_main",
+    srcs = ["swarm_simulator_main.py"],
+    data = ["//simulation/swarm/configs:swarm_configs"],
+    deps = [
+        ":swarm_simulator",
+        "//simulation/swarm/proto:swarm_config_py_proto",
+        requirement("absl-py"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
     name = "target",
     srcs = ["target.py"],
     deps = [

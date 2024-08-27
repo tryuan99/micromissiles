@@ -2,5 +2,13 @@ package(default_visibility = ["//visibility:public"])
 
 filegroup(
     name = "simulator_configs",
-    srcs = glob(["*.pbtxt"]),
+    srcs = glob(
+        ["*.pbtxt"],
+        exclude = ["*_swarm.pbtxt"],
+    ),
+)
+
+filegroup(
+    name = "swarm_configs",
+    srcs = glob(["*_swarm.pbtxt"]),
 )

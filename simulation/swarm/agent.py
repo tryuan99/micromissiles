@@ -87,20 +87,23 @@ class Agent(ABC):
                 velocity_y,
                 velocity_z,
             ) = state
-            dx = np.array([
-                # dx/dt = vx
-                velocity_x,
-                # dy/dt = vy
-                velocity_y,
-                # dz/dt = vz
-                velocity_z,
-                # dvx/dt = ax
-                self.state.acceleration.x,
-                # dvy/dt = ay
-                self.state.acceleration.y,
-                # dvz/dt = az
-                self.state.acceleration.z,
-            ])
+            if position_z <= 0:
+                dx = np.zeros(state.shape)
+            else:
+                dx = np.array([
+                    # dx/dt = vx
+                    velocity_x,
+                    # dy/dt = vy
+                    velocity_y,
+                    # dz/dt = vz
+                    velocity_z,
+                    # dvx/dt = ax
+                    self.state.acceleration.x,
+                    # dvy/dt = ay
+                    self.state.acceleration.y,
+                    # dvz/dt = az
+                    self.state.acceleration.z,
+                ])
             return dx
 
         solution = scipy.integrate.solve_ivp(

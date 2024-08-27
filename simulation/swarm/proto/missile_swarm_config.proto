@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package swarm;
+
+import "simulation/swarm/proto/state.proto";
+
+// Missile swarm configuration.
+message MissileSwarmConfig {
+  // State mean.
+  State mean = 1;
+
+  // State standard deviation.
+  State standard_deviation = 2;
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package swarm;
+
+import "simulation/swarm/proto/missile_swarm_config.proto";
+import "simulation/swarm/proto/target_swarm_config.proto";
+
+// Swarm configuration.
+message SwarmConfig {
+  // Step time in seconds.
+  float step_time = 1;
+
+  // Number of missiles.
+  uint32 num_missiles = 2;
+
+  // Missile swarm configuration.
+  MissileSwarmConfig missile_swarm_config = 3;
+
+  // Number of targets.
+  uint32 num_targets = 4;
+
+  // Target swarm configuration.
+  TargetSwarmConfig target_swarm_config = 5;
+}

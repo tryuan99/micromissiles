@@ -25,6 +25,17 @@ py_proto_library(
 )
 
 proto_library(
+    name = "missile_swarm_config_proto",
+    srcs = ["missile_swarm_config.proto"],
+    deps = [":state_proto"],
+)
+
+py_proto_library(
+    name = "missile_swarm_config_py_proto",
+    deps = [":missile_swarm_config_proto"],
+)
+
+proto_library(
     name = "sensor_proto",
     srcs = ["sensor.proto"],
     deps = [":coordinates_proto"],
@@ -61,6 +72,20 @@ py_proto_library(
 )
 
 proto_library(
+    name = "swarm_config_proto",
+    srcs = ["swarm_config.proto"],
+    deps = [
+        ":missile_swarm_config_proto",
+        ":target_swarm_config_proto",
+    ],
+)
+
+py_proto_library(
+    name = "swarm_config_py_proto",
+    deps = [":swarm_config_proto"],
+)
+
+proto_library(
     name = "target_config_proto",
     srcs = ["target_config.proto"],
     deps = [":state_proto"],
@@ -69,4 +94,15 @@ proto_library(
 py_proto_library(
     name = "target_config_py_proto",
     deps = [":target_config_proto"],
+)
+
+proto_library(
+    name = "target_swarm_config_proto",
+    srcs = ["target_swarm_config.proto"],
+    deps = [":state_proto"],
+)
+
+py_proto_library(
+    name = "target_swarm_config_py_proto",
+    deps = [":target_swarm_config_proto"],
 )
