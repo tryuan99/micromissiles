@@ -6,6 +6,7 @@ py_library(
     name = "agent",
     srcs = ["agent.py"],
     deps = [
+        ":constants",
         "//simulation/swarm/proto:state_py_proto",
         requirement("numpy"),
         requirement("scipy"),
@@ -41,6 +42,7 @@ py_library(
         ":sensor",
         ":target",
         "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:sensor_py_proto",
         requirement("numpy"),
     ],
 )

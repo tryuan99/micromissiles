@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import scipy.integrate
 
+from simulation.swarm import constants
 from simulation.swarm.proto.state_pb2 import State
 
 
@@ -45,6 +46,28 @@ class Agent(ABC):
         # The yaw axis points upwards relative to the agent's roll-lateral plane.
         yaw = np.cross(lateral, roll)
         return roll, lateral, yaw
+
+    def get_normalized_principal_axes(
+            self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Returns the normalized_principal axes of the agent.
+
+        Returns:
+            A 3-tuple consisting of the normalized roll, lateral, and yaw axes.
+        """
+        roll, lateral, yaw = self.get_principal_axes()
+        normalized_roll = roll / np.linalg.norm(roll)
+        normalized_lateral = lateral / np.linalg.norm(lateral)
+        normalized_yaw = yaw / np.linalg.norm(yaw)
+        return normalized_roll, normalized_lateral, normalized_yaw
+
+    def get_gravity(self) -> np.ndarray:
+        """Returns the gravity acceleration vector."""
+        gravity = np.array([
+            0,
+            0,
+            -constants.gravity_at_altitude(self.state.position.z),
+        ])
+        return gravity
 
     def step(self, t_start: float, t_step: float) -> None:
         """Steps forward the simulation by simulating the dynamics of the
