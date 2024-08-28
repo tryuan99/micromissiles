@@ -2,6 +2,7 @@ import numpy as np
 from absl.testing import absltest
 
 from simulation.swarm.agent import StaticAgent
+from simulation.swarm.proto.physical_config_pb2 import PhysicalConfig
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.sensor import IdealSensor
 
@@ -17,7 +18,8 @@ class IdealSensorTargetAtBoresightTestCase(absltest.TestCase):
             agent_state.velocity.y,
             agent_state.velocity.z,
         ) = self.agent_velocity
-        self.agent = StaticAgent(agent_state)
+        physical_config = PhysicalConfig()
+        self.agent = StaticAgent(agent_state, physical_config)
         self.sensor = IdealSensor(self.agent)
 
         # Configure the target.
@@ -35,7 +37,7 @@ class IdealSensorTargetAtBoresightTestCase(absltest.TestCase):
             target_state.velocity.y,
             target_state.velocity.z,
         ) = self.target_velocity
-        self.target = StaticAgent(target_state)
+        self.target = StaticAgent(target_state, physical_config)
 
     def test_sense_position_range(self):
         expected_range = np.linalg.norm(self.target_position)
@@ -100,7 +102,8 @@ class IdealSensorTargetAtStarboardTestCase(absltest.TestCase):
             agent_state.velocity.y,
             agent_state.velocity.z,
         ) = self.agent_velocity
-        self.agent = StaticAgent(agent_state)
+        physical_config = PhysicalConfig()
+        self.agent = StaticAgent(agent_state, physical_config)
         self.sensor = IdealSensor(self.agent)
 
         # Configure the target.
@@ -118,7 +121,7 @@ class IdealSensorTargetAtStarboardTestCase(absltest.TestCase):
             target_state.velocity.y,
             target_state.velocity.z,
         ) = self.target_velocity
-        self.target = StaticAgent(target_state)
+        self.target = StaticAgent(target_state, physical_config)
 
     def test_sense_position_range(self):
         expected_range = np.linalg.norm(self.target_position)
@@ -183,7 +186,8 @@ class IdealSensorTargetAboveOnYawTestCase(absltest.TestCase):
             agent_state.velocity.y,
             agent_state.velocity.z,
         ) = self.agent_velocity
-        self.agent = StaticAgent(agent_state)
+        physical_config = PhysicalConfig()
+        self.agent = StaticAgent(agent_state, physical_config)
         self.sensor = IdealSensor(self.agent)
 
         # Configure the target.
@@ -201,7 +205,7 @@ class IdealSensorTargetAboveOnYawTestCase(absltest.TestCase):
             target_state.velocity.y,
             target_state.velocity.z,
         ) = self.target_velocity
-        self.target = StaticAgent(target_state)
+        self.target = StaticAgent(target_state, physical_config)
 
     def test_sense_position_range(self):
         expected_range = np.linalg.norm(self.target_position)
@@ -265,7 +269,8 @@ class IdealSensorTargetAtAzimuth45Elevation45TestCase(absltest.TestCase):
             agent_state.velocity.y,
             agent_state.velocity.z,
         ) = self.agent_velocity
-        self.agent = StaticAgent(agent_state)
+        physical_config = PhysicalConfig()
+        self.agent = StaticAgent(agent_state, physical_config)
         self.sensor = IdealSensor(self.agent)
 
         # Configure the target.
@@ -285,7 +290,7 @@ class IdealSensorTargetAtAzimuth45Elevation45TestCase(absltest.TestCase):
             target_state.velocity.y,
             target_state.velocity.z,
         ) = self.target_velocity
-        self.target = StaticAgent(target_state)
+        self.target = StaticAgent(target_state, physical_config)
 
     def test_sense_position_range(self):
         expected_range = np.linalg.norm(self.target_position)

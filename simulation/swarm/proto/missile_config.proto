@@ -3,16 +3,13 @@ syntax = "proto3";
 package swarm;
 
 import "simulation/swarm/proto/state.proto";
-import "simulation/swarm/proto/aerodynamics_config.proto";
+import "simulation/swarm/proto/physical_config.proto";
 
 // Missile configuration.
 message MissileConfig {
   // Initial state.
   State initial_state = 1;
 
-  // Aerodynamics configuration.
-  AerodynamicsConfig aerodynamics_config = 2;
-
-  // Hit radius.
-  float hit_radius = 3;
+  // Physical configuration.
+  PhysicalConfig physical_config = 2;
 }

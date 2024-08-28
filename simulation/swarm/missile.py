@@ -16,18 +16,15 @@ class Missile(Agent):
     Attributes:
         sensor: The sensor mounted on the missile.
         target: The target assigned to the missile.
-        hit_radius: The hit radius around the target.
     """
 
     # Coefficient for proportional navigation.
     PROPORTIONAL_NAVIGATION_COEFFICIENT = 3
 
     def __init__(self, missile_config: MissileConfig) -> None:
-        super().__init__(missile_config.initial_state)
-        self.aerodynamics_config = missile_config.aerodynamics_config
+        super().__init__(missile_config)
         self.sensor = IdealSensor(self)
         self.target: Target = None
-        self.hit_radius = missile_config.hit_radius
 
     def assign_target(self, target: Target) -> None:
         """Assigns the given target to the missile.
@@ -54,8 +51,9 @@ class Missile(Agent):
             return False
 
         # A hit is recorded if the target is within the missile's hit radius.
+        hit_radius = self.physical_config.hit_config.hit_radius
         distance = sensor_output.position.range
-        if distance <= self.hit_radius:
+        if distance <= hit_radius:
             return True
 
     def update(self) -> None:
@@ -73,7 +71,9 @@ class Missile(Agent):
         # Check whether the target has been hit.
         if self.has_hit_target(sensor_output):
             # Consider the kill probability of the target.
-            if np.random.binomial(1, self.target.kill_probability) > 0:
+            kill_probability = (
+                self.target.physical_config.hit_config.kill_probability)
+            if np.random.binomial(1, kill_probability) > 0:
                 self.hit = True
                 self.target.hit = True
                 return
@@ -169,11 +169,11 @@ class Missile(Agent):
         Returns:
             The drag acceleration in m/s^2.
         """
-        mass = self.aerodynamics_config.physical_config.mass
         drag_coefficient = (
-            self.aerodynamics_config.lift_drag_config.drag_coefficient)
+            self.physical_config.lift_drag_config.drag_coefficient)
         cross_sectional_area = (
-            self.aerodynamics_config.physical_config.cross_sectional_area)
+            self.physical_config.body_config.cross_sectional_area)
+        mass = self.physical_config.body_config.mass
 
         dynamic_pressure = self.get_dynamic_pressure()
         drag_force = drag_coefficient * dynamic_pressure * cross_sectional_area
@@ -197,7 +197,7 @@ class Missile(Agent):
 
         # Calculate the drag acceleration from the lift acceleration.
         lift_drag_ratio = (
-            self.aerodynamics_config.lift_drag_config.lift_drag_ratio)
+            self.physical_config.lift_drag_config.lift_drag_ratio)
         lift_induced_drag_acceleration = (np.abs(lift_acceleration /
                                                  lift_drag_ratio))
         return lift_induced_drag_acceleration
@@ -210,10 +210,10 @@ class Missile(Agent):
             The maximum acceleration in m/s^2.
         """
         max_reference_acceleration = (
-            self.aerodynamics_config.acceleration_config.
-            max_reference_acceleration * constants.STANDARD_GRAVITY)
+            self.physical_config.acceleration_config.max_reference_acceleration
+            * constants.STANDARD_GRAVITY)
         reference_speed = (
-            self.aerodynamics_config.acceleration_config.reference_speed)
+            self.physical_config.acceleration_config.reference_speed)
         max_acceleration = ((self.get_speed() / reference_speed)**2 *
                             max_reference_acceleration)
         return max_acceleration

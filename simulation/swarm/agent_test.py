@@ -2,6 +2,7 @@ import numpy as np
 from absl.testing import absltest
 
 from simulation.swarm.agent import StaticAgent
+from simulation.swarm.proto.physical_config_pb2 import PhysicalConfig
 from simulation.swarm.proto.state_pb2 import State
 
 
@@ -16,7 +17,8 @@ class StaticAgentTestCase(absltest.TestCase):
             agent_state.velocity.y,
             agent_state.velocity.z,
         ) = self.agent_velocity
-        self.agent = StaticAgent(agent_state)
+        physical_config = PhysicalConfig()
+        self.agent = StaticAgent(agent_state, physical_config)
 
     def test_get_principal_axes_roll(self):
         roll, lateral, yaw = self.agent.get_principal_axes()

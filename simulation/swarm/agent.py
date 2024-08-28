@@ -6,7 +6,10 @@ import numpy as np
 import scipy.integrate
 
 from simulation.swarm import constants
+from simulation.swarm.proto.missile_config_pb2 import MissileConfig
+from simulation.swarm.proto.physical_config_pb2 import PhysicalConfig
 from simulation.swarm.proto.state_pb2 import State
+from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 
 class Agent(ABC):
@@ -14,15 +17,26 @@ class Agent(ABC):
 
     Attributes:
         state: Current state.
+        physical_config: The physical configuration of the agent.
         history: A list of 2-tuples consisting of a timestamp and the state.
-        hit: A boolean indicating whether the missile has hit the target.
+        hit: A boolean indicating whether the agent has hit or been hit.
     """
 
-    def __init__(self, initial_state: State) -> None:
-        self.state = initial_state
-        self.history = [(0, State())]
-        self.history[-1][1].CopyFrom(initial_state)
+    def __init__(
+        self,
+        config: MissileConfig | TargetConfig = None,
+        *,
+        initial_state: State = None,
+        physical_config: PhysicalConfig = None,
+    ) -> None:
+        self.state = (initial_state
+                      if initial_state is not None else config.initial_state)
+        self.physical_config = (physical_config if physical_config is not None
+                                else config.physical_config)
         self.hit = False
+
+        self.history = [(0, State())]
+        self.history[-1][1].CopyFrom(self.state)
 
     def get_principal_axes(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the principal axes of the agent.
@@ -185,8 +199,15 @@ class StaticAgent(Agent):
     according to its environment.
     """
 
-    def __init__(self, initial_state: State) -> None:
-        super().__init__(initial_state)
+    def __init__(
+        self,
+        initial_state: State,
+        physical_config: PhysicalConfig,
+    ) -> None:
+        super().__init__(
+            initial_state=initial_state,
+            physical_config=physical_config,
+        )
 
     def update(self) -> None:
         """Updates the agent's state according to the environment."""

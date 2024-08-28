@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package swarm;
+
+// Acceleration configuration.
+message AccelerationConfig {
+  // Maximum reference acceleration in m/s^2.
+  float max_reference_acceleration = 1;
+
+  // Reference speed in m/s.
+  float reference_speed = 2;
+}
+
+// Lift and drag configuration.
+message LiftDragConfig {
+  // Lift coefficient.
+  float lift_coefficient = 1;
+
+  // Drag coefficient.
+  float drag_coefficient = 2;
+
+  // Lift-drag ratio.
+  float lift_drag_ratio = 3;
+}
+
+// Body configuration.
+message BodyConfig {
+  // Mass in kg.
+  float mass = 1;
+
+  // Cross-sectional area in m^2.
+  float cross_sectional_area = 2;
+
+  // Fin area in m^2.
+  float fin_area = 3;
+
+  // Body area in m^2.
+  float body_area = 4;
+}
+
+// Sensor configuration.
+message SensorConfig {
+  // Sensor frequency in Hz.
+  float frequency = 1;
+}
+
+// Hit configuration.
+message HitConfig {
+  // Hit radius in m.
+  float hit_radius = 1;
+
+  // Kill probability.
+  float kill_probability = 2;
+}
+
+// Physical configuration.
+message PhysicalConfig {
+  // Acceleration configuration.
+  AccelerationConfig acceleration_config = 1;
+
+  // Lift and drag configuration.
+  LiftDragConfig lift_drag_config = 2;
+
+  // Body configuration.
+  BodyConfig body_config = 3;
+
+  // Sensor configuration.
+  SensorConfig sensor_config = 4;
+
+  // Hit configuration.
+  HitConfig hit_config = 5;
+}

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package swarm;
 
+import "simulation/swarm/proto/physical_config.proto";
 import "simulation/swarm/proto/state.proto";
 
 // Target configuration.
@@ -9,6 +10,6 @@ message TargetConfig {
   // Initial state.
   State initial_state = 1;
 
-  // Kill probability.
-  float kill_probability = 2;
+  // Physical configuration.
+  PhysicalConfig physical_config = 2;
 }
