@@ -8,4 +8,7 @@ import "simulation/swarm/proto/state.proto";
 message MissileConfig {
   // Initial state.
   State initial_state = 1;
+
+  // Hit radius.
+  float hit_radius = 2;
 }

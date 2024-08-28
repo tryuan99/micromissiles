@@ -9,6 +9,7 @@ class Target(Agent):
 
     def __init__(self, target_config: TargetConfig) -> None:
         super().__init__(target_config.initial_state)
+        self.kill_probability = target_config.kill_probability
 
     def update(self) -> None:
         """Updates the agent's state according to the environment.

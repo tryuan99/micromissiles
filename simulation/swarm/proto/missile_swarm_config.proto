@@ -11,4 +11,7 @@ message MissileSwarmConfig {
 
   // State standard deviation.
   State standard_deviation = 2;
+
+  // Hit radius.
+  float hit_radius = 3;
 }

@@ -16,6 +16,7 @@ class Missile(Agent):
     Attributes:
         sensor: The sensor mounted on the missile.
         target: The target assigned to the missile.
+        hit_radius: The hit radius around the target.
     """
 
     # Coefficient for proportional navigation.
@@ -25,14 +26,36 @@ class Missile(Agent):
         super().__init__(missile_config.initial_state)
         self.sensor = IdealSensor(self)
         self.target: Target = None
+        self.hit_radius = missile_config.hit_radius
 
-    def assign(self, target: Target) -> None:
+    def assign_target(self, target: Target) -> None:
         """Assigns the given target to the missile.
 
         Args:
             target: Target to assign to the missile.
         """
         self.target = target
+
+    def unassign_target(self) -> None:
+        """Unassigns the given target from the missile."""
+        self.target = None
+
+    def has_hit_target(self, sensor_output: SensorOutput) -> bool:
+        """Checks whether the missile has hit the assigned target.
+
+        Args:
+            sensor_output: Sensor output.
+
+        Returns:
+            Whether the missile has hit the target.
+        """
+        if self.target is None:
+            return False
+
+        # A hit is recorded if the target is within the missile's hit radius.
+        distance = sensor_output.position.range
+        if distance <= self.hit_radius:
+            return True
 
     def update(self) -> None:
         """Updates the agent's state according to the environment.
@@ -45,6 +68,14 @@ class Missile(Agent):
 
         # Sense the target.
         sensor_output = self.sensor.sense([self.target])[0]
+
+        # Check whether the target has been hit.
+        if self.has_hit_target(sensor_output):
+            # Consider the kill probability of the target.
+            if np.random.binomial(1, self.target.kill_probability) > 0:
+                self.hit = True
+                self.target.hit = True
+                return
 
         # Determine the acceleration input.
         acceleration_input = self._calculate_acceleration_input(sensor_output)

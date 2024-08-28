@@ -15,12 +15,14 @@ class Agent(ABC):
     Attributes:
         state: Current state.
         history: A list of 2-tuples consisting of a timestamp and the state.
+        hit: A boolean indicating whether the missile has hit the target.
     """
 
     def __init__(self, initial_state: State) -> None:
         self.state = initial_state
         self.history = [(0, State())]
         self.history[-1][1].CopyFrom(initial_state)
+        self.hit = False
 
     def get_principal_axes(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the principal axes of the agent.

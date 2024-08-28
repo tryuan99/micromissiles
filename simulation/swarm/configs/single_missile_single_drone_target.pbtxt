@@ -12,6 +12,7 @@ missile_configs {
       z: 1000
     }
   }
+  hit_radius: 1
 }
 target_configs {
   initial_state {
@@ -26,4 +27,5 @@ target_configs {
       z: 0
     }
   }
+  kill_probability: 0.9
 }

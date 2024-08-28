@@ -26,6 +26,8 @@ class SwarmSimulator(Simulator):
                     swarm_config.missile_swarm_config.mean,
                     swarm_config.missile_swarm_config.standard_deviation,
                 ))
+            missile_config.hit_radius = (
+                swarm_config.missile_swarm_config.hit_radius)
         # Generate the swarm of targets.
         for _ in range(swarm_config.num_targets):
             target_config = simulator_config.target_configs.add()
@@ -34,6 +36,8 @@ class SwarmSimulator(Simulator):
                     swarm_config.target_swarm_config.mean,
                     swarm_config.target_swarm_config.standard_deviation,
                 ))
+            target_config.kill_probability = (
+                swarm_config.target_swarm_config.kill_probability)
         super().__init__(simulator_config)
 
     @staticmethod

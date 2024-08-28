@@ -8,4 +8,7 @@ import "simulation/swarm/proto/state.proto";
 message TargetConfig {
   // Initial state.
   State initial_state = 1;
+
+  // Kill probability.
+  float kill_probability = 2;
 }

@@ -39,14 +39,16 @@ class Simulator:
         # TODO(titan): Implement some optimal matching algorithm.
         for missile_index, missile in enumerate(self.missiles):
             target_index = missile_index % len(self.targets)
-            missile.assign(self.targets[target_index])
+            missile.assign_target(self.targets[target_index])
 
         # Step through the simulation.
         for t in np.arange(0, t_end, self.t_step):
             for agent in [*self.missiles, *self.targets]:
-                agent.update()
+                if not agent.hit:
+                    agent.update()
             for agent in [*self.missiles, *self.targets]:
-                agent.step(t, self.t_step)
+                if not agent.hit:
+                    agent.step(t, self.t_step)
 
     def plot(self, animate: bool, animation_file: str) -> None:
         """Plots the agent trajectories over time.

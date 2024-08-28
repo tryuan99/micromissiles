@@ -25,6 +25,7 @@ missile_swarm_config {
       z: 0
     }
   }
+  hit_radius: 1
 }
 num_targets: 8
 target_swarm_config {
@@ -52,4 +53,5 @@ target_swarm_config {
       z: 0
     }
   }
+  kill_probability: 0.9
 }
