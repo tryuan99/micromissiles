@@ -74,10 +74,25 @@ class Missile(Agent):
         acceleration_input_vector /= np.linalg.norm(acceleration_input_vector)
         acceleration_input_vector *= self._get_max_acceleration()
 
+        # Compensate for gravity. An additional g of acceleration is negligible
+        # relative to the maximum acceleration.
+        gravity = np.array([
+            0,
+            0,
+            -constants.gravity_at_altitude(self.state.position.z),
+        ])
+        gravity_projection_lateral_coefficient = np.dot(gravity,
+                                                        normalized_lateral)
+        gravity_projection_yaw_coefficient = np.dot(gravity, normalized_yaw)
+        gravity_projection_on_lateral_and_yaw = (
+            gravity_projection_lateral_coefficient * normalized_lateral +
+            gravity_projection_yaw_coefficient + normalized_yaw)
+        acceleration_input_vector -= gravity_projection_on_lateral_and_yaw
+
         # Set the acceleration according to the feedback law.
         acceleration_vector = acceleration_input_vector
         (self.state.acceleration.x, self.state.acceleration.y,
-         self.state.acceleration.z) = acceleration_vector
+         self.state.acceleration.z) = acceleration_vector + gravity
 
     def _get_max_acceleration(self) -> float:
         """Calculates the maximum acceleration of the missile based on its
