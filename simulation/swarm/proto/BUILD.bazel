@@ -4,6 +4,16 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 package(default_visibility = ["//visibility:public"])
 
 proto_library(
+    name = "aerodynamics_config_proto",
+    srcs = ["aerodynamics_config.proto"],
+)
+
+py_proto_library(
+    name = "aerodynamics_config_py_proto",
+    deps = [":aerodynamics_config_proto"],
+)
+
+proto_library(
     name = "coordinates_proto",
     srcs = ["coordinates.proto"],
 )
@@ -16,7 +26,10 @@ py_proto_library(
 proto_library(
     name = "missile_config_proto",
     srcs = ["missile_config.proto"],
-    deps = [":state_proto"],
+    deps = [
+        ":aerodynamics_config_proto",
+        ":state_proto",
+    ],
 )
 
 py_proto_library(
@@ -27,7 +40,10 @@ py_proto_library(
 proto_library(
     name = "missile_swarm_config_proto",
     srcs = ["missile_swarm_config.proto"],
-    deps = [":state_proto"],
+    deps = [
+        ":aerodynamics_config_proto",
+        ":state_proto",
+    ],
 )
 
 py_proto_library(

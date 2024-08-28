@@ -12,6 +12,23 @@ missile_configs {
       z: 1000
     }
   }
+  aerodynamics_config {
+    acceleration_config {
+      max_reference_acceleration: 300
+      reference_speed: 1000
+    }
+    lift_drag_config {
+      lift_coefficient: 0.2
+      drag_coefficient: 0.7
+      lift_drag_ratio: 5
+    }
+    physical_config {
+      mass: 0.37
+      cross_sectional_area: 3e-4
+      fin_area: 6e-4
+      body_area: 1e-2
+    }
+  }
   hit_radius: 1
 }
 target_configs {

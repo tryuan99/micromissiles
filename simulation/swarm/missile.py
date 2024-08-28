@@ -24,6 +24,7 @@ class Missile(Agent):
 
     def __init__(self, missile_config: MissileConfig) -> None:
         super().__init__(missile_config.initial_state)
+        self.aerodynamics_config = missile_config.aerodynamics_config
         self.sensor = IdealSensor(self)
         self.target: Target = None
         self.hit_radius = missile_config.hit_radius
@@ -84,10 +85,22 @@ class Missile(Agent):
         gravity = self.get_gravity()
         gravity_projection_on_lateral_and_yaw = (
             self._calculate_gravity_projection_on_lateral_and_yaw())
+        acceleration_input -= gravity_projection_on_lateral_and_yaw
+
+        # Calculate the air drag.
+        air_drag_acceleration = self._calculate_drag()
+        # Calculate the lift-induced drag.
+        lift_induced_drag_acceleration = self._calculate_lift_induced_drag(
+            acceleration_input)
+        # Calculate the total drag acceleration.
+        normalized_roll, normalized_lateral, normalized_yaw = (
+            self.get_normalized_principal_axes())
+        drag_acceleration = (
+            -(air_drag_acceleration + lift_induced_drag_acceleration) *
+            normalized_roll)
 
         # Set the acceleration vector.
-        acceleration = (acceleration_input -
-                        gravity_projection_on_lateral_and_yaw + gravity)
+        acceleration = acceleration_input + gravity + drag_acceleration
         (
             self.state.acceleration.x,
             self.state.acceleration.y,
@@ -135,7 +148,7 @@ class Missile(Agent):
         axes.
 
         Returns:
-            The gravity acceleration along the lateral and yaw axes.
+            The gravity acceleration in m/s^2 along the lateral and yaw axes.
         """
         normalized_roll, normalized_lateral, normalized_yaw = (
             self.get_normalized_principal_axes())
@@ -150,6 +163,45 @@ class Missile(Agent):
             gravity_projection_yaw_coefficient + normalized_yaw)
         return gravity_projection_on_lateral_and_yaw
 
+    def _calculate_drag(self) -> float:
+        """Calculates the air drag.
+
+        Returns:
+            The drag acceleration in m/s^2.
+        """
+        mass = self.aerodynamics_config.physical_config.mass
+        drag_coefficient = (
+            self.aerodynamics_config.lift_drag_config.drag_coefficient)
+        cross_sectional_area = (
+            self.aerodynamics_config.physical_config.cross_sectional_area)
+
+        dynamic_pressure = self.get_dynamic_pressure()
+        drag_force = drag_coefficient * dynamic_pressure * cross_sectional_area
+        drag_acceleration = drag_force / mass
+        return drag_acceleration
+
+    def _calculate_lift_induced_drag(self,
+                                     acceleration_input: np.ndarray) -> float:
+        """Calculates the lift-induced drag.
+
+        Args:
+            acceleration_input: The x, y, and z acceleration inputs in m/s^2.
+
+        Returns:
+            The drag acceleration in m/s^2.
+        """
+        # Project the acceleration input onto the yaw axis.
+        normalized_roll, normalized_lateral, normalized_yaw = (
+            self.get_normalized_principal_axes())
+        lift_acceleration = np.dot(acceleration_input, normalized_yaw)
+
+        # Calculate the drag acceleration from the lift acceleration.
+        lift_drag_ratio = (
+            self.aerodynamics_config.lift_drag_config.lift_drag_ratio)
+        lift_induced_drag_acceleration = (np.abs(lift_acceleration /
+                                                 lift_drag_ratio))
+        return lift_induced_drag_acceleration
+
     def _get_max_acceleration(self) -> float:
         """Calculates the maximum acceleration of the missile based on its
         velocity.
@@ -157,15 +209,11 @@ class Missile(Agent):
         Returns:
             The maximum acceleration in m/s^2.
         """
-        # Maximum acceleration in m/s^2 at 1 km/s.
-        max_reference_acceleration = 300 * constants.STANDARD_GRAVITY
-        reference_speed = 1000
-
-        # Calculate the velocity.
-        velocity = np.array([
-            self.state.velocity.x,
-            self.state.velocity.y,
-            self.state.velocity.z,
-        ])
-        speed = np.linalg.norm(velocity)
-        return (speed / reference_speed)**2 * max_reference_acceleration
+        max_reference_acceleration = (
+            self.aerodynamics_config.acceleration_config.
+            max_reference_acceleration * constants.STANDARD_GRAVITY)
+        reference_speed = (
+            self.aerodynamics_config.acceleration_config.reference_speed)
+        max_acceleration = ((self.get_speed() / reference_speed)**2 *
+                            max_reference_acceleration)
+        return max_acceleration

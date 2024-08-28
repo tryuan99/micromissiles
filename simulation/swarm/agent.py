@@ -71,6 +71,23 @@ class Agent(ABC):
         ])
         return gravity
 
+    def get_speed(self) -> float:
+        """Returns the speed of the agent."""
+        velocity = np.array([
+            self.state.velocity.x,
+            self.state.velocity.y,
+            self.state.velocity.z,
+        ])
+        speed = np.linalg.norm(velocity)
+        return speed
+
+    def get_dynamic_pressure(self) -> float:
+        """Calculates the dynamic air pressure around the agent."""
+        air_density = constants.air_density_at_altitude(self.state.position.z)
+        flow_speed = self.get_speed()
+        dynamic_pressure = 1 / 2 * air_density * flow_speed**2
+        return dynamic_pressure
+
     def step(self, t_start: float, t_step: float) -> None:
         """Steps forward the simulation by simulating the dynamics of the
         agent.

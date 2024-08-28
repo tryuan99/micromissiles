@@ -26,6 +26,8 @@ class SwarmSimulator(Simulator):
                     swarm_config.missile_swarm_config.mean,
                     swarm_config.missile_swarm_config.standard_deviation,
                 ))
+            missile_config.aerodynamics_config.CopyFrom(
+                swarm_config.missile_swarm_config.aerodynamics_config)
             missile_config.hit_radius = (
                 swarm_config.missile_swarm_config.hit_radius)
         # Generate the swarm of targets.
