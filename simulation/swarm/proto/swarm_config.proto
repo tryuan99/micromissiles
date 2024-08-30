@@ -10,15 +10,9 @@ message SwarmConfig {
   // Step time in seconds.
   float step_time = 1;
 
-  // Number of missiles.
-  uint32 num_missiles = 2;
+  // Missile swarm configurations.
+  repeated MissileSwarmConfig missile_swarm_configs = 2;
 
-  // Missile swarm configuration.
-  MissileSwarmConfig missile_swarm_config = 3;
-
-  // Number of targets.
-  uint32 num_targets = 4;
-
-  // Target swarm configuration.
-  TargetSwarmConfig target_swarm_config = 5;
+  // Target swarm configurations.
+  repeated TargetSwarmConfig target_swarm_configs = 3;
 }

@@ -4,11 +4,11 @@ filegroup(
     name = "simulator_configs",
     srcs = glob(
         ["*.pbtxt"],
-        exclude = ["*_swarm.pbtxt"],
+        exclude = ["*swarm*.pbtxt"],
     ),
 )
 
 filegroup(
     name = "swarm_configs",
-    srcs = glob(["*_swarm.pbtxt"]),
+    srcs = glob(["*swarm*.pbtxt"]),
 )

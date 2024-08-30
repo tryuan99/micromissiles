@@ -18,26 +18,30 @@ class SwarmSimulator(Simulator):
         # Populate the simulator configuration.
         simulator_config = SimulatorConfig()
         simulator_config.step_time = swarm_config.step_time
-        # Generate the swarm of missiles.
-        for _ in range(swarm_config.num_missiles):
-            missile_config = simulator_config.missile_configs.add()
-            missile_config.initial_state.CopyFrom(
-                self._generate_random_state(
-                    swarm_config.missile_swarm_config.mean,
-                    swarm_config.missile_swarm_config.standard_deviation,
-                ))
-            missile_config.physical_config.CopyFrom(
-                swarm_config.missile_swarm_config.physical_config)
-        # Generate the swarm of targets.
-        for _ in range(swarm_config.num_targets):
-            target_config = simulator_config.target_configs.add()
-            target_config.initial_state.CopyFrom(
-                self._generate_random_state(
-                    swarm_config.target_swarm_config.mean,
-                    swarm_config.target_swarm_config.standard_deviation,
-                ))
-            target_config.physical_config.CopyFrom(
-                swarm_config.target_swarm_config.physical_config)
+
+        # Generate swarms of missiles.
+        for missile_swarm_config in swarm_config.missile_swarm_configs:
+            for _ in range(missile_swarm_config.num_missiles):
+                missile_config = simulator_config.missile_configs.add()
+                missile_config.initial_state.CopyFrom(
+                    self._generate_random_state(
+                        missile_swarm_config.mean,
+                        missile_swarm_config.standard_deviation,
+                    ))
+                missile_config.physical_config.CopyFrom(
+                    missile_swarm_config.physical_config)
+
+        # Generate swarms of targets.
+        for target_swarm_config in swarm_config.target_swarm_configs:
+            for _ in range(target_swarm_config.num_targets):
+                target_config = simulator_config.target_configs.add()
+                target_config.initial_state.CopyFrom(
+                    self._generate_random_state(
+                        target_swarm_config.mean,
+                        target_swarm_config.standard_deviation,
+                    ))
+                target_config.physical_config.CopyFrom(
+                    target_swarm_config.physical_config)
         super().__init__(simulator_config)
 
     @staticmethod

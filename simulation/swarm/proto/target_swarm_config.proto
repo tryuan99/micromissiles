@@ -7,12 +7,15 @@ import "simulation/swarm/proto/state.proto";
 
 // Target swarm configuration.
 message TargetSwarmConfig {
+  // Number of targets.
+  uint32 num_targets = 1;
+
   // State mean.
-  State mean = 1;
+  State mean = 2;
 
   // State standard deviation.
-  State standard_deviation = 2;
+  State standard_deviation = 3;
 
   // Physical configuration.
-  PhysicalConfig physical_config = 3;
+  PhysicalConfig physical_config = 4;
 }
