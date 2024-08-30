@@ -30,6 +30,8 @@ class SwarmSimulator(Simulator):
                     ))
                 missile_config.physical_config.CopyFrom(
                     missile_swarm_config.physical_config)
+                missile_config.plotting_config.CopyFrom(
+                    missile_swarm_config.plotting_config)
 
         # Generate swarms of targets.
         for target_swarm_config in swarm_config.target_swarm_configs:
@@ -42,6 +44,8 @@ class SwarmSimulator(Simulator):
                     ))
                 target_config.physical_config.CopyFrom(
                     target_swarm_config.physical_config)
+                target_config.plotting_config.CopyFrom(
+                    target_swarm_config.plotting_config)
         super().__init__(simulator_config)
 
     @staticmethod

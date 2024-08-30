@@ -48,6 +48,11 @@ missile_swarm_configs {
       hit_radius: 1
     }
   }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
 }
 target_swarm_configs {
   num_targets: 8
@@ -79,5 +84,10 @@ target_swarm_configs {
     hit_config {
       kill_probability: 0.9
     }
+  }
+  plotting_config {
+    color: RED
+    linestyle: SOLID
+    marker: SQUARE
   }
 }

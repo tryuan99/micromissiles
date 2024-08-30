@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package swarm;
+
+// Color.
+enum Color {
+  BLACK = 0;
+  BLUE = 1;
+  ORANGE = 2;
+  GREEN = 3;
+  RED = 4;
+  PURPLE = 5;
+  BROWN = 6;
+  PINK = 7;
+  GRAY = 8;
+  OLIVE = 9;
+  CYAN = 10;
+}
+
+// Line style.
+enum LineStyle {
+  SOLID = 0;
+  DOTTED = 1;
+  DASHED = 2;
+  DASHDOT = 3;
+}
+
+// Marker.
+enum Marker {
+  NONE = 0;
+  CIRCLE = 1;
+  TRIANGLE_DOWN = 2;
+  TRIANGLE_UP = 3;
+  TRIANGLE_LEFT = 4;
+  TRIANGLE_RIGHT = 5;
+  OCTAGON = 6;
+  SQUARE = 7;
+  PENTAGON = 8;
+  PLUS = 9;
+  STAR = 10;
+  HEXAGON = 11;
+  X = 12;
+  DIAMOND = 13;
+  THIN_DIAMOND = 14;
+}
+
+// Plotting configuration.
+message PlottingConfig {
+  // Color.
+  Color color = 1;
+
+  // Line style.
+  LineStyle linestyle = 2;
+
+  // Marker.
+  Marker marker = 3;
+}

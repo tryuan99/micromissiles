@@ -9,6 +9,7 @@ py_library(
         ":constants",
         "//simulation/swarm/proto:missile_config_py_proto",
         "//simulation/swarm/proto:physical_config_py_proto",
+        "//simulation/swarm/proto:plotting_config_py_proto",
         "//simulation/swarm/proto:state_py_proto",
         "//simulation/swarm/proto:target_config_py_proto",
         requirement("numpy"),
@@ -55,8 +56,7 @@ py_library(
     srcs = ["plotter.py"],
     deps = [
         ":agent",
-        ":missile",
-        ":target",
+        "//simulation/swarm/proto:plotting_config_py_proto",
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("SciencePlots"),

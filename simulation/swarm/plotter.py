@@ -1,4 +1,4 @@
-"""The plotter plots the trajectories of the missiles and the targets."""
+"""The plotter plots the trajectories of the agents."""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,11 +6,52 @@ import scienceplots
 from matplotlib import animation, artist
 
 from simulation.swarm.agent import Agent
-from simulation.swarm.missile import Missile
-from simulation.swarm.target import Target
+from simulation.swarm.proto.plotting_config_pb2 import Color, LineStyle, Marker
 
 # Animation interval in fps.
 PLOTTER_ANIMATION_FPS = 50
+
+# Map from the color enumeration to the color string.
+COLOR_ENUM_TO_STRING = {
+    Color.BLACK: "black",
+    Color.BLUE: "blue",
+    Color.ORANGE: "orange",
+    Color.GREEN: "green",
+    Color.RED: "red",
+    Color.PURPLE: "purple",
+    Color.BROWN: "brown",
+    Color.PINK: "pink",
+    Color.GRAY: "gray",
+    Color.OLIVE: "olive",
+    Color.CYAN: "cyan",
+}
+
+# Map from the line style enumeration to the line style string.
+LINE_STYLE_ENUM_TO_STRING = {
+    LineStyle.SOLID: "solid",
+    LineStyle.DOTTED: "dotted",
+    LineStyle.DASHED: "dashed",
+    LineStyle.DASHDOT: "dashdot",
+}
+
+# Map from the marker enumeration to the marker string.
+MARKER_ENUM_TO_STRING = {
+    Marker.NONE: "",
+    Marker.CIRCLE: "o",
+    Marker.TRIANGLE_DOWN: "v",
+    Marker.TRIANGLE_UP: "^",
+    Marker.TRIANGLE_LEFT: "<",
+    Marker.TRIANGLE_RIGHT: ">",
+    Marker.OCTAGON: "8",
+    Marker.SQUARE: "s",
+    Marker.PENTAGON: "p",
+    Marker.PLUS: "P",
+    Marker.STAR: "*",
+    Marker.HEXAGON: "h",
+    Marker.X: "X",
+    Marker.DIAMOND: "D",
+    Marker.THIN_DIAMOND: "d",
+}
 
 
 class Plotter:
@@ -18,18 +59,15 @@ class Plotter:
 
     Attributes:
         t_step: Simulation step time in seconds.
-        missiles: List of missiles for which to plot the trajectory.
-        targets: List of targets for which to plot the trajectory.
+        agents: List of agents for which to plot the trajectory.
     """
 
-    def __init__(self, t_step: float, missiles: list[Missile],
-                 targets: list[Target]) -> None:
+    def __init__(self, t_step: float, agents: list[Agent]) -> None:
         self.t_step = t_step
-        self.missiles = missiles
-        self.targets = targets
+        self.agents = agents
 
     def plot(self, animate: bool = True, animation_file: str = None) -> None:
-        """Plots the trajectories of the missiles and the targets.
+        """Plots the trajectories of the agents.
 
         Args:
             animation_file: Animation file.
@@ -44,20 +82,32 @@ class Plotter:
         ax.set_zlabel(r"$z$ [m]")
         ax.set_title("Agent trajectories")
 
-        missile_trajectories = [(ax.plot(*self._get_positions(missile),
-                                         color="blue",
-                                         marker="^",
-                                         markevery=[-1])[0])
-                                for missile in self.missiles]
-        target_trajectories = [(ax.plot(*self._get_positions(target),
-                                        color="red",
-                                        marker="s",
-                                        markevery=[-1])[0])
-                               for target in self.targets]
-        num_time_steps = max([
-            *[len(missile.history) for missile in self.missiles],
-            *[len(target.history) for target in self.targets],
-        ])
+        def plot_agent_trajectory(agent: Agent) -> artist.Artist:
+            """Plots the trajectory of the agent.
+
+            Args:
+                agent: Agent for which to plot the trajectory.
+
+            Returns:
+                An artist corresponding to the trajectory.
+            """
+            color = COLOR_ENUM_TO_STRING[agent.plotting_config.color]
+            linestyle = (
+                LINE_STYLE_ENUM_TO_STRING[agent.plotting_config.linestyle])
+            marker = MARKER_ENUM_TO_STRING[agent.plotting_config.marker]
+            artist = ax.plot(
+                *self._get_positions(agent),
+                color=color,
+                linestyle=linestyle,
+                marker=marker,
+                markevery=[-1],
+            )[0]
+            return artist
+
+        agent_trajectories = [
+            plot_agent_trajectory(agent) for agent in self.agents
+        ]
+        num_time_steps = max([len(agent.history) for agent in self.agents])
 
         # Plot the trajectories if no animation is required.
         if not animate:
@@ -73,15 +123,11 @@ class Plotter:
             Returns:
                 An iterable of artists.
             """
-            for missile_index, missile in enumerate(self.missiles):
-                x, y, z = self._get_positions(missile, frame)
-                missile_trajectories[missile_index].set_data(x, y)
-                missile_trajectories[missile_index].set_3d_properties(z)
-            for target_index, target in enumerate(self.targets):
-                x, y, z = self._get_positions(target, frame)
-                target_trajectories[target_index].set_data(x, y)
-                target_trajectories[target_index].set_3d_properties(z)
-            return *missile_trajectories, *target_trajectories
+            for agent_index, agent in enumerate(self.agents):
+                x, y, z = self._get_positions(agent, frame)
+                agent_trajectories[agent_index].set_data(x, y)
+                agent_trajectories[agent_index].set_3d_properties(z)
+            return agent_trajectories
 
         # Animate at a frame rate of at most 50 fps.
         num_steps_per_frame = int(

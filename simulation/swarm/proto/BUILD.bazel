@@ -18,6 +18,7 @@ proto_library(
     srcs = ["missile_config.proto"],
     deps = [
         ":physical_config_proto",
+        ":plotting_config_proto",
         ":state_proto",
     ],
 )
@@ -32,6 +33,7 @@ proto_library(
     srcs = ["missile_swarm_config.proto"],
     deps = [
         ":physical_config_proto",
+        ":plotting_config_proto",
         ":state_proto",
     ],
 )
@@ -49,6 +51,16 @@ proto_library(
 py_proto_library(
     name = "physical_config_py_proto",
     deps = [":physical_config_proto"],
+)
+
+proto_library(
+    name = "plotting_config_proto",
+    srcs = ["plotting_config.proto"],
+)
+
+py_proto_library(
+    name = "plotting_config_py_proto",
+    deps = [":plotting_config_proto"],
 )
 
 proto_library(
@@ -106,6 +118,7 @@ proto_library(
     srcs = ["target_config.proto"],
     deps = [
         ":physical_config_proto",
+        ":plotting_config_proto",
         ":state_proto",
     ],
 )
@@ -120,6 +133,7 @@ proto_library(
     srcs = ["target_swarm_config.proto"],
     deps = [
         ":physical_config_proto",
+        ":plotting_config_proto",
         ":state_proto",
     ],
 )

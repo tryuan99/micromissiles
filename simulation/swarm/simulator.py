@@ -59,5 +59,6 @@ class Simulator:
             animate: If true, animate the trajectories.
             animation_file: Animation file.
         """
-        plotter = Plotter(self.t_step, self.missiles, self.targets)
+        agents = [*self.missiles, *self.targets]
+        plotter = Plotter(self.t_step, agents)
         plotter.plot(animate, animation_file)

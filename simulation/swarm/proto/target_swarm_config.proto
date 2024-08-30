@@ -4,6 +4,7 @@ package swarm;
 
 import "simulation/swarm/proto/physical_config.proto";
 import "simulation/swarm/proto/state.proto";
+import "simulation/swarm/proto/plotting_config.proto";
 
 // Target swarm configuration.
 message TargetSwarmConfig {
@@ -18,4 +19,7 @@ message TargetSwarmConfig {
 
   // Physical configuration.
   PhysicalConfig physical_config = 4;
+
+  // Plotting configuration.
+  PlottingConfig plotting_config = 5;
 }

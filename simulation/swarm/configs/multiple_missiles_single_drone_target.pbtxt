@@ -35,6 +35,11 @@ missile_configs {
       hit_radius: 1
     }
   }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
 }
 missile_configs {
   initial_state {
@@ -71,6 +76,11 @@ missile_configs {
     hit_config {
       hit_radius: 1
     }
+  }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
   }
 }
 missile_configs {
@@ -109,6 +119,11 @@ missile_configs {
       hit_radius: 1
     }
   }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
 }
 missile_configs {
   initial_state {
@@ -146,6 +161,11 @@ missile_configs {
       hit_radius: 1
     }
   }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
 }
 target_configs {
   initial_state {
@@ -164,5 +184,10 @@ target_configs {
     hit_config {
       kill_probability: 0.9
     }
+  }
+  plotting_config {
+    color: RED
+    linestyle: SOLID
+    marker: SQUARE
   }
 }

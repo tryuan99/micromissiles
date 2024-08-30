@@ -8,6 +8,7 @@ import scipy.integrate
 from simulation.swarm import constants
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.physical_config_pb2 import PhysicalConfig
+from simulation.swarm.proto.plotting_config_pb2 import PlottingConfig
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
@@ -18,6 +19,7 @@ class Agent(ABC):
     Attributes:
         state: The current state.
         physical_config: The physical configuration of the agent.
+        plotting_config: The plotting configuration of the agent.
         history: A list of 2-tuples consisting of a timestamp and the state.
         hit: A boolean indicating whether the agent has hit or been hit.
         update_time: The time of the last state update.
@@ -29,6 +31,7 @@ class Agent(ABC):
         *,
         initial_state: State = None,
         physical_config: PhysicalConfig = None,
+        plotting_config: PlottingConfig = None,
     ) -> None:
         # Set the initial state.
         self.state = State()
@@ -36,14 +39,22 @@ class Agent(ABC):
             self.state.CopyFrom(initial_state)
         else:
             self.state.CopyFrom(config.initial_state)
+
         # Set the physical configuration.
         self.physical_config = PhysicalConfig()
         if physical_config is not None:
             self.physical_config.CopyFrom(physical_config)
         elif config is not None:
             self.physical_config.CopyFrom(config.physical_config)
-        self.hit = False
 
+        # Set the plotting configuration.
+        self.plotting_config = PlottingConfig()
+        if plotting_config is not None:
+            self.plotting_config.CopyFrom(plotting_config)
+        elif config is not None:
+            self.plotting_config.CopyFrom(config.plotting_config)
+
+        self.hit = False
         self.history = [(0, State())]
         self.history[-1][1].CopyFrom(self.state)
         self.update_time = 0
