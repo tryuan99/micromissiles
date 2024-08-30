@@ -4,6 +4,20 @@ package swarm;
 
 import "simulation/swarm/proto/coordinates.proto";
 
+// Sensor type enumeration.
+enum SensorType {
+  IDEAL = 0;
+}
+
+// Sensor configuration.
+message SensorConfig {
+  // Sensor type.
+  SensorType type = 1;
+
+  // Sensor frequency in Hz.
+  float frequency = 2;
+}
+
 // Sensor output.
 message SensorOutput {
   // Range in m, azimuth and elevation in rad.

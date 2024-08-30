@@ -1,20 +1,9 @@
-"""The target class represents the dynamics of a single target."""
+"""This file defines the list of available targets."""
 
-from simulation.swarm.agent import Agent
-from simulation.swarm.proto.target_config_pb2 import TargetConfig
+from simulation.swarm.proto.target_config_pb2 import TargetType
+from simulation.swarm.targets.drone_target import DroneTarget
 
-
-class Target(Agent):
-    """Target dynamics."""
-
-    def __init__(self, target_config: TargetConfig) -> None:
-        super().__init__(target_config)
-
-    def update(self, t: float) -> None:
-        """Updates the agent's state according to the environment.
-
-        Args:
-            t: Time in seconds.
-        """
-        # The target does not accelerate.
-        return
+# Map from the target type enumeration to the target class.
+TARGET_TYPE_ENUM_TO_CLASS = {
+    TargetType.DRONE: DroneTarget,
+}

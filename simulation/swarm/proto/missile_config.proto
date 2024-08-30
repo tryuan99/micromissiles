@@ -6,14 +6,26 @@ import "simulation/swarm/proto/state.proto";
 import "simulation/swarm/proto/physical_config.proto";
 import "simulation/swarm/proto/plotting_config.proto";
 
+// Missile type enumeration.
+enum MissileType {
+  MICROMISSILE = 0;
+  HYDRA_70 = 1;
+}
+
 // Missile configuration.
 message MissileConfig {
+  // Missile type.
+  MissileType type = 1;
+
   // Initial state.
-  State initial_state = 1;
+  State initial_state = 2;
+
+  // Initial state standard deviation to randomize the state variables.
+  State standard_deviation = 3;
 
   // Physical configuration.
-  PhysicalConfig physical_config = 2;
+  PhysicalConfig physical_config = 4;
 
   // Plotting configuration.
-  PlottingConfig plotting_config = 3;
+  PlottingConfig plotting_config = 5;
 }

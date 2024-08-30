@@ -3,15 +3,43 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "dummy_missile",
+    srcs = ["dummy_missile.py"],
+    deps = [
+        ":missile_interface",
+        "//simulation/swarm/proto:missile_config_py_proto",
+    ],
+)
+
+py_library(
+    name = "micromissile",
+    srcs = ["micromissile.py"],
+    deps = [
+        ":missile_interface",
+        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:sensor_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "missile",
     srcs = ["missile.py"],
+    deps = [
+        ":micromissile",
+        "//simulation/swarm/proto:missile_config_py_proto",
+    ],
+)
+
+py_library(
+    name = "missile_interface",
+    srcs = ["missile_interface.py"],
     deps = [
         "//simulation/swarm:agent",
         "//simulation/swarm:constants",
         "//simulation/swarm/proto:missile_config_py_proto",
-        "//simulation/swarm/proto:sensor_py_proto",
         "//simulation/swarm/sensors:sensor",
-        "//simulation/swarm/targets:target",
+        "//simulation/swarm/targets:target_interface",
         requirement("numpy"),
     ],
 )

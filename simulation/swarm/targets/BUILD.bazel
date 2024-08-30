@@ -3,10 +3,28 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "drone_target",
+    srcs = ["drone_target.py"],
+    deps = [
+        ":target_interface",
+        "//simulation/swarm/proto:target_config_py_proto",
+    ],
+)
+
+py_library(
+    name = "dummy_target",
+    srcs = ["dummy_target.py"],
+    deps = [
+        ":target_interface",
+        "//simulation/swarm/proto:target_config_py_proto",
+    ],
+)
+
+py_library(
     name = "target",
     srcs = ["target.py"],
     deps = [
-        "//simulation/swarm:agent",
+        ":drone_target",
         "//simulation/swarm/proto:target_config_py_proto",
     ],
 )
@@ -15,8 +33,8 @@ py_library(
     name = "target_assignment",
     srcs = ["target_assignment.py"],
     deps = [
-        ":target",
-        "//simulation/swarm/missiles:missile",
+        ":target_interface",
+        "//simulation/swarm/missiles:missile_interface",
         requirement("numpy"),
     ],
 )
@@ -25,11 +43,20 @@ py_test(
     name = "target_assignment_test",
     srcs = ["target_assignment_test.py"],
     deps = [
-        ":target",
+        ":dummy_target",
         ":target_assignment",
-        "//simulation/swarm/missiles:missile",
+        "//simulation/swarm/missiles:dummy_missile",
         "//simulation/swarm/proto:missile_config_py_proto",
         "//simulation/swarm/proto:target_config_py_proto",
         requirement("absl-py"),
+    ],
+)
+
+py_library(
+    name = "target_interface",
+    srcs = ["target_interface.py"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:target_config_py_proto",
     ],
 )

@@ -2,24 +2,13 @@ syntax = "proto3";
 
 package swarm;
 
-import "simulation/swarm/proto/physical_config.proto";
-import "simulation/swarm/proto/state.proto";
-import "simulation/swarm/proto/plotting_config.proto";
+import "simulation/swarm/proto/missile_config.proto";
 
 // Missile swarm configuration.
 message MissileSwarmConfig {
   // Number of missiles.
   uint32 num_missiles = 1;
 
-  // State mean.
-  State mean = 2;
-
-  // State standard deviation.
-  State standard_deviation = 3;
-
-  // Physical configuration.
-  PhysicalConfig physical_config = 4;
-
-  // Plotting configuration.
-  PlottingConfig plotting_config = 5;
+  // Missile configuration.
+  MissileConfig missile_config = 2;
 }

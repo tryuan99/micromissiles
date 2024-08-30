@@ -1,5 +1,6 @@
 step_time: 0.001
 missile_configs {
+  type: MICROMISSILE
   initial_state {
     position {
       x: 0
@@ -29,6 +30,7 @@ missile_configs {
       body_area: 1e-2
     }
     sensor_config {
+      type: IDEAL
       frequency: 100
     }
     hit_config {
@@ -42,6 +44,7 @@ missile_configs {
   }
 }
 target_configs {
+  type: MISSILE
   initial_state {
     position {
       x: 200000

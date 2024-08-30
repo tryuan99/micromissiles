@@ -1,93 +1,100 @@
 step_time: 0.001
 missile_swarm_configs {
   num_missiles: 16
-  mean {
-    position {
-      x: 0
-      y: 0
-      z: 100
+  missile_config {
+    type: MICROMISSILE
+    initial_state {
+      position {
+        x: 0
+        y: 0
+        z: 100
+      }
+      velocity {
+        x: 1
+        y: 0
+        z: 1000
+      }
     }
-    velocity {
-      x: 1
-      y: 0
-      z: 1000
+    standard_deviation {
+      position {
+        x: 100
+        y: 2000
+        z: 0
+      }
+      velocity {
+        x: 0
+        y: 0
+        z: 0
+      }
     }
-  }
-  standard_deviation {
-    position {
-      x: 100
-      y: 2000
-      z: 0
+    physical_config {
+      acceleration_config {
+        max_reference_acceleration: 300
+        reference_speed: 1000
+      }
+      lift_drag_config {
+        lift_coefficient: 0.2
+        drag_coefficient: 0.7
+        lift_drag_ratio: 5
+      }
+      body_config {
+        mass: 0.37
+        cross_sectional_area: 3e-4
+        fin_area: 6e-4
+        body_area: 1e-2
+      }
+      sensor_config {
+        type: IDEAL
+        frequency: 100
+      }
+      hit_config {
+        hit_radius: 1
+      }
     }
-    velocity {
-      x: 0
-      y: 0
-      z: 0
+    plotting_config {
+      color: BLUE
+      linestyle: SOLID
+      marker: TRIANGLE_UP
     }
-  }
-  physical_config {
-    acceleration_config {
-      max_reference_acceleration: 300
-      reference_speed: 1000
-    }
-    lift_drag_config {
-      lift_coefficient: 0.2
-      drag_coefficient: 0.7
-      lift_drag_ratio: 5
-    }
-    body_config {
-      mass: 0.37
-      cross_sectional_area: 3e-4
-      fin_area: 6e-4
-      body_area: 1e-2
-    }
-    sensor_config {
-      frequency: 100
-    }
-    hit_config {
-      hit_radius: 1
-    }
-  }
-  plotting_config {
-    color: BLUE
-    linestyle: SOLID
-    marker: TRIANGLE_UP
   }
 }
 target_swarm_configs {
   num_targets: 8
-  mean {
-    position {
-      x: 8000
-      y: 0
-      z: 200
+  target_config {
+    type: DRONE
+    initial_state {
+      position {
+        x: 8000
+        y: 0
+        z: 200
+      }
+      velocity {
+        x: -40
+        y: 0
+        z: 0
+      }
     }
-    velocity {
-      x: -40
-      y: 0
-      z: 0
+    standard_deviation {
+      position {
+        x: 1000
+        y: 1000
+        z: 50
+      }
+      velocity {
+        x: 20
+        y: 50
+        z: 0
+      }
     }
-  }
-  standard_deviation {
-    position {
-      x: 1000
-      y: 1000
-      z: 50
+    physical_config {
+      hit_config {
+        kill_probability: 0.9
+      }
     }
-    velocity {
-      x: 20
-      y: 50
-      z: 0
+    plotting_config {
+      color: RED
+      linestyle: SOLID
+      marker: SQUARE
     }
-  }
-  physical_config {
-    hit_config {
-      kill_probability: 0.9
-    }
-  }
-  plotting_config {
-    color: RED
-    linestyle: SOLID
-    marker: SQUARE
   }
 }

@@ -6,14 +6,26 @@ import "simulation/swarm/proto/physical_config.proto";
 import "simulation/swarm/proto/state.proto";
 import "simulation/swarm/proto/plotting_config.proto";
 
+// Target type enumeration.
+enum TargetType {
+  DRONE = 0;
+  MISSILE = 1;
+}
+
 // Target configuration.
 message TargetConfig {
+  // Target type.
+  TargetType type = 1;
+
   // Initial state.
-  State initial_state = 1;
+  State initial_state = 2;
+
+  // Initial state standard deviation to randomize the state variables.
+  State standard_deviation = 3;
 
   // Physical configuration.
-  PhysicalConfig physical_config = 2;
+  PhysicalConfig physical_config = 4;
 
   // Plotting configuration.
-  PlottingConfig plotting_config = 3;
+  PlottingConfig plotting_config = 5;
 }

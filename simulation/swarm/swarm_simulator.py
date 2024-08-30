@@ -25,13 +25,13 @@ class SwarmSimulator(Simulator):
                 missile_config = simulator_config.missile_configs.add()
                 missile_config.initial_state.CopyFrom(
                     self._generate_random_state(
-                        missile_swarm_config.mean,
-                        missile_swarm_config.standard_deviation,
+                        missile_swarm_config.missile_config.initial_state,
+                        missile_swarm_config.missile_config.standard_deviation,
                     ))
                 missile_config.physical_config.CopyFrom(
-                    missile_swarm_config.physical_config)
+                    missile_swarm_config.missile_config.physical_config)
                 missile_config.plotting_config.CopyFrom(
-                    missile_swarm_config.plotting_config)
+                    missile_swarm_config.missile_config.plotting_config)
 
         # Generate swarms of targets.
         for target_swarm_config in swarm_config.target_swarm_configs:
@@ -39,13 +39,13 @@ class SwarmSimulator(Simulator):
                 target_config = simulator_config.target_configs.add()
                 target_config.initial_state.CopyFrom(
                     self._generate_random_state(
-                        target_swarm_config.mean,
-                        target_swarm_config.standard_deviation,
+                        target_swarm_config.target_config.initial_state,
+                        target_swarm_config.target_config.standard_deviation,
                     ))
                 target_config.physical_config.CopyFrom(
-                    target_swarm_config.physical_config)
+                    target_swarm_config.target_config.physical_config)
                 target_config.plotting_config.CopyFrom(
-                    target_swarm_config.plotting_config)
+                    target_swarm_config.target_config.plotting_config)
         super().__init__(simulator_config)
 
     @staticmethod

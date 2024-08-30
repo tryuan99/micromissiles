@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package swarm;
 
+import "simulation/swarm/proto/sensor.proto";
+
 // Acceleration configuration.
 message AccelerationConfig {
   // Maximum reference acceleration in m/s^2.
@@ -36,12 +38,6 @@ message BodyConfig {
 
   // Body area in m^2.
   float body_area = 4;
-}
-
-// Sensor configuration.
-message SensorConfig {
-  // Sensor frequency in Hz.
-  float frequency = 1;
 }
 
 // Hit configuration.

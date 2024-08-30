@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from simulation.swarm.missiles.missile import Missile
-from simulation.swarm.targets.target import Target
+from simulation.swarm.missiles.missile_interface import Missile
+from simulation.swarm.targets.target_interface import Target
 
 
 class TargetAssignment(ABC):
