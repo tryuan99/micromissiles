@@ -92,6 +92,7 @@ py_library(
         ":missile",
         ":plotter",
         ":target",
+        ":target_assignment",
         "//simulation/swarm/proto:simulator_config_py_proto",
         requirement("absl-py"),
         requirement("numpy"),
@@ -140,5 +141,28 @@ py_library(
     deps = [
         ":agent",
         "//simulation/swarm/proto:target_config_py_proto",
+    ],
+)
+
+py_library(
+    name = "target_assignment",
+    srcs = ["target_assignment.py"],
+    deps = [
+        ":missile",
+        ":target",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "target_assignment_test",
+    srcs = ["target_assignment_test.py"],
+    deps = [
+        ":missile",
+        ":target",
+        ":target_assignment",
+        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:target_config_py_proto",
+        requirement("absl-py"),
     ],
 )

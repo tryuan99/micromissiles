@@ -7,6 +7,7 @@ from simulation.swarm.missile import Missile
 from simulation.swarm.plotter import Plotter
 from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
 from simulation.swarm.target import Target
+from simulation.swarm.target_assignment import DistanceBasedTargetAssignment
 
 
 class Simulator:
@@ -37,10 +38,12 @@ class Simulator:
             t_end: Time span in seconds.
         """
         # Assign the targets to the missiles.
-        # TODO(titan): Implement some optimal matching algorithm.
-        for missile_index, missile in enumerate(self.missiles):
-            target_index = missile_index % len(self.targets)
-            missile.assign_target(self.targets[target_index])
+        target_assignment = DistanceBasedTargetAssignment(
+            self.missiles, self.targets)
+        for (missile_index, target_index
+            ) in target_assignment.missile_to_target_assignments.items():
+            self.missiles[missile_index].assign_target(
+                self.targets[target_index])
 
         # Step through the simulation.
         for t in np.arange(0, t_end, self.t_step):

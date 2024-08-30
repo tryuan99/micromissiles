@@ -39,6 +39,10 @@ class Missile(Agent):
         self.target = target
         self.target_model = ModelAgent(target.state)
 
+    def has_assigned_target(self) -> bool:
+        """Returns whether a target is assigned to the missile."""
+        return self.target is not None
+
     def unassign_target(self) -> None:
         """Unassigns the given target from the missile."""
         self.target = None
