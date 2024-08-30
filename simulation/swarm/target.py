@@ -10,9 +10,11 @@ class Target(Agent):
     def __init__(self, target_config: TargetConfig) -> None:
         super().__init__(target_config)
 
-    def update(self) -> None:
+    def update(self, t: float) -> None:
         """Updates the agent's state according to the environment.
 
-        The target does not accelerate.
+        Args:
+            t: Time in seconds.
         """
+        # The target does not accelerate.
         return

@@ -1,6 +1,7 @@
 """The simulator class defines all agents and runs the simulation."""
 
 import numpy as np
+from absl import logging
 
 from simulation.swarm.missile import Missile
 from simulation.swarm.plotter import Plotter
@@ -43,9 +44,10 @@ class Simulator:
 
         # Step through the simulation.
         for t in np.arange(0, t_end, self.t_step):
+            logging.log_every_n(logging.INFO, "Simulating time t=%f.", 1000, t)
             for agent in [*self.missiles, *self.targets]:
                 if not agent.hit:
-                    agent.update()
+                    agent.update(t)
             for agent in [*self.missiles, *self.targets]:
                 if not agent.hit:
                     agent.step(t, self.t_step)

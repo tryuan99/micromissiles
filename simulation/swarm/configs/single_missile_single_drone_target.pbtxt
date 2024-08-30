@@ -1,4 +1,4 @@
-step_time: 0.01
+step_time: 0.001
 missile_configs {
   initial_state {
     position {
@@ -27,6 +27,9 @@ missile_configs {
       cross_sectional_area: 3e-4
       fin_area: 6e-4
       body_area: 1e-2
+    }
+    sensor_config {
+      frequency: 100
     }
     hit_config {
       hit_radius: 1

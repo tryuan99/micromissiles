@@ -3,7 +3,7 @@
 import numpy as np
 
 from simulation.swarm import constants
-from simulation.swarm.agent import Agent
+from simulation.swarm.agent import Agent, ModelAgent
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.sensor_pb2 import SensorOutput
 from simulation.swarm.sensor import IdealSensor
@@ -15,7 +15,9 @@ class Missile(Agent):
 
     Attributes:
         sensor: The sensor mounted on the missile.
+        sensor_update_time: The time of the last sensor update.
         target: The target assigned to the missile.
+        target_model: The model of the target.
     """
 
     # Coefficient for proportional navigation.
@@ -24,7 +26,9 @@ class Missile(Agent):
     def __init__(self, missile_config: MissileConfig) -> None:
         super().__init__(missile_config)
         self.sensor = IdealSensor(self)
+        self.sensor_update_time = -np.inf
         self.target: Target = None
+        self.target_model: Agent = None
 
     def assign_target(self, target: Target) -> None:
         """Assigns the given target to the missile.
@@ -33,16 +37,15 @@ class Missile(Agent):
             target: Target to assign to the missile.
         """
         self.target = target
+        self.target_model = ModelAgent(target.state)
 
     def unassign_target(self) -> None:
         """Unassigns the given target from the missile."""
         self.target = None
+        self.target_model = None
 
-    def has_hit_target(self, sensor_output: SensorOutput) -> bool:
+    def has_hit_target(self) -> bool:
         """Checks whether the missile has hit the assigned target.
-
-        Args:
-            sensor_output: Sensor output.
 
         Returns:
             Whether the missile has hit the target.
@@ -50,26 +53,47 @@ class Missile(Agent):
         if self.target is None:
             return False
 
+        # Determine the distance to the target.
+        sensor = IdealSensor(self)
+        sensor_output = sensor.sense([self.target])[0]
+        distance = sensor_output.position.range
+
         # A hit is recorded if the target is within the missile's hit radius.
         hit_radius = self.physical_config.hit_config.hit_radius
         distance = sensor_output.position.range
         if distance <= hit_radius:
             return True
 
-    def update(self) -> None:
+    def update(self, t: float) -> None:
         """Updates the agent's state according to the environment.
 
         The missile uses proportional navigation to intercept the target, i.e.,
         it should maintain a constant azimuth and elevation to the target.
+
+        Args:
+            t: Time in seconds.
         """
         if self.target is None:
             return
 
+        # Update the target model.
+        model_step_time = t - self.target_model.update_time
+        self.target_model.update(t)
+        self.target_model.step(self.target_model.update_time, model_step_time)
+
+        # Correct the state of the target model at the sensor frequency.
+        sensor_update_period = 1 / self.physical_config.sensor_config.frequency
+        if t - self.sensor_update_time >= sensor_update_period:
+            # TODO(titan): Use some guidance filter to estimate the state from
+            # the sensor output.
+            self.target_model.set_state(self.target.state)
+            self.sensor_update_time = t
+
         # Sense the target.
-        sensor_output = self.sensor.sense([self.target])[0]
+        sensor_output = self.sensor.sense([self.target_model])[0]
 
         # Check whether the target has been hit.
-        if self.has_hit_target(sensor_output):
+        if self.has_hit_target():
             # Consider the kill probability of the target.
             kill_probability = (
                 self.target.physical_config.hit_config.kill_probability)

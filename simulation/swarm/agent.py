@@ -16,10 +16,11 @@ class Agent(ABC):
     """Agent.
 
     Attributes:
-        state: Current state.
+        state: The current state.
         physical_config: The physical configuration of the agent.
         history: A list of 2-tuples consisting of a timestamp and the state.
         hit: A boolean indicating whether the agent has hit or been hit.
+        update_time: The time of the last state update.
     """
 
     def __init__(
@@ -29,14 +30,23 @@ class Agent(ABC):
         initial_state: State = None,
         physical_config: PhysicalConfig = None,
     ) -> None:
-        self.state = (initial_state
-                      if initial_state is not None else config.initial_state)
-        self.physical_config = (physical_config if physical_config is not None
-                                else config.physical_config)
+        # Set the initial state.
+        self.state = State()
+        if initial_state is not None:
+            self.state.CopyFrom(initial_state)
+        else:
+            self.state.CopyFrom(config.initial_state)
+        # Set the physical configuration.
+        self.physical_config = PhysicalConfig()
+        if physical_config is not None:
+            self.physical_config.CopyFrom(physical_config)
+        elif config is not None:
+            self.physical_config.CopyFrom(config.physical_config)
         self.hit = False
 
         self.history = [(0, State())]
         self.history[-1][1].CopyFrom(self.state)
+        self.update_time = 0
 
     def get_principal_axes(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the principal axes of the agent.
@@ -102,6 +112,20 @@ class Agent(ABC):
         dynamic_pressure = 1 / 2 * air_density * flow_speed**2
         return dynamic_pressure
 
+    @abstractmethod
+    def update(self, t: float) -> None:
+        """Updates the agent's state according to the environment.
+
+        Args:
+            t: Time in seconds.
+        """
+
+    def set_state(self, state: State) -> None:
+        """Sets the state of the agent."""
+        self.state.CopyFrom(state)
+        # Update the latest state in the history of states.
+        self.history[-1][1].CopyFrom(state)
+
     def step(self, t_start: float, t_step: float) -> None:
         """Steps forward the simulation by simulating the dynamics of the
         agent.
@@ -113,8 +137,12 @@ class Agent(ABC):
             t_start: Start time in seconds.
             t_step: Step time in seconds.
         """
-        # Update the most recent state in the history of states.
+        # Update the latest state in the history of states.
         self.history[-1][1].CopyFrom(self.state)
+
+        # Check if the step time is zero.
+        if t_step == 0:
+            return
 
         initial_state = np.array([
             self.state.position.x,
@@ -184,31 +212,28 @@ class Agent(ABC):
         self.state.velocity.z = velocity_z
 
         # Add the new state to the history of states.
-        self.history.append((t_start + t_step, State()))
+        t = t_start + t_step
+        self.history.append((t, State()))
         self.history[-1][1].CopyFrom(self.state)
-
-    @abstractmethod
-    def update(self) -> None:
-        """Updates the agent's state according to the environment."""
+        self.update_time = t
 
 
-class StaticAgent(Agent):
-    """Static agent.
+class ModelAgent(Agent):
+    """Model agent.
 
-    A static agent maintains its initial state and does not update its state
-    according to its environment.
+    A model agent models an agent without any physical configuration.
     """
 
     def __init__(
         self,
         initial_state: State,
-        physical_config: PhysicalConfig,
     ) -> None:
-        super().__init__(
-            initial_state=initial_state,
-            physical_config=physical_config,
-        )
+        super().__init__(initial_state=initial_state)
 
-    def update(self) -> None:
-        """Updates the agent's state according to the environment."""
+    def update(self, t: float) -> None:
+        """Updates the agent's state according to the environment.
+
+        Args:
+            t: Time in seconds.
+        """
         return

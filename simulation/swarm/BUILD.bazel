@@ -21,7 +21,6 @@ py_test(
     srcs = ["agent_test.py"],
     deps = [
         ":agent",
-        "//simulation/swarm/proto:physical_config_py_proto",
         "//simulation/swarm/proto:state_py_proto",
         requirement("absl-py"),
         requirement("numpy"),
@@ -80,7 +79,6 @@ py_test(
     deps = [
         ":agent",
         ":sensor",
-        "//simulation/swarm/proto:physical_config_py_proto",
         "//simulation/swarm/proto:state_py_proto",
         requirement("absl-py"),
         requirement("numpy"),
@@ -95,6 +93,7 @@ py_library(
         ":plotter",
         ":target",
         "//simulation/swarm/proto:simulator_config_py_proto",
+        requirement("absl-py"),
         requirement("numpy"),
     ],
 )
