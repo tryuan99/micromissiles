@@ -54,13 +54,12 @@ class Missile(Agent):
             return False
 
         # Determine the distance to the target.
-        sensor = IdealSensor(self)
-        sensor_output = sensor.sense([self.target])[0]
-        distance = sensor_output.position.range
+        position = self.get_position()
+        target_position = self.target.get_position()
+        distance = np.linalg.norm(target_position - position)
 
         # A hit is recorded if the target is within the missile's hit radius.
         hit_radius = self.physical_config.hit_config.hit_radius
-        distance = sensor_output.position.range
         if distance <= hit_radius:
             return True
 
@@ -114,8 +113,8 @@ class Missile(Agent):
         # Calculate the air drag.
         air_drag_acceleration = self._calculate_drag()
         # Calculate the lift-induced drag.
-        lift_induced_drag_acceleration = self._calculate_lift_induced_drag(
-            acceleration_input)
+        lift_induced_drag_acceleration = (
+            self._calculate_lift_induced_drag(acceleration_input))
         # Calculate the total drag acceleration.
         normalized_roll, normalized_lateral, normalized_yaw = (
             self.get_normalized_principal_axes())
@@ -238,6 +237,7 @@ class Missile(Agent):
             * constants.STANDARD_GRAVITY)
         reference_speed = (
             self.physical_config.acceleration_config.reference_speed)
+        # The maximum acceleration scales with the squared speed.
         max_acceleration = ((self.get_speed() / reference_speed)**2 *
                             max_reference_acceleration)
         return max_acceleration

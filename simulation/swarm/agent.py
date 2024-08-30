@@ -73,11 +73,7 @@ class Agent(ABC):
         """
         # The roll axis is assumed to be aligned with the agent's velocity
         # vector.
-        roll = np.array([
-            self.state.velocity.x,
-            self.state.velocity.y,
-            self.state.velocity.z,
-        ])
+        roll = self.get_velocity()
         # The lateral axis is to the agent's starboard.
         lateral = np.array([roll[1], -roll[0], 0])
         # The yaw axis points upwards relative to the agent's roll-lateral plane.
@@ -97,6 +93,30 @@ class Agent(ABC):
         normalized_yaw = yaw / np.linalg.norm(yaw)
         return normalized_roll, normalized_lateral, normalized_yaw
 
+    def get_position(self) -> np.ndarray:
+        """Returns the position vector of the agent."""
+        position = np.array([
+            self.state.position.x,
+            self.state.position.y,
+            self.state.position.z,
+        ])
+        return position
+
+    def get_velocity(self) -> np.ndarray:
+        """Returns the velocity vector of the agent."""
+        velocity = np.array([
+            self.state.velocity.x,
+            self.state.velocity.y,
+            self.state.velocity.z,
+        ])
+        return velocity
+
+    def get_speed(self) -> float:
+        """Returns the speed of the agent."""
+        velocity = self.get_velocity()
+        speed = np.linalg.norm(velocity)
+        return speed
+
     def get_gravity(self) -> np.ndarray:
         """Returns the gravity acceleration vector."""
         gravity = np.array([
@@ -105,16 +125,6 @@ class Agent(ABC):
             -constants.gravity_at_altitude(self.state.position.z),
         ])
         return gravity
-
-    def get_speed(self) -> float:
-        """Returns the speed of the agent."""
-        velocity = np.array([
-            self.state.velocity.x,
-            self.state.velocity.y,
-            self.state.velocity.z,
-        ])
-        speed = np.linalg.norm(velocity)
-        return speed
 
     def get_dynamic_pressure(self) -> float:
         """Calculates the dynamic air pressure around the agent."""
@@ -155,14 +165,9 @@ class Agent(ABC):
         if t_step == 0:
             return
 
-        initial_state = np.array([
-            self.state.position.x,
-            self.state.position.y,
-            self.state.position.z,
-            self.state.velocity.x,
-            self.state.velocity.y,
-            self.state.velocity.z,
-        ])
+        position = self.get_position()
+        velocity = self.get_velocity()
+        initial_state = np.concatenate((position, velocity))
 
         def kinematics(t: float, state: np.ndarray) -> np.ndarray:
             """Defines the kinematic equations of the agent.

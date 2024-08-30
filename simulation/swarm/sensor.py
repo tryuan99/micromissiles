@@ -79,16 +79,8 @@ class IdealSensor(Sensor):
         """
         position_sensor_output = SensorOutput()
         roll, lateral, yaw = self.agent.get_principal_axes()
-        position = np.array([
-            self.agent.state.position.x,
-            self.agent.state.position.y,
-            self.agent.state.position.z,
-        ])
-        target_position = np.array([
-            target.state.position.x,
-            target.state.position.y,
-            target.state.position.z,
-        ])
+        position = self.agent.get_position()
+        target_position = target.get_position()
         target_relative_position = target_position - position
 
         # Calculate the distance to the target.
@@ -155,29 +147,17 @@ class IdealSensor(Sensor):
         """
         velocity_sensor_output = SensorOutput()
         roll, lateral, yaw = self.agent.get_principal_axes()
-        position = np.array([
-            self.agent.state.position.x,
-            self.agent.state.position.y,
-            self.agent.state.position.z,
-        ])
-        target_position = np.array([
-            target.state.position.x,
-            target.state.position.y,
-            target.state.position.z,
-        ])
+
+        # Calculate the relative position of the target with respect to the
+        # agent.
+        position = self.agent.get_position()
+        target_position = target.get_position()
         target_relative_position = target_position - position
+
         # Calculate the relative velocity of the target with respect to the
         # agent.
-        velocity = np.array([
-            self.agent.state.velocity.x,
-            self.agent.state.velocity.y,
-            self.agent.state.velocity.z,
-        ])
-        target_velocity = np.array([
-            target.state.velocity.x,
-            target.state.velocity.y,
-            target.state.velocity.z,
-        ])
+        velocity = self.agent.get_velocity()
+        target_velocity = target.get_velocity()
         target_relative_velocity = target_velocity - velocity
 
         # Project the relative velocity vector onto the relative position
