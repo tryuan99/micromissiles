@@ -38,20 +38,6 @@ py_library(
 )
 
 py_library(
-    name = "missile",
-    srcs = ["missile.py"],
-    deps = [
-        ":agent",
-        ":constants",
-        ":sensor",
-        ":target",
-        "//simulation/swarm/proto:missile_config_py_proto",
-        "//simulation/swarm/proto:sensor_py_proto",
-        requirement("numpy"),
-    ],
-)
-
-py_library(
     name = "plotter",
     srcs = ["plotter.py"],
     deps = [
@@ -64,36 +50,14 @@ py_library(
 )
 
 py_library(
-    name = "sensor",
-    srcs = ["sensor.py"],
-    deps = [
-        ":agent",
-        "//simulation/swarm/proto:sensor_py_proto",
-        requirement("numpy"),
-    ],
-)
-
-py_test(
-    name = "sensor_test",
-    srcs = ["sensor_test.py"],
-    deps = [
-        ":agent",
-        ":sensor",
-        "//simulation/swarm/proto:state_py_proto",
-        requirement("absl-py"),
-        requirement("numpy"),
-    ],
-)
-
-py_library(
     name = "simulator",
     srcs = ["simulator.py"],
     deps = [
-        ":missile",
         ":plotter",
-        ":target",
-        ":target_assignment",
+        "//simulation/swarm/missiles:missile",
         "//simulation/swarm/proto:simulator_config_py_proto",
+        "//simulation/swarm/targets:target",
+        "//simulation/swarm/targets:target_assignment",
         requirement("absl-py"),
         requirement("numpy"),
     ],
@@ -132,37 +96,5 @@ py_binary(
         "//simulation/swarm/proto:swarm_config_py_proto",
         requirement("absl-py"),
         requirement("protobuf"),
-    ],
-)
-
-py_library(
-    name = "target",
-    srcs = ["target.py"],
-    deps = [
-        ":agent",
-        "//simulation/swarm/proto:target_config_py_proto",
-    ],
-)
-
-py_library(
-    name = "target_assignment",
-    srcs = ["target_assignment.py"],
-    deps = [
-        ":missile",
-        ":target",
-        requirement("numpy"),
-    ],
-)
-
-py_test(
-    name = "target_assignment_test",
-    srcs = ["target_assignment_test.py"],
-    deps = [
-        ":missile",
-        ":target",
-        ":target_assignment",
-        "//simulation/swarm/proto:missile_config_py_proto",
-        "//simulation/swarm/proto:target_config_py_proto",
-        requirement("absl-py"),
     ],
 )

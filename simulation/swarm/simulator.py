@@ -3,11 +3,12 @@
 import numpy as np
 from absl import logging
 
-from simulation.swarm.missile import Missile
+from simulation.swarm.missiles.missile import Missile
 from simulation.swarm.plotter import Plotter
 from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
-from simulation.swarm.target import Target
-from simulation.swarm.target_assignment import DistanceBasedTargetAssignment
+from simulation.swarm.targets.target import Target
+from simulation.swarm.targets.target_assignment import \
+    DistanceBasedTargetAssignment
 
 
 class Simulator:

@@ -6,8 +6,8 @@ from simulation.swarm import constants
 from simulation.swarm.agent import Agent, ModelAgent
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.sensor_pb2 import SensorOutput
-from simulation.swarm.sensor import IdealSensor
-from simulation.swarm.target import Target
+from simulation.swarm.sensors.sensor import IdealSensor
+from simulation.swarm.targets.target import Target
 
 
 class Missile(Agent):

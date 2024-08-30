@@ -1,10 +1,11 @@
 from absl.testing import absltest
 
-from simulation.swarm.missile import Missile
+from simulation.swarm.missiles.missile import Missile
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
-from simulation.swarm.target import Target
-from simulation.swarm.target_assignment import DistanceBasedTargetAssignment
+from simulation.swarm.targets.target import Target
+from simulation.swarm.targets.target_assignment import \
+    DistanceBasedTargetAssignment
 
 
 class DistanceBasedTargetAssignmentTestCase(absltest.TestCase):

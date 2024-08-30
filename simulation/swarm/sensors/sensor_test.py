@@ -3,7 +3,7 @@ from absl.testing import absltest
 
 from simulation.swarm.agent import ModelAgent
 from simulation.swarm.proto.state_pb2 import State
-from simulation.swarm.sensor import IdealSensor
+from simulation.swarm.sensors.sensor import IdealSensor
 
 
 class IdealSensorTargetAtBoresightTestCase(absltest.TestCase):

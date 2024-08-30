@@ -1,0 +1,25 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "sensor",
+    srcs = ["sensor.py"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:sensor_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "sensor_test",
+    srcs = ["sensor_test.py"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:state_py_proto",
+        "//simulation/swarm/sensors:sensor",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

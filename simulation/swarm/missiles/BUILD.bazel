@@ -1,0 +1,17 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "missile",
+    srcs = ["missile.py"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm:constants",
+        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:sensor_py_proto",
+        "//simulation/swarm/sensors:sensor",
+        "//simulation/swarm/targets:target",
+        requirement("numpy"),
+    ],
+)
