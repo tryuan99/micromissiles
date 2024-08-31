@@ -50,6 +50,8 @@ class SwarmSimulator(Simulator):
                     target_swarm_config.target_config.dynamic_config)
                 target_config.plotting_config.CopyFrom(
                     target_swarm_config.target_config.plotting_config)
+                target_config.submunitions_config.CopyFrom(
+                    target_swarm_config.target_config.submunitions_config)
         super().__init__(simulator_config)
 
     @staticmethod

@@ -21,8 +21,13 @@ class Missile(Agent, ABC):
         target_model: The model of the target.
     """
 
-    def __init__(self, missile_config: MissileConfig) -> None:
-        super().__init__(missile_config)
+    def __init__(
+        self,
+        missile_config: MissileConfig,
+        ready: bool = True,
+        t_creation: float = 0,
+    ) -> None:
+        super().__init__(missile_config, ready, t_creation)
         sensor_class = (
             SENSOR_TYPE_ENUM_TO_CLASS[self.dynamic_config.sensor_config.type])
         self.sensor = sensor_class(self)
@@ -45,8 +50,15 @@ class Missile(Agent, ABC):
 
     def assignable_to_target(self) -> bool:
         """Returns whether a target can be assigned to the missile."""
-        return (self.flight_phase != AgentFlightPhase.READY and
-                not self.has_assigned_target())
+        return self.has_launched() and not self.has_assigned_target()
+
+    def check_target(self) -> None:
+        """Checks whether the target has been hit.
+
+        If the target has been hit, unassign the target.
+        """
+        if self.has_assigned_target() and self.target.hit:
+            self.unassign_target()
 
     def unassign_target(self) -> None:
         """Unassigns the given target from the missile."""
@@ -71,6 +83,24 @@ class Missile(Agent, ABC):
         hit_radius = self.static_config.hit_config.hit_radius
         if distance <= hit_radius:
             return True
+
+    def _update_ready(self, t: float) -> None:
+        """Updates the missile's state in the ready flight phase.
+
+        Args:
+            t: Time in seconds.
+        """
+        # The missile is subject to gravity and drag with zero input
+        # acceleration.
+        acceleration_input = np.zeros(3)
+
+        # Calculate and set the total acceleration.
+        acceleration = self._calculate_total_acceleration(acceleration_input)
+        (
+            self.state.acceleration.x,
+            self.state.acceleration.y,
+            self.state.acceleration.z,
+        ) = acceleration
 
     def _calculate_gravity_projection_on_lateral_and_yaw(self) -> np.ndarray:
         """Calculates the gravity projection on the lateral and yaw axes.

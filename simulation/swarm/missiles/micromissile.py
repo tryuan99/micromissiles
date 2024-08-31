@@ -16,8 +16,13 @@ class Micromissile(Missile):
     # Coefficient for proportional navigation.
     PROPORTIONAL_NAVIGATION_COEFFICIENT = 3
 
-    def __init__(self, missile_config: MissileConfig) -> None:
-        super().__init__(missile_config)
+    def __init__(
+        self,
+        missile_config: MissileConfig,
+        ready: bool = True,
+        t_creation: float = 0,
+    ) -> None:
+        super().__init__(missile_config, ready, t_creation)
 
     @property
     def static_config(self) -> StaticConfig:
@@ -89,8 +94,8 @@ class Micromissile(Missile):
             kill_probability = (
                 self.target.static_config.hit_config.kill_probability)
             if np.random.binomial(1, kill_probability) > 0:
-                self.set_hit()
-                self.target.set_hit()
+                self.mark_as_hit()
+                self.target.mark_as_hit()
                 return
 
         # Calculate the acceleration input.

@@ -23,11 +23,13 @@ class Simulator:
     def __init__(self, simulator_config: SimulatorConfig) -> None:
         self.t_step = simulator_config.step_time
         self.missiles = [
-            MISSILE_TYPE_ENUM_TO_CLASS[missile_config.type](missile_config)
+            MISSILE_TYPE_ENUM_TO_CLASS[missile_config.type](missile_config,
+                                                            ready=False)
             for missile_config in simulator_config.missile_configs
         ]
         self.targets = [
-            TARGET_TYPE_ENUM_TO_CLASS[target_config.type](target_config)
+            TARGET_TYPE_ENUM_TO_CLASS[target_config.type](target_config,
+                                                          ready=False)
             for target_config in simulator_config.target_configs
         ]
 
@@ -41,6 +43,20 @@ class Simulator:
         # Step through the simulation.
         for t in np.arange(0, t_end, self.t_step):
             logging.log_every_n(logging.INFO, "Simulating time t=%f.", 1000, t)
+
+            # Have all missiles check their targets.
+            for missile in self.missiles:
+                missile.check_target()
+
+            # Allow agents to spawn new instances.
+            spawned_missiles = []
+            spawned_targets = []
+            for missile in self.missiles:
+                spawned_missiles.extend(missile.spawn(t))
+            for target in self.targets:
+                spawned_targets.extend(target.spawn(t))
+            self.missiles.extend(spawned_missiles)
+            self.targets.extend(spawned_targets)
 
             # Assign the targets to the missiles.
             target_assignment = DistanceBasedTargetAssignment(
@@ -57,7 +73,7 @@ class Simulator:
 
             # Step to the next time step.
             for agent in [*self.missiles, *self.targets]:
-                if not agent.has_terminated():
+                if agent.has_launched() and not agent.has_terminated():
                     agent.step(t, self.t_step)
 
     def plot(self, animate: bool, animation_file: str) -> None:

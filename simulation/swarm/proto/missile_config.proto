@@ -19,8 +19,11 @@ message MissileConfig {
     // Number of missiles.
     uint32 num_missiles = 1;
 
+    // Launch configuration.
+    LaunchConfig launch_config = 2;
+
     // Missile configuration.
-    MissileConfig missile_config = 2;
+    MissileConfig missile_config = 3;
   }
 
   // Missile type.

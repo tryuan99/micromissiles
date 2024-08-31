@@ -8,8 +8,13 @@ from simulation.swarm.targets.target_interface import Target
 class DummyTarget(Target):
     """Dummy target dynamics."""
 
-    def __init__(self, target_config: TargetConfig) -> None:
-        super().__init__(target_config)
+    def __init__(
+        self,
+        target_config: TargetConfig,
+        ready: bool = True,
+        t_creation: float = 0,
+    ) -> None:
+        super().__init__(target_config, ready, t_creation)
 
     @property
     def static_config(self) -> StaticConfig:

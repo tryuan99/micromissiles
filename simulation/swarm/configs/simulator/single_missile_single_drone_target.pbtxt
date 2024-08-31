@@ -20,20 +20,20 @@ missile_configs {
   }
   plotting_config {
     color: BLUE
-    linestyle: SOLID
+    linestyle: DOTTED
     marker: TRIANGLE_UP
   }
   submunitions_config {
     num_missiles: 7
+    launch_config {
+      launch_time: 10
+    }
     missile_config {
       type: MICROMISSILE
       dynamic_config {
         sensor_config {
           type: IDEAL
           frequency: 100
-        }
-        launch_config {
-          launch_time: 10
         }
       }
       plotting_config {

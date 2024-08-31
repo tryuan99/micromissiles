@@ -1,6 +1,7 @@
 """The target assignment class assigns each missile to a target."""
 
 from abc import ABC, abstractmethod
+from collections import namedtuple
 
 import numpy as np
 
@@ -39,6 +40,10 @@ class DistanceBasedTargetAssignment(TargetAssignment):
     targets.
     """
 
+    # Missile-target distance named tuple type.
+    MissileTargetDistance = namedtuple(
+        "MissileTargetDistance", ["missile_index", "target_index", "distance"])
+
     def __init__(self, missiles: list[Missile], targets: list[Target]) -> None:
         super().__init__(missiles, targets)
 
@@ -59,13 +64,14 @@ class DistanceBasedTargetAssignment(TargetAssignment):
                     if not self.targets[target_index].hit:
                         distance = (np.linalg.norm(target_position -
                                                    missile_position))
-                        missile_target_distances.append((
-                            missile_index,
-                            target_index,
-                            distance,
-                        ))
+                        missile_target_distances.append(
+                            DistanceBasedTargetAssignment.MissileTargetDistance(
+                                missile_index=missile_index,
+                                target_index=target_index,
+                                distance=distance,
+                            ))
         sorted_missile_target_distances = sorted(missile_target_distances,
-                                                 key=lambda x: x[2])
+                                                 key=lambda x: x.distance)
 
         # Assign targets to missiles based on distance.
         while len(sorted_missile_target_distances) > 0:
@@ -80,5 +86,6 @@ class DistanceBasedTargetAssignment(TargetAssignment):
                     assigned_missile_indices.add(missile_index)
                     assigned_target_indices.add(target_index)
             sorted_missile_target_distances = set(
-                filter(lambda x: x[0] not in assigned_missile_indices,
-                       sorted_missile_target_distances))
+                filter(
+                    lambda x: x.missile_index not in assigned_missile_indices,
+                    sorted_missile_target_distances))

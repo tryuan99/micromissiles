@@ -4,16 +4,33 @@ import google.protobuf
 import numpy as np
 
 from simulation.swarm import constants
+from simulation.swarm.missiles.micromissile import Micromissile
 from simulation.swarm.missiles.missile_interface import Missile
-from simulation.swarm.proto.missile_config_pb2 import MissileConfig
+from simulation.swarm.proto.missile_config_pb2 import (MissileConfig,
+                                                       MissileType)
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
+
+# Hydra-70 submunitions type enumeration to the missile class.
+HYDRA_70_SUBMUNITIONS_TYPE_ENUM_TO_CLASS = {
+    MissileType.MICROMISSILE: Micromissile,
+}
 
 
 class Hydra70(Missile):
-    """Hydra-70 dynamics."""
+    """Hydra-70 dynamics.
 
-    def __init__(self, missile_config: MissileConfig) -> None:
-        super().__init__(missile_config)
+    Attributes:
+        has_spawned: A boolean indicating whether the rocket has spawned submunitions.
+    """
+
+    def __init__(
+        self,
+        missile_config: MissileConfig,
+        ready: bool = True,
+        t_creation: float = 0,
+    ) -> None:
+        super().__init__(missile_config, ready, t_creation)
+        self.has_spawned = False
 
     @property
     def static_config(self) -> StaticConfig:
@@ -28,6 +45,40 @@ class Hydra70(Missile):
     def assignable_to_target(self) -> bool:
         """Returns whether a target can be assigned to the missile."""
         return False
+
+    def spawn(self, t: float) -> list[Missile]:
+        """Spawns new missiles.
+
+        Args:
+            t: Time in seconds.
+
+        Returns:
+            A list of newly spawned missiles.
+        """
+        if self.has_spawned:
+            return []
+
+        num_submunitions = self.submunitions_config.num_missiles
+        launch_time = self.dynamic_config.launch_config.launch_time
+        submunitions_launch_time = (
+            self.submunitions_config.launch_config.launch_time)
+        if t >= self.t_creation + launch_time + submunitions_launch_time:
+            submunitions_missile_config = self.submunitions_config.missile_config
+            submunitions_type = submunitions_missile_config.type
+
+            # Create the missiles for the submunitions.
+            submunitions_missile_config = MissileConfig()
+            submunitions_missile_config.CopyFrom(
+                self.submunitions_config.missile_config)
+            submunitions_missile_config.initial_state.CopyFrom(self.state)
+            spawned_missiles = [
+                HYDRA_70_SUBMUNITIONS_TYPE_ENUM_TO_CLASS[submunitions_type](
+                    submunitions_missile_config, t_creation=t)
+                for _ in range(num_submunitions)
+            ]
+            self.has_spawned = True
+            return spawned_missiles
+        return []
 
     def _update_boost(self, t: float) -> None:
         """Updates the agent's state in the boost flight phase.

@@ -6,7 +6,7 @@ import "simulation/swarm/proto/sensor.proto";
 
 // Launch configuration.
 message LaunchConfig {
-  // Launch time in s.
+  // Launch time in s relative to the agent creation.
   float launch_time = 1;
 }
 

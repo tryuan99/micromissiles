@@ -59,11 +59,14 @@ class Plotter:
 
     Attributes:
         t_step: Simulation step time in seconds.
+        num_time_steps: Number of time steps to plot.
         agents: List of agents for which to plot the trajectory.
     """
 
     def __init__(self, t_step: float, agents: list[Agent]) -> None:
         self.t_step = t_step
+        self.num_time_steps = int(
+            max([agent.history[-1].t for agent in agents]) / self.t_step)
         self.agents = agents
 
     def plot(self, animate: bool = True, animation_file: str = None) -> None:
@@ -98,7 +101,7 @@ class Plotter:
                       if agent.history[-1].hit else
                       MARKER_ENUM_TO_STRING[agent.plotting_config.marker])
             artist = ax.plot(
-                *self._get_positions(agent),
+                *self._get_positions(agent, self.num_time_steps),
                 color=color,
                 linestyle=linestyle,
                 marker=marker,
@@ -106,10 +109,10 @@ class Plotter:
             )[0]
             return artist
 
+        # Plot the agent trajectories.
         agent_trajectories = [
             plot_agent_trajectory(agent) for agent in self.agents
         ]
-        num_time_steps = max([len(agent.history) for agent in self.agents])
 
         # Plot the trajectories if no animation is required.
         if not animate:
@@ -131,9 +134,8 @@ class Plotter:
                 agent_trajectories[agent_index].set_3d_properties(z)
 
                 # Set the marker.
-                latest_history_index = min(frame, len(agent.history) - 1)
-                marker = (MARKER_ENUM_TO_STRING[Marker.STAR]
-                          if agent.history[latest_history_index].hit else
+                hit = self._get_hit(agent, frame)
+                marker = (MARKER_ENUM_TO_STRING[Marker.STAR] if hit else
                           MARKER_ENUM_TO_STRING[agent.plotting_config.marker])
                 agent_trajectories[agent_index].set_marker(marker)
             return agent_trajectories
@@ -145,7 +147,7 @@ class Plotter:
         anim = animation.FuncAnimation(
             fig,
             update_agent_trajectories,
-            frames=np.arange(0, num_time_steps, num_steps_per_frame),
+            frames=np.arange(0, self.num_time_steps, num_steps_per_frame),
             interval=1000 / effective_fps,
             blit=True,
             cache_frame_data=False,
@@ -159,21 +161,56 @@ class Plotter:
             )
         plt.show()
 
-    @staticmethod
     def _get_positions(
-            agent: Agent,
-            max_index: int = -1
+        self,
+        agent: Agent,
+        frame: int,
     ) -> tuple[list[float], list[float], list[float]]:
-        """Returns the positions of the agent up to the given maximum index.
+        """Returns the positions of the agent up to the given frame.
 
         Args:
             agent: Agent.
-            max_index: Maximum index to return. If -1, return all time steps.
+            frame: Frame number.
 
         Returns:
             A 3-tuple consisting of the agent's x, y, and z positions.
         """
+        max_index = self._frame_to_history_index(agent, frame) + 1
+        if max_index <= 0:
+            return [], [], []
+
         x = [record.state.position.x for record in agent.history[:max_index]]
         y = [record.state.position.y for record in agent.history[:max_index]]
         z = [record.state.position.z for record in agent.history[:max_index]]
         return x, y, z
+
+    def _get_hit(self, agent: Agent, frame: int) -> bool:
+        """Returns whether the agent has hit or been hit at the given frame.
+
+        Args:
+            agent: Agent.
+            frame: Frame number.
+
+        Returns:
+            A boolean indicating whether the agent has hit or been hit.
+        """
+        index = self._frame_to_history_index(agent, frame)
+        if index < 0:
+            return False
+        hit = agent.history[index].hit
+        return hit
+
+    def _frame_to_history_index(self, agent: Agent, frame: int) -> int:
+        """Converts the given frame number to the index of the agent's history.
+
+        Args:
+            agent: Agent.
+            frame: Frame number.
+
+        Returns:
+            The history index corresponding to the frame number.
+        """
+        t_history_start = agent.history[0].t
+        frame_offset = int(t_history_start / self.t_step)
+        index = frame - frame_offset
+        return min(index, len(agent.history) - 1)

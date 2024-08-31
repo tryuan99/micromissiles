@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from enum import Enum, auto
+from typing import Self
 
 import numpy as np
 import scipy.integrate
@@ -18,6 +19,7 @@ from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 class AgentFlightPhase(Enum):
     """Agent flight phase enumeration."""
+    INITIALIZED = auto()
     READY = auto()
     BOOST = auto()
     MIDCOURSE = auto()
@@ -29,12 +31,14 @@ class Agent(ABC):
     """Agent.
 
     Attributes:
+        t_creation: The agent's creation time in s.
         state: The current state.
         state_update_time: The time of the last state update.
         flight_phase: The flight phase of the agent.
         static_config: The static configuration of the agent.
         dynamic_config: The dynamic configuration of the agent.
         plotting_config: The plotting configuration of the agent.
+        submunitions_config: The submunitions configuration of the agent.
         history: A list of 3-tuples consisting of a timestamp, the hit boolean,
           and the state.
         hit: A boolean indicating whether the agent has hit or been hit.
@@ -46,11 +50,17 @@ class Agent(ABC):
     def __init__(
         self,
         config: MissileConfig | TargetConfig = None,
+        ready: bool = True,
+        t_creation: float = 0,
         *,
         initial_state: State = None,
         dynamic_config: DynamicConfig = None,
         plotting_config: PlottingConfig = None,
+        submunitions_config: MissileConfig.SubmunitionsConfig |
+        TargetConfig.SubmunitionsConfig = None,
     ) -> None:
+        self.t_creation = t_creation
+
         # Set the initial state.
         self.state = State()
         if initial_state is not None:
@@ -58,7 +68,10 @@ class Agent(ABC):
         else:
             self.state.CopyFrom(config.initial_state)
         self.state_update_time = 0
-        self.flight_phase = AgentFlightPhase.READY
+        # In the initialized flight phase, the agent idles, but in the ready
+        # flight phase, the agent is subject to physical forces.
+        self.flight_phase = (AgentFlightPhase.READY
+                             if ready else AgentFlightPhase.INITIALIZED)
 
         # Set the dynamic configuration.
         self.dynamic_config = DynamicConfig()
@@ -74,14 +87,47 @@ class Agent(ABC):
         elif config is not None:
             self.plotting_config.CopyFrom(config.plotting_config)
 
+        # Set the submunitions configuration.
+        self.submunitions_config = None
+        if submunitions_config is not None:
+            self.submunitions_config = type(submunitions_config)()
+            self.submunitions_config.CopyFrom(submunitions_config)
+        elif config is not None:
+            self.submunitions_config = type(config.submunitions_config)()
+            self.submunitions_config.CopyFrom(config.submunitions_config)
+
         self.hit = False
-        self.history = [Agent.HistoryRecord(t=0, hit=self.hit, state=State())]
+        self.history = [
+            Agent.HistoryRecord(t=self.t_creation, hit=self.hit, state=State())
+        ]
         self.history[-1].state.CopyFrom(self.state)
 
     @property
     @abstractmethod
     def static_config(self) -> StaticConfig:
         """Returns the static configuration of the agent."""
+
+    def has_launched(self) -> bool:
+        """Returns whether the agent has launched."""
+        return (self.flight_phase != AgentFlightPhase.INITIALIZED and
+                self.flight_phase != AgentFlightPhase.READY)
+
+    def has_terminated(self) -> bool:
+        """Returns whether the agent's flight has terminated."""
+        return self.flight_phase == AgentFlightPhase.TERMINATED
+
+    def mark_as_hit(self) -> None:
+        """Sets the agent to have hit the target or have been hit."""
+        self.hit = True
+        # Update the latest hit boolean in the history of states.
+        self.history[-1] = self.history[-1]._replace(hit=True)
+        self.flight_phase = AgentFlightPhase.TERMINATED
+
+    def set_state(self, state: State) -> None:
+        """Sets the state of the agent."""
+        self.state.CopyFrom(state)
+        # Update the latest state in the history of states.
+        self.history[-1].state.CopyFrom(state)
 
     def get_principal_axes(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the principal axes of the agent.
@@ -167,13 +213,15 @@ class Agent(ABC):
         boost_time = self.static_config.boost_config.boost_time
 
         # Determine the flight phase.
-        if t >= launch_time:
+        if t >= self.t_creation + launch_time:
             self.flight_phase = AgentFlightPhase.BOOST
-        if t >= launch_time + boost_time:
+        if t >= self.t_creation + launch_time + boost_time:
             self.flight_phase = AgentFlightPhase.MIDCOURSE
         # TODO(titan): Determine when to enter the terminal phase.
 
         match self.flight_phase:
+            case AgentFlightPhase.INITIALIZED:
+                return
             case AgentFlightPhase.READY:
                 self._update_ready(t)
             case AgentFlightPhase.BOOST:
@@ -184,23 +232,6 @@ class Agent(ABC):
                 return
             case _:
                 raise ValueError(f"Invalid flight phase: {self.flight_phase}.")
-
-    def has_terminated(self) -> bool:
-        """Returns whether the agent's flight has terminated."""
-        return self.flight_phase == AgentFlightPhase.TERMINATED
-
-    def set_hit(self) -> None:
-        """Sets the agent to have hit the target or have been hit."""
-        self.hit = True
-        # Update the latest hit boolean in the history of states.
-        self.history[-1] = self.history[-1]._replace(hit=True)
-        self.flight_phase = AgentFlightPhase.TERMINATED
-
-    def set_state(self, state: State) -> None:
-        """Sets the state of the agent."""
-        self.state.CopyFrom(state)
-        # Update the latest state in the history of states.
-        self.history[-1].state.CopyFrom(state)
 
     def step(self, t_start: float, t_step: float) -> None:
         """Steps forward the simulation by simulating the dynamics of the
@@ -214,6 +245,7 @@ class Agent(ABC):
             t_step: Step time in seconds.
         """
         # Update the latest state in the history of states.
+        self.history[-1] = self.history[-1]._replace(t=t_start)
         self.history[-1].state.CopyFrom(self.state)
 
         # Check if the step time is zero.
@@ -289,13 +321,24 @@ class Agent(ABC):
         self.history[-1].state.CopyFrom(self.state)
         self.state_update_time = t
 
+    def spawn(self, t: float) -> list[Self]:
+        """Spawns new agents.
+
+        Args:
+            t: Time in seconds.
+
+        Returns:
+            A list of newly spawned agents.
+        """
+        return []
+
     def _update_ready(self, t: float) -> None:
         """Updates the agent's state in the ready flight phase.
 
         Args:
             t: Time in seconds.
         """
-        # Idle in the ready flight phase.
+        # By default, idle in the ready flight phase.
         return
 
     def _update_boost(self, t: float) -> None:

@@ -8,8 +8,13 @@ from simulation.swarm.proto.static_config_pb2 import StaticConfig
 class DummyMissile(Missile):
     """Dummy missile dynamics."""
 
-    def __init__(self, missile_config: MissileConfig) -> None:
-        super().__init__(missile_config)
+    def __init__(
+        self,
+        missile_config: MissileConfig,
+        ready: bool = True,
+        t_creation: float = 0,
+    ) -> None:
+        super().__init__(missile_config, ready, t_creation)
 
     @property
     def static_config(self) -> StaticConfig:
