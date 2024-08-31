@@ -22,6 +22,7 @@ class AgentFlightPhase(Enum):
     BOOST = auto()
     MIDCOURSE = auto()
     TERMINAL = auto()
+    TERMINATED = auto()
 
 
 class Agent(ABC):
@@ -179,14 +180,21 @@ class Agent(ABC):
                 self._update_boost(t)
             case AgentFlightPhase.MIDCOURSE | AgentFlightPhase.TERMINAL:
                 self._update(t)
+            case AgentFlightPhase.TERMINATED:
+                return
             case _:
                 raise ValueError(f"Invalid flight phase: {self.flight_phase}.")
+
+    def has_terminated(self) -> bool:
+        """Returns whether the agent's flight has terminated."""
+        return self.flight_phase == AgentFlightPhase.TERMINATED
 
     def set_hit(self) -> None:
         """Sets the agent to have hit the target or have been hit."""
         self.hit = True
         # Update the latest hit boolean in the history of states.
         self.history[-1] = self.history[-1]._replace(hit=True)
+        self.flight_phase = AgentFlightPhase.TERMINATED
 
     def set_state(self, state: State) -> None:
         """Sets the state of the agent."""

@@ -52,12 +52,12 @@ class Simulator:
 
             # Update the acceleration vectors of each agent.
             for agent in [*self.missiles, *self.targets]:
-                if not agent.hit:
+                if not agent.has_terminated():
                     agent.update(t)
 
             # Step to the next time step.
             for agent in [*self.missiles, *self.targets]:
-                if not agent.hit:
+                if not agent.has_terminated():
                     agent.step(t, self.t_step)
 
     def plot(self, animate: bool, animation_file: str) -> None:

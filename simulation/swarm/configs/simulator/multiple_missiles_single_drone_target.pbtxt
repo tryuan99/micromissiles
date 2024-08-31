@@ -1,6 +1,6 @@
 step_time: 0.001
 missile_configs {
-  type: MICROMISSILE
+  type: HYDRA_70
   initial_state {
     position {
       x: 0
@@ -14,10 +14,6 @@ missile_configs {
     }
   }
   dynamic_config {
-    sensor_config {
-      type: IDEAL
-      frequency: 100
-    }
     launch_config {
       launch_time: 0
     }
@@ -27,9 +23,29 @@ missile_configs {
     linestyle: SOLID
     marker: TRIANGLE_UP
   }
+  submunitions_config {
+    num_missiles: 7
+    missile_config {
+      type: MICROMISSILE
+      dynamic_config {
+        sensor_config {
+          type: IDEAL
+          frequency: 100
+        }
+        launch_config {
+          launch_time: 10
+        }
+      }
+      plotting_config {
+        color: BLUE
+        linestyle: SOLID
+        marker: TRIANGLE_DOWN
+      }
+    }
+  }
 }
 missile_configs {
-  type: MICROMISSILE
+  type: HYDRA_70
   initial_state {
     position {
       x: 0
@@ -43,10 +59,6 @@ missile_configs {
     }
   }
   dynamic_config {
-    sensor_config {
-      type: IDEAL
-      frequency: 100
-    }
     launch_config {
       launch_time: 0
     }
@@ -56,9 +68,29 @@ missile_configs {
     linestyle: SOLID
     marker: TRIANGLE_UP
   }
+  submunitions_config {
+    num_missiles: 7
+    missile_config {
+      type: MICROMISSILE
+      dynamic_config {
+        sensor_config {
+          type: IDEAL
+          frequency: 100
+        }
+        launch_config {
+          launch_time: 10
+        }
+      }
+      plotting_config {
+        color: BLUE
+        linestyle: SOLID
+        marker: TRIANGLE_DOWN
+      }
+    }
+  }
 }
 missile_configs {
-  type: MICROMISSILE
+  type: HYDRA_70
   initial_state {
     position {
       x: 0
@@ -72,10 +104,6 @@ missile_configs {
     }
   }
   dynamic_config {
-    sensor_config {
-      type: IDEAL
-      frequency: 100
-    }
     launch_config {
       launch_time: 5
     }
@@ -85,9 +113,29 @@ missile_configs {
     linestyle: SOLID
     marker: TRIANGLE_UP
   }
+  submunitions_config {
+    num_missiles: 7
+    missile_config {
+      type: MICROMISSILE
+      dynamic_config {
+        sensor_config {
+          type: IDEAL
+          frequency: 100
+        }
+        launch_config {
+          launch_time: 15
+        }
+      }
+      plotting_config {
+        color: GREEN
+        linestyle: SOLID
+        marker: TRIANGLE_DOWN
+      }
+    }
+  }
 }
 missile_configs {
-  type: MICROMISSILE
+  type: HYDRA_70
   initial_state {
     position {
       x: 0
@@ -101,10 +149,6 @@ missile_configs {
     }
   }
   dynamic_config {
-    sensor_config {
-      type: IDEAL
-      frequency: 100
-    }
     launch_config {
       launch_time: 5
     }
@@ -113,6 +157,26 @@ missile_configs {
     color: GREEN
     linestyle: SOLID
     marker: TRIANGLE_UP
+  }
+  submunitions_config {
+    num_missiles: 7
+    missile_config {
+      type: MICROMISSILE
+      dynamic_config {
+        sensor_config {
+          type: IDEAL
+          frequency: 100
+        }
+        launch_config {
+          launch_time: 15
+        }
+      }
+      plotting_config {
+        color: GREEN
+        linestyle: SOLID
+        marker: TRIANGLE_DOWN
+      }
+    }
   }
 }
 target_configs {

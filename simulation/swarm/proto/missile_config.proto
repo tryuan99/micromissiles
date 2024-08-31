@@ -14,6 +14,15 @@ enum MissileType {
 
 // Missile configuration.
 message MissileConfig {
+  // Submunitions configuration.
+  message SubmunitionsConfig {
+    // Number of missiles.
+    uint32 num_missiles = 1;
+
+    // Missile configuration.
+    MissileConfig missile_config = 2;
+  }
+
   // Missile type.
   MissileType type = 1;
 
@@ -28,4 +37,7 @@ message MissileConfig {
 
   // Plotting configuration.
   PlottingConfig plotting_config = 5;
+
+  // Submunitions configuration.
+  SubmunitionsConfig submunitions_config = 6;
 }
