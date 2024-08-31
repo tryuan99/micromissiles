@@ -1,6 +1,7 @@
 """The agent class is an interface for a missile or a target."""
 
 from abc import ABC, abstractmethod
+from collections import namedtuple
 from enum import Enum, auto
 
 import numpy as np
@@ -33,9 +34,13 @@ class Agent(ABC):
         static_config: The static configuration of the agent.
         dynamic_config: The dynamic configuration of the agent.
         plotting_config: The plotting configuration of the agent.
-        history: A list of 2-tuples consisting of a timestamp and the state.
+        history: A list of 3-tuples consisting of a timestamp, the hit boolean,
+          and the state.
         hit: A boolean indicating whether the agent has hit or been hit.
     """
+
+    # History record named tuple type.
+    HistoryRecord = namedtuple("HistoryRecord", ["t", "hit", "state"])
 
     def __init__(
         self,
@@ -69,8 +74,8 @@ class Agent(ABC):
             self.plotting_config.CopyFrom(config.plotting_config)
 
         self.hit = False
-        self.history = [(0, State())]
-        self.history[-1][1].CopyFrom(self.state)
+        self.history = [Agent.HistoryRecord(t=0, hit=self.hit, state=State())]
+        self.history[-1].state.CopyFrom(self.state)
 
     @property
     @abstractmethod
@@ -177,11 +182,17 @@ class Agent(ABC):
             case _:
                 raise ValueError(f"Invalid flight phase: {self.flight_phase}.")
 
+    def set_hit(self) -> None:
+        """Sets the agent to have hit the target or have been hit."""
+        self.hit = True
+        # Update the latest hit boolean in the history of states.
+        self.history[-1] = self.history[-1]._replace(hit=True)
+
     def set_state(self, state: State) -> None:
         """Sets the state of the agent."""
         self.state.CopyFrom(state)
         # Update the latest state in the history of states.
-        self.history[-1][1].CopyFrom(state)
+        self.history[-1].state.CopyFrom(state)
 
     def step(self, t_start: float, t_step: float) -> None:
         """Steps forward the simulation by simulating the dynamics of the
@@ -195,7 +206,7 @@ class Agent(ABC):
             t_step: Step time in seconds.
         """
         # Update the latest state in the history of states.
-        self.history[-1][1].CopyFrom(self.state)
+        self.history[-1].state.CopyFrom(self.state)
 
         # Check if the step time is zero.
         if t_step == 0:
@@ -265,8 +276,9 @@ class Agent(ABC):
 
         # Add the new state to the history of states.
         t = t_start + t_step
-        self.history.append((t, State()))
-        self.history[-1][1].CopyFrom(self.state)
+        self.history.append(
+            Agent.HistoryRecord(t=t, hit=self.hit, state=State()))
+        self.history[-1].state.CopyFrom(self.state)
         self.state_update_time = t
 
     def _update_ready(self, t: float) -> None:

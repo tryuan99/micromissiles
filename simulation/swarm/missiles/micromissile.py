@@ -89,8 +89,8 @@ class Micromissile(Missile):
             kill_probability = (
                 self.target.static_config.hit_config.kill_probability)
             if np.random.binomial(1, kill_probability) > 0:
-                self.hit = True
-                self.target.hit = True
+                self.set_hit()
+                self.target.set_hit()
                 return
 
         # Calculate the acceleration input.

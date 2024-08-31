@@ -89,12 +89,14 @@ class Plotter:
                 agent: Agent for which to plot the trajectory.
 
             Returns:
-                An artist corresponding to the trajectory.
+                An artist corresponding to the trajectory of the agent.
             """
             color = COLOR_ENUM_TO_STRING[agent.plotting_config.color]
             linestyle = (
                 LINE_STYLE_ENUM_TO_STRING[agent.plotting_config.linestyle])
-            marker = MARKER_ENUM_TO_STRING[agent.plotting_config.marker]
+            marker = (MARKER_ENUM_TO_STRING[Marker.STAR]
+                      if agent.history[-1].hit else
+                      MARKER_ENUM_TO_STRING[agent.plotting_config.marker])
             artist = ax.plot(
                 *self._get_positions(agent),
                 color=color,
@@ -114,8 +116,8 @@ class Plotter:
             plt.show()
             return
 
-        def update_trajectories(frame: int) -> tuple[artist.Artist, ...]:
-            """Updates the trajectories.
+        def update_agent_trajectories(frame: int) -> tuple[artist.Artist, ...]:
+            """Updates the trajectories of the agents.
 
             Args:
                 frame: Frame number.
@@ -127,6 +129,13 @@ class Plotter:
                 x, y, z = self._get_positions(agent, frame)
                 agent_trajectories[agent_index].set_data(x, y)
                 agent_trajectories[agent_index].set_3d_properties(z)
+
+                # Set the marker.
+                latest_history_index = min(frame, len(agent.history) - 1)
+                marker = (MARKER_ENUM_TO_STRING[Marker.STAR]
+                          if agent.history[latest_history_index].hit else
+                          MARKER_ENUM_TO_STRING[agent.plotting_config.marker])
+                agent_trajectories[agent_index].set_marker(marker)
             return agent_trajectories
 
         # Animate at a frame rate of at most 50 fps.
@@ -135,7 +144,7 @@ class Plotter:
         effective_fps = 1 / (num_steps_per_frame * self.t_step)
         anim = animation.FuncAnimation(
             fig,
-            update_trajectories,
+            update_agent_trajectories,
             frames=np.arange(0, num_time_steps, num_steps_per_frame),
             interval=1000 / effective_fps,
             blit=True,
@@ -164,7 +173,7 @@ class Plotter:
         Returns:
             A 3-tuple consisting of the agent's x, y, and z positions.
         """
-        x = [state.position.x for _, state in agent.history[:max_index]]
-        y = [state.position.y for _, state in agent.history[:max_index]]
-        z = [state.position.z for _, state in agent.history[:max_index]]
+        x = [record.state.position.x for record in agent.history[:max_index]]
+        y = [record.state.position.y for record in agent.history[:max_index]]
+        z = [record.state.position.z for record in agent.history[:max_index]]
         return x, y, z
