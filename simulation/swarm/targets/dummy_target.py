@@ -15,12 +15,3 @@ class DummyTarget(Target):
     def static_config(self) -> StaticConfig:
         """Returns the static configuration of the target."""
         return StaticConfig()
-
-    def update(self, t: float) -> None:
-        """Updates the agent's state according to the environment.
-
-        Args:
-            t: Time in seconds.
-        """
-        # The dummy target does not accelerate.
-        return

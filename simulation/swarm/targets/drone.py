@@ -22,12 +22,3 @@ class Drone(Target):
             static_config = google.protobuf.text_format.Parse(
                 static_config_file.read(), StaticConfig())
         return static_config
-
-    def update(self, t: float) -> None:
-        """Updates the agent's state according to the environment.
-
-        Args:
-            t: Time in seconds.
-        """
-        # The target does not accelerate.
-        return

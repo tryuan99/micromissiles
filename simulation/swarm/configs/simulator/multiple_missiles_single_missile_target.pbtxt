@@ -5,12 +5,12 @@ missile_configs {
     position {
       x: 0
       y: 0
-      z: 100
+      z: 0
     }
     velocity {
-      x: 1
+      x: 1e-3
       y: 0
-      z: 1000
+      z: 2e-3
     }
   }
   dynamic_config {
@@ -34,41 +34,12 @@ missile_configs {
     position {
       x: 0
       y: 0
-      z: 120
+      z: 0
     }
     velocity {
-      x: 1
+      x: 1e-3
       y: 0
-      z: 1000
-    }
-  }
-  dynamic_config {
-    sensor_config {
-      type: IDEAL
-      frequency: 100
-    }
-    launch_config {
-      launch_time: 0
-    }
-  }
-  plotting_config {
-    color: BLUE
-    linestyle: SOLID
-    marker: TRIANGLE_UP
-  }
-}
-missile_configs {
-  type: MICROMISSILE
-  initial_state {
-    position {
-      x: 0
-      y: 10
-      z: 100
-    }
-    velocity {
-      x: 1
-      y: 0
-      z: 1000
+      z: 2e-3
     }
   }
   dynamic_config {
@@ -92,12 +63,41 @@ missile_configs {
     position {
       x: 0
       y: 10
-      z: 120
+      z: 0
     }
     velocity {
-      x: 1
+      x: 1e-3
       y: 0
-      z: 1000
+      z: 2e-3
+    }
+  }
+  dynamic_config {
+    sensor_config {
+      type: IDEAL
+      frequency: 100
+    }
+    launch_config {
+      launch_time: 0
+    }
+  }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
+}
+missile_configs {
+  type: MICROMISSILE
+  initial_state {
+    position {
+      x: 0
+      y: 10
+      z: 0
+    }
+    velocity {
+      x: 1e-3
+      y: 0
+      z: 2e-3
     }
   }
   dynamic_config {

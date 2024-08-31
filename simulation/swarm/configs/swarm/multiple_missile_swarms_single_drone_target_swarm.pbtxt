@@ -43,6 +43,49 @@ missile_swarm_configs {
     }
   }
 }
+missile_swarm_configs {
+  num_missiles: 16
+  missile_config {
+    type: MICROMISSILE
+    initial_state {
+      position {
+        x: 0
+        y: 0
+        z: 0
+      }
+      velocity {
+        x: 1e-3
+        y: 0
+        z: 2e-3
+      }
+    }
+    standard_deviation {
+      position {
+        x: 100
+        y: 2000
+        z: 0
+      }
+      velocity {
+        x: 0
+        y: 0
+        z: 0
+      }
+    }
+    dynamic_config {
+      sensor_config {
+        frequency: 100
+      }
+      launch_config {
+        launch_time: 10
+      }
+    }
+    plotting_config {
+      color: GREEN
+      linestyle: SOLID
+      marker: TRIANGLE_UP
+    }
+  }
+}
 target_swarm_configs {
   num_targets: 8
   target_config {

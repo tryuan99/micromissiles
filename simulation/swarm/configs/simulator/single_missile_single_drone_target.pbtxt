@@ -5,12 +5,12 @@ missile_configs {
     position {
       x: 0
       y: 0
-      z: 100
+      z: 0
     }
     velocity {
-      x: 1
+      x: 1e-3
       y: 0
-      z: 1000
+      z: 2e-3
     }
   }
   dynamic_config {

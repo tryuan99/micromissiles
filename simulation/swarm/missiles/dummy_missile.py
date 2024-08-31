@@ -15,12 +15,3 @@ class DummyMissile(Missile):
     def static_config(self) -> StaticConfig:
         """Returns the static configuration of the ."""
         return StaticConfig()
-
-    def update(self, t: float) -> None:
-        """Updates the agent's state according to the environment.
-
-        Args:
-            t: Time in seconds.
-        """
-        # The dummy missile does not accelerate.
-        return

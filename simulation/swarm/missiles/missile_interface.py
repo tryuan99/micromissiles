@@ -142,3 +142,39 @@ class Missile(Agent, ABC):
         max_acceleration = ((self.get_speed() / reference_speed)**2 *
                             max_reference_acceleration)
         return max_acceleration
+
+    def _calculate_total_acceleration(
+            self,
+            acceleration_input: np.ndarray,
+            compensate_for_gravity: bool = True) -> np.ndarray:
+        """Calculates the total acceleration vector, including gravity and drag.
+
+        Args:
+            acceleration_input: Acceleration input vector.
+            compensate_for_gravity: If true, compensate for gravity.
+
+        Returns:
+            The total x, y, and z acceleration components.
+        """
+        # Determine the gravity and compensate for it.
+        gravity = self.get_gravity()
+        gravity_projection_on_lateral_and_yaw = (
+            self._calculate_gravity_projection_on_lateral_and_yaw())
+        if compensate_for_gravity:
+            acceleration_input -= gravity_projection_on_lateral_and_yaw
+
+        # Calculate the air drag.
+        air_drag_acceleration = self._calculate_drag()
+        # Calculate the lift-induced drag.
+        lift_induced_drag_acceleration = (
+            self._calculate_lift_induced_drag(acceleration_input))
+        # Calculate the total drag acceleration.
+        normalized_roll, normalized_lateral, normalized_yaw = (
+            self.get_normalized_principal_axes())
+        drag_acceleration = (
+            -(air_drag_acceleration + lift_induced_drag_acceleration) *
+            normalized_roll)
+
+        # Calculate the total acceleration vector.
+        acceleration = acceleration_input + gravity + drag_acceleration
+        return acceleration

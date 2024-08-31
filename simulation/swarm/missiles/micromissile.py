@@ -3,6 +3,7 @@
 import google.protobuf
 import numpy as np
 
+from simulation.swarm import constants
 from simulation.swarm.missiles.missile_interface import Missile
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.sensor_pb2 import SensorOutput
@@ -28,8 +29,34 @@ class Micromissile(Missile):
                 static_config_file.read(), StaticConfig())
         return static_config
 
-    def update(self, t: float) -> None:
-        """Updates the agent's state according to the environment.
+    def _update_boost(self, t: float) -> None:
+        """Updates the agent's state in the boost flight phase.
+
+        During the boost phase, we assume that the missile will only accelerate
+        along its roll axis.
+
+        Args:
+            t: Time in seconds.
+        """
+        normalized_roll, normalized_lateral, normalized_yaw = (
+            self.get_normalized_principal_axes())
+        boost_acceleration = (
+            self.static_config.boost_config.boost_acceleration *
+            constants.STANDARD_GRAVITY)
+        acceleration_input = boost_acceleration * normalized_roll
+
+        # Calculate and set the total acceleration.
+        acceleration = self._calculate_total_acceleration(
+            acceleration_input, compensate_for_gravity=False)
+        (
+            self.state.acceleration.x,
+            self.state.acceleration.y,
+            self.state.acceleration.z,
+        ) = acceleration
+
+    def _update(self, t: float) -> None:
+        """Updates the agent's state in the midcourse and terminal flight
+        phase.
 
         The missile uses proportional navigation to intercept the target, i.e.,
         it should maintain a constant azimuth and elevation to the target.
@@ -41,9 +68,10 @@ class Micromissile(Missile):
             return
 
         # Update the target model.
-        model_step_time = t - self.target_model.update_time
+        model_step_time = t - self.target_model.state_update_time
         self.target_model.update(t)
-        self.target_model.step(self.target_model.update_time, model_step_time)
+        self.target_model.step(self.target_model.state_update_time,
+                               model_step_time)
 
         # Correct the state of the target model at the sensor frequency.
         sensor_update_period = 1 / self.dynamic_config.sensor_config.frequency
@@ -66,29 +94,11 @@ class Micromissile(Missile):
                 self.target.hit = True
                 return
 
-        # Determine the acceleration input.
+        # Calculate the acceleration input.
         acceleration_input = self._calculate_acceleration_input(sensor_output)
 
-        # Determine the gravity and compensate for it.
-        gravity = self.get_gravity()
-        gravity_projection_on_lateral_and_yaw = (
-            self._calculate_gravity_projection_on_lateral_and_yaw())
-        acceleration_input -= gravity_projection_on_lateral_and_yaw
-
-        # Calculate the air drag.
-        air_drag_acceleration = self._calculate_drag()
-        # Calculate the lift-induced drag.
-        lift_induced_drag_acceleration = (
-            self._calculate_lift_induced_drag(acceleration_input))
-        # Calculate the total drag acceleration.
-        normalized_roll, normalized_lateral, normalized_yaw = (
-            self.get_normalized_principal_axes())
-        drag_acceleration = (
-            -(air_drag_acceleration + lift_induced_drag_acceleration) *
-            normalized_roll)
-
-        # Set the acceleration vector.
-        acceleration = acceleration_input + gravity + drag_acceleration
+        # Calculate and set the total acceleration.
+        acceleration = self._calculate_total_acceleration(acceleration_input)
         (
             self.state.acceleration.x,
             self.state.acceleration.y,

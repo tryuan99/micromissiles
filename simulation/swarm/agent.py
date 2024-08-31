@@ -1,6 +1,7 @@
 """The agent class is an interface for a missile or a target."""
 
 from abc import ABC, abstractmethod
+from enum import Enum, auto
 
 import numpy as np
 import scipy.integrate
@@ -14,17 +15,26 @@ from simulation.swarm.proto.static_config_pb2 import StaticConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 
+class AgentFlightPhase(Enum):
+    """Agent flight phase enumeration."""
+    READY = auto()
+    BOOST = auto()
+    MIDCOURSE = auto()
+    TERMINAL = auto()
+
+
 class Agent(ABC):
     """Agent.
 
     Attributes:
         state: The current state.
+        state_update_time: The time of the last state update.
+        flight_phase: The flight phase of the agent.
         static_config: The static configuration of the agent.
         dynamic_config: The dynamic configuration of the agent.
         plotting_config: The plotting configuration of the agent.
         history: A list of 2-tuples consisting of a timestamp and the state.
         hit: A boolean indicating whether the agent has hit or been hit.
-        update_time: The time of the last state update.
     """
 
     def __init__(
@@ -41,6 +51,8 @@ class Agent(ABC):
             self.state.CopyFrom(initial_state)
         else:
             self.state.CopyFrom(config.initial_state)
+        self.state_update_time = 0
+        self.flight_phase = AgentFlightPhase.READY
 
         # Set the dynamic configuration.
         self.dynamic_config = DynamicConfig()
@@ -59,7 +71,6 @@ class Agent(ABC):
         self.hit = False
         self.history = [(0, State())]
         self.history[-1][1].CopyFrom(self.state)
-        self.update_time = 0
 
     @property
     @abstractmethod
@@ -140,13 +151,31 @@ class Agent(ABC):
         dynamic_pressure = 1 / 2 * air_density * flow_speed**2
         return dynamic_pressure
 
-    @abstractmethod
     def update(self, t: float) -> None:
         """Updates the agent's state according to the environment.
 
         Args:
             t: Time in seconds.
         """
+        launch_time = self.dynamic_config.launch_config.launch_time
+        boost_time = self.static_config.boost_config.boost_time
+
+        # Determine the flight phase.
+        if t >= launch_time:
+            self.flight_phase = AgentFlightPhase.BOOST
+        if t >= launch_time + boost_time:
+            self.flight_phase = AgentFlightPhase.MIDCOURSE
+        # TODO(titan): Determine when to enter the terminal phase.
+
+        match self.flight_phase:
+            case AgentFlightPhase.READY:
+                self._update_ready(t)
+            case AgentFlightPhase.BOOST:
+                self._update_boost(t)
+            case AgentFlightPhase.MIDCOURSE | AgentFlightPhase.TERMINAL:
+                self._update(t)
+            case _:
+                raise ValueError(f"Invalid flight phase: {self.flight_phase}.")
 
     def set_state(self, state: State) -> None:
         """Sets the state of the agent."""
@@ -194,7 +223,7 @@ class Agent(ABC):
                 velocity_y,
                 velocity_z,
             ) = state
-            if position_z <= 0:
+            if position_z < 0:
                 dx = np.zeros(state.shape)
             else:
                 dx = np.array([
@@ -238,7 +267,35 @@ class Agent(ABC):
         t = t_start + t_step
         self.history.append((t, State()))
         self.history[-1][1].CopyFrom(self.state)
-        self.update_time = t
+        self.state_update_time = t
+
+    def _update_ready(self, t: float) -> None:
+        """Updates the agent's state in the ready flight phase.
+
+        Args:
+            t: Time in seconds.
+        """
+        # Idle in the ready flight phase.
+        return
+
+    def _update_boost(self, t: float) -> None:
+        """Updates the agent's state in the boost flight phase.
+
+        Args:
+            t: Time in seconds.
+        """
+        # By default, idle in the boost flight phase.
+        return
+
+    def _update(self, t: float) -> None:
+        """Updates the agent's state in the midcourse and terminal flight
+        phase.
+
+        Args:
+            t: Time in seconds.
+        """
+        # By default, idle in the midcourse and terminal flight phase.
+        return
 
 
 class ModelAgent(Agent):
@@ -257,11 +314,3 @@ class ModelAgent(Agent):
     def static_config(self) -> StaticConfig:
         """Returns the static configuration of the agent."""
         return StaticConfig()
-
-    def update(self, t: float) -> None:
-        """Updates the agent's state according to the environment.
-
-        Args:
-            t: Time in seconds.
-        """
-        return

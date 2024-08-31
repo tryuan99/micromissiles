@@ -18,6 +18,7 @@ py_library(
     data = ["//simulation/swarm/configs/missiles:configs"],
     deps = [
         ":missile_interface",
+        "//simulation/swarm:constants",
         "//simulation/swarm/proto:missile_config_py_proto",
         "//simulation/swarm/proto:sensor_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
