@@ -146,7 +146,7 @@ class Missile(Agent, ABC):
     def _calculate_total_acceleration(
             self,
             acceleration_input: np.ndarray,
-            compensate_for_gravity: bool = True) -> np.ndarray:
+            compensate_for_gravity: bool = False) -> np.ndarray:
         """Calculates the total acceleration vector, including gravity and drag.
 
         Args:

@@ -46,8 +46,7 @@ class Micromissile(Missile):
         acceleration_input = boost_acceleration * normalized_roll
 
         # Calculate and set the total acceleration.
-        acceleration = self._calculate_total_acceleration(
-            acceleration_input, compensate_for_gravity=False)
+        acceleration = self._calculate_total_acceleration(acceleration_input)
         (
             self.state.acceleration.x,
             self.state.acceleration.y,
@@ -98,7 +97,8 @@ class Micromissile(Missile):
         acceleration_input = self._calculate_acceleration_input(sensor_output)
 
         # Calculate and set the total acceleration.
-        acceleration = self._calculate_total_acceleration(acceleration_input)
+        acceleration = self._calculate_total_acceleration(
+            acceleration_input, compensate_for_gravity=True)
         (
             self.state.acceleration.x,
             self.state.acceleration.y,

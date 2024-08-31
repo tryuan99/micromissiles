@@ -13,6 +13,20 @@ py_library(
 )
 
 py_library(
+    name = "hydra_70",
+    srcs = ["hydra_70.py"],
+    data = ["//simulation/swarm/configs/missiles:configs"],
+    deps = [
+        ":missile_interface",
+        "//simulation/swarm:constants",
+        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+        requirement("numpy"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
     name = "micromissile",
     srcs = ["micromissile.py"],
     data = ["//simulation/swarm/configs/missiles:configs"],
@@ -31,6 +45,7 @@ py_library(
     name = "missile",
     srcs = ["missile.py"],
     deps = [
+        ":hydra_70",
         ":micromissile",
         "//simulation/swarm/proto:missile_config_py_proto",
     ],
