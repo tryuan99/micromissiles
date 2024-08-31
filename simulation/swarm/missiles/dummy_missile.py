@@ -15,3 +15,7 @@ class DummyMissile(Missile):
     def static_config(self) -> StaticConfig:
         """Returns the static configuration of the ."""
         return StaticConfig()
+
+    def assignable_to_target(self) -> bool:
+        """Returns whether a target can be assigned to the missile."""
+        return True

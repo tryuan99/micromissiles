@@ -38,20 +38,24 @@ class Simulator:
         Args:
             t_end: Time span in seconds.
         """
-        # Assign the targets to the missiles.
-        target_assignment = DistanceBasedTargetAssignment(
-            self.missiles, self.targets)
-        for (missile_index, target_index
-            ) in target_assignment.missile_to_target_assignments.items():
-            self.missiles[missile_index].assign_target(
-                self.targets[target_index])
-
         # Step through the simulation.
         for t in np.arange(0, t_end, self.t_step):
             logging.log_every_n(logging.INFO, "Simulating time t=%f.", 1000, t)
+
+            # Assign the targets to the missiles.
+            target_assignment = DistanceBasedTargetAssignment(
+                self.missiles, self.targets)
+            for (missile_index, target_index
+                ) in target_assignment.missile_to_target_assignments.items():
+                self.missiles[missile_index].assign_target(
+                    self.targets[target_index])
+
+            # Update the acceleration vectors of each agent.
             for agent in [*self.missiles, *self.targets]:
                 if not agent.hit:
                     agent.update(t)
+
+            # Step to the next time step.
             for agent in [*self.missiles, *self.targets]:
                 if not agent.hit:
                     agent.step(t, self.t_step)

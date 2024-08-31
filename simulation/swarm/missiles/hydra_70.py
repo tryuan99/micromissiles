@@ -25,6 +25,10 @@ class Hydra70(Missile):
                 static_config_file.read(), StaticConfig())
         return static_config
 
+    def assignable_to_target(self) -> bool:
+        """Returns whether a target can be assigned to the missile."""
+        return False
+
     def _update_boost(self, t: float) -> None:
         """Updates the agent's state in the boost flight phase.
 

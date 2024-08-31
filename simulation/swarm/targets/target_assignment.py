@@ -53,16 +53,17 @@ class DistanceBasedTargetAssignment(TargetAssignment):
         # Sort the missile-target distances.
         missile_target_distances = []
         for missile_index, missile_position in enumerate(missile_positions):
-            if not self.missiles[missile_index].has_assigned_target():
+            if self.missiles[missile_index].assignable_to_target():
                 for target_index, target_position in enumerate(
                         target_positions):
-                    distance = (np.linalg.norm(target_position -
-                                               missile_position))
-                    missile_target_distances.append((
-                        missile_index,
-                        target_index,
-                        distance,
-                    ))
+                    if not self.targets[target_index].hit:
+                        distance = (np.linalg.norm(target_position -
+                                                   missile_position))
+                        missile_target_distances.append((
+                            missile_index,
+                            target_index,
+                            distance,
+                        ))
         sorted_missile_target_distances = sorted(missile_target_distances,
                                                  key=lambda x: x[2])
 

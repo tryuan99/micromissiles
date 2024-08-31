@@ -5,7 +5,7 @@ from abc import ABC
 import numpy as np
 
 from simulation.swarm import constants
-from simulation.swarm.agent import Agent, ModelAgent
+from simulation.swarm.agent import Agent, AgentFlightPhase, ModelAgent
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.sensors.sensor import SENSOR_TYPE_ENUM_TO_CLASS
 from simulation.swarm.targets.target_interface import Target
@@ -42,6 +42,11 @@ class Missile(Agent, ABC):
     def has_assigned_target(self) -> bool:
         """Returns whether a target is assigned to the missile."""
         return self.target is not None
+
+    def assignable_to_target(self) -> bool:
+        """Returns whether a target can be assigned to the missile."""
+        return (self.flight_phase != AgentFlightPhase.READY and
+                not self.has_assigned_target())
 
     def unassign_target(self) -> None:
         """Unassigns the given target from the missile."""
