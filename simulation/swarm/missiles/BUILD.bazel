@@ -8,17 +8,21 @@ py_library(
     deps = [
         ":missile_interface",
         "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
     ],
 )
 
 py_library(
     name = "micromissile",
     srcs = ["micromissile.py"],
+    data = ["//simulation/swarm/configs/missiles:configs"],
     deps = [
         ":missile_interface",
         "//simulation/swarm/proto:missile_config_py_proto",
         "//simulation/swarm/proto:sensor_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
         requirement("numpy"),
+        requirement("protobuf"),
     ],
 )
 

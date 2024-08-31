@@ -24,7 +24,7 @@ class Missile(Agent, ABC):
     def __init__(self, missile_config: MissileConfig) -> None:
         super().__init__(missile_config)
         sensor_class = (
-            SENSOR_TYPE_ENUM_TO_CLASS[self.physical_config.sensor_config.type])
+            SENSOR_TYPE_ENUM_TO_CLASS[self.dynamic_config.sensor_config.type])
         self.sensor = sensor_class(self)
         self.sensor_update_time = -np.inf
         self.target: Target = None
@@ -63,7 +63,7 @@ class Missile(Agent, ABC):
         distance = np.linalg.norm(target_position - position)
 
         # A hit is recorded if the target is within the missile's hit radius.
-        hit_radius = self.physical_config.hit_config.hit_radius
+        hit_radius = self.static_config.hit_config.hit_radius
         if distance <= hit_radius:
             return True
 
@@ -96,10 +96,10 @@ class Missile(Agent, ABC):
             The drag acceleration in m/s^2.
         """
         drag_coefficient = (
-            self.physical_config.lift_drag_config.drag_coefficient)
+            self.static_config.lift_drag_config.drag_coefficient)
         cross_sectional_area = (
-            self.physical_config.body_config.cross_sectional_area)
-        mass = self.physical_config.body_config.mass
+            self.static_config.body_config.cross_sectional_area)
+        mass = self.static_config.body_config.mass
 
         dynamic_pressure = self.get_dynamic_pressure()
         drag_force = drag_coefficient * dynamic_pressure * cross_sectional_area
@@ -122,8 +122,7 @@ class Missile(Agent, ABC):
         lift_acceleration = np.dot(acceleration_input, normalized_yaw)
 
         # Calculate the drag acceleration from the lift acceleration.
-        lift_drag_ratio = (
-            self.physical_config.lift_drag_config.lift_drag_ratio)
+        lift_drag_ratio = self.static_config.lift_drag_config.lift_drag_ratio
         lift_induced_drag_acceleration = (np.abs(lift_acceleration /
                                                  lift_drag_ratio))
         return lift_induced_drag_acceleration
@@ -136,10 +135,9 @@ class Missile(Agent, ABC):
             The maximum acceleration in m/s^2.
         """
         max_reference_acceleration = (
-            self.physical_config.acceleration_config.max_reference_acceleration
-            * constants.STANDARD_GRAVITY)
-        reference_speed = (
-            self.physical_config.acceleration_config.reference_speed)
+            self.static_config.acceleration_config.max_reference_acceleration *
+            constants.STANDARD_GRAVITY)
+        reference_speed = self.static_config.acceleration_config.reference_speed
         # The maximum acceleration scales with the squared speed.
         max_acceleration = ((self.get_speed() / reference_speed)**2 *
                             max_reference_acceleration)

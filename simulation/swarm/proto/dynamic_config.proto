@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package swarm;
+
+import "simulation/swarm/proto/sensor.proto";
+
+// Launch configuration.
+message LaunchConfig {
+  // Launch time in s.
+  float launch_time = 1;
+}
+
+// Dynamic configuration.
+message DynamicConfig {
+  // Sensor configuration.
+  SensorConfig sensor_config = 1;
+
+  // Launch configuration.
+  LaunchConfig launch_config = 2;
+}

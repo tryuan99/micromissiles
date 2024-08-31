@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package swarm;
 
-import "simulation/swarm/proto/physical_config.proto";
+import "simulation/swarm/proto/dynamic_config.proto";
 import "simulation/swarm/proto/state.proto";
 import "simulation/swarm/proto/plotting_config.proto";
 
@@ -23,8 +23,8 @@ message TargetConfig {
   // Initial state standard deviation to randomize the state variables.
   State standard_deviation = 3;
 
-  // Physical configuration.
-  PhysicalConfig physical_config = 4;
+  // Dynamic configuration.
+  DynamicConfig dynamic_config = 4;
 
   // Plotting configuration.
   PlottingConfig plotting_config = 5;

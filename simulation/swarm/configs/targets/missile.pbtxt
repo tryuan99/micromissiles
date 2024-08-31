@@ -1,0 +1,3 @@
+hit_config {
+  kill_probability: 0.6
+}

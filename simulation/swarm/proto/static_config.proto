@@ -2,15 +2,22 @@ syntax = "proto3";
 
 package swarm;
 
-import "simulation/swarm/proto/sensor.proto";
-
 // Acceleration configuration.
 message AccelerationConfig {
-  // Maximum reference acceleration in m/s^2.
+  // Maximum reference acceleration in g.
   float max_reference_acceleration = 1;
 
   // Reference speed in m/s.
   float reference_speed = 2;
+}
+
+// Boost configuration.
+message BoostConfig {
+  // Boost time in s.
+  float boost_time = 1;
+
+  // Boost acceleration in g.
+  float boost_acceleration = 2;
 }
 
 // Lift and drag configuration.
@@ -49,19 +56,19 @@ message HitConfig {
   float kill_probability = 2;
 }
 
-// Physical configuration.
-message PhysicalConfig {
+// Static configuration.
+message StaticConfig {
   // Acceleration configuration.
   AccelerationConfig acceleration_config = 1;
 
+  // Boost configuration.
+  BoostConfig boost_config = 2;
+
   // Lift and drag configuration.
-  LiftDragConfig lift_drag_config = 2;
+  LiftDragConfig lift_drag_config = 3;
 
   // Body configuration.
-  BodyConfig body_config = 3;
-
-  // Sensor configuration.
-  SensorConfig sensor_config = 4;
+  BodyConfig body_config = 4;
 
   // Hit configuration.
   HitConfig hit_config = 5;

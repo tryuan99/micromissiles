@@ -28,8 +28,8 @@ class SwarmSimulator(Simulator):
                         missile_swarm_config.missile_config.initial_state,
                         missile_swarm_config.missile_config.standard_deviation,
                     ))
-                missile_config.physical_config.CopyFrom(
-                    missile_swarm_config.missile_config.physical_config)
+                missile_config.dynamic_config.CopyFrom(
+                    missile_swarm_config.missile_config.dynamic_config)
                 missile_config.plotting_config.CopyFrom(
                     missile_swarm_config.missile_config.plotting_config)
 
@@ -42,8 +42,8 @@ class SwarmSimulator(Simulator):
                         target_swarm_config.target_config.initial_state,
                         target_swarm_config.target_config.standard_deviation,
                     ))
-                target_config.physical_config.CopyFrom(
-                    target_swarm_config.target_config.physical_config)
+                target_config.dynamic_config.CopyFrom(
+                    target_swarm_config.target_config.dynamic_config)
                 target_config.plotting_config.CopyFrom(
                     target_swarm_config.target_config.plotting_config)
         super().__init__(simulator_config)

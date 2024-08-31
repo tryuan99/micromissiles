@@ -1,0 +1,22 @@
+acceleration_config {
+  max_reference_acceleration: 300
+  reference_speed: 1000
+}
+boost_config {
+  boost_time: 0.3
+  boost_acceleration: 350
+}
+lift_drag_config {
+  lift_coefficient: 0.2
+  drag_coefficient: 0.7
+  lift_drag_ratio: 5
+}
+body_config {
+  mass: 0.37
+  cross_sectional_area: 3e-4
+  fin_area: 6e-4
+  body_area: 1e-2
+}
+hit_config {
+  hit_radius: 1
+}

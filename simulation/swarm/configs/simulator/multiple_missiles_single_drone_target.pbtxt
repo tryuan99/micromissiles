@@ -1,0 +1,137 @@
+step_time: 0.001
+missile_configs {
+  type: MICROMISSILE
+  initial_state {
+    position {
+      x: 0
+      y: 0
+      z: 100
+    }
+    velocity {
+      x: 1
+      y: 0
+      z: 1000
+    }
+  }
+  dynamic_config {
+    sensor_config {
+      type: IDEAL
+      frequency: 100
+    }
+    launch_config {
+      launch_time: 0
+    }
+  }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
+}
+missile_configs {
+  type: MICROMISSILE
+  initial_state {
+    position {
+      x: 0
+      y: 0
+      z: 120
+    }
+    velocity {
+      x: 1
+      y: 0
+      z: 1000
+    }
+  }
+  dynamic_config {
+    sensor_config {
+      type: IDEAL
+      frequency: 100
+    }
+    launch_config {
+      launch_time: 0
+    }
+  }
+  plotting_config {
+    color: BLUE
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
+}
+missile_configs {
+  type: MICROMISSILE
+  initial_state {
+    position {
+      x: 0
+      y: 10
+      z: 100
+    }
+    velocity {
+      x: 1
+      y: 0
+      z: 1000
+    }
+  }
+  dynamic_config {
+    sensor_config {
+      type: IDEAL
+      frequency: 100
+    }
+    launch_config {
+      launch_time: 5
+    }
+  }
+  plotting_config {
+    color: GREEN
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
+}
+missile_configs {
+  type: MICROMISSILE
+  initial_state {
+    position {
+      x: 0
+      y: 10
+      z: 120
+    }
+    velocity {
+      x: 1
+      y: 0
+      z: 1000
+    }
+  }
+  dynamic_config {
+    sensor_config {
+      type: IDEAL
+      frequency: 100
+    }
+    launch_config {
+      launch_time: 5
+    }
+  }
+  plotting_config {
+    color: GREEN
+    linestyle: SOLID
+    marker: TRIANGLE_UP
+  }
+}
+target_configs {
+  type: DRONE
+  initial_state {
+    position {
+      x: 10000
+      y: 0
+      z: 150
+    }
+    velocity {
+      x: -40
+      y: -20
+      z: 0
+    }
+  }
+  plotting_config {
+    color: RED
+    linestyle: SOLID
+    marker: SQUARE
+  }
+}

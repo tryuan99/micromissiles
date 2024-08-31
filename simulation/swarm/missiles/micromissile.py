@@ -1,10 +1,12 @@
 """The micromissile class represents the dynamics of a single micromissile."""
 
+import google.protobuf
 import numpy as np
 
 from simulation.swarm.missiles.missile_interface import Missile
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.sensor_pb2 import SensorOutput
+from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
 
 class Micromissile(Missile):
@@ -15,6 +17,16 @@ class Micromissile(Missile):
 
     def __init__(self, missile_config: MissileConfig) -> None:
         super().__init__(missile_config)
+
+    @property
+    def static_config(self) -> StaticConfig:
+        """Returns the static configuration of the micromissile."""
+        static_config_file_path = (
+            "simulation/swarm/configs/missiles/micromissile.pbtxt")
+        with open(static_config_file_path, "r") as static_config_file:
+            static_config = google.protobuf.text_format.Parse(
+                static_config_file.read(), StaticConfig())
+        return static_config
 
     def update(self, t: float) -> None:
         """Updates the agent's state according to the environment.
@@ -34,7 +46,7 @@ class Micromissile(Missile):
         self.target_model.step(self.target_model.update_time, model_step_time)
 
         # Correct the state of the target model at the sensor frequency.
-        sensor_update_period = 1 / self.physical_config.sensor_config.frequency
+        sensor_update_period = 1 / self.dynamic_config.sensor_config.frequency
         if t - self.sensor_update_time >= sensor_update_period:
             # TODO(titan): Use some guidance filter to estimate the state from
             # the sensor output.
@@ -48,7 +60,7 @@ class Micromissile(Missile):
         if self.has_hit_target():
             # Consider the kill probability of the target.
             kill_probability = (
-                self.target.physical_config.hit_config.kill_probability)
+                self.target.static_config.hit_config.kill_probability)
             if np.random.binomial(1, kill_probability) > 0:
                 self.hit = True
                 self.target.hit = True

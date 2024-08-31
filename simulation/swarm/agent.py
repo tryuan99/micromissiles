@@ -6,10 +6,11 @@ import numpy as np
 import scipy.integrate
 
 from simulation.swarm import constants
+from simulation.swarm.proto.dynamic_config_pb2 import DynamicConfig
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
-from simulation.swarm.proto.physical_config_pb2 import PhysicalConfig
 from simulation.swarm.proto.plotting_config_pb2 import PlottingConfig
 from simulation.swarm.proto.state_pb2 import State
+from simulation.swarm.proto.static_config_pb2 import StaticConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 
@@ -18,7 +19,8 @@ class Agent(ABC):
 
     Attributes:
         state: The current state.
-        physical_config: The physical configuration of the agent.
+        static_config: The static configuration of the agent.
+        dynamic_config: The dynamic configuration of the agent.
         plotting_config: The plotting configuration of the agent.
         history: A list of 2-tuples consisting of a timestamp and the state.
         hit: A boolean indicating whether the agent has hit or been hit.
@@ -30,7 +32,7 @@ class Agent(ABC):
         config: MissileConfig | TargetConfig = None,
         *,
         initial_state: State = None,
-        physical_config: PhysicalConfig = None,
+        dynamic_config: DynamicConfig = None,
         plotting_config: PlottingConfig = None,
     ) -> None:
         # Set the initial state.
@@ -40,12 +42,12 @@ class Agent(ABC):
         else:
             self.state.CopyFrom(config.initial_state)
 
-        # Set the physical configuration.
-        self.physical_config = PhysicalConfig()
-        if physical_config is not None:
-            self.physical_config.CopyFrom(physical_config)
+        # Set the dynamic configuration.
+        self.dynamic_config = DynamicConfig()
+        if dynamic_config is not None:
+            self.dynamic_config.CopyFrom(dynamic_config)
         elif config is not None:
-            self.physical_config.CopyFrom(config.physical_config)
+            self.dynamic_config.CopyFrom(config.dynamic_config)
 
         # Set the plotting configuration.
         self.plotting_config = PlottingConfig()
@@ -58,6 +60,11 @@ class Agent(ABC):
         self.history = [(0, State())]
         self.history[-1][1].CopyFrom(self.state)
         self.update_time = 0
+
+    @property
+    @abstractmethod
+    def static_config(self) -> StaticConfig:
+        """Returns the static configuration of the agent."""
 
     def get_principal_axes(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the principal axes of the agent.
@@ -237,7 +244,7 @@ class Agent(ABC):
 class ModelAgent(Agent):
     """Model agent.
 
-    A model agent models an agent without any physical configuration.
+    A model agent models an agent without any configuration.
     """
 
     def __init__(
@@ -245,6 +252,11 @@ class ModelAgent(Agent):
         initial_state: State,
     ) -> None:
         super().__init__(initial_state=initial_state)
+
+    @property
+    def static_config(self) -> StaticConfig:
+        """Returns the static configuration of the agent."""
+        return StaticConfig()
 
     def update(self, t: float) -> None:
         """Updates the agent's state according to the environment.

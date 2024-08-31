@@ -27,28 +27,13 @@ missile_swarm_configs {
         z: 0
       }
     }
-    physical_config {
-      acceleration_config {
-        max_reference_acceleration: 300
-        reference_speed: 1000
-      }
-      lift_drag_config {
-        lift_coefficient: 0.2
-        drag_coefficient: 0.7
-        lift_drag_ratio: 5
-      }
-      body_config {
-        mass: 0.37
-        cross_sectional_area: 3e-4
-        fin_area: 6e-4
-        body_area: 1e-2
-      }
+    dynamic_config {
       sensor_config {
         type: IDEAL
         frequency: 100
       }
-      hit_config {
-        hit_radius: 1
+      launch_config {
+        launch_time: 0
       }
     }
     plotting_config {
@@ -84,11 +69,6 @@ target_swarm_configs {
         x: 20
         y: 50
         z: 0
-      }
-    }
-    physical_config {
-      hit_config {
-        kill_probability: 0.9
       }
     }
     plotting_config {

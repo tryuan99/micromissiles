@@ -7,10 +7,11 @@ py_library(
     srcs = ["agent.py"],
     deps = [
         ":constants",
+        "//simulation/swarm/proto:dynamic_config_py_proto",
         "//simulation/swarm/proto:missile_config_py_proto",
-        "//simulation/swarm/proto:physical_config_py_proto",
         "//simulation/swarm/proto:plotting_config_py_proto",
         "//simulation/swarm/proto:state_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
         "//simulation/swarm/proto:target_config_py_proto",
         requirement("numpy"),
         requirement("scipy"),
@@ -66,7 +67,7 @@ py_library(
 py_binary(
     name = "simulator_main",
     srcs = ["simulator_main.py"],
-    data = ["//simulation/swarm/configs:simulator_configs"],
+    data = ["//simulation/swarm/configs/simulator:configs"],
     deps = [
         ":simulator",
         "//simulation/swarm/proto:simulator_config_py_proto",
@@ -90,7 +91,7 @@ py_library(
 py_binary(
     name = "swarm_simulator_main",
     srcs = ["swarm_simulator_main.py"],
-    data = ["//simulation/swarm/configs:swarm_configs"],
+    data = ["//simulation/swarm/configs/swarm:configs"],
     deps = [
         ":swarm_simulator",
         "//simulation/swarm/proto:swarm_config_py_proto",

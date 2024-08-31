@@ -7,20 +7,20 @@ from simulation.swarm.swarm_simulator import SwarmSimulator
 FLAGS = flags.FLAGS
 
 
-def simulate_missile_swarm_and_targets(swarm_config: str, output: str,
+def simulate_missile_swarm_and_targets(swarm_config_file_path: str, output: str,
                                        animate: bool, animation: str,
                                        t_end: float) -> None:
     """Simulates the swarm of missiles and the targets.
 
     Args:
-        swarm_config: Swarm configuration.
+        swarm_config_file_path: Swarm configuration file path.
         output: Output file.
         animate: If true, animate the trajectories.
         animation: Animation file.
         t_end: Simulation end time in seconds.
     """
     # Parse the swarm configuration.
-    with open(swarm_config, "r") as swarm_config_file:
+    with open(swarm_config_file_path, "r") as swarm_config_file:
         swarm_config = google.protobuf.text_format.Parse(
             swarm_config_file.read(), SwarmConfig())
 

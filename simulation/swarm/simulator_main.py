@@ -7,20 +7,20 @@ from simulation.swarm.simulator import Simulator
 FLAGS = flags.FLAGS
 
 
-def simulate_missiles_and_targets(simulator_config: str, output: str,
+def simulate_missiles_and_targets(simulator_config_file_path: str, output: str,
                                   animate: bool, animation: str,
                                   t_end: float) -> None:
     """Simulates the missiles and the targets.
 
     Args:
-        simulator_config: Simulator configuration.
+        simulator_config_file_path: Simulator configuration file path.
         output: Output file.
         animate: If true, animate the trajectories.
         animation: Animation file.
         t_end: Simulation end time in seconds.
     """
     # Parse the simulator configuration.
-    with open(simulator_config, "r") as simulator_config_file:
+    with open(simulator_config_file_path, "r") as simulator_config_file:
         simulator_config = google.protobuf.text_format.Parse(
             simulator_config_file.read(), SimulatorConfig())
 
