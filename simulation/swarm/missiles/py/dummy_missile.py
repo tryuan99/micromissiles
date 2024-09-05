@@ -1,8 +1,9 @@
 """The dummy missile class represents the dynamics of a single dummy missile."""
 
-from simulation.swarm.missiles.missile_interface import Missile
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
+
+from simulation.swarm.missiles.py.missile_interface import Missile
 
 
 class DummyMissile(Missile):

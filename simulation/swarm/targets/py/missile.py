@@ -1,14 +1,14 @@
-"""The drone class represents the dynamics of a single drone."""
+"""The missile class represents the dynamics of a single missile."""
 
 import google.protobuf
-
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
-from simulation.swarm.targets.target_interface import Target
+
+from simulation.swarm.targets.py.target_interface import Target
 
 
-class Drone(Target):
-    """Drone dynamics."""
+class Missile(Target):
+    """Missile dynamics."""
 
     def __init__(
         self,
@@ -20,9 +20,8 @@ class Drone(Target):
 
     @property
     def static_config(self) -> StaticConfig:
-        """Returns the static configuration of the drone."""
-        static_config_file_path = (
-            "simulation/swarm/configs/targets/drone.pbtxt")
+        """Returns the static configuration of the missile."""
+        static_config_file_path = "simulation/swarm/configs/targets/missile.pbtxt"
         with open(static_config_file_path, "r") as static_config_file:
             static_config = google.protobuf.text_format.Parse(
                 static_config_file.read(), StaticConfig())

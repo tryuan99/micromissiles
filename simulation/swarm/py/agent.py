@@ -7,14 +7,14 @@ from typing import Self
 
 import numpy as np
 import scipy.integrate
-
-from simulation.swarm import constants
 from simulation.swarm.proto.dynamic_config_pb2 import DynamicConfig
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.plotting_config_pb2 import PlottingConfig
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
+
+from simulation.swarm.py import constants
 
 
 class AgentFlightPhase(Enum):

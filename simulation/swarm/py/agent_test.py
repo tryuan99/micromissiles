@@ -1,8 +1,8 @@
 import numpy as np
 from absl.testing import absltest
-
-from simulation.swarm.agent import ModelAgent
 from simulation.swarm.proto.state_pb2 import State
+
+from simulation.swarm.py.agent import ModelAgent
 
 
 class StaticAgentTestCase(absltest.TestCase):

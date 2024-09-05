@@ -5,8 +5,8 @@ from collections import namedtuple
 
 import numpy as np
 
-from simulation.swarm.missiles.missile_interface import Missile
-from simulation.swarm.targets.target_interface import Target
+from simulation.swarm.missiles.py.missile_interface import Missile
+from simulation.swarm.targets.py.target_interface import Target
 
 
 class TargetAssignment(ABC):

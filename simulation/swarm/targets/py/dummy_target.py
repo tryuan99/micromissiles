@@ -2,7 +2,8 @@
 
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
-from simulation.swarm.targets.target_interface import Target
+
+from simulation.swarm.targets.py.target_interface import Target
 
 
 class DummyTarget(Target):

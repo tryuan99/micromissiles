@@ -2,8 +2,9 @@
 
 from abc import ABC, abstractmethod
 
-from simulation.swarm.agent import Agent
 from simulation.swarm.proto.sensor_pb2 import SensorOutput
+
+from simulation.swarm.py.agent import Agent
 
 
 class Sensor(ABC):

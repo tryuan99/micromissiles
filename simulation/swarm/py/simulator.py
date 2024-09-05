@@ -2,12 +2,12 @@
 
 import numpy as np
 from absl import logging
-
-from simulation.swarm.missiles.missile import MISSILE_TYPE_ENUM_TO_CLASS
-from simulation.swarm.plotter import Plotter
 from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
-from simulation.swarm.targets.target import TARGET_TYPE_ENUM_TO_CLASS
-from simulation.swarm.targets.target_assignment import \
+
+from simulation.swarm.missiles.py.missile import MISSILE_TYPE_ENUM_TO_CLASS
+from simulation.swarm.py.plotter import Plotter
+from simulation.swarm.targets.py.target import TARGET_TYPE_ENUM_TO_CLASS
+from simulation.swarm.targets.py.target_assignment import \
     DistanceBasedTargetAssignment
 
 

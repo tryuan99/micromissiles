@@ -2,13 +2,13 @@
 
 import google.protobuf
 import numpy as np
-
-from simulation.swarm import constants
-from simulation.swarm.missiles.micromissile import Micromissile
-from simulation.swarm.missiles.missile_interface import Missile
 from simulation.swarm.proto.missile_config_pb2 import (MissileConfig,
                                                        MissileType)
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
+
+from simulation.swarm.missiles.py.micromissile import Micromissile
+from simulation.swarm.missiles.py.missile_interface import Missile
+from simulation.swarm.py import constants
 
 # Hydra-70 submunitions type enumeration to the missile class.
 HYDRA_70_SUBMUNITIONS_TYPE_ENUM_TO_CLASS = {

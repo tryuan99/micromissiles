@@ -1,9 +1,9 @@
 import numpy as np
 from absl.testing import absltest
-
-from simulation.swarm.agent import ModelAgent
 from simulation.swarm.proto.state_pb2 import State
-from simulation.swarm.sensors.ideal_sensor import IdealSensor
+
+from simulation.swarm.py.agent import ModelAgent
+from simulation.swarm.sensors.py.ideal_sensor import IdealSensor
 
 
 class IdealSensorTargetAtBoresightTestCase(absltest.TestCase):

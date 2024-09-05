@@ -1,8 +1,8 @@
 import google.protobuf
 from absl import app, flags
-
 from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
-from simulation.swarm.simulator import Simulator
+
+from simulation.swarm.py.simulator import Simulator
 
 FLAGS = flags.FLAGS
 

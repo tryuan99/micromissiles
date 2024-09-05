@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
 from matplotlib import animation, artist
-
-from simulation.swarm.agent import Agent
 from simulation.swarm.proto.plotting_config_pb2 import Color, LineStyle, Marker
+
+from simulation.swarm.py.agent import Agent
 
 # Animation interval in fps.
 PLOTTER_ANIMATION_FPS = 50

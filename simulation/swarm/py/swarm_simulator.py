@@ -4,11 +4,11 @@ velocities.
 """
 
 import numpy as np
-
 from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.proto.swarm_config_pb2 import SwarmConfig
-from simulation.swarm.simulator import Simulator
+
+from simulation.swarm.py.simulator import Simulator
 
 
 class SwarmSimulator(Simulator):

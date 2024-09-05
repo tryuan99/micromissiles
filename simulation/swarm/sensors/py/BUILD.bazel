@@ -1,0 +1,44 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "ideal_sensor",
+    srcs = ["ideal_sensor.py"],
+    deps = [
+        ":sensor_interface",
+        "//simulation/swarm/proto:sensor_py_proto",
+        "//simulation/swarm/py:agent",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "ideal_sensor_test",
+    srcs = ["ideal_sensor_test.py"],
+    deps = [
+        ":ideal_sensor",
+        "//simulation/swarm/proto:state_py_proto",
+        "//simulation/swarm/py:agent",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "sensor",
+    srcs = ["sensor.py"],
+    deps = [
+        ":ideal_sensor",
+        "//simulation/swarm/proto:sensor_py_proto",
+    ],
+)
+
+py_library(
+    name = "sensor_interface",
+    srcs = ["sensor_interface.py"],
+    deps = [
+        "//simulation/swarm/proto:sensor_py_proto",
+        "//simulation/swarm/py:agent",
+    ],
+)
