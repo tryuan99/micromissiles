@@ -12,7 +12,8 @@ from utils import constants
 
 FLAGS = flags.FLAGS
 
-# Single-reflection path distances in meters.
+# Distances in meters from the direct line-of-sight path to the single-
+# reflection path.
 DISTANCES = np.arange(0.01, 11, 0.01)
 
 # Radar cross sections in dBsm.
