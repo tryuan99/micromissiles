@@ -7,6 +7,7 @@ from typing import Self
 
 import numpy as np
 import scipy.integrate
+from simulation.swarm.proto.agent_pb2 import FlightPhase
 from simulation.swarm.proto.dynamic_config_pb2 import DynamicConfig
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.plotting_config_pb2 import PlottingConfig
@@ -15,16 +16,6 @@ from simulation.swarm.proto.static_config_pb2 import StaticConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 from simulation.swarm.py import constants
-
-
-class AgentFlightPhase(Enum):
-    """Agent flight phase enumeration."""
-    INITIALIZED = auto()
-    READY = auto()
-    BOOST = auto()
-    MIDCOURSE = auto()
-    TERMINAL = auto()
-    TERMINATED = auto()
 
 
 class Agent(ABC):
@@ -70,8 +61,8 @@ class Agent(ABC):
         self.state_update_time = 0
         # In the initialized flight phase, the agent idles, but in the ready
         # flight phase, the agent is subject to physical forces.
-        self.flight_phase = (AgentFlightPhase.READY
-                             if ready else AgentFlightPhase.INITIALIZED)
+        self.flight_phase = (FlightPhase.READY
+                             if ready else FlightPhase.INITIALIZED)
 
         # Set the dynamic configuration.
         self.dynamic_config = DynamicConfig()
@@ -109,19 +100,19 @@ class Agent(ABC):
 
     def has_launched(self) -> bool:
         """Returns whether the agent has launched."""
-        return (self.flight_phase != AgentFlightPhase.INITIALIZED and
-                self.flight_phase != AgentFlightPhase.READY)
+        return (self.flight_phase != FlightPhase.INITIALIZED and
+                self.flight_phase != FlightPhase.READY)
 
     def has_terminated(self) -> bool:
         """Returns whether the agent's flight has terminated."""
-        return self.flight_phase == AgentFlightPhase.TERMINATED
+        return self.flight_phase == FlightPhase.TERMINATED
 
     def mark_as_hit(self) -> None:
         """Sets the agent to have hit the target or have been hit."""
         self.hit = True
         # Update the latest hit boolean in the history of states.
         self.history[-1] = self.history[-1]._replace(hit=True)
-        self.flight_phase = AgentFlightPhase.TERMINATED
+        self.flight_phase = FlightPhase.TERMINATED
 
     def set_state(self, state: State) -> None:
         """Sets the state of the agent."""
@@ -214,21 +205,21 @@ class Agent(ABC):
 
         # Determine the flight phase.
         if t >= self.t_creation + launch_time:
-            self.flight_phase = AgentFlightPhase.BOOST
+            self.flight_phase = FlightPhase.BOOST
         if t >= self.t_creation + launch_time + boost_time:
-            self.flight_phase = AgentFlightPhase.MIDCOURSE
+            self.flight_phase = FlightPhase.MIDCOURSE
         # TODO(titan): Determine when to enter the terminal phase.
 
         match self.flight_phase:
-            case AgentFlightPhase.INITIALIZED:
+            case FlightPhase.INITIALIZED:
                 return
-            case AgentFlightPhase.READY:
+            case FlightPhase.READY:
                 self._update_ready(t)
-            case AgentFlightPhase.BOOST:
+            case FlightPhase.BOOST:
                 self._update_boost(t)
-            case AgentFlightPhase.MIDCOURSE | AgentFlightPhase.TERMINAL:
+            case FlightPhase.MIDCOURSE | FlightPhase.TERMINAL:
                 self._update(t)
-            case AgentFlightPhase.TERMINATED:
+            case FlightPhase.TERMINATED:
                 return
             case _:
                 raise ValueError(f"Invalid flight phase: {self.flight_phase}.")

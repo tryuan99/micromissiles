@@ -7,6 +7,7 @@ py_library(
     srcs = ["agent.py"],
     deps = [
         ":constants",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:dynamic_config_py_proto",
         "//simulation/swarm/proto:missile_config_py_proto",
         "//simulation/swarm/proto:plotting_config_py_proto",

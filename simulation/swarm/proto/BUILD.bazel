@@ -4,6 +4,21 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 package(default_visibility = ["//visibility:public"])
 
 proto_library(
+    name = "agent_proto",
+    srcs = ["agent.proto"],
+)
+
+cc_proto_library(
+    name = "agent_cc_proto",
+    deps = [":agent_proto"],
+)
+
+py_proto_library(
+    name = "agent_py_proto",
+    deps = [":agent_proto"],
+)
+
+proto_library(
     name = "coordinates_proto",
     srcs = ["coordinates.proto"],
 )
