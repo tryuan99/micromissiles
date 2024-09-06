@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from enum import Enum, auto
 from typing import Self
 
 import numpy as np
@@ -350,21 +349,3 @@ class Agent(ABC):
         """
         # By default, idle in the midcourse and terminal flight phase.
         return
-
-
-class ModelAgent(Agent):
-    """Model agent.
-
-    A model agent models an agent without any configuration.
-    """
-
-    def __init__(
-        self,
-        initial_state: State,
-    ) -> None:
-        super().__init__(initial_state=initial_state)
-
-    @property
-    def static_config(self) -> StaticConfig:
-        """Returns the static configuration of the agent."""
-        return StaticConfig()

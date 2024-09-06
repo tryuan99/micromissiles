@@ -19,7 +19,7 @@ py_test(
     deps = [
         ":ideal_sensor",
         "//simulation/swarm/proto:state_py_proto",
-        "//simulation/swarm/py:agent",
+        "//simulation/swarm/py:model_agent",
         requirement("absl-py"),
         requirement("numpy"),
     ],

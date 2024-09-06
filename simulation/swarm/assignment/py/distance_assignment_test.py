@@ -2,8 +2,9 @@ from absl.testing import absltest
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
+from simulation.swarm.assignment.py.distance_assignment import \
+    DistanceAssignment
 from simulation.swarm.missiles.py.dummy_missile import DummyMissile
-from simulation.swarm.targets.py.distance_assignment import DistanceAssignment
 from simulation.swarm.targets.py.dummy_target import DummyTarget
 
 

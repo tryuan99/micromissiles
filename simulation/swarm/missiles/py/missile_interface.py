@@ -6,7 +6,8 @@ import numpy as np
 from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 
 from simulation.swarm.py import constants
-from simulation.swarm.py.agent import Agent, ModelAgent
+from simulation.swarm.py.agent import Agent
+from simulation.swarm.py.model_agent import ModelAgent
 from simulation.swarm.sensors.py.sensor import SENSOR_TYPE_ENUM_TO_CLASS
 from simulation.swarm.targets.py.target_interface import Target
 

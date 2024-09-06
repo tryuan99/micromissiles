@@ -58,6 +58,7 @@ py_library(
         "//simulation/swarm/proto:missile_config_py_proto",
         "//simulation/swarm/py:agent",
         "//simulation/swarm/py:constants",
+        "//simulation/swarm/py:model_agent",
         "//simulation/swarm/sensors/py:sensor",
         "//simulation/swarm/targets/py:target_interface",
         requirement("numpy"),
