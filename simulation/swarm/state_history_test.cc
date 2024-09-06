@@ -4,7 +4,7 @@
 
 #include <cstdbool>
 
-namespace swarm {
+namespace swarm::state {
 namespace {
 
 class StateHistoryTest : public testing::Test {
@@ -71,4 +71,4 @@ TEST_F(StateHistoryTest, Iterator) {
 }
 
 }  // namespace
-}  // namespace swarm
+}  // namespace swarm::state

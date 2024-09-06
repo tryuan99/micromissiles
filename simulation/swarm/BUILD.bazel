@@ -1,6 +1,22 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "constants",
+    srcs = ["constants.cc"],
+    hdrs = ["constants.h"],
+)
+
+cc_test(
+    name = "constants_test",
+    srcs = ["constants_test.cc"],
+    deps = [
+        ":constants",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "state_history",
     srcs = ["state_history.cc"],
     hdrs = ["state_history.h"],

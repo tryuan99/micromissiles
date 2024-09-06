@@ -5,7 +5,7 @@
 
 #include "simulation/swarm/proto/state.pb.h"
 
-namespace swarm {
+namespace swarm::state {
 
 class StateHistory {
  public:
@@ -54,4 +54,4 @@ class StateHistory {
   std::list<Record> records_;
 };
 
-}  // namespace swarm
+}  // namespace swarm::state
