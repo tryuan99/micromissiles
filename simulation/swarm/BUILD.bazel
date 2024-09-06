@@ -1,0 +1,18 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "state_history",
+    srcs = ["state_history.cc"],
+    hdrs = ["state_history.h"],
+    deps = ["//simulation/swarm/proto:state_cc_proto"],
+)
+
+cc_test(
+    name = "state_history_test",
+    srcs = ["state_history_test.cc"],
+    deps = [
+        ":state_history",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

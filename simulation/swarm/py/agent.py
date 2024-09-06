@@ -24,7 +24,7 @@ class Agent(ABC):
     Attributes:
         t_creation: The agent's creation time in s.
         state: The current state.
-        state_update_time: The time of the last state update.
+        state_update_time: The time of the last state update in s.
         flight_phase: The flight phase of the agent.
         static_config: The static configuration of the agent.
         dynamic_config: The dynamic configuration of the agent.
