@@ -26,18 +26,18 @@ int main(int argc, char** argv) {
   //  x2_dot = -g/l * sin(x1)
 
   // Define the initial conditions.
-  Eigen::Vector2f x{1, 0};
+  Eigen::Vector2d x{1, 0};
 
   // Define the state-space equations.
-  const auto pendulum = [&](const Eigen::Vector2f& x, Eigen::Vector2f& x_dot,
+  const auto pendulum = [&](const Eigen::Vector2d& x, Eigen::Vector2d& x_dot,
                             const double t) {
     x_dot(0) = x(1);
     x_dot(1) = -kGravity / kPendulumLength * std::sin(x(0));
   };
 
   // Define the observer function for each time step.
-  const auto observer = [&](const Eigen::Vector2f& x, const double t) {
-    LOG(INFO) << "Time: " << t << ": " << x;
+  const auto observer = [&](const Eigen::Vector2d& x, const double t) {
+    LOG(INFO) << "Time = " << t << ": " << x;
   };
 
   // Integrate the state-space equations.

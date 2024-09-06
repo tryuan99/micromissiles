@@ -30,9 +30,11 @@ class StateHistory {
   std::list<Record>::size_type size() const { return records_.size(); }
 
   // Return the earliest history record.
+  Record& front() { return records_.front(); }
   const Record& front() const { return records_.front(); }
 
   // Return the latest history record.
+  Record& back() { return records_.back(); }
   const Record& back() const { return records_.back(); }
 
   // Add a new history record.

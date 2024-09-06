@@ -1,6 +1,26 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "agent",
+    srcs = ["agent.cc"],
+    hdrs = ["agent.h"],
+    deps = [
+        ":constants",
+        ":state_history",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:dynamic_config_cc_proto",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "//simulation/swarm/proto:plotting_config_cc_proto",
+        "//simulation/swarm/proto:state_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "//simulation/swarm/proto:target_config_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+        "@boost",
+        "@eigen",
+    ],
+)
+
+cc_library(
     name = "constants",
     srcs = ["constants.cc"],
     hdrs = ["constants.h"],
@@ -11,6 +31,29 @@ cc_test(
     srcs = ["constants_test.cc"],
     deps = [
         ":constants",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "model_agent",
+    hdrs = ["model_agent.h"],
+    deps = [
+        ":agent",
+        "//simulation/swarm/proto:state_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "model_agent_test",
+    srcs = ["model_agent_test.cc"],
+    deps = [
+        ":model_agent",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@eigen",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
