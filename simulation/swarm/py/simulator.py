@@ -4,11 +4,11 @@ import numpy as np
 from absl import logging
 from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
 
+from simulation.swarm.assignment.py.distance_assignment import \
+    DistanceAssignment
 from simulation.swarm.missiles.py.missile import MISSILE_TYPE_ENUM_TO_CLASS
 from simulation.swarm.py.plotter import Plotter
 from simulation.swarm.targets.py.target import TARGET_TYPE_ENUM_TO_CLASS
-from simulation.swarm.targets.py.target_assignment import \
-    DistanceBasedTargetAssignment
 
 
 class Simulator:
@@ -59,8 +59,7 @@ class Simulator:
             self.targets.extend(spawned_targets)
 
             # Assign the targets to the missiles.
-            target_assignment = DistanceBasedTargetAssignment(
-                self.missiles, self.targets)
+            target_assignment = DistanceAssignment(self.missiles, self.targets)
             for (missile_index, target_index
                 ) in target_assignment.missile_to_target_assignments.items():
                 self.missiles[missile_index].assign_target(

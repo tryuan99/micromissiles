@@ -47,29 +47,6 @@ py_library(
 )
 
 py_library(
-    name = "target_assignment",
-    srcs = ["target_assignment.py"],
-    deps = [
-        ":target_interface",
-        "//simulation/swarm/missiles/py:missile_interface",
-        requirement("numpy"),
-    ],
-)
-
-py_test(
-    name = "target_assignment_test",
-    srcs = ["target_assignment_test.py"],
-    deps = [
-        ":dummy_target",
-        ":target_assignment",
-        "//simulation/swarm/missiles/py:dummy_missile",
-        "//simulation/swarm/proto:missile_config_py_proto",
-        "//simulation/swarm/proto:target_config_py_proto",
-        requirement("absl-py"),
-    ],
-)
-
-py_library(
     name = "target_interface",
     srcs = ["target_interface.py"],
     deps = [

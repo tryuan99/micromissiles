@@ -1,0 +1,36 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "assignment_interface",
+    srcs = ["assignment_interface.py"],
+    deps = [
+        "//simulation/swarm/missiles/py:missile_interface",
+        "//simulation/swarm/targets/py:target_interface",
+    ],
+)
+
+py_library(
+    name = "distance_assignment",
+    srcs = ["distance_assignment.py"],
+    deps = [
+        ":assignment_interface",
+        "//simulation/swarm/missiles/py:missile_interface",
+        "//simulation/swarm/targets/py:target_interface",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "distance_assignment_test",
+    srcs = ["distance_assignment_test.py"],
+    deps = [
+        ":distance_assignment",
+        "//simulation/swarm/missiles/py:dummy_missile",
+        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:target_config_py_proto",
+        "//simulation/swarm/targets/py:dummy_target",
+        requirement("absl-py"),
+    ],
+)

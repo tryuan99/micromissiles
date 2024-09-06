@@ -3,12 +3,11 @@ from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 from simulation.swarm.missiles.py.dummy_missile import DummyMissile
+from simulation.swarm.targets.py.distance_assignment import DistanceAssignment
 from simulation.swarm.targets.py.dummy_target import DummyTarget
-from simulation.swarm.targets.py.target_assignment import \
-    DistanceBasedTargetAssignment
 
 
-class DistanceBasedTargetAssignmentTestCase(absltest.TestCase):
+class DistanceAssignmentTestCase(absltest.TestCase):
 
     def setUp(self):
         # Configure the missiles.
@@ -52,8 +51,7 @@ class DistanceBasedTargetAssignmentTestCase(absltest.TestCase):
         targets.append(DummyTarget(target_config))
 
         # Assign targets to missiles.
-        self.target_assignment = (DistanceBasedTargetAssignment(
-            missiles, targets))
+        self.target_assignment = DistanceAssignment(missiles, targets)
 
     def test_assign_targets(self):
         target_assignments = (

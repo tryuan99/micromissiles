@@ -1,39 +1,18 @@
-"""The target assignment class assigns each missile to a target."""
+"""The distance assignment class assigns each missile to the nearest target
+that has not been assigned yet.
+"""
 
-from abc import ABC, abstractmethod
 from collections import namedtuple
 
 import numpy as np
 
+from simulation.swarm.assignment.py.assignment_interface import Assignment
 from simulation.swarm.missiles.py.missile_interface import Missile
 from simulation.swarm.targets.py.target_interface import Target
 
 
-class TargetAssignment(ABC):
-    """Target assignment interface.
-
-    Missiles with a previously assigned target are ignored.
-
-    Attributes:
-        missiles: A list of missiles.
-        targest: A list of targets.
-        missile_to_target_assignment: A map from the missile index to its
-          assigned target index.
-    """
-
-    def __init__(self, missiles: list[Missile], targets: list[Target]) -> None:
-        self.missiles = missiles
-        self.targets = targets
-        self.missile_to_target_assignments: dict[int, int] = {}
-        self._assign_targets()
-
-    @abstractmethod
-    def _assign_targets(self) -> None:
-        """Assigns each missile to a target."""
-
-
-class DistanceBasedTargetAssignment(TargetAssignment):
-    """Target assignment based on distance.
+class DistanceAssignment(Assignment):
+    """Assignment based on distance.
 
     Each missile is assigned to the closest unassigned target. After all
     targets have been assigned, the remaining missiles will double up on
@@ -65,7 +44,7 @@ class DistanceBasedTargetAssignment(TargetAssignment):
                         distance = (np.linalg.norm(target_position -
                                                    missile_position))
                         missile_target_distances.append(
-                            DistanceBasedTargetAssignment.MissileTargetDistance(
+                            DistanceAssignment.MissileTargetDistance(
                                 missile_index=missile_index,
                                 target_index=target_index,
                                 distance=distance,
