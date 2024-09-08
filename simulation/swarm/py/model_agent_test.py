@@ -19,7 +19,7 @@ class StaticAgentTestCase(absltest.TestCase):
         self.agent = ModelAgent(agent_state)
 
     def test_get_principal_axes_roll(self):
-        roll, lateral, yaw = self.agent.get_principal_axes()
+        roll, pitch, yaw = self.agent.get_principal_axes()
 
         # Check that the roll axis is aligned to the velocity vector.
         self.assertAlmostEqual(
@@ -27,24 +27,24 @@ class StaticAgentTestCase(absltest.TestCase):
             np.linalg.norm(roll) * np.linalg.norm(self.agent_velocity))
 
         # Check that the roll axis is orthogonal to the other axes.
-        self.assertAlmostEqual(np.dot(roll, lateral), 0)
+        self.assertAlmostEqual(np.dot(roll, pitch), 0)
         self.assertAlmostEqual(np.dot(roll, yaw), 0)
 
-    def test_get_principal_axes_lateral(self):
-        roll, lateral, yaw = self.agent.get_principal_axes()
+    def test_get_principal_axes_pitch(self):
+        roll, pitch, yaw = self.agent.get_principal_axes()
 
-        # Check the lateral axis direction.
-        expected_lateral_axis = np.array([1, 2, 0])
+        # Check the pitch axis direction.
+        expected_pitch_axis = np.array([1, 2, 0])
         self.assertAlmostEqual(
-            np.dot(lateral, expected_lateral_axis),
-            np.linalg.norm(lateral) * np.linalg.norm(expected_lateral_axis))
+            np.dot(pitch, expected_pitch_axis),
+            np.linalg.norm(pitch) * np.linalg.norm(expected_pitch_axis))
 
-        # Check that the lateral axis is orthogonal to the other axes.
-        self.assertAlmostEqual(np.dot(lateral, roll), 0)
-        self.assertAlmostEqual(np.dot(lateral, yaw), 0)
+        # Check that the pitch axis is orthogonal to the other axes.
+        self.assertAlmostEqual(np.dot(pitch, roll), 0)
+        self.assertAlmostEqual(np.dot(pitch, yaw), 0)
 
     def test_get_principal_axes_yaw(self):
-        roll, lateral, yaw = self.agent.get_principal_axes()
+        roll, pitch, yaw = self.agent.get_principal_axes()
 
         # Check the yaw axis direction.
         expected_yaw_axis = np.array([0, 0, 1])
@@ -54,7 +54,7 @@ class StaticAgentTestCase(absltest.TestCase):
 
         # Check that the yaw axis is orthogonal to the other axes.
         self.assertAlmostEqual(np.dot(yaw, roll), 0)
-        self.assertAlmostEqual(np.dot(yaw, lateral), 0)
+        self.assertAlmostEqual(np.dot(yaw, pitch), 0)
 
 
 if __name__ == "__main__":

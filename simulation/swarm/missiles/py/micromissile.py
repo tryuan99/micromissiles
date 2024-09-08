@@ -43,7 +43,7 @@ class Micromissile(Missile):
         Args:
             t: Time in seconds.
         """
-        normalized_roll, normalized_lateral, normalized_yaw = (
+        normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
         boost_acceleration = (
             self.static_config.boost_config.boost_acceleration *
@@ -126,17 +126,17 @@ class Micromissile(Missile):
         elevation_velocity = sensor_output.velocity.elevation
 
         # Get the normalized principal axes of the missile.
-        normalized_roll, normalized_lateral, normalized_yaw = (
+        normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
 
         # Calculate the components along the three axes.
-        lateral_coefficient = (np.cos(elevation_velocity) *
-                               np.sin(azimuth_velocity))
+        pitch_coefficient = (np.cos(elevation_velocity) *
+                             np.sin(azimuth_velocity))
         yaw_coefficient = np.sin(elevation_velocity)
 
         # Calculate the desired acceleration vector. The missile cannot
         # accelerate along the roll axis.
-        acceleration_input = (lateral_coefficient * normalized_lateral +
+        acceleration_input = (pitch_coefficient * normalized_pitch +
                               yaw_coefficient * normalized_yaw)
 
         # Limit the acceleration vector.

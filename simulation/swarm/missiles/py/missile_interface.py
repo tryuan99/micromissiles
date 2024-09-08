@@ -103,27 +103,26 @@ class Missile(Agent, ABC):
             self.state.acceleration.z,
         ) = acceleration
 
-    def _calculate_gravity_projection_on_lateral_and_yaw(self) -> np.ndarray:
-        """Calculates the gravity projection on the lateral and yaw axes.
+    def _calculate_gravity_projection_on_pitch_and_yaw(self) -> np.ndarray:
+        """Calculates the gravity projection on the pitch and yaw axes.
 
-        The missile can only compensate for gravity along the lateral and yaw
+        The missile can only compensate for gravity along the pitch and yaw
         axes.
 
         Returns:
-            The gravity acceleration in m/s^2 along the lateral and yaw axes.
+            The gravity acceleration in m/s^2 along the pitch and yaw axes.
         """
-        normalized_roll, normalized_lateral, normalized_yaw = (
+        normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
         gravity = self.get_gravity()
 
-        # Project the gravity onto the lateral and yaw axes.
-        gravity_projection_lateral_coefficient = np.dot(gravity,
-                                                        normalized_lateral)
+        # Project the gravity onto the pitch and yaw axes.
+        gravity_projection_pitch_coefficient = np.dot(gravity, normalized_pitch)
         gravity_projection_yaw_coefficient = np.dot(gravity, normalized_yaw)
-        gravity_projection_on_lateral_and_yaw = (
-            gravity_projection_lateral_coefficient * normalized_lateral +
+        gravity_projection_on_pitch_and_yaw = (
+            gravity_projection_pitch_coefficient * normalized_pitch +
             gravity_projection_yaw_coefficient + normalized_yaw)
-        return gravity_projection_on_lateral_and_yaw
+        return gravity_projection_on_pitch_and_yaw
 
     def _calculate_drag(self) -> float:
         """Calculates the air drag.
@@ -153,7 +152,7 @@ class Missile(Agent, ABC):
             The drag acceleration in m/s^2.
         """
         # Project the acceleration input onto the yaw axis.
-        normalized_roll, normalized_lateral, normalized_yaw = (
+        normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
         lift_acceleration = np.dot(acceleration_input, normalized_yaw)
 
@@ -194,10 +193,10 @@ class Missile(Agent, ABC):
         """
         # Determine the gravity and compensate for it.
         gravity = self.get_gravity()
-        gravity_projection_on_lateral_and_yaw = (
-            self._calculate_gravity_projection_on_lateral_and_yaw())
+        gravity_projection_on_pitch_and_yaw = (
+            self._calculate_gravity_projection_on_pitch_and_yaw())
         if compensate_for_gravity:
-            acceleration_input -= gravity_projection_on_lateral_and_yaw
+            acceleration_input -= gravity_projection_on_pitch_and_yaw
 
         # Calculate the air drag.
         air_drag_acceleration = self._calculate_drag()
@@ -205,7 +204,7 @@ class Missile(Agent, ABC):
         lift_induced_drag_acceleration = (
             self._calculate_lift_induced_drag(acceleration_input))
         # Calculate the total drag acceleration.
-        normalized_roll, normalized_lateral, normalized_yaw = (
+        normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
         drag_acceleration = (
             -(air_drag_acceleration + lift_induced_drag_acceleration) *

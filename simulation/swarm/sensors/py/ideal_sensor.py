@@ -54,7 +54,7 @@ class IdealSensor(Sensor):
             The sensor output with the position field populated.
         """
         position_sensor_output = SensorOutput()
-        roll, lateral, yaw = self.agent.get_principal_axes()
+        roll, pitch, yaw = self.agent.get_principal_axes()
         position = self.agent.get_position()
         target_position = target.get_position()
         target_relative_position = target_position - position
@@ -67,9 +67,9 @@ class IdealSensor(Sensor):
         relative_position_projection_on_yaw = (
             np.dot(target_relative_position, yaw) / np.linalg.norm(yaw)**2 *
             yaw)
-        # Project the relative position vector onto the agent's roll-lateral
+        # Project the relative position vector onto the agent's roll-pitch
         # plane.
-        relative_position_projection_on_roll_lateral_plane = (
+        relative_position_projection_on_roll_pitch_plane = (
             target_relative_position - relative_position_projection_on_yaw)
 
         # Determine the sign of the elevation.
@@ -81,28 +81,28 @@ class IdealSensor(Sensor):
         # Calculate the elevation to the target.
         position_sensor_output.position.elevation = (elevation_sign * np.arctan(
             np.linalg.norm(relative_position_projection_on_yaw) /
-            np.linalg.norm(relative_position_projection_on_roll_lateral_plane)))
+            np.linalg.norm(relative_position_projection_on_roll_pitch_plane)))
 
         # Project the projection onto the roll axis.
         relative_position_projection_on_roll = (
-            np.dot(relative_position_projection_on_roll_lateral_plane, roll) /
+            np.dot(relative_position_projection_on_roll_pitch_plane, roll) /
             np.linalg.norm(roll)**2 * roll)
-        # Find the projection onto the lateral axis.
-        relative_position_projection_on_lateral = (
-            relative_position_projection_on_roll_lateral_plane -
+        # Find the projection onto the pitch axis.
+        relative_position_projection_on_pitch = (
+            relative_position_projection_on_roll_pitch_plane -
             relative_position_projection_on_roll)
 
-        if (np.linalg.norm(relative_position_projection_on_lateral) > 0 or
+        if (np.linalg.norm(relative_position_projection_on_pitch) > 0 or
                 np.linalg.norm(relative_position_projection_on_roll) > 0):
             # Determine the sign of the azimuth.
-            if np.dot(relative_position_projection_on_lateral, lateral) >= 0:
+            if np.dot(relative_position_projection_on_pitch, pitch) >= 0:
                 azimuth_sign = 1
             else:
                 azimuth_sign = -1
 
             # Calculate the azimuth to the target.
             position_sensor_output.position.azimuth = (azimuth_sign * np.arctan(
-                np.linalg.norm(relative_position_projection_on_lateral) /
+                np.linalg.norm(relative_position_projection_on_pitch) /
                 np.linalg.norm(relative_position_projection_on_roll)))
         else:
             position_sensor_output.position.azimuth = 0
@@ -122,7 +122,7 @@ class IdealSensor(Sensor):
             The sensor output with the velocity field populated.
         """
         velocity_sensor_output = SensorOutput()
-        roll, lateral, yaw = self.agent.get_principal_axes()
+        roll, pitch, yaw = self.agent.get_principal_axes()
 
         # Calculate the relative position of the target with respect to the
         # agent.
@@ -167,8 +167,8 @@ class IdealSensor(Sensor):
         # The target elevation vector is orthogonal to the relative position
         # vector and points upwards from the target along the azimuth-
         # elevation sphere.
-        target_elevation = np.cross(lateral, target_relative_position)
-        # If the relative position vector is parallel to the yaw or lateral
+        target_elevation = np.cross(pitch, target_relative_position)
+        # If the relative position vector is parallel to the yaw or pitch
         # axis, the target azimuth vector or the target elevation vector will
         # undefined.
         if np.linalg.norm(target_azimuth) == 0:

@@ -124,34 +124,34 @@ class Agent(ABC):
 
         The principal axis directions have not been normalized.
         The roll axis is assumed to be aligned with the agent's velocity vector,
-        and the lateral axis points to the starboard of the agent.
+        and the pitch axis points to the starboard of the agent.
         TODO(titan): The roll axis does not necessarily have to be aligned with
         the agent's velocity vector.
 
         Returns:
-            A 3-tuple consisting of the roll, lateral, and yaw axes.
+            A 3-tuple consisting of the roll, pitch, and yaw axes.
         """
         # The roll axis is assumed to be aligned with the agent's velocity
         # vector.
         roll = self.get_velocity()
-        # The lateral axis is to the agent's starboard.
-        lateral = np.array([roll[1], -roll[0], 0])
-        # The yaw axis points upwards relative to the agent's roll-lateral plane.
-        yaw = np.cross(lateral, roll)
-        return roll, lateral, yaw
+        # The pitch axis is to the agent's starboard.
+        pitch = np.array([roll[1], -roll[0], 0])
+        # The yaw axis points upwards relative to the agent's roll-pitch plane.
+        yaw = np.cross(pitch, roll)
+        return roll, pitch, yaw
 
     def get_normalized_principal_axes(
             self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the normalized_principal axes of the agent.
 
         Returns:
-            A 3-tuple consisting of the normalized roll, lateral, and yaw axes.
+            A 3-tuple consisting of the normalized roll, pitch, and yaw axes.
         """
-        roll, lateral, yaw = self.get_principal_axes()
+        roll, pitch, yaw = self.get_principal_axes()
         normalized_roll = roll / np.linalg.norm(roll)
-        normalized_lateral = lateral / np.linalg.norm(lateral)
+        normalized_pitch = pitch / np.linalg.norm(pitch)
         normalized_yaw = yaw / np.linalg.norm(yaw)
-        return normalized_roll, normalized_lateral, normalized_yaw
+        return normalized_roll, normalized_pitch, normalized_yaw
 
     def get_position(self) -> np.ndarray:
         """Returns the position vector of the agent."""

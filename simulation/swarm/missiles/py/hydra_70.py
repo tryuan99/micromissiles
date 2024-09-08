@@ -89,7 +89,7 @@ class Hydra70(Missile):
         Args:
             t: Time in seconds.
         """
-        normalized_roll, normalized_lateral, normalized_yaw = (
+        normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
         boost_acceleration = (
             self.static_config.boost_config.boost_acceleration *

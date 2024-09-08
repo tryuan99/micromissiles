@@ -1,4 +1,4 @@
-"""The model agent models an agent and has no configuration."""
+"""The model agent models an agent without any configuration."""
 
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
