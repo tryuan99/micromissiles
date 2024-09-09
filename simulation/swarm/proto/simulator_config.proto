@@ -2,8 +2,7 @@ syntax = "proto3";
 
 package swarm;
 
-import "simulation/swarm/proto/missile_config.proto";
-import "simulation/swarm/proto/target_config.proto";
+import "simulation/swarm/proto/agent.proto";
 
 // Simulator configuration.
 message SimulatorConfig {
@@ -11,8 +10,8 @@ message SimulatorConfig {
   float step_time = 1;
 
   // Missile configurations.
-  repeated MissileConfig missile_configs = 2;
+  repeated AgentConfig missile_configs = 2;
 
   // Target configurations.
-  repeated TargetConfig target_configs = 3;
+  repeated AgentConfig target_configs = 3;
 }

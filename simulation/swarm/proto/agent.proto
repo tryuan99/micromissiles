@@ -2,6 +2,22 @@ syntax = "proto3";
 
 package swarm;
 
+import "simulation/swarm/proto/dynamic_config.proto";
+import "simulation/swarm/proto/state.proto";
+import "simulation/swarm/proto/plotting_config.proto";
+
+// Missile type enumeration.
+enum MissileType {
+  MICROMISSILE = 0;
+  HYDRA_70 = 1;
+}
+
+// Target type enumeration.
+enum TargetType {
+  DRONE = 0;
+  MISSILE = 1;
+}
+
 // Flight phase enumeration.
 enum FlightPhase {
   INITIALIZED = 0;
@@ -10,4 +26,51 @@ enum FlightPhase {
   MIDCOURSE = 3;
   TERMINAL = 4;
   TERMINATED = 5;
+}
+
+// Agent configuration.
+message AgentConfig {
+  // Submunitions configuration.
+  message SubmunitionsConfig {
+    // Number of submunitions.
+    uint32 num_submunitions = 1;
+
+    // Launch configuration.
+    LaunchConfig launch_config = 2;
+
+    // Agent configuration.
+    AgentConfig agent_config = 3;
+  }
+
+  // Agent type.
+  oneof type_oneof {
+    // Missile type.
+    MissileType missile_type = 1;
+    // Target type.
+    TargetType target_type = 2;
+  }
+
+  // Initial state.
+  State initial_state = 3;
+
+  // Initial state standard deviation to randomize the state variables.
+  State standard_deviation = 4;
+
+  // Dynamic configuration.
+  DynamicConfig dynamic_config = 5;
+
+  // Plotting configuration.
+  PlottingConfig plotting_config = 6;
+
+  // Submunitions configuration.
+  SubmunitionsConfig submunitions_config = 7;
+}
+
+// Agent swarm configuration.
+message AgentSwarmConfig {
+  // Number of agents.
+  uint32 num_agents = 1;
+
+  // Agent configuration.
+  AgentConfig agent_config = 2;
 }

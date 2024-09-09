@@ -23,13 +23,13 @@ class Simulator:
     def __init__(self, simulator_config: SimulatorConfig) -> None:
         self.t_step = simulator_config.step_time
         self.missiles = [
-            MISSILE_TYPE_ENUM_TO_CLASS[missile_config.type](missile_config,
-                                                            ready=False)
+            MISSILE_TYPE_ENUM_TO_CLASS[missile_config.missile_type](
+                missile_config, ready=False)
             for missile_config in simulator_config.missile_configs
         ]
         self.targets = [
-            TARGET_TYPE_ENUM_TO_CLASS[target_config.type](target_config,
-                                                          ready=False)
+            TARGET_TYPE_ENUM_TO_CLASS[target_config.target_type](target_config,
+                                                                 ready=False)
             for target_config in simulator_config.target_configs
         ]
 

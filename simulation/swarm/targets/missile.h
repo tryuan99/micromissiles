@@ -5,7 +5,7 @@
 #include <string>
 
 #include "absl/strings/str_format.h"
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/targets/target.h"
 #include "simulation/swarm/utils.h"
 
@@ -20,10 +20,10 @@ class Missile : public Target {
 
   Missile() = default;
 
-  explicit Missile(const TargetConfig& config) : Target(config) {
+  explicit Missile(const AgentConfig& config) : Target(config) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }
-  Missile(const TargetConfig& config, const double t_creation, const bool ready)
+  Missile(const AgentConfig& config, const double t_creation, const bool ready)
       : Target(config, t_creation, ready) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }

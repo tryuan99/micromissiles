@@ -4,7 +4,6 @@
 
 #include <Eigen/Dense>
 
-#include "simulation/swarm/proto/missile_config.pb.h"
 #include "simulation/swarm/proto/state.pb.h"
 
 namespace swarm::agent {
@@ -23,11 +22,11 @@ class ModelAgentTest : public testing::Test {
     agent_state.mutable_velocity()->set_x(kAgentVelocity(0));
     agent_state.mutable_velocity()->set_y(kAgentVelocity(1));
     agent_state.mutable_velocity()->set_z(kAgentVelocity(2));
-    agent_ = ModelAgent<MissileConfig>(std::move(agent_state));
+    agent_ = ModelAgent(std::move(agent_state));
   }
 
   // Model agent.
-  ModelAgent<MissileConfig> agent_;
+  ModelAgent agent_;
 };
 
 TEST_F(ModelAgentTest, GetPrincipalAxesRoll) {

@@ -2,8 +2,7 @@
 
 import google.protobuf
 import numpy as np
-from simulation.swarm.proto.missile_config_pb2 import (MissileConfig,
-                                                       MissileType)
+from simulation.swarm.proto.agent_pb2 import AgentConfig, MissileType
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
 from simulation.swarm.missiles.py.micromissile import Micromissile
@@ -25,7 +24,7 @@ class Hydra70(Missile):
 
     def __init__(
         self,
-        missile_config: MissileConfig,
+        missile_config: AgentConfig,
         ready: bool = True,
         t_creation: float = 0,
     ) -> None:
@@ -58,16 +57,16 @@ class Hydra70(Missile):
         if self.has_spawned:
             return []
 
-        num_submunitions = self.submunitions_config.num_missiles
+        num_submunitions = self.submunitions_config.num_submunitions
         launch_time = self.dynamic_config.launch_config.launch_time
         submunitions_launch_time = (
             self.submunitions_config.launch_config.launch_time)
         if t >= self.t_creation + launch_time + submunitions_launch_time:
             # Define the missile configuration for the submunitions.
-            submunitions_type = self.submunitions_config.missile_config.type
-            submunitions_missile_config = MissileConfig()
+            submunitions_type = self.submunitions_config.agent_config.missile_type
+            submunitions_missile_config = AgentConfig()
             submunitions_missile_config.CopyFrom(
-                self.submunitions_config.missile_config)
+                self.submunitions_config.agent_config)
             submunitions_missile_config.initial_state.CopyFrom(self.state)
 
             # Create the missiles for the submunitions.

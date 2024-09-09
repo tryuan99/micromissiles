@@ -3,18 +3,18 @@
 #pragma once
 
 #include "simulation/swarm/agent.h"
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::target {
 
 // Target interface.
-class Target : public agent::Agent<TargetConfig> {
+class Target : public agent::Agent {
  public:
   Target() = default;
 
-  explicit Target(const TargetConfig& config) : Agent<TargetConfig>(config) {}
-  Target(const TargetConfig& config, const double t_creation, const bool ready)
-      : Agent<TargetConfig>(config, t_creation, ready) {}
+  explicit Target(const AgentConfig& config) : Agent(config) {}
+  Target(const AgentConfig& config, const double t_creation, const bool ready)
+      : Agent(config, t_creation, ready) {}
 
   Target(const Target&) = default;
   Target& operator=(const Target&) = default;

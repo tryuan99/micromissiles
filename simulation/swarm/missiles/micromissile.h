@@ -6,7 +6,7 @@
 #include <string>
 
 #include "simulation/swarm/missiles/missile.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/sensor.pb.h"
 #include "simulation/swarm/utils.h"
 
@@ -21,10 +21,10 @@ class Micromissile : public Missile {
 
   Micromissile() = default;
 
-  explicit Micromissile(const MissileConfig& config) : Missile(config) {
+  explicit Micromissile(const AgentConfig& config) : Missile(config) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }
-  Micromissile(const MissileConfig& config, const double t_creation,
+  Micromissile(const AgentConfig& config, const double t_creation,
                const bool ready)
       : Missile(config, t_creation, ready) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);

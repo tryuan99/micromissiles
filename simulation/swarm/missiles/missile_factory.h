@@ -10,7 +10,7 @@
 #include "simulation/swarm/missiles/hydra_70.h"
 #include "simulation/swarm/missiles/micromissile.h"
 #include "simulation/swarm/missiles/missile.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::missile {
 

@@ -10,17 +10,14 @@
 
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/dynamic_config.pb.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
 #include "simulation/swarm/proto/plotting_config.pb.h"
 #include "simulation/swarm/proto/state.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
-#include "simulation/swarm/proto/target_config.pb.h"
 #include "simulation/swarm/state_history.h"
 
 namespace swarm::agent {
 
 // Agent interface.
-template <typename T>
 class Agent {
  public:
   // Principal axes.
@@ -41,9 +38,9 @@ class Agent {
   Agent() = default;
 
   // Construct the agent with a full configuration.
-  explicit Agent(const T& config)
+  explicit Agent(const AgentConfig& config)
       : Agent(config, /*t_creation=*/0, /*ready=*/true) {}
-  Agent(const T& config, double t_creation, bool ready);
+  Agent(const AgentConfig& config, double t_creation, bool ready);
 
   // Construct the agent with partial configurations. These constructors should
   // only be used for testing.
@@ -72,7 +69,7 @@ class Agent {
   const PlottingConfig& plotting_config() const { return plotting_config_; }
 
   // Return the submunitions configuration of the agent.
-  const T::SubmunitionsConfig& submunitions_config() const {
+  const AgentConfig::SubmunitionsConfig& submunitions_config() const {
     return submunitions_config_;
   }
 
@@ -160,7 +157,7 @@ class Agent {
   PlottingConfig plotting_config_;
 
   // Submunitions configuration of the agent.
-  T::SubmunitionsConfig submunitions_config_;
+  AgentConfig::SubmunitionsConfig submunitions_config_;
 
   // History of the agent.
   state::StateHistory state_history_;

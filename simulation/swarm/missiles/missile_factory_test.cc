@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::missile {
 namespace {
@@ -17,8 +17,8 @@ class MissileFactoryTest : public testing::Test {
 };
 
 TEST_F(MissileFactoryTest, CreateMissileMicromissile) {
-  const auto missile = missile_factory_.CreateMissile(MissileType::MICROMISSILE,
-                                                      MissileConfig());
+  const auto missile =
+      missile_factory_.CreateMissile(MissileType::MICROMISSILE, AgentConfig());
   EXPECT_NEAR(missile->static_config().boost_config().boost_time(), 0.3,
               kMaxErrorTolerance);
   EXPECT_NEAR(missile->static_config().boost_config().boost_acceleration(), 350,
@@ -27,7 +27,7 @@ TEST_F(MissileFactoryTest, CreateMissileMicromissile) {
 
 TEST_F(MissileFactoryTest, CreateMissileHydra70) {
   const auto missile =
-      missile_factory_.CreateMissile(MissileType::HYDRA_70, MissileConfig());
+      missile_factory_.CreateMissile(MissileType::HYDRA_70, AgentConfig());
   EXPECT_NEAR(missile->static_config().boost_config().boost_time(), 1,
               kMaxErrorTolerance);
   EXPECT_NEAR(missile->static_config().boost_config().boost_acceleration(), 100,

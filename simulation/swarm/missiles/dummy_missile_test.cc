@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::missile {
 namespace {
@@ -12,7 +12,7 @@ constexpr double kMaxErrorTolerance = 1e-6;
 
 class DummyMissileTest : public testing::Test {
  protected:
-  DummyMissileTest() : missile_(DummyMissile(MissileConfig())) {}
+  DummyMissileTest() : missile_(DummyMissile(AgentConfig())) {}
 
   // Dummy missile.
   DummyMissile missile_;

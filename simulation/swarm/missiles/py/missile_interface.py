@@ -3,7 +3,7 @@
 from abc import ABC
 
 import numpy as np
-from simulation.swarm.proto.missile_config_pb2 import MissileConfig
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 
 from simulation.swarm.py import constants
 from simulation.swarm.py.agent import Agent
@@ -24,7 +24,7 @@ class Missile(Agent, ABC):
 
     def __init__(
         self,
-        missile_config: MissileConfig,
+        missile_config: AgentConfig,
         ready: bool = True,
         t_creation: float = 0,
     ) -> None:

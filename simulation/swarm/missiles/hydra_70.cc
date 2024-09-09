@@ -9,7 +9,7 @@
 #include "absl/strings/str_format.h"
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/missiles/micromissile.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::missile {
 
@@ -18,16 +18,16 @@ void Hydra70::Spawn(const double t) override {
     return std::vector<std::unique_ptr<agent::Agent>>();
   }
 
-  const auto num_submunitions = submunitions_config().num_missiles();
+  const auto num_submunitions = submunitions_config().num_submunitions();
   const auto launch_time = dynamic_config().launch_config().launch_time();
   const auto submunitions_launch_time =
       submunitions_config().launch_config().launch_time();
   if (t >= t_creation_ + launch_time + submunitions_launch_time) {
     // Define the missile configuration for the submunitions.
     const auto submunitions_type =
-        submunitions_config().missile_config().type();
-    MissileConfig submunitions_missile_config(
-        submunitions_config().missile_config());
+        submunitions_config().agent_config().missile_type();
+    AgentConfig submunitions_missile_config(
+        submunitions_config().agent_config());
     *submunitions_missile_config.mutable_initial_state() = state();
 
     // Create the missiles for the submunitions.

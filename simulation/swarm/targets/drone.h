@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/targets/target.h"
 #include "simulation/swarm/utils.h"
 
@@ -19,10 +19,10 @@ class Drone : public Target {
 
   Drone() = default;
 
-  explicit Drone(const TargetConfig& config) : Target(config) {
+  explicit Drone(const AgentConfig& config) : Target(config) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }
-  Drone(const TargetConfig& config, const double t_creation, const bool ready)
+  Drone(const AgentConfig& config, const double t_creation, const bool ready)
       : Target(config, t_creation, ready) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }

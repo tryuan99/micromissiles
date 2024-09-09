@@ -1,6 +1,6 @@
 """The dummy missile class represents the dynamics of a single dummy missile."""
 
-from simulation.swarm.proto.missile_config_pb2 import MissileConfig
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
 from simulation.swarm.missiles.py.missile_interface import Missile
@@ -11,7 +11,7 @@ class DummyMissile(Missile):
 
     def __init__(
         self,
-        missile_config: MissileConfig,
+        missile_config: AgentConfig,
         ready: bool = True,
         t_creation: float = 0,
     ) -> None:

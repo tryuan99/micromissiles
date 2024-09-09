@@ -1,8 +1,8 @@
 """The drone class represents the dynamics of a single drone."""
 
 import google.protobuf
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
-from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 from simulation.swarm.targets.py.target_interface import Target
 
@@ -12,7 +12,7 @@ class Drone(Target):
 
     def __init__(
         self,
-        target_config: TargetConfig,
+        target_config: AgentConfig,
         ready: bool = True,
         t_creation: float = 0,
     ) -> None:

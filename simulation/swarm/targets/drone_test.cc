@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::target {
 namespace {
@@ -12,7 +12,7 @@ constexpr double kMaxErrorTolerance = 1e-6;
 
 class DroneTest : public testing::Test {
  protected:
-  DroneTest() : target_(Drone(TargetConfig())) {}
+  DroneTest() : target_(Drone(AgentConfig())) {}
 
   // Drone.
   Drone target_;

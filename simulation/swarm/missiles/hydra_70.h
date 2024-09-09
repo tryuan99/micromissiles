@@ -10,7 +10,7 @@
 
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/missiles/missile.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/utils.h"
 
 namespace swarm::missile {
@@ -24,11 +24,10 @@ class Hydra70 : public Missile {
 
   Hydra70() = default;
 
-  explicit Hydra70(const MissileConfig& config) : Missile(config) {
+  explicit Hydra70(const AgentConfig& config) : Missile(config) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }
-  Hydra70(const MissileConfig& config, const double t_creation,
-          const bool ready)
+  Hydra70(const AgentConfig& config, const double t_creation, const bool ready)
       : Missile(config, t_creation, ready) {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }

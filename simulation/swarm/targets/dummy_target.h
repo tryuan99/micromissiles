@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/targets/target.h"
 
 namespace swarm::target {
@@ -12,8 +12,8 @@ class DummyTarget : public Target {
  public:
   DummyTarget() = default;
 
-  explicit DummyTarget(const TargetConfig& config) : Target(config) {}
-  DummyTarget(const TargetConfig& config, const double t_creation,
+  explicit DummyTarget(const AgentConfig& config) : Target(config) {}
+  DummyTarget(const AgentConfig& config, const double t_creation,
               const bool ready)
       : Target(config, t_creation, ready) {}
 

@@ -6,13 +6,11 @@ from typing import Self
 
 import numpy as np
 import scipy.integrate
-from simulation.swarm.proto.agent_pb2 import FlightPhase
+from simulation.swarm.proto.agent_pb2 import AgentConfig, FlightPhase
 from simulation.swarm.proto.dynamic_config_pb2 import DynamicConfig
-from simulation.swarm.proto.missile_config_pb2 import MissileConfig
 from simulation.swarm.proto.plotting_config_pb2 import PlottingConfig
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
-from simulation.swarm.proto.target_config_pb2 import TargetConfig
 
 from simulation.swarm.py import constants
 
@@ -39,15 +37,14 @@ class Agent(ABC):
 
     def __init__(
         self,
-        config: MissileConfig | TargetConfig = None,
+        config: AgentConfig = None,
         ready: bool = True,
         t_creation: float = 0,
         *,
         initial_state: State = None,
         dynamic_config: DynamicConfig = None,
         plotting_config: PlottingConfig = None,
-        submunitions_config: MissileConfig.SubmunitionsConfig |
-        TargetConfig.SubmunitionsConfig = None,
+        submunitions_config: AgentConfig.SubmunitionsConfig = None,
     ) -> None:
         self.t_creation = t_creation
 
@@ -78,12 +75,10 @@ class Agent(ABC):
             self.plotting_config.CopyFrom(config.plotting_config)
 
         # Set the submunitions configuration.
-        self.submunitions_config = None
+        self.submunitions_config = AgentConfig.SubmunitionsConfig()
         if submunitions_config is not None:
-            self.submunitions_config = type(submunitions_config)()
             self.submunitions_config.CopyFrom(submunitions_config)
         elif config is not None:
-            self.submunitions_config = type(config.submunitions_config)()
             self.submunitions_config.CopyFrom(config.submunitions_config)
 
         self.hit = False

@@ -5,20 +5,20 @@
 #include <cstdbool>
 
 #include "simulation/swarm/constants.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/sensors/sensor_factory.h"
 
 namespace swarm::missile {
 
-Missile::Missile(const MissileConfig& config) : Agent<MissileConfig>(config) {
+Missile::Missile(const AgentConfig& config) : Agent(config) {
   SensorFactory sensor_factory;
   sensor_ = sensor_factory.CreateSensor(dynamic_config().sensor_config().type(),
                                         this);
 }
 
-Missile::Missile(const MissileConfig& config, const double t_creation,
+Missile::Missile(const AgentConfig& config, const double t_creation,
                  const bool ready)
-    : Agent<MissileConfig>(config, t_creation, ready) {
+    : Agent(config, t_creation, ready) {
   SensorFactory sensor_factory;
   sensor_ = sensor_factory.CreateSensor(dynamic_config().sensor_config().type(),
                                         this);

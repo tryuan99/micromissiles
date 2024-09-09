@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::target {
 namespace {
@@ -18,14 +18,14 @@ class TargetFactoryTest : public testing::Test {
 
 TEST_F(TargetFactoryTest, CreateTargetDrone) {
   const auto target =
-      target_factory_.CreateTarget(TargetType::DRONE, TargetConfig());
+      target_factory_.CreateTarget(TargetType::DRONE, AgentConfig());
   EXPECT_NEAR(target->static_config().hit_config().kill_probability(), 0.9,
               kMaxErrorTolerance);
 }
 
 TEST_F(TargetFactoryTest, CreateTargetMissile) {
   const auto target =
-      target_factory_.CreateTarget(TargetType::MISSILE, TargetConfig());
+      target_factory_.CreateTarget(TargetType::MISSILE, AgentConfig());
   EXPECT_NEAR(target->static_config().hit_config().kill_probability(), 0.6,
               kMaxErrorTolerance);
 }

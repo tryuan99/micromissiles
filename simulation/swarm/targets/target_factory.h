@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "absl/strings/str_format.h"
-#include "simulation/swarm/proto/target_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/targets/drone.h"
 #include "simulation/swarm/targets/missile.h"
 #include "simulation/swarm/targets/target.h"

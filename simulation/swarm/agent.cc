@@ -13,17 +13,16 @@
 
 namespace swarm::agent {
 
-template <typename T>
-Agent<T>::Agent(const T& config, const double t_creation, const bool ready)
+Agent::Agent(const AgentConfig& config, const double t_creation,
+             const bool ready)
     : Agent(config.initial_state(), t_creation, ready) {
   dynamic_config_ = config.dynamic_config();
   plotting_config_ = config.plotting_config();
   submunitions_config_ = config.submunitions_config();
 }
 
-template <typename T>
-Agent<T>::Agent(const State initial_state, const double t_creation,
-                const bool ready)
+Agent::Agent(const State initial_state, const double t_creation,
+             const bool ready)
     : t_creation_(t_creation),
       state_(std::move(initial_state)),
       flight_phase_(ready ? FlightPhase::READY : FlightPhase::INITIALIZED) {
@@ -32,22 +31,19 @@ Agent<T>::Agent(const State initial_state, const double t_creation,
       .t = t_creation_, .hit = hit_, .state = state_});
 }
 
-template <typename T>
-void Agent<T>::MarkAsHit() {
+void Agent::MarkAsHit() {
   hit_ = true;
   // Update the latest hit boolean in the history.
   state_history_.back().hit = true;
   flight_phase_ = FlightPhase::TERMINATED;
 }
 
-template <typename T>
-void Agent<T>::SetState(const State& state) {
+void Agent::SetState(const State& state) {
   state_ = state;
   state_history_.back().state = state;
 }
 
-template <typename T>
-Agent<T>::PrincipalAxes Agent<T>::GetPrincipalAxes() const {
+Agent::PrincipalAxes Agent<T>::GetPrincipalAxes() const {
   PrincipalAxes principal_axes;
   // The roll axis is assumed to be aligned with the agent's velocity vector.
   principal_axes.roll = GetVelocity();
@@ -59,8 +55,7 @@ Agent<T>::PrincipalAxes Agent<T>::GetPrincipalAxes() const {
   return principal_axes;
 }
 
-template <typename T>
-Agent<T>::PrincipalAxes Agent<T>::GetNormalizedPrincipalAxes() const {
+Agent::PrincipalAxes Agent<T>::GetNormalizedPrincipalAxes() const {
   auto principal_axes = GetPrincipalAxes();
   principal_axes.roll.normalize();
   principal_axes.pitch.normalize();
@@ -68,8 +63,7 @@ Agent<T>::PrincipalAxes Agent<T>::GetNormalizedPrincipalAxes() const {
   return principal_axes;
 }
 
-template <typename T>
-Eigen::Vector3d Agent<T>::GetPosition() const {
+Eigen::Vector3d Agent::GetPosition() const {
   return Eigen::Vector3d{
       state_.position().x(),
       state_.position().y(),
@@ -77,8 +71,7 @@ Eigen::Vector3d Agent<T>::GetPosition() const {
   };
 }
 
-template <typename T>
-Eigen::Vector3d Agent<T>::GetVelocity() const {
+Eigen::Vector3d Agent::GetVelocity() const {
   return Eigen::Vector3d{
       state_.velocity().x(),
       state_.velocity().y(),
@@ -86,28 +79,24 @@ Eigen::Vector3d Agent<T>::GetVelocity() const {
   };
 }
 
-template <typename T>
-double Agent<T>::GetSpeed() const {
+double Agent::GetSpeed() const {
   const auto velocity = GetVelocity();
   return velocity.norm();
 }
 
-template <typename T>
-Eigen::Vector3d Agent<T>::GetGravity() const {
+Eigen::Vector3d Agent::GetGravity() const {
   return Eigen::Vector3d{
       0, 0, -constants::CalculateGravityAtAltitude(state_.position().z())};
 }
 
-template <typename T>
-double Agent<T>::GetDynamicPressure() const {
+double Agent::GetDynamicPressure() const {
   const auto air_density =
       constants::CalculateAirDensityAtAltitude(state_.position().z());
   const auto flow_speed = GetSpeed();
   return air_density * std::pow(flow_speed, 2) / 2;
 }
 
-template <typename T>
-void Agent<T>::Update(const double t) {
+void Agent::Update(const double t) {
   const auto launch_time = dynamic_config_.launch_config().launch_time();
   const auto boost_time = static_config().boost_config().boost_time();
 
@@ -144,8 +133,7 @@ void Agent<T>::Update(const double t) {
   }
 }
 
-template <typename T>
-void Agent<T>::Step(const double t_start, const double t_step) {
+void Agent::Step(const double t_start, const double t_step) {
   // TODO(titan): Evolve the agent's roll, pitch, and yaw.
   using Vector6d = Eigen::Matrix<double, 6, 1>;
 
@@ -223,9 +211,5 @@ void Agent<T>::Step(const double t_start, const double t_step) {
   });
   state_update_time_ = t_end;
 }
-
-// Explicit instantiations of the template.
-template class Agent<MissileConfig>;
-template class Agent<TargetConfig>;
 
 }  // namespace swarm::agent

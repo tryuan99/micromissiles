@@ -7,7 +7,7 @@ py_library(
     srcs = ["dummy_missile.py"],
     deps = [
         ":missile_interface",
-        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
     ],
 )
@@ -18,7 +18,7 @@ py_library(
     data = ["//simulation/swarm/configs/missiles:configs"],
     deps = [
         ":missile_interface",
-        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
         "//simulation/swarm/py:constants",
         requirement("numpy"),
@@ -32,7 +32,7 @@ py_library(
     data = ["//simulation/swarm/configs/missiles:configs"],
     deps = [
         ":missile_interface",
-        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:sensor_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
         "//simulation/swarm/py:constants",
@@ -47,7 +47,7 @@ py_library(
     deps = [
         ":hydra_70",
         ":micromissile",
-        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
     ],
 )
 
@@ -55,7 +55,7 @@ py_library(
     name = "missile_interface",
     srcs = ["missile_interface.py"],
     deps = [
-        "//simulation/swarm/proto:missile_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/py:agent",
         "//simulation/swarm/py:constants",
         "//simulation/swarm/py:model_agent",

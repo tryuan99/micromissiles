@@ -8,8 +8,8 @@ py_library(
     data = ["//simulation/swarm/configs/targets:configs"],
     deps = [
         ":target_interface",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
-        "//simulation/swarm/proto:target_config_py_proto",
         requirement("protobuf"),
     ],
 )
@@ -19,8 +19,8 @@ py_library(
     srcs = ["dummy_target.py"],
     deps = [
         ":target_interface",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
-        "//simulation/swarm/proto:target_config_py_proto",
     ],
 )
 
@@ -30,8 +30,8 @@ py_library(
     data = ["//simulation/swarm/configs/targets:configs"],
     deps = [
         ":target_interface",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
-        "//simulation/swarm/proto:target_config_py_proto",
         requirement("protobuf"),
     ],
 )
@@ -42,7 +42,7 @@ py_library(
     deps = [
         ":drone",
         ":missile",
-        "//simulation/swarm/proto:target_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
     ],
 )
 
@@ -50,7 +50,7 @@ py_library(
     name = "target_interface",
     srcs = ["target_interface.py"],
     deps = [
-        "//simulation/swarm/proto:target_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/py:agent",
     ],
 )

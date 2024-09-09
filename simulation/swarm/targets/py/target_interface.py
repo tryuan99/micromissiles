@@ -2,7 +2,7 @@
 
 from abc import ABC
 
-from simulation.swarm.proto.target_config_pb2 import TargetConfig
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 
 from simulation.swarm.py.agent import Agent
 
@@ -12,7 +12,7 @@ class Target(Agent, ABC):
 
     def __init__(
         self,
-        target_config: TargetConfig,
+        target_config: AgentConfig,
         ready: bool = True,
         t_creation: float = 0,
     ) -> None:

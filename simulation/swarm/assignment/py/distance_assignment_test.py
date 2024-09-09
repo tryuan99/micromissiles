@@ -1,6 +1,5 @@
 from absl.testing import absltest
-from simulation.swarm.proto.missile_config_pb2 import MissileConfig
-from simulation.swarm.proto.target_config_pb2 import TargetConfig
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 
 from simulation.swarm.assignment.py.distance_assignment import \
     DistanceAssignment
@@ -13,25 +12,25 @@ class DistanceAssignmentTestCase(absltest.TestCase):
     def setUp(self):
         # Configure the missiles.
         missiles = []
-        missile_config = MissileConfig()
+        missile_config = AgentConfig()
         missile_config.initial_state.position.x = 1
         missile_config.initial_state.position.y = 2
         missile_config.initial_state.position.z = 1
         missiles.append(DummyMissile(missile_config))
 
-        missile_config = MissileConfig()
+        missile_config = AgentConfig()
         missile_config.initial_state.position.x = 10
         missile_config.initial_state.position.y = 12
         missile_config.initial_state.position.z = 1
         missiles.append(DummyMissile(missile_config))
 
-        missile_config = MissileConfig()
+        missile_config = AgentConfig()
         missile_config.initial_state.position.x = 10
         missile_config.initial_state.position.y = 12
         missile_config.initial_state.position.z = 1
         missiles.append(DummyMissile(missile_config))
 
-        missile_config = MissileConfig()
+        missile_config = AgentConfig()
         missile_config.initial_state.position.x = 10
         missile_config.initial_state.position.y = 10
         missile_config.initial_state.position.z = 1
@@ -39,13 +38,13 @@ class DistanceAssignmentTestCase(absltest.TestCase):
 
         # Configure the targets.
         targets = []
-        target_config = TargetConfig()
+        target_config = AgentConfig()
         target_config.initial_state.position.x = 10
         target_config.initial_state.position.y = 15
         target_config.initial_state.position.z = 2
         targets.append(DummyTarget(target_config))
 
-        target_config = TargetConfig()
+        target_config = AgentConfig()
         target_config.initial_state.position.x = 1
         target_config.initial_state.position.y = 2
         target_config.initial_state.position.z = 2

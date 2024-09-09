@@ -21,37 +21,37 @@ class SwarmSimulator(Simulator):
 
         # Generate swarms of missiles.
         for missile_swarm_config in swarm_config.missile_swarm_configs:
-            for _ in range(missile_swarm_config.num_missiles):
+            for _ in range(missile_swarm_config.num_agents):
                 missile_config = simulator_config.missile_configs.add()
-                missile_config.type = missile_swarm_config.missile_config.type
+                missile_config.missile_type = missile_swarm_config.agent_config.missile_type
                 missile_config.initial_state.CopyFrom(
                     self._generate_random_state(
-                        missile_swarm_config.missile_config.initial_state,
-                        missile_swarm_config.missile_config.standard_deviation,
+                        missile_swarm_config.agent_config.initial_state,
+                        missile_swarm_config.agent_config.standard_deviation,
                     ))
                 missile_config.dynamic_config.CopyFrom(
-                    missile_swarm_config.missile_config.dynamic_config)
+                    missile_swarm_config.agent_config.dynamic_config)
                 missile_config.plotting_config.CopyFrom(
-                    missile_swarm_config.missile_config.plotting_config)
+                    missile_swarm_config.agent_config.plotting_config)
                 missile_config.submunitions_config.CopyFrom(
-                    missile_swarm_config.missile_config.submunitions_config)
+                    missile_swarm_config.agent_config.submunitions_config)
 
         # Generate swarms of targets.
         for target_swarm_config in swarm_config.target_swarm_configs:
-            for _ in range(target_swarm_config.num_targets):
+            for _ in range(target_swarm_config.num_agents):
                 target_config = simulator_config.target_configs.add()
-                target_config.type = target_swarm_config.target_config.type
+                target_config.target_type = target_swarm_config.agent_config.target_type
                 target_config.initial_state.CopyFrom(
                     self._generate_random_state(
-                        target_swarm_config.target_config.initial_state,
-                        target_swarm_config.target_config.standard_deviation,
+                        target_swarm_config.agent_config.initial_state,
+                        target_swarm_config.agent_config.standard_deviation,
                     ))
                 target_config.dynamic_config.CopyFrom(
-                    target_swarm_config.target_config.dynamic_config)
+                    target_swarm_config.agent_config.dynamic_config)
                 target_config.plotting_config.CopyFrom(
-                    target_swarm_config.target_config.plotting_config)
+                    target_swarm_config.agent_config.plotting_config)
                 target_config.submunitions_config.CopyFrom(
-                    target_swarm_config.target_config.submunitions_config)
+                    target_swarm_config.agent_config.submunitions_config)
         super().__init__(simulator_config)
 
     @staticmethod

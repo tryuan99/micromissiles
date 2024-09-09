@@ -1,6 +1,6 @@
 step_time: 0.001
 missile_configs {
-  type: HYDRA_70
+  missile_type: HYDRA_70
   initial_state {
     position {
       x: 0
@@ -24,12 +24,12 @@ missile_configs {
     marker: TRIANGLE_UP
   }
   submunitions_config {
-    num_missiles: 7
+    num_submunitions: 7
     launch_config {
       launch_time: 10
     }
-    missile_config {
-      type: MICROMISSILE
+    agent_config {
+      missile_type: MICROMISSILE
       dynamic_config {
         sensor_config {
           type: IDEAL
@@ -45,7 +45,7 @@ missile_configs {
   }
 }
 target_configs {
-  type: DRONE
+  target_type: DRONE
   initial_state {
     position {
       x: 10000

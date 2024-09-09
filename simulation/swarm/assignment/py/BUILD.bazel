@@ -28,8 +28,7 @@ py_test(
     deps = [
         ":distance_assignment",
         "//simulation/swarm/missiles/py:dummy_missile",
-        "//simulation/swarm/proto:missile_config_py_proto",
-        "//simulation/swarm/proto:target_config_py_proto",
+        "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/targets/py:dummy_target",
         requirement("absl-py"),
     ],

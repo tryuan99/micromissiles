@@ -1,6 +1,6 @@
 """This file defines the list of available missiles."""
 
-from simulation.swarm.proto.missile_config_pb2 import MissileType
+from simulation.swarm.proto.agent_pb2 import MissileType
 
 from simulation.swarm.missiles.py.hydra_70 import Hydra70
 from simulation.swarm.missiles.py.micromissile import Micromissile

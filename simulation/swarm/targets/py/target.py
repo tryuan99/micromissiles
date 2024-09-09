@@ -1,6 +1,6 @@
 """This file defines the list of available targets."""
 
-from simulation.swarm.proto.target_config_pb2 import TargetType
+from simulation.swarm.proto.agent_pb2 import TargetType
 
 from simulation.swarm.targets.py.drone import Drone
 from simulation.swarm.targets.py.missile import Missile

@@ -1,8 +1,8 @@
 step_time: 0.001
 missile_swarm_configs {
-  num_missiles: 1
-  missile_config {
-    type: HYDRA_70
+  num_agents: 1
+  agent_config {
+    missile_type: HYDRA_70
     initial_state {
       position {
         x: 0
@@ -38,12 +38,12 @@ missile_swarm_configs {
       marker: TRIANGLE_UP
     }
     submunitions_config {
-      num_missiles: 7
+      num_submunitions: 7
       launch_config {
         launch_time: 10
       }
-      missile_config {
-        type: MICROMISSILE
+      agent_config {
+        missile_type: MICROMISSILE
         dynamic_config {
           sensor_config {
             type: IDEAL
@@ -60,9 +60,9 @@ missile_swarm_configs {
   }
 }
 target_swarm_configs {
-  num_targets: 8
-  target_config {
-    type: DRONE
+  num_agents: 8
+  agent_config {
+    target_type: DRONE
     initial_state {
       position {
         x: 8000

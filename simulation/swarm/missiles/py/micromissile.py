@@ -2,7 +2,7 @@
 
 import google.protobuf
 import numpy as np
-from simulation.swarm.proto.missile_config_pb2 import MissileConfig
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 from simulation.swarm.proto.sensor_pb2 import SensorOutput
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
@@ -18,7 +18,7 @@ class Micromissile(Missile):
 
     def __init__(
         self,
-        missile_config: MissileConfig,
+        missile_config: AgentConfig,
         ready: bool = True,
         t_creation: float = 0,
     ) -> None:

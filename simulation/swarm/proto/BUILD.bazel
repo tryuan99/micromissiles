@@ -6,6 +6,11 @@ package(default_visibility = ["//visibility:public"])
 proto_library(
     name = "agent_proto",
     srcs = ["agent.proto"],
+    deps = [
+        ":dynamic_config_proto",
+        ":plotting_config_proto",
+        ":state_proto",
+    ],
 )
 
 cc_proto_library(
@@ -50,42 +55,6 @@ py_proto_library(
 )
 
 proto_library(
-    name = "missile_config_proto",
-    srcs = ["missile_config.proto"],
-    deps = [
-        ":dynamic_config_proto",
-        ":plotting_config_proto",
-        ":state_proto",
-    ],
-)
-
-cc_proto_library(
-    name = "missile_config_cc_proto",
-    deps = [":missile_config_proto"],
-)
-
-py_proto_library(
-    name = "missile_config_py_proto",
-    deps = [":missile_config_proto"],
-)
-
-proto_library(
-    name = "missile_swarm_config_proto",
-    srcs = ["missile_swarm_config.proto"],
-    deps = [":missile_config_proto"],
-)
-
-cc_proto_library(
-    name = "missile_swarm_config_cc_proto",
-    deps = [":missile_swarm_config_proto"],
-)
-
-py_proto_library(
-    name = "missile_swarm_config_py_proto",
-    deps = [":missile_swarm_config_proto"],
-)
-
-proto_library(
     name = "plotting_config_proto",
     srcs = ["plotting_config.proto"],
 )
@@ -119,10 +88,7 @@ py_proto_library(
 proto_library(
     name = "simulator_config_proto",
     srcs = ["simulator_config.proto"],
-    deps = [
-        ":missile_config_proto",
-        ":target_config_proto",
-    ],
+    deps = [":agent_proto"],
 )
 
 cc_proto_library(
@@ -169,10 +135,7 @@ py_proto_library(
 proto_library(
     name = "swarm_config_proto",
     srcs = ["swarm_config.proto"],
-    deps = [
-        ":missile_swarm_config_proto",
-        ":target_swarm_config_proto",
-    ],
+    deps = [":agent_proto"],
 )
 
 cc_proto_library(
@@ -183,40 +146,4 @@ cc_proto_library(
 py_proto_library(
     name = "swarm_config_py_proto",
     deps = [":swarm_config_proto"],
-)
-
-proto_library(
-    name = "target_config_proto",
-    srcs = ["target_config.proto"],
-    deps = [
-        ":dynamic_config_proto",
-        ":plotting_config_proto",
-        ":state_proto",
-    ],
-)
-
-cc_proto_library(
-    name = "target_config_cc_proto",
-    deps = [":target_config_proto"],
-)
-
-py_proto_library(
-    name = "target_config_py_proto",
-    deps = [":target_config_proto"],
-)
-
-proto_library(
-    name = "target_swarm_config_proto",
-    srcs = ["target_swarm_config.proto"],
-    deps = [":target_config_proto"],
-)
-
-cc_proto_library(
-    name = "target_swarm_config_cc_proto",
-    deps = [":target_swarm_config_proto"],
-)
-
-py_proto_library(
-    name = "target_swarm_config_py_proto",
-    deps = [":target_swarm_config_proto"],
 )

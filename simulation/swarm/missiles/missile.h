@@ -9,18 +9,18 @@
 
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/model_agent.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent_config.pb.h"
 #include "simulation/swarm/sensors/sensor.h"
 
 namespace swarm::missile {
 
 // Missile interface.
-class Missile : public agent::Agent<MissileConfig> {
+class Missile : public agent::Agent {
  public:
   Missile() = default;
 
-  explicit Missile(const MissileConfig& config);
-  Missile(const MissileConfig& config, double t_creation, bool ready);
+  explicit Missile(const AgentConfig& config);
+  Missile(const AgentConfig& config, double t_creation, bool ready);
 
   Missile(const Missile&) = default;
   Missile& operator=(const Missile&) = default;

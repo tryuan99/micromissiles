@@ -3,7 +3,7 @@
 #pragma once
 
 #include "simulation/swarm/missiles/missile.h"
-#include "simulation/swarm/proto/missile_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 
 namespace swarm::missile {
 
@@ -12,8 +12,8 @@ class DummyMissile : public Missile {
  public:
   DummyMissile() = default;
 
-  explicit DummyMissile(const MissileConfig& config) : Missile(config) {}
-  DummyMissile(const MissileConfig& config, const double t_creation,
+  explicit DummyMissile(const AgentConfig& config) : Missile(config) {}
+  DummyMissile(const AgentConfig& config, const double t_creation,
                const bool ready)
       : Missile(config, t_creation, ready) {}
 
