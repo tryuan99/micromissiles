@@ -2,7 +2,6 @@
 
 #include <gtest/gtest.h>
 
-#include "simulation/swarm/proto/static_config.pb.h"
 #include "simulation/swarm/proto/target_config.pb.h"
 
 namespace swarm::target {

@@ -5,6 +5,7 @@
 #include <Eigen/Dense>
 #include <cstdbool>
 #include <cstdlib>
+#include <memory>
 #include <vector>
 
 #include "simulation/swarm/proto/agent.pb.h"
@@ -55,8 +56,28 @@ class Agent {
 
   virtual ~Agent() = default;
 
+  // Return the state of the agent.
+  const State& state() const { return state_; }
+
+  // Return the time of the last state update.
+  double state_update_time() const { return state_update_time_; }
+
   // Return the static configuration of the agent.
   const StaticConfig& static_config() const { return static_config_; }
+
+  // Return the dynamic configuration of the agent.
+  const DynamicConfig& dynamic_config() const { return dynamic_config_; }
+
+  // Return the plotting configuration of the agent.
+  const PlottingConfig& plotting_config() const { return plotting_config_; }
+
+  // Return the submunitions configuration of the agent.
+  const T::SubmunitionsConfig& submunitions_config() const {
+    return submunitions_config_;
+  }
+
+  // Return whether the agent has hit or been hit.
+  bool hit() const { return hit_; }
 
   // Return whether the agent has launched.
   bool has_launched() const {
@@ -102,12 +123,12 @@ class Agent {
   // Step forward the simulation by simulating the dynamics of the agent.
   void Step(double t_start, double t_step);
 
- protected:
   // Spawn new agents.
-  virtual std::vector<Agent> Spawn(const double t) {
-    return std::vector<Agent>();
+  virtual std::vector<std::unique_ptr<Agent>> Spawn(const double t) {
+    return std::vector<std::unique_ptr<Agent>>();
   }
 
+ protected:
   // Update the agent's state in the ready flight phase.
   virtual void UpdateReady(const double t) {}
 

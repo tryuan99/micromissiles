@@ -63,14 +63,14 @@ class Hydra70(Missile):
         submunitions_launch_time = (
             self.submunitions_config.launch_config.launch_time)
         if t >= self.t_creation + launch_time + submunitions_launch_time:
-            submunitions_missile_config = self.submunitions_config.missile_config
-            submunitions_type = submunitions_missile_config.type
-
-            # Create the missiles for the submunitions.
+            # Define the missile configuration for the submunitions.
+            submunitions_type = self.submunitions_config.missile_config.type
             submunitions_missile_config = MissileConfig()
             submunitions_missile_config.CopyFrom(
                 self.submunitions_config.missile_config)
             submunitions_missile_config.initial_state.CopyFrom(self.state)
+
+            # Create the missiles for the submunitions.
             spawned_missiles = [
                 HYDRA_70_SUBMUNITIONS_TYPE_ENUM_TO_CLASS[submunitions_type](
                     submunitions_missile_config, t_creation=t)
@@ -79,31 +79,6 @@ class Hydra70(Missile):
             self.has_spawned = True
             return spawned_missiles
         return []
-
-    def _update_boost(self, t: float) -> None:
-        """Updates the agent's state in the boost flight phase.
-
-        During the boost phase, we assume that the missile will only accelerate
-        along its roll axis.
-
-        Args:
-            t: Time in seconds.
-        """
-        normalized_roll, normalized_pitch, normalized_yaw = (
-            self.get_normalized_principal_axes())
-        boost_acceleration = (
-            self.static_config.boost_config.boost_acceleration *
-            constants.STANDARD_GRAVITY)
-        acceleration_input = boost_acceleration * normalized_roll
-
-        # Calculate and set the total acceleration.
-        acceleration = self._calculate_total_acceleration(
-            acceleration_input, compensate_for_gravity=False)
-        (
-            self.state.acceleration.x,
-            self.state.acceleration.y,
-            self.state.acceleration.z,
-        ) = acceleration
 
     def _update(self, t: float) -> None:
         """Updates the agent's state in the midcourse and terminal flight

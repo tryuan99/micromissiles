@@ -1,0 +1,109 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "dummy_missile",
+    hdrs = ["dummy_missile.h"],
+    deps = [
+        ":missile",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "dummy_missile_test",
+    srcs = ["dummy_missile_test.cc"],
+    deps = [
+        ":dummy_missile",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "hydra_70",
+    srcs = ["hydra_70.cc"],
+    hdrs = ["hydra_70.h"],
+    deps = [
+        ":micromissile",
+        ":missile",
+        "//simulation/swarm:agent",
+        "//simulation/swarm:utils",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+        "@eigen",
+    ],
+)
+
+cc_test(
+    name = "hydra_70_test",
+    srcs = ["hydra_70_test.cc"],
+    deps = [
+        ":hydra_70",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "micromissile",
+    srcs = ["micromissile.cc"],
+    hdrs = ["micromissile.h"],
+    deps = [
+        ":missile",
+        "//simulation/swarm:utils",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "//simulation/swarm/proto:sensor_cc_proto",
+        "@eigen",
+    ],
+)
+
+cc_test(
+    name = "micromissile_test",
+    srcs = ["micromissile_test.cc"],
+    deps = [
+        ":micromissile",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "missile",
+    srcs = ["missile.cc"],
+    hdrs = ["missile.h"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm:constants",
+        "//simulation/swarm:model_agent",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "//simulation/swarm/sensors:sensor",
+        "//simulation/swarm/sensors:sensor_factory",
+        "@eigen",
+    ],
+)
+
+cc_library(
+    name = "missile_factory",
+    hdrs = ["missile_factory.h"],
+    deps = [
+        ":hydra_70",
+        ":micromissile",
+        ":missile",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+    ],
+)
+
+cc_test(
+    name = "missile_factory_test",
+    srcs = ["missile_factory_test.cc"],
+    deps = [
+        ":missile_factory",
+        "//simulation/swarm/proto:missile_config_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

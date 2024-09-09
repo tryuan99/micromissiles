@@ -34,30 +34,6 @@ class Micromissile(Missile):
                 static_config_file.read(), StaticConfig())
         return static_config
 
-    def _update_boost(self, t: float) -> None:
-        """Updates the agent's state in the boost flight phase.
-
-        During the boost phase, we assume that the missile will only accelerate
-        along its roll axis.
-
-        Args:
-            t: Time in seconds.
-        """
-        normalized_roll, normalized_pitch, normalized_yaw = (
-            self.get_normalized_principal_axes())
-        boost_acceleration = (
-            self.static_config.boost_config.boost_acceleration *
-            constants.STANDARD_GRAVITY)
-        acceleration_input = boost_acceleration * normalized_roll
-
-        # Calculate and set the total acceleration.
-        acceleration = self._calculate_total_acceleration(acceleration_input)
-        (
-            self.state.acceleration.x,
-            self.state.acceleration.y,
-            self.state.acceleration.z,
-        ) = acceleration
-
     def _update(self, t: float) -> None:
         """Updates the agent's state in the midcourse and terminal flight
         phase.
@@ -68,38 +44,39 @@ class Micromissile(Missile):
         Args:
             t: Time in seconds.
         """
-        if self.target is None:
-            return
+        if self.has_assigned_target():
+            # Update the target model.
+            model_step_time = t - self.target_model.state_update_time
+            self.target_model.update(t)
+            self.target_model.step(self.target_model.state_update_time,
+                                   model_step_time)
 
-        # Update the target model.
-        model_step_time = t - self.target_model.state_update_time
-        self.target_model.update(t)
-        self.target_model.step(self.target_model.state_update_time,
-                               model_step_time)
+            # Correct the state of the target model at the sensor frequency.
+            sensor_update_period = 1 / self.dynamic_config.sensor_config.frequency
+            if t - self.sensor_update_time >= sensor_update_period:
+                # TODO(titan): Use some guidance filter to estimate the state from
+                # the sensor output.
+                self.target_model.set_state(self.target.state)
+                self.sensor_update_time = t
 
-        # Correct the state of the target model at the sensor frequency.
-        sensor_update_period = 1 / self.dynamic_config.sensor_config.frequency
-        if t - self.sensor_update_time >= sensor_update_period:
-            # TODO(titan): Use some guidance filter to estimate the state from
-            # the sensor output.
-            self.target_model.set_state(self.target.state)
-            self.sensor_update_time = t
+            # Sense the target.
+            sensor_output = self.sensor.sense([self.target_model])[0]
 
-        # Sense the target.
-        sensor_output = self.sensor.sense([self.target_model])[0]
+            # Check whether the target has been hit.
+            if self.has_hit_target():
+                # Consider the kill probability of the target.
+                kill_probability = (
+                    self.target.static_config.hit_config.kill_probability)
+                if np.random.binomial(1, kill_probability) > 0:
+                    self.mark_as_hit()
+                    self.target.mark_as_hit()
+                    return
 
-        # Check whether the target has been hit.
-        if self.has_hit_target():
-            # Consider the kill probability of the target.
-            kill_probability = (
-                self.target.static_config.hit_config.kill_probability)
-            if np.random.binomial(1, kill_probability) > 0:
-                self.mark_as_hit()
-                self.target.mark_as_hit()
-                return
-
-        # Calculate the acceleration input.
-        acceleration_input = self._calculate_acceleration_input(sensor_output)
+            # Calculate the acceleration input.
+            acceleration_input = self._calculate_acceleration_input(
+                sensor_output)
+        else:
+            acceleration_input = np.zeros(3)
 
         # Calculate and set the total acceleration.
         acceleration = self._calculate_total_acceleration(
@@ -129,7 +106,7 @@ class Micromissile(Missile):
         normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
 
-        # Calculate the components along the three axes.
+        # Calculate the acceleration components along the axes normal to the roll axis.
         pitch_coefficient = (np.cos(elevation_velocity) *
                              np.sin(azimuth_velocity))
         yaw_coefficient = np.sin(elevation_velocity)

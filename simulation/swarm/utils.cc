@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 
+#include <random>
 #include <stdexcept>
 #include <string>
 
@@ -26,6 +27,13 @@ StaticConfig LoadStaticConfigFromFile(const std::string& file) {
   }
   static_config_file_stream.Close();
   return static_config;
+}
+
+double GenerateRandomUniform(const double a, const double b) {
+  std::random_device random_device;
+  std::mt19937 generator(random_device());
+  std::uniform_real_distribution<double> distribution(a, b);
+  return distribution(generator);
 }
 
 }  // namespace swarm::utils

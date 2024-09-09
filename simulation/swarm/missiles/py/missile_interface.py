@@ -72,7 +72,7 @@ class Missile(Agent, ABC):
         Returns:
             Whether the missile has hit the target.
         """
-        if self.target is None:
+        if not self.has_assigned_target():
             return False
 
         # Determine the distance to the target.
@@ -82,8 +82,7 @@ class Missile(Agent, ABC):
 
         # A hit is recorded if the target is within the missile's hit radius.
         hit_radius = self.static_config.hit_config.hit_radius
-        if distance <= hit_radius:
-            return True
+        return distance <= hit_radius
 
     def _update_ready(self, t: float) -> None:
         """Updates the missile's state in the ready flight phase.
@@ -94,6 +93,30 @@ class Missile(Agent, ABC):
         # The missile is subject to gravity and drag with zero input
         # acceleration.
         acceleration_input = np.zeros(3)
+
+        # Calculate and set the total acceleration.
+        acceleration = self._calculate_total_acceleration(acceleration_input)
+        (
+            self.state.acceleration.x,
+            self.state.acceleration.y,
+            self.state.acceleration.z,
+        ) = acceleration
+
+    def _update_boost(self, t: float) -> None:
+        """Updates the missile's state in the boost flight phase.
+
+        During the boost phase, we assume that the missile will only accelerate
+        along its roll axis.
+
+        Args:
+            t: Time in seconds.
+        """
+        normalized_roll, normalized_pitch, normalized_yaw = (
+            self.get_normalized_principal_axes())
+        boost_acceleration = (
+            self.static_config.boost_config.boost_acceleration *
+            constants.STANDARD_GRAVITY)
+        acceleration_input = boost_acceleration * normalized_roll
 
         # Calculate and set the total acceleration.
         acceleration = self._calculate_total_acceleration(acceleration_input)
@@ -193,16 +216,19 @@ class Missile(Agent, ABC):
         """
         # Determine the gravity and compensate for it.
         gravity = self.get_gravity()
-        gravity_projection_on_pitch_and_yaw = (
-            self._calculate_gravity_projection_on_pitch_and_yaw())
         if compensate_for_gravity:
-            acceleration_input -= gravity_projection_on_pitch_and_yaw
+            gravity_projection_on_pitch_and_yaw = (
+                self._calculate_gravity_projection_on_pitch_and_yaw())
+            compensated_acceleration_input = (
+                acceleration_input - gravity_projection_on_pitch_and_yaw)
+        else:
+            compensated_acceleration_input = acceleration_input
 
         # Calculate the air drag.
         air_drag_acceleration = self._calculate_drag()
         # Calculate the lift-induced drag.
         lift_induced_drag_acceleration = (
-            self._calculate_lift_induced_drag(acceleration_input))
+            self._calculate_lift_induced_drag(compensated_acceleration_input))
         # Calculate the total drag acceleration.
         normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
@@ -211,5 +237,6 @@ class Missile(Agent, ABC):
             normalized_roll)
 
         # Calculate the total acceleration vector.
-        acceleration = acceleration_input + gravity + drag_acceleration
+        acceleration = (compensated_acceleration_input + gravity +
+                        drag_acceleration)
         return acceleration

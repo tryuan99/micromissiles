@@ -16,7 +16,6 @@ cc_test(
     srcs = ["drone_test.cc"],
     deps = [
         ":drone",
-        "//simulation/swarm/proto:static_config_cc_proto",
         "//simulation/swarm/proto:target_config_cc_proto",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
@@ -37,7 +36,6 @@ cc_test(
     srcs = ["dummy_target_test.cc"],
     deps = [
         ":dummy_target",
-        "//simulation/swarm/proto:static_config_cc_proto",
         "//simulation/swarm/proto:target_config_cc_proto",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
@@ -60,7 +58,6 @@ cc_test(
     srcs = ["missile_test.cc"],
     deps = [
         ":missile",
-        "//simulation/swarm/proto:static_config_cc_proto",
         "//simulation/swarm/proto:target_config_cc_proto",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
