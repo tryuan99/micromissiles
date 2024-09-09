@@ -42,7 +42,6 @@ cc_library(
     deps = [
         ":agent",
         "//simulation/swarm/proto:state_cc_proto",
-        "//simulation/swarm/proto:static_config_cc_proto",
     ],
 )
 
@@ -71,6 +70,28 @@ cc_test(
     srcs = ["state_history_test.cc"],
     deps = [
         ":state_history",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "utils",
+    srcs = ["utils.cc"],
+    hdrs = ["utils.h"],
+    deps = [
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+        "@com_google_protobuf//:protobuf",
+    ],
+)
+
+cc_test(
+    name = "utils_test",
+    srcs = ["utils_test.cc"],
+    data = ["//simulation/swarm/configs/missiles:configs"],
+    deps = [
+        ":utils",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

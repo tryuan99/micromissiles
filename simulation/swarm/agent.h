@@ -18,7 +18,7 @@
 
 namespace swarm::agent {
 
-// Agent.
+// Agent interface.
 template <typename T>
 class Agent {
  public:
@@ -40,12 +40,13 @@ class Agent {
   Agent() = default;
 
   // Construct the agent with a full configuration.
-  Agent(const T& config) : Agent(config, /*t_creation=*/0, /*ready=*/true) {}
+  explicit Agent(const T& config)
+      : Agent(config, /*t_creation=*/0, /*ready=*/true) {}
   Agent(const T& config, double t_creation, bool ready);
 
   // Construct the agent with partial configurations. These constructors should
   // only be used for testing.
-  Agent(State initial_state)
+  explicit Agent(State initial_state)
       : Agent(std::move(initial_state), /*t_creation=*/0, /*ready=*/true) {}
   Agent(State initial_state, double t_creation, bool ready);
 
@@ -55,7 +56,7 @@ class Agent {
   virtual ~Agent() = default;
 
   // Return the static configuration of the agent.
-  virtual const StaticConfig& static_config() const = 0;
+  const StaticConfig& static_config() const { return static_config_; }
 
   // Return whether the agent has launched.
   bool has_launched() const {
@@ -127,6 +128,9 @@ class Agent {
 
   // Flight phase of the agent.
   FlightPhase flight_phase_ = FlightPhase::INITIALIZED;
+
+  // Static configuration of the agent.
+  StaticConfig static_config_;
 
   // Dynamic configuration of the agent.
   DynamicConfig dynamic_config_;

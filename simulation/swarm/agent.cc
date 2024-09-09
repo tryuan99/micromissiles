@@ -9,6 +9,7 @@
 #include "absl/strings/str_format.h"
 #include "simulation/swarm/constants.h"
 #include "simulation/swarm/proto/agent.pb.h"
+#include "simulation/swarm/proto/static_config.pb.h"
 
 namespace swarm::agent {
 
