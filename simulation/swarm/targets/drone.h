@@ -10,15 +10,13 @@
 
 namespace swarm::target {
 
-namespace {
-// Static configuration file.
-const std::string kStaticConfigFile =
-    "simulation/swarm/configs/targets/drone.pbtxt";
-}  // namespace
-
 // Drone.
 class Drone : public Target {
  public:
+  // Static configuration file.
+  inline static const std::string kStaticConfigFile =
+      "simulation/swarm/configs/targets/drone.pbtxt";
+
   Drone() = default;
 
   explicit Drone(const TargetConfig& config) : Target(config) {
