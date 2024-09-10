@@ -17,8 +17,8 @@ class DummyMissile : public Missile {
                const bool ready)
       : Missile(config, t_creation, ready) {}
 
-  DummyMissile(const DummyMissile&) = default;
-  DummyMissile& operator=(const DummyMissile&) = default;
+  DummyMissile(const DummyMissile&) = delete;
+  DummyMissile& operator=(const DummyMissile&) = delete;
 };
 
 }  // namespace swarm::missile

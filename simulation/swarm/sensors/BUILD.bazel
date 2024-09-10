@@ -1,0 +1,46 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "ideal_sensor",
+    srcs = ["ideal_sensor.cc"],
+    hdrs = ["ideal_sensor.h"],
+    deps = [
+        ":sensor",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:sensor_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "ideal_sensor_test",
+    srcs = ["ideal_sensor_test.cc"],
+    deps = [
+        ":ideal_sensor",
+        "//simulation/swarm:model_agent",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@eigen",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "sensor",
+    hdrs = ["sensor.h"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:sensor_cc_proto",
+    ],
+)
+
+cc_library(
+    name = "sensor_factory",
+    hdrs = ["sensor_factory.h"],
+    deps = [
+        ":ideal_sensor",
+        ":sensor",
+        "//simulation/swarm/proto:sensor_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+    ],
+)

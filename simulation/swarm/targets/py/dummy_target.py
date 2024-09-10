@@ -1,6 +1,6 @@
 """The dummy target class represents the dynamics of a single dummy target."""
 
-from simulation.swarm.proto.agent_config_pb2 import AgentConfig
+from simulation.swarm.proto.agent_pb2 import AgentConfig
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
 from simulation.swarm.targets.py.target_interface import Target

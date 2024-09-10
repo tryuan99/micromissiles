@@ -12,7 +12,7 @@ void Micromissile::UpdateMidCourse(const double t) {
   // The missile uses proportional navigation to intercept the target, i.e., it
   // should maintian a constant azimuth and elevation to the target.
   Eigen::Vector3d acceleration_input = Eigen::Vector3d::Zero(3);
-  if (has_target_assigned()) {
+  if (has_assigned_target()) {
     // Update the target model.
     const auto model_step_time = t - target_model_->state_update_time();
     target_model_->Update(t);
@@ -32,11 +32,11 @@ void Micromissile::UpdateMidCourse(const double t) {
     const auto sensor_output = sensor_->Sense(*target_model_);
 
     // Check whether the target has been hit.
-    if (has_hit_target()) {
+    if (HasHitTarget()) {
       // Consider the kill probability of the target.
       const auto kill_probability =
           target_->static_config().hit_config().kill_probability();
-      if (GenerateRandomUniform(0, 1) < kill_probability) {
+      if (utils::GenerateRandomUniform(0, 1) < kill_probability) {
         MarkAsHit();
         target_->MarkAsHit();
         return;
@@ -56,7 +56,7 @@ void Micromissile::UpdateMidCourse(const double t) {
 }
 
 Eigen::Vector3d Micromissile::CalculateAccelerationInput(
-    const auto& SensorOutput sensor_output) const {
+    const SensorOutput& sensor_output) const {
   // In proportional navigation, the acceleration vector should be proportional
   // to the rate of change of the bearing.
   const auto azimuth_velocity = sensor_output.velocity().azimuth();
@@ -65,7 +65,7 @@ Eigen::Vector3d Micromissile::CalculateAccelerationInput(
   // Calculate the acceleration components along the axes normal to the roll
   // axis.
   const auto pitch_coefficient =
-      std::cos(elevation_velocity) * std : sin(azimuth_velocity);
+      std::cos(elevation_velocity) * std::sin(azimuth_velocity);
   const auto yaw_coefficient = std::sin(elevation_velocity);
 
   // Calculate the desired acceleration vector. The missile cannot accelerate

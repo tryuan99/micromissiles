@@ -30,8 +30,8 @@ class Micromissile : public Missile {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }
 
-  Micromissile(const Micromissile&) = default;
-  Micromissile& operator=(const Micromissile&) = default;
+  Micromissile(const Micromissile&) = delete;
+  Micromissile& operator=(const Micromissile&) = delete;
 
  protected:
   // Update the agent's state in the midcourse flight phase.
@@ -40,7 +40,7 @@ class Micromissile : public Missile {
  private:
   // Calculate the acceleration input to the sensor output.
   Eigen::Vector3d CalculateAccelerationInput(
-      const auto& SensorOutput sensor_output) const;
+      const SensorOutput& sensor_output) const;
 };
 
 }  // namespace swarm::missile

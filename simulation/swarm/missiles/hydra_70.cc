@@ -13,7 +13,7 @@
 
 namespace swarm::missile {
 
-void Hydra70::Spawn(const double t) override {
+std::vector<std::unique_ptr<agent::Agent>> Hydra70::Spawn(const double t) {
   if (has_spawned_) {
     return std::vector<std::unique_ptr<agent::Agent>>();
   }
@@ -28,7 +28,7 @@ void Hydra70::Spawn(const double t) override {
         submunitions_config().agent_config().missile_type();
     AgentConfig submunitions_missile_config(
         submunitions_config().agent_config());
-    *submunitions_missile_config.mutable_initial_state() = state();
+    submunitions_missile_config.mutable_initial_state()->CopyFrom(state());
 
     // Create the missiles for the submunitions.
     std::vector<std::unique_ptr<agent::Agent>> spawned_missiles;
@@ -43,7 +43,7 @@ void Hydra70::Spawn(const double t) override {
   return std::vector<std::unique_ptr<agent::Agent>>();
 }
 
-void Hydra70::UpdateMidCourse(const double t) override {
+void Hydra70::UpdateMidCourse(const double t) {
   // The Hydra-70 rocket is unguided, so only consider gravity and drag.
   Eigen::Vector3d acceleration_input = Eigen::Vector3d::Zero();
 
@@ -55,7 +55,7 @@ void Hydra70::UpdateMidCourse(const double t) override {
 }
 
 template <typename... Args>
-Hydra70::std::unique_ptr<Missile> CreateSubmunition(const MissileType type,
+std::unique_ptr<Missile> Hydra70::CreateSubmunition(const MissileType type,
                                                     Args&&... args) {
   switch (type) {
     case MissileType::MICROMISSILE: {

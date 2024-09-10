@@ -11,17 +11,17 @@
 namespace swarm::missile {
 
 Missile::Missile(const AgentConfig& config) : Agent(config) {
-  SensorFactory sensor_factory;
+  sensor::SensorFactory sensor_factory;
   sensor_ = sensor_factory.CreateSensor(dynamic_config().sensor_config().type(),
-                                        this);
+                                        *this);
 }
 
 Missile::Missile(const AgentConfig& config, const double t_creation,
                  const bool ready)
     : Agent(config, t_creation, ready) {
-  SensorFactory sensor_factory;
+  sensor::SensorFactory sensor_factory;
   sensor_ = sensor_factory.CreateSensor(dynamic_config().sensor_config().type(),
-                                        this);
+                                        *this);
 }
 
 bool Missile::HasHitTarget() const {
@@ -39,7 +39,7 @@ bool Missile::HasHitTarget() const {
   return distance <= hit_radius;
 }
 
-void Missile::UpdateReady(const double t) override {
+void Missile::UpdateReady(const double t) {
   // The missile is subject to gravity and drag with zero input acceleration.
   Eigen::Vector3d acceleration_input = Eigen::Vector3d::Zero();
 
@@ -50,7 +50,7 @@ void Missile::UpdateReady(const double t) override {
   state_.mutable_acceleration()->set_z(acceleration(2));
 }
 
-void Missile::UpdateBoost(const double t) override {
+void Missile::UpdateBoost(const double t) {
   // The missile only accelerates along its roll axis.
   const auto principal_axes = GetNormalizedPrincipalAxes();
   const auto boost_acceleration =
@@ -118,7 +118,7 @@ Eigen::Vector3d Missile::CalculateGravityProjectionOnPitchAndYaw() const {
 double Missile::CalculateDrag() const {
   const auto drag_coefficient =
       static_config().lift_drag_config().drag_coefficient();
-  const auto cross_section_area =
+  const auto cross_sectional_area =
       static_config().body_config().cross_sectional_area();
   const auto mass = static_config().body_config().mass();
 
@@ -135,7 +135,8 @@ double Missile::CalculateLiftInducedDrag(
   const auto lift_acceleration = acceleration_input.dot(principal_axes.yaw);
 
   // Calculate the drag acceleration from the lift acceleration.
-  const auto lift_drag_ratio = static_config().drag_config().lift_drag_ratio();
+  const auto lift_drag_ratio =
+      static_config().lift_drag_config().lift_drag_ratio();
   return std::abs(lift_acceleration / lift_drag_ratio);
 }
 

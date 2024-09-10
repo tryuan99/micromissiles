@@ -54,7 +54,11 @@ class IdealSensor(Sensor):
             The sensor output with the position field populated.
         """
         position_sensor_output = SensorOutput()
-        roll, pitch, yaw = self.agent.get_principal_axes()
+        normalized_roll, normalized_pitch, normalized_yaw = (
+            self.agent.get_normalized_principal_axes())
+
+        # Calculate the relative position of the target with respect to the
+        # agent.
         position = self.agent.get_position()
         target_position = target.get_position()
         target_relative_position = target_position - position
@@ -65,15 +69,14 @@ class IdealSensor(Sensor):
 
         # Project the relative position vector onto the yaw axis.
         relative_position_projection_on_yaw = (
-            np.dot(target_relative_position, yaw) / np.linalg.norm(yaw)**2 *
-            yaw)
+            np.dot(target_relative_position, normalized_yaw) * normalized_yaw)
         # Project the relative position vector onto the agent's roll-pitch
         # plane.
         relative_position_projection_on_roll_pitch_plane = (
             target_relative_position - relative_position_projection_on_yaw)
 
         # Determine the sign of the elevation.
-        if np.dot(relative_position_projection_on_yaw, yaw) >= 0:
+        if np.dot(relative_position_projection_on_yaw, normalized_yaw) >= 0:
             elevation_sign = 1
         else:
             elevation_sign = -1
@@ -84,9 +87,9 @@ class IdealSensor(Sensor):
             np.linalg.norm(relative_position_projection_on_roll_pitch_plane)))
 
         # Project the projection onto the roll axis.
-        relative_position_projection_on_roll = (
-            np.dot(relative_position_projection_on_roll_pitch_plane, roll) /
-            np.linalg.norm(roll)**2 * roll)
+        relative_position_projection_on_roll = (np.dot(
+            relative_position_projection_on_roll_pitch_plane, normalized_roll) *
+                                                normalized_roll)
         # Find the projection onto the pitch axis.
         relative_position_projection_on_pitch = (
             relative_position_projection_on_roll_pitch_plane -
@@ -95,7 +98,8 @@ class IdealSensor(Sensor):
         if (np.linalg.norm(relative_position_projection_on_pitch) > 0 or
                 np.linalg.norm(relative_position_projection_on_roll) > 0):
             # Determine the sign of the azimuth.
-            if np.dot(relative_position_projection_on_pitch, pitch) >= 0:
+            if np.dot(relative_position_projection_on_pitch,
+                      normalized_pitch) >= 0:
                 azimuth_sign = 1
             else:
                 azimuth_sign = -1

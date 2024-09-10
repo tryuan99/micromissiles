@@ -9,8 +9,9 @@
 
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/model_agent.h"
-#include "simulation/swarm/proto/agent_config.pb.h"
+#include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/sensors/sensor.h"
+#include "simulation/swarm/targets/target.h"
 
 namespace swarm::missile {
 
@@ -22,15 +23,15 @@ class Missile : public agent::Agent {
   explicit Missile(const AgentConfig& config);
   Missile(const AgentConfig& config, double t_creation, bool ready);
 
-  Missile(const Missile&) = default;
-  Missile& operator=(const Missile&) = default;
+  Missile(const Missile&) = delete;
+  Missile& operator=(const Missile&) = delete;
 
   virtual ~Missile() = default;
 
   // Assign the given target to the missile.
-  void AssignTarget(const target::Target& target) {
-    target_ = &target;
-    target_model_ = std::make_unique<agent::ModelAgent>(target.state());
+  void AssignTarget(target::Target* target) {
+    target_ = target;
+    target_model_ = std::make_unique<agent::ModelAgent>(target->state());
   }
 
   // Return whether a target is assigned to the missile.
@@ -81,10 +82,10 @@ class Missile : public agent::Agent {
   std::unique_ptr<sensor::Sensor> sensor_;
 
   // Time of the last sensor update.
-  double sensor_update_time_ = std::numeric_limits<double>::min;
+  double sensor_update_time_ = std::numeric_limits<double>::min();
 
   // Target assigned to the missile.
-  const target::Target* target_ = nullptr;
+  target::Target* target_ = nullptr;
 
   // Model of the target.
   std::unique_ptr<agent::Agent> target_model_;

@@ -43,7 +43,7 @@ void Agent::SetState(const State& state) {
   state_history_.back().state = state;
 }
 
-Agent::PrincipalAxes Agent<T>::GetPrincipalAxes() const {
+Agent::PrincipalAxes Agent::GetPrincipalAxes() const {
   PrincipalAxes principal_axes;
   // The roll axis is assumed to be aligned with the agent's velocity vector.
   principal_axes.roll = GetVelocity();
@@ -55,7 +55,7 @@ Agent::PrincipalAxes Agent<T>::GetPrincipalAxes() const {
   return principal_axes;
 }
 
-Agent::PrincipalAxes Agent<T>::GetNormalizedPrincipalAxes() const {
+Agent::PrincipalAxes Agent::GetNormalizedPrincipalAxes() const {
   auto principal_axes = GetPrincipalAxes();
   principal_axes.roll.normalize();
   principal_axes.pitch.normalize();

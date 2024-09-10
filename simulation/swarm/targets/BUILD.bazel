@@ -69,7 +69,7 @@ cc_library(
     hdrs = ["target.h"],
     deps = [
         "//simulation/swarm:agent",
-        "//simulation/swarm/proto:target_config_cc_proto",
+        "//simulation/swarm/proto:agent_cc_proto",
     ],
 )
 
@@ -80,7 +80,7 @@ cc_library(
         ":drone",
         ":missile",
         ":target",
-        "//simulation/swarm/proto:target_config_cc_proto",
+        "//simulation/swarm/proto:agent_cc_proto",
         "@abseil-cpp//absl/strings:str_format",
     ],
 )
@@ -90,7 +90,7 @@ cc_test(
     srcs = ["target_factory_test.cc"],
     deps = [
         ":target_factory",
-        "//simulation/swarm/proto:target_config_cc_proto",
+        "//simulation/swarm/proto:agent_cc_proto",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

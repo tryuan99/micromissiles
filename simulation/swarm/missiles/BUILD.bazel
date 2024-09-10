@@ -24,6 +24,7 @@ cc_library(
     name = "hydra_70",
     srcs = ["hydra_70.cc"],
     hdrs = ["hydra_70.h"],
+    data = ["//simulation/swarm/configs/missiles:configs"],
     deps = [
         ":micromissile",
         ":missile",
@@ -50,6 +51,7 @@ cc_library(
     name = "micromissile",
     srcs = ["micromissile.cc"],
     hdrs = ["micromissile.h"],
+    data = ["//simulation/swarm/configs/missiles:configs"],
     deps = [
         ":missile",
         "//simulation/swarm:utils",
@@ -81,6 +83,7 @@ cc_library(
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/sensors:sensor",
         "//simulation/swarm/sensors:sensor_factory",
+        "//simulation/swarm/targets:target",
         "@eigen",
     ],
 )

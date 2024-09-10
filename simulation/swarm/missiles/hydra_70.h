@@ -32,14 +32,14 @@ class Hydra70 : public Missile {
     static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
   }
 
-  Hydra70(const Hydra70&) = default;
-  Hydra70& operator=(const Hydra70&) = default;
+  Hydra70(const Hydra70&) = delete;
+  Hydra70& operator=(const Hydra70&) = delete;
 
   // Return whether a target can be assigned to the missile.
   bool assignable_to_target() const override { return false; }
 
   // Spawn the submunitions.
-  std::vector<std::unique_ptr<agent::Agent>> Spawn(double t);
+  std::vector<std::unique_ptr<agent::Agent>> Spawn(double t) override;
 
  protected:
   // Update the agent's state in the midcourse flight phase.
