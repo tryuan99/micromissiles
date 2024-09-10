@@ -11,6 +11,11 @@ class StateHistory {
  public:
   // History record.
   struct Record {
+    Record() = default;
+    Record(const double t, const bool hit) : Record(t, hit, State()) {}
+    Record(const double t, const bool hit, const State state)
+        : t(t), hit(hit), state(std::move(state)) {}
+
     // Time in s.
     double t = 0.0;
 

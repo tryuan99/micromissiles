@@ -27,8 +27,7 @@ Agent::Agent(const State initial_state, const double t_creation,
       state_(std::move(initial_state)),
       flight_phase_(ready ? FlightPhase::READY : FlightPhase::INITIALIZED) {
   // Add the initial state to the history.
-  state_history_.Add(state::StateHistory::Record{
-      .t = t_creation_, .hit = hit_, .state = state_});
+  state_history_.Add(state::StateHistory::Record(t_creation_, hit_, state_));
 }
 
 void Agent::MarkAsHit() {
@@ -204,11 +203,7 @@ void Agent::Step(const double t_start, const double t_step) {
   state_.mutable_velocity()->set_z(velocity_z);
 
   // Add the new state to the history.
-  state_history_.Add(state::StateHistory::Record{
-      .t = t_end,
-      .hit = hit_,
-      .state = state_,
-  });
+  state_history_.Add(state::StateHistory::Record(t_end, hit_, state_));
   state_update_time_ = t_end;
 }
 

@@ -22,6 +22,11 @@ class Agent {
  public:
   // Principal axes.
   struct PrincipalAxes {
+    PrincipalAxes() = default;
+    PrincipalAxes(const Eigen::Vector3d roll, const Eigen::Vector3d pitch,
+                  const Eigen::Vector3d yaw)
+        : roll(std::move(roll)), pitch(std::move(pitch)), yaw(std::move(yaw)) {}
+
     // Roll axis.
     // The roll axis is assumed to be aligned with the agent's velocity vector.
     Eigen::Vector3d roll;

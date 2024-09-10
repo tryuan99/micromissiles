@@ -13,18 +13,9 @@ class StateHistoryTest : public testing::Test {
   static constexpr int kNumRecords = 3;
 
   StateHistoryTest() {
-    state_history_.Add(StateHistory::Record{
-        .t = 0,
-        .hit = false,
-    });
-    state_history_.Add(StateHistory::Record{
-        .t = 1,
-        .hit = false,
-    });
-    state_history_.Add(StateHistory::Record{
-        .t = 2,
-        .hit = false,
-    });
+    state_history_.Add(StateHistory::Record(/*t=*/0, /*hit=*/false));
+    state_history_.Add(StateHistory::Record(/*t=*/1, /*hit=*/false));
+    state_history_.Add(StateHistory::Record(/*t=*/2, /*hit=*/false));
   }
 
   // History of states.
@@ -32,17 +23,14 @@ class StateHistoryTest : public testing::Test {
 };
 
 TEST_F(StateHistoryTest, Add) {
-  state_history_.Add(StateHistory::Record{
-      .t = 10,
-      .hit = true,
-  });
+  state_history_.Add(StateHistory::Record(/*t=*/10, /*hit=*/true));
   EXPECT_EQ(state_history_.size(), kNumRecords + 1);
   EXPECT_EQ(state_history_.back().t, 10);
   EXPECT_EQ(state_history_.back().hit, true);
 }
 
 TEST_F(StateHistoryTest, UpdateLast) {
-  const auto new_record = StateHistory::Record{.t = 10, .hit = true};
+  const auto new_record = StateHistory::Record(/*t=*/10, /*hit=*/true);
   state_history_.UpdateLast(new_record);
   EXPECT_EQ(state_history_.size(), kNumRecords);
   EXPECT_EQ(state_history_.back().t, 10);
