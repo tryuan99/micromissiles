@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <cmath>
-
 namespace swarm::constants {
 
 // Air density in kg/m^3.
@@ -19,14 +17,9 @@ constexpr double kGravity = 9.80665;
 constexpr double kEarthMeanRadius = 6378137;
 
 // Calculate the air density at the given altitude.
-double CalculateAirDensityAtAltitude(const double altitude) {
-  return kAirDensity * std::exp(-altitude / (kAirDensityScaleHeight * 1000));
-}
+double CalculateAirDensityAtAltitude(double altitude);
 
 // Calculate the gravity at the given altitude.
-double CalculateGravityAtAltitude(const double altitude) {
-  return kGravity *
-         std::pow(kEarthMeanRadius / (kEarthMeanRadius + altitude), 2);
-}
+double CalculateGravityAtAltitude(double altitude);
 
 }  // namespace swarm::constants

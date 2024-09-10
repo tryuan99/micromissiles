@@ -7,8 +7,8 @@ from collections import namedtuple
 import numpy as np
 
 from simulation.swarm.assignment.py.assignment_interface import Assignment
-from simulation.swarm.missiles.py.missile_interface import Missile
-from simulation.swarm.targets.py.target_interface import Target
+from simulation.swarm.missile.py.missile_interface import Missile
+from simulation.swarm.target.py.target_interface import Target
 
 
 class DistanceAssignment(Assignment):

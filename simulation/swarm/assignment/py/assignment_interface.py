@@ -2,8 +2,8 @@
 
 from abc import ABC, abstractmethod
 
-from simulation.swarm.missiles.py.missile_interface import Missile
-from simulation.swarm.targets.py.target_interface import Target
+from simulation.swarm.missile.py.missile_interface import Missile
+from simulation.swarm.target.py.target_interface import Target
 
 
 class Assignment(ABC):

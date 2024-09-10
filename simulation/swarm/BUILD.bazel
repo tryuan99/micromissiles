@@ -86,7 +86,7 @@ cc_library(
 cc_test(
     name = "utils_test",
     srcs = ["utils_test.cc"],
-    data = ["//simulation/swarm/configs/missiles:configs"],
+    data = ["//simulation/swarm/configs/missile:configs"],
     deps = [
         ":utils",
         "@googletest//:gtest",

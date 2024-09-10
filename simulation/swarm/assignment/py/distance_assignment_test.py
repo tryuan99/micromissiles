@@ -3,8 +3,8 @@ from simulation.swarm.proto.agent_pb2 import AgentConfig
 
 from simulation.swarm.assignment.py.distance_assignment import \
     DistanceAssignment
-from simulation.swarm.missiles.py.dummy_missile import DummyMissile
-from simulation.swarm.targets.py.dummy_target import DummyTarget
+from simulation.swarm.missile.py.dummy_missile import DummyMissile
+from simulation.swarm.target.py.dummy_target import DummyTarget
 
 
 class DistanceAssignmentTestCase(absltest.TestCase):

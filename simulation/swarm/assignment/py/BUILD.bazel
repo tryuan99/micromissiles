@@ -6,8 +6,8 @@ py_library(
     name = "assignment_interface",
     srcs = ["assignment_interface.py"],
     deps = [
-        "//simulation/swarm/missiles/py:missile_interface",
-        "//simulation/swarm/targets/py:target_interface",
+        "//simulation/swarm/missile/py:missile_interface",
+        "//simulation/swarm/target/py:target_interface",
     ],
 )
 
@@ -16,8 +16,8 @@ py_library(
     srcs = ["distance_assignment.py"],
     deps = [
         ":assignment_interface",
-        "//simulation/swarm/missiles/py:missile_interface",
-        "//simulation/swarm/targets/py:target_interface",
+        "//simulation/swarm/missile/py:missile_interface",
+        "//simulation/swarm/target/py:target_interface",
         requirement("numpy"),
     ],
 )
@@ -27,9 +27,9 @@ py_test(
     srcs = ["distance_assignment_test.py"],
     deps = [
         ":distance_assignment",
-        "//simulation/swarm/missiles/py:dummy_missile",
+        "//simulation/swarm/missile/py:dummy_missile",
         "//simulation/swarm/proto:agent_py_proto",
-        "//simulation/swarm/targets/py:dummy_target",
+        "//simulation/swarm/target/py:dummy_target",
         requirement("absl-py"),
     ],
 )

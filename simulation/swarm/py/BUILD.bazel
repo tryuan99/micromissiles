@@ -65,9 +65,9 @@ py_library(
     deps = [
         ":plotter",
         "//simulation/swarm/assignment/py:distance_assignment",
-        "//simulation/swarm/missiles/py:missile",
+        "//simulation/swarm/missile/py:missile",
         "//simulation/swarm/proto:simulator_config_py_proto",
-        "//simulation/swarm/targets/py:target",
+        "//simulation/swarm/target/py:target",
         requirement("absl-py"),
         requirement("numpy"),
     ],
