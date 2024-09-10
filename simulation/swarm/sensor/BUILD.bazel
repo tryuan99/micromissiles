@@ -17,7 +17,6 @@ cc_test(
     deps = [
         ":ideal_sensor",
         "//simulation/swarm:model_agent",
-        "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:state_cc_proto",
         "@eigen",
         "@googletest//:gtest",
