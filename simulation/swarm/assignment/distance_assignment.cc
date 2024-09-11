@@ -35,33 +35,47 @@ struct MissileTargetDistance {
 void DistanceAssignment::Assign(
     const std::vector<std::unique_ptr<agent::Agent>>& missiles,
     const std::vector<std::unique_ptr<agent::Agent>>& targets) {
+  const auto assignable_missile_indices = GetAssignableMissileIndices(missiles);
+  if (assignable_missile_indices.size() == 0) {
+    return;
+  }
+  const auto active_target_indices = GetActiveTargetIndices(targets);
+  if (active_target_indices.size() == 0) {
+    return;
+  }
+
   // Get the missile and target positions.
-  std::vector<Eigen::Vector3d> missile_positions(missiles.size());
-  std::transform(missiles.cbegin(), missiles.cend(), missile_positions.begin(),
-                 [](const std::unique_ptr<agent::Agent>& missile) {
-                   return missile->GetPosition();
+  std::vector<Eigen::Vector3d> assignable_missile_positions(
+      assignable_missile_indices.size());
+  std::transform(assignable_missile_indices.cbegin(),
+                 assignable_missile_indices.cend(),
+                 assignable_missile_positions.begin(),
+                 [&](const int assignable_missile_index) {
+                   return missiles[assignable_missile_index]->GetPosition();
                  });
-  std::vector<Eigen::Vector3d> target_positions(targets.size());
-  std::transform(targets.cbegin(), targets.cend(), target_positions.begin(),
-                 [](const std::unique_ptr<agent::Agent>& target) {
-                   return target->GetPosition();
+  std::vector<Eigen::Vector3d> active_target_positions(
+      active_target_indices.size());
+  std::transform(active_target_indices.cbegin(), active_target_indices.cend(),
+                 active_target_positions.begin(),
+                 [&](const int active_target_index) {
+                   return targets[active_target_index]->GetPosition();
                  });
 
   // Sort the missile-target distances.
   std::deque<MissileTargetDistance> missile_target_distances;
-  for (int missile_index = 0; missile_index < missiles.size();
-       ++missile_index) {
-    if (missiles[missile_index]->assignable()) {
-      for (int target_index = 0; target_index < targets.size();
-           ++target_index) {
-        if (!targets[target_index]->hit()) {
-          const auto distance = (target_positions[target_index] -
-                                 missile_positions[missile_index])
-                                    .norm();
-          missile_target_distances.emplace_back(missile_index, target_index,
-                                                distance);
-        }
-      }
+  for (int assignable_missile_index = 0;
+       assignable_missile_index < assignable_missile_indices.size();
+       ++assignable_missile_index) {
+    for (int active_target_index = 0;
+         active_target_index < active_target_indices.size();
+         ++active_target_index) {
+      const auto distance =
+          (active_target_positions[assignable_missile_index] -
+           assignable_missile_positions[assignable_missile_index])
+              .norm();
+      missile_target_distances.emplace_back(
+          assignable_missile_indices[assignable_missile_index],
+          active_target_indices[active_target_index], distance);
     }
   }
   std::sort(missile_target_distances.begin(), missile_target_distances.end(),
@@ -76,9 +90,9 @@ void DistanceAssignment::Assign(
   // Assign targets to missiles based on distance.
   while (missile_target_distances.size() > 0) {
     std::unordered_set<int> assigned_missile_indices;
-    assigned_missile_indices.reserve(missile_target_distances.size());
+    assigned_missile_indices.reserve(assignable_missile_indices.size());
     std::unordered_set<int> assigned_target_indices;
-    assigned_target_indices.reserve(missile_target_distances.size());
+    assigned_target_indices.reserve(active_target_indices.size());
     for (const auto& missile_target_distance : missile_target_distances) {
       const auto missile_index = missile_target_distance.missile_index;
       const auto target_index = missile_target_distance.target_index;

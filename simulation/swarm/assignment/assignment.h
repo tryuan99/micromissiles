@@ -37,6 +37,14 @@ class Assignment {
       const std::vector<std::unique_ptr<agent::Agent>>& targets) = 0;
 
  protected:
+  // Get the list of assignable missile indices.
+  static std::vector<int> GetAssignableMissileIndices(
+      const std::vector<std::unique_ptr<agent::Agent>>& missiles);
+
+  // Get the list of active target indices.
+  static std::vector<int> GetActiveTargetIndices(
+      const std::vector<std::unique_ptr<agent::Agent>>& targets);
+
   // A list containing the missile-target assignments.
   std::forward_list<AssignmentItem> missile_to_target_assignments_;
 };

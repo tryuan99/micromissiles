@@ -2,6 +2,7 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "assignment",
+    srcs = ["assignment.cc"],
     hdrs = ["assignment.h"],
     deps = ["//simulation/swarm:agent"],
 )
@@ -22,6 +23,29 @@ cc_test(
     srcs = ["distance_assignment_test.cc"],
     deps = [
         ":distance_assignment",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/missile:dummy_missile",
+        "//simulation/swarm/target:dummy_target",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "round_robin_assignment",
+    srcs = ["round_robin_assignment.cc"],
+    hdrs = ["round_robin_assignment.h"],
+    deps = [
+        ":assignment",
+        "//simulation/swarm:agent",
+    ],
+)
+
+cc_test(
+    name = "round_robin_assignment_test",
+    srcs = ["round_robin_assignment_test.cc"],
+    deps = [
+        ":round_robin_assignment",
         "//simulation/swarm:agent",
         "//simulation/swarm/missile:dummy_missile",
         "//simulation/swarm/target:dummy_target",
