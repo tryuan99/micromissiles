@@ -28,27 +28,39 @@ class DistanceAssignment(Assignment):
 
     def _assign_targets(self) -> None:
         """Assigns each missile to a target."""
+        assignable_missile_indices = self.get_assignable_missile_indices(
+            self.missiles)
+        if len(assignable_missile_indices) == 0:
+            return
+        active_target_indices = self.get_active_target_indices(self.targets)
+        if len(active_target_indices) == 0:
+            return
+
         # Get the missile and target positions.
         missile_positions = [
-            missile.get_position() for missile in self.missiles
+            self.missiles[missile_index].get_position()
+            for missile_index in assignable_missile_indices
         ]
-        target_positions = [target.get_position() for target in self.targets]
+        target_positions = [
+            self.targets[target_index].get_position()
+            for target_index in active_target_indices
+        ]
 
         # Sort the missile-target distances.
         missile_target_distances = []
-        for missile_index, missile_position in enumerate(missile_positions):
-            if self.missiles[missile_index].assignable_to_target():
-                for target_index, target_position in enumerate(
-                        target_positions):
-                    if not self.targets[target_index].hit:
-                        distance = (np.linalg.norm(target_position -
-                                                   missile_position))
-                        missile_target_distances.append(
-                            DistanceAssignment.MissileTargetDistance(
-                                missile_index=missile_index,
-                                target_index=target_index,
-                                distance=distance,
-                            ))
+        for assignable_missile_index, missile_index in enumerate(
+                assignable_missile_indices):
+            for active_target_index, target_index in enumerate(
+                    active_target_indices):
+                distance = (
+                    np.linalg.norm(target_positions[active_target_index] -
+                                   missile_positions[assignable_missile_index]))
+                missile_target_distances.append(
+                    DistanceAssignment.MissileTargetDistance(
+                        missile_index=missile_index,
+                        target_index=target_index,
+                        distance=distance,
+                    ))
         sorted_missile_target_distances = sorted(missile_target_distances,
                                                  key=lambda x: x.distance)
 

@@ -27,3 +27,35 @@ class Assignment(ABC):
     @abstractmethod
     def _assign_targets(self) -> None:
         """Assigns each missile to a target."""
+
+    @staticmethod
+    def get_assignable_missile_indices(missiles: list[Missile]) -> list[int]:
+        """Returns the indices of assignable missiles.
+
+        Args:
+            missiles: List of missiles.
+
+        Returns:
+            The list of assignable missile indices.
+        """
+        assignable_missile_indices = [
+            missile_index for missile_index, missile in enumerate(missiles)
+            if missile.assignable_to_target()
+        ]
+        return assignable_missile_indices
+
+    @staticmethod
+    def get_active_target_indices(targets: list[Target]) -> list[int]:
+        """Returns the indices of active targets.
+
+        Args:
+            targets: List of targets.
+
+        Returns:
+            The list of active target indices.
+        """
+        active_target_indices = [
+            target_index for target_index, target in enumerate(targets)
+            if not target.hit
+        ]
+        return active_target_indices
