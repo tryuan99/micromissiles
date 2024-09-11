@@ -7,8 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include "simulation/swarm/missile/missile.h"
-#include "simulation/swarm/target/target.h"
+#include "simulation/swarm/agent.h"
 
 namespace swarm::assignment {
 
@@ -34,8 +33,8 @@ class Assignment {
 
   // Assign a target to each missile that has not been assigned a target yet.
   virtual void Assign(
-      const std::vector<std::unique_ptr<missile::Missile>>& missiles,
-      const std::vector<std::unique_ptr<target::Target>>& targets) = 0;
+      const std::vector<std::unique_ptr<agent::Agent>>& missiles,
+      const std::vector<std::unique_ptr<agent::Agent>>& targets) = 0;
 
  protected:
   // A list containing the missile-target assignments.

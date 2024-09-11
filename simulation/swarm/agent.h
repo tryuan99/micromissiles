@@ -78,9 +78,6 @@ class Agent {
     return submunitions_config_;
   }
 
-  // Return whether the agent has hit or been hit.
-  bool hit() const { return hit_; }
-
   // Return whether the agent has launched.
   bool has_launched() const {
     return flight_phase_ != FlightPhase::INITIALIZED &&
@@ -92,8 +89,33 @@ class Agent {
     return flight_phase_ == FlightPhase::TERMINATED;
   }
 
+  // Return whether a target can be assigned to the agent.
+  virtual bool assignable() const { return true; }
+
+  // Assign the given target to the agent.
+  virtual void AssignTarget(Agent* target) { target_ = target; }
+
+  // Return whether a target is assigned to the agent.
+  bool has_assigned_target() const { return target_ != nullptr; }
+
+  // Check whether the assigned target has been hit.
+  void CheckTarget() {
+    if (has_assigned_target() && target_->hit()) {
+      UnassignTarget();
+    }
+  }
+
+  // Unassign the target from the agent.
+  virtual void UnassignTarget() { target_ = nullptr; }
+
+  // Return whether the agent has hit or been hit.
+  bool hit() const { return hit_; }
+
   // Mark the agent as having hit the target or been hit.
   void MarkAsHit();
+
+  // Return whether the agent has hit the assigned target.
+  bool HasHitTarget() const;
 
   // Set the state of the agent.
   void SetState(const State& state);
@@ -166,6 +188,9 @@ class Agent {
 
   // History of the agent.
   state::StateHistory state_history_;
+
+  // Target assigned to the agent.
+  Agent* target_ = nullptr;
 
   // Boolean indicating whether the agent has hit or been hit.
   bool hit_ = false;

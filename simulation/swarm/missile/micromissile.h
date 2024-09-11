@@ -8,6 +8,7 @@
 #include "simulation/swarm/missile/missile.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/sensor.pb.h"
+#include "simulation/swarm/proto/static_config.pb.h"
 #include "simulation/swarm/utils.h"
 
 namespace swarm::missile {
@@ -22,12 +23,14 @@ class Micromissile : public Missile {
   Micromissile() = default;
 
   explicit Micromissile(const AgentConfig& config) : Missile(config) {
-    static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
+    static_config_ =
+        utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
   Micromissile(const AgentConfig& config, const double t_creation,
                const bool ready)
       : Missile(config, t_creation, ready) {
-    static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
+    static_config_ =
+        utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
 
   Micromissile(const Micromissile&) = delete;

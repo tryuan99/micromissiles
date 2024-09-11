@@ -6,11 +6,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include "simulation/swarm/agent.h"
 #include "simulation/swarm/missile/dummy_missile.h"
-#include "simulation/swarm/missile/missile.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/target/dummy_target.h"
-#include "simulation/swarm/target/target.h"
 
 namespace swarm::assignment {
 namespace {
@@ -21,8 +20,8 @@ class DistanceAssignmentTest : public testing::Test {
       : missiles_(GenerateMissiles()), targets_(GenerateTargets()) {}
 
   // Generate the missiles.
-  static std::vector<std::unique_ptr<missile::Missile>> GenerateMissiles() {
-    std::vector<std::unique_ptr<missile::Missile>> missiles;
+  static std::vector<std::unique_ptr<agent::Agent>> GenerateMissiles() {
+    std::vector<std::unique_ptr<agent::Agent>> missiles;
     AgentConfig missile_config;
     missile_config.mutable_initial_state()->mutable_position()->set_x(1);
     missile_config.mutable_initial_state()->mutable_position()->set_x(2);
@@ -51,8 +50,8 @@ class DistanceAssignmentTest : public testing::Test {
   }
 
   // Generate the targets.
-  static std::vector<std::unique_ptr<target::Target>> GenerateTargets() {
-    std::vector<std::unique_ptr<target::Target>> targets;
+  static std::vector<std::unique_ptr<agent::Agent>> GenerateTargets() {
+    std::vector<std::unique_ptr<agent::Agent>> targets;
     AgentConfig target_config;
     target_config.mutable_initial_state()->mutable_position()->set_x(10);
     target_config.mutable_initial_state()->mutable_position()->set_x(15);
@@ -70,10 +69,10 @@ class DistanceAssignmentTest : public testing::Test {
   DistanceAssignment assignment_;
 
   // Missiles.
-  std::vector<std::unique_ptr<missile::Missile>> missiles_;
+  std::vector<std::unique_ptr<agent::Agent>> missiles_;
 
   // Targets.
-  std::vector<std::unique_ptr<target::Target>> targets_;
+  std::vector<std::unique_ptr<agent::Agent>> targets_;
 };
 
 TEST_F(DistanceAssignmentTest, Assign) {

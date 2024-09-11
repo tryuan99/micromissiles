@@ -31,6 +31,7 @@ cc_library(
         "//simulation/swarm:agent",
         "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
         "@abseil-cpp//absl/strings:str_format",
         "@eigen",
     ],
@@ -57,6 +58,7 @@ cc_library(
         "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
         "@eigen",
     ],
 )
@@ -83,7 +85,6 @@ cc_library(
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/sensor",
         "//simulation/swarm/sensor:sensor_factory",
-        "//simulation/swarm/target",
         "@eigen",
     ],
 )

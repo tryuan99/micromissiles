@@ -8,6 +8,7 @@ cc_library(
         ":target",
         "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
     ],
 )
 
@@ -50,6 +51,7 @@ cc_library(
         ":target",
         "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
     ],
 )
 

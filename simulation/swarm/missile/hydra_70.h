@@ -11,6 +11,7 @@
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/missile/missile.h"
 #include "simulation/swarm/proto/agent.pb.h"
+#include "simulation/swarm/proto/static_config.pb.h"
 #include "simulation/swarm/utils.h"
 
 namespace swarm::missile {
@@ -25,18 +26,20 @@ class Hydra70 : public Missile {
   Hydra70() = default;
 
   explicit Hydra70(const AgentConfig& config) : Missile(config) {
-    static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
+    static_config_ =
+        utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
   Hydra70(const AgentConfig& config, const double t_creation, const bool ready)
       : Missile(config, t_creation, ready) {
-    static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
+    static_config_ =
+        utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
 
   Hydra70(const Hydra70&) = delete;
   Hydra70& operator=(const Hydra70&) = delete;
 
   // Return whether a target can be assigned to the missile.
-  bool assignable_to_target() const override { return false; }
+  bool assignable() const override { return false; }
 
   // Spawn the submunitions.
   std::vector<std::unique_ptr<agent::Agent>> Spawn(double t) override;

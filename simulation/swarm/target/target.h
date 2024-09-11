@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <cstdbool>
+
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/proto/agent.pb.h"
 
@@ -20,6 +22,9 @@ class Target : public agent::Agent {
   Target& operator=(const Target&) = default;
 
   virtual ~Target() = default;
+
+  // Return whether a target can be assigned to the target.
+  bool assignable() const override { return false; };
 };
 
 }  // namespace swarm::target

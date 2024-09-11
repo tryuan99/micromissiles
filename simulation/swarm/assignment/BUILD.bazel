@@ -3,10 +3,7 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "assignment",
     hdrs = ["assignment.h"],
-    deps = [
-        "//simulation/swarm/missile",
-        "//simulation/swarm/target",
-    ],
+    deps = ["//simulation/swarm:agent"],
 )
 
 cc_library(
@@ -15,8 +12,7 @@ cc_library(
     hdrs = ["distance_assignment.h"],
     deps = [
         ":assignment",
-        "//simulation/swarm/missile",
-        "//simulation/swarm/target",
+        "//simulation/swarm:agent",
         "@eigen",
     ],
 )
@@ -26,9 +22,8 @@ cc_test(
     srcs = ["distance_assignment_test.cc"],
     deps = [
         ":distance_assignment",
-        "//simulation/swarm/missile",
+        "//simulation/swarm:agent",
         "//simulation/swarm/missile:dummy_missile",
-        "//simulation/swarm/target",
         "//simulation/swarm/target:dummy_target",
         "@googletest//:gtest",
         "@googletest//:gtest_main",

@@ -34,8 +34,7 @@ class Simulator:
         ]
 
     def run(self, t_end: float) -> None:
-        """Runs the simulation for the given time span in increments of the
-        given step time.
+        """Runs the simulation for the given time span.
 
         Args:
             t_end: Time span in seconds.
@@ -65,7 +64,7 @@ class Simulator:
                 self.missiles[missile_index].assign_target(
                     self.targets[target_index])
 
-            # Update the acceleration vectors of each agent.
+            # Update the acceleration vector of each agent.
             for agent in [*self.missiles, *self.targets]:
                 if not agent.has_terminated():
                     agent.update(t)

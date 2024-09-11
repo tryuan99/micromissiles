@@ -11,7 +11,6 @@
 #include "simulation/swarm/model_agent.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/sensor/sensor.h"
-#include "simulation/swarm/target/target.h"
 
 namespace swarm::missile {
 
@@ -28,35 +27,22 @@ class Missile : public agent::Agent {
 
   virtual ~Missile() = default;
 
+  // Return whether a target can be assigned to the missile.
+  virtual bool assignable() const override {
+    return has_launched() && !has_assigned_target();
+  }
+
   // Assign the given target to the missile.
-  void AssignTarget(target::Target* target) {
+  void AssignTarget(Agent* target) override {
     target_ = target;
     target_model_ = std::make_unique<agent::ModelAgent>(target->state());
   }
 
-  // Return whether a target is assigned to the missile.
-  bool has_assigned_target() const { return target_ != nullptr; }
-
-  // Return whether a target can be assigned to the missile.
-  virtual bool assignable_to_target() const {
-    return has_launched() && !has_assigned_target();
-  }
-
-  // Check whether the target has been hit.
-  void CheckTarget() {
-    if (has_assigned_target() && target_->hit()) {
-      UnassignTarget();
-    }
-  }
-
-  // Unassign the given target from the missile.
-  void UnassignTarget() {
+  // Unassign the target from the missile.
+  void UnassignTarget() override {
     target_ = nullptr;
     target_model_.release();
   }
-
-  // Return whether the missile has hit the assigned target.
-  bool HasHitTarget() const;
 
  protected:
   // Update the missile's state in the ready phase.
@@ -83,9 +69,6 @@ class Missile : public agent::Agent {
 
   // Time of the last sensor update.
   double sensor_update_time_ = std::numeric_limits<double>::min();
-
-  // Target assigned to the missile.
-  target::Target* target_ = nullptr;
 
   // Model of the target.
   std::unique_ptr<agent::Agent> target_model_;

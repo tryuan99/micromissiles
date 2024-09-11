@@ -6,6 +6,7 @@
 
 #include "absl/strings/str_format.h"
 #include "simulation/swarm/proto/agent.pb.h"
+#include "simulation/swarm/proto/static_config.pb.h"
 #include "simulation/swarm/target/target.h"
 #include "simulation/swarm/utils.h"
 
@@ -21,11 +22,13 @@ class Missile : public Target {
   Missile() = default;
 
   explicit Missile(const AgentConfig& config) : Target(config) {
-    static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
+    static_config_ =
+        utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
   Missile(const AgentConfig& config, const double t_creation, const bool ready)
       : Target(config, t_creation, ready) {
-    static_config_ = utils::LoadStaticConfigFromFile(kStaticConfigFile);
+    static_config_ =
+        utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
 
   Missile(const Missile&) = default;

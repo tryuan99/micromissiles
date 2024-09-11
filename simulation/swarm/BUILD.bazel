@@ -56,6 +56,34 @@ cc_test(
 )
 
 cc_library(
+    name = "simulator",
+    srcs = ["simulator.cc"],
+    hdrs = ["simulator.h"],
+    deps = [
+        "//base:logging",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/assignment",
+        "//simulation/swarm/assignment:distance_assignment",
+        "//simulation/swarm/missile:missile_factory",
+        "//simulation/swarm/proto:simulator_config_cc_proto",
+        "//simulation/swarm/target:target_factory",
+    ],
+)
+
+cc_binary(
+    name = "simulator_main",
+    srcs = ["simulator_main.cc"],
+    data = ["//simulation/swarm/configs/simulator:configs"],
+    deps = [
+        ":simulator",
+        ":utils",
+        "//base",
+        "//base:commandlineflags",
+        "//simulation/swarm/proto:simulator_config_cc_proto",
+    ],
+)
+
+cc_library(
     name = "state_history",
     srcs = ["state_history.cc"],
     hdrs = ["state_history.h"],
@@ -73,11 +101,36 @@ cc_test(
 )
 
 cc_library(
+    name = "swarm_simulator",
+    srcs = ["swarm_simulator.cc"],
+    hdrs = ["swarm_simulator.h"],
+    deps = [
+        ":simulator",
+        "//simulation/swarm:utils",
+        "//simulation/swarm/proto:simulator_config_cc_proto",
+        "//simulation/swarm/proto:state_cc_proto",
+        "//simulation/swarm/proto:swarm_config_cc_proto",
+    ],
+)
+
+cc_binary(
+    name = "swarm_simulator_main",
+    srcs = ["swarm_simulator_main.cc"],
+    data = ["//simulation/swarm/configs/swarm:configs"],
+    deps = [
+        ":swarm_simulator",
+        ":utils",
+        "//base",
+        "//base:commandlineflags",
+        "//simulation/swarm/proto:swarm_config_cc_proto",
+    ],
+)
+
+cc_library(
     name = "utils",
     srcs = ["utils.cc"],
     hdrs = ["utils.h"],
     deps = [
-        "//simulation/swarm/proto:static_config_cc_proto",
         "@abseil-cpp//absl/strings:str_format",
         "@com_google_protobuf//:protobuf",
     ],
@@ -89,6 +142,7 @@ cc_test(
     data = ["//simulation/swarm/configs/missile:configs"],
     deps = [
         ":utils",
+        "//simulation/swarm/proto:static_config_cc_proto",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
