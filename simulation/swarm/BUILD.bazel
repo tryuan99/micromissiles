@@ -67,6 +67,7 @@ cc_library(
         "//simulation/swarm/missile:missile_factory",
         "//simulation/swarm/proto:simulator_config_cc_proto",
         "//simulation/swarm/target:target_factory",
+        "//utils:thread_pool",
     ],
 )
 

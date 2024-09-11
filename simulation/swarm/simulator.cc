@@ -9,12 +9,19 @@
 #include "simulation/swarm/missile/missile_factory.h"
 #include "simulation/swarm/proto/simulator_config.pb.h"
 #include "simulation/swarm/target/target_factory.h"
+#include "utils/thread_pool.h"
 
 namespace swarm::simulator {
 
+namespace {
+// Number of threads.
+constexpr int kNumThreads = 8;
+}  // namespace
+
 Simulator::Simulator(const SimulatorConfig& simulator_config)
     : t_step_(simulator_config.step_time()),
-      assignment_(std::make_unique<assignment::DistanceAssignment>()) {
+      assignment_(std::make_unique<assignment::DistanceAssignment>()),
+      thread_pool_(::utils::ThreadPool(kNumThreads)) {
   missiles_.reserve(simulator_config.missile_configs_size());
   missile::MissileFactory missile_factory;
   for (const auto& missile_config : simulator_config.missile_configs()) {
@@ -29,6 +36,7 @@ Simulator::Simulator(const SimulatorConfig& simulator_config)
         target_factory.CreateTarget(target_config.target_type(), target_config,
                                     /*t_creation=*/0, /*ready=*/false));
   }
+  thread_pool_.Start();
 }
 
 void Simulator::Run(const double t_end) {
@@ -84,14 +92,15 @@ void Simulator::Run(const double t_end) {
     // Step to the next time step.
     for (auto& missile : missiles_) {
       if (missile->has_launched() && !missile->has_terminated()) {
-        missile->Step(t, t_step_);
+        thread_pool_.QueueJob([&]() { missile->Step(t, t_step_); });
       }
     }
     for (auto& target : targets_) {
       if (target->has_launched() && !target->has_terminated()) {
-        target->Step(t, t_step_);
+        thread_pool_.QueueJob([&]() { target->Step(t, t_step_); });
       }
     }
+    thread_pool_.Wait();
   }
 }
 

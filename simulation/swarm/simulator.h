@@ -9,6 +9,7 @@
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/assignment/assignment.h"
 #include "simulation/swarm/proto/simulator_config.pb.h"
+#include "utils/thread_pool.h"
 
 namespace swarm::simulator {
 
@@ -18,6 +19,8 @@ class Simulator {
 
   Simulator(const Simulator&) = delete;
   Simulator& operator=(const Simulator&) = delete;
+
+  virtual ~Simulator() { thread_pool_.Stop(); }
 
   // Run the simulation.
   void Run(double t_end);
@@ -37,6 +40,9 @@ class Simulator {
 
   // Assignment between the missiles and the targets.
   std::unique_ptr<assignment::Assignment> assignment_;
+
+  // Thread pool.
+  utils::ThreadPool thread_pool_;
 };
 
 }  // namespace swarm::simulator
