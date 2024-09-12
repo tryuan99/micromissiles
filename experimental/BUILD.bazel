@@ -18,3 +18,12 @@ cc_binary(
         "@eigen",
     ],
 )
+
+cc_binary(
+    name = "opencv_gui_example_main",
+    srcs = ["opencv_gui_example_main.cc"],
+    deps = [
+        "//base",
+        "@opencv",
+    ],
+)
