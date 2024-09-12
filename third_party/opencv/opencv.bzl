@@ -6,6 +6,7 @@ OPENCV_MODULES = [
     "core",
     "highgui",
     "imgproc",
+    "viz",
 ]
 
 def opencv_shared_libs_osx():

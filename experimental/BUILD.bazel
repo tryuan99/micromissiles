@@ -27,3 +27,12 @@ cc_binary(
         "@opencv",
     ],
 )
+
+cc_binary(
+    name = "opencv_3d_animation_example_main",
+    srcs = ["opencv_3d_animation_example_main.cc"],
+    deps = [
+        "//base",
+        "@opencv",
+    ],
+)

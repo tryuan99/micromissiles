@@ -10,9 +10,13 @@ filegroup(
 
 cmake(
     name = "opencv",
+    build_data = ["@opencv_contrib//:modules"],
     cache_entries = {
         "BUILD_SHARED_LIBS": "ON",
         "BUILD_LIST": ",".join(OPENCV_MODULES),
+        "OPENCV_EXTRA_MODULES_PATH": "$EXT_BUILD_ROOT/external/opencv_contrib/modules",
+        "WITH_VTK": "ON",
+        "BUILD_ZLIB": "OFF",
     },
     lib_source = "@opencv//:all",
     out_include_dir = "include/opencv4",
