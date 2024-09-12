@@ -8,5 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: bazelbuild/setup-bazelisk@v3
+      - run: sudo apt-get install -y libvtk9-dev
       - run: bazel build //...
       - run: bazel test --test_output=errors //...
