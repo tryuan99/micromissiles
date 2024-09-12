@@ -18,3 +18,12 @@ cc_binary(
         "@eigen",
     ],
 )
+
+cc_binary(
+    name = "matplot_example_main",
+    srcs = ["matplot_example_main.cc"],
+    deps = [
+        "//base",
+        "@matplot",
+    ],
+)
