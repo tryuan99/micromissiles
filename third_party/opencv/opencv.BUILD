@@ -15,6 +15,7 @@ cmake(
         "BUILD_SHARED_LIBS": "ON",
         "BUILD_LIST": ",".join(OPENCV_MODULES),
         "OPENCV_EXTRA_MODULES_PATH": "$EXT_BUILD_ROOT/external/opencv_contrib/modules",
+        "WITH_EIGEN": "ON",
         "WITH_VTK": "ON",
         "BUILD_ZLIB": "OFF",
     },

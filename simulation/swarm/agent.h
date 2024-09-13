@@ -108,6 +108,9 @@ class Agent {
   // Unassign the target from the agent.
   virtual void UnassignTarget() { target_ = nullptr; }
 
+  // Return the state history of the agent.
+  const state::StateHistory& history() const { return state_history_; }
+
   // Return whether the agent has hit or been hit.
   bool hit() const { return hit_; }
 

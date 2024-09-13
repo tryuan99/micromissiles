@@ -48,24 +48,12 @@ py_test(
 )
 
 py_library(
-    name = "plotter",
-    srcs = ["plotter.py"],
-    deps = [
-        ":agent",
-        "//simulation/swarm/proto:plotting_config_py_proto",
-        requirement("matplotlib"),
-        requirement("numpy"),
-        requirement("SciencePlots"),
-    ],
-)
-
-py_library(
     name = "simulator",
     srcs = ["simulator.py"],
     deps = [
-        ":plotter",
         "//simulation/swarm/assignment/py:distance_assignment",
         "//simulation/swarm/missile/py:missile",
+        "//simulation/swarm/plotter/py:plotter",
         "//simulation/swarm/proto:simulator_config_py_proto",
         "//simulation/swarm/target/py:target",
         requirement("absl-py"),

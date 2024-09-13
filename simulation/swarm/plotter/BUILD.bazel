@@ -1,0 +1,48 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "plotter",
+    srcs = ["plotter.cc"],
+    hdrs = ["plotter.h"],
+    deps = [
+        "//simulation/swarm:agent",
+        "@opencv",
+    ],
+)
+
+cc_library(
+    name = "plotter_factory",
+    hdrs = ["plotter_factory.h"],
+    deps = [
+        ":plotter",
+        ":static_plotter",
+        ":video_plotter",
+    ],
+)
+
+cc_library(
+    name = "static_plotter",
+    srcs = ["static_plotter.cc"],
+    hdrs = ["static_plotter.h"],
+    defines = ["OPENCV_DISABLE_EIGEN_TENSOR_SUPPORT"],
+    deps = [
+        ":plotter",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@eigen",
+        "@opencv",
+    ],
+)
+
+cc_library(
+    name = "video_plotter",
+    srcs = ["video_plotter.cc"],
+    hdrs = ["video_plotter.h"],
+    defines = ["OPENCV_DISABLE_EIGEN_TENSOR_SUPPORT"],
+    deps = [
+        ":plotter",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@opencv",
+    ],
+)

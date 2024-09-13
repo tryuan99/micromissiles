@@ -65,6 +65,7 @@ cc_library(
         "//simulation/swarm/assignment",
         "//simulation/swarm/assignment:distance_assignment",
         "//simulation/swarm/missile:missile_factory",
+        "//simulation/swarm/plotter:plotter_factory",
         "//simulation/swarm/proto:simulator_config_cc_proto",
         "//simulation/swarm/target:target_factory",
         "//utils:thread_pool",

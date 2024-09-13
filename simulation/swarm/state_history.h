@@ -1,5 +1,7 @@
 // The state history maintains a list of the past states of an agent.
 
+#pragma once
+
 #include <cstdbool>
 #include <list>
 

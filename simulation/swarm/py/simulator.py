@@ -7,7 +7,7 @@ from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
 from simulation.swarm.assignment.py.distance_assignment import \
     DistanceAssignment
 from simulation.swarm.missile.py.missile import MISSILE_TYPE_ENUM_TO_CLASS
-from simulation.swarm.py.plotter import Plotter
+from simulation.swarm.plotter.py.plotter import Plotter
 from simulation.swarm.target.py.target import TARGET_TYPE_ENUM_TO_CLASS
 
 

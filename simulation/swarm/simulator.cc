@@ -7,6 +7,7 @@
 #include "base/logging.h"
 #include "simulation/swarm/assignment/distance_assignment.h"
 #include "simulation/swarm/missile/missile_factory.h"
+#include "simulation/swarm/plotter/plotter_factory.h"
 #include "simulation/swarm/proto/simulator_config.pb.h"
 #include "simulation/swarm/target/target_factory.h"
 #include "utils/thread_pool.h"
@@ -107,8 +108,9 @@ void Simulator::Run(const double t_end) {
 // Plot the agent trajectories over time.
 void Simulator::Plot(const bool animate,
                      const std::string& animation_file) const {
-  // TODO(titan): Implement the plotter.
-  return;
+  plotter::PlotterFactory plotter_factory;
+  const auto plotter = plotter_factory.CreatePlotter(animate);
+  plotter->Plot(t_step_, missiles_, targets_);
 }
 
 }  // namespace swarm::simulator

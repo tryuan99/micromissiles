@@ -1,0 +1,15 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "plotter",
+    srcs = ["plotter.py"],
+    deps = [
+        "//simulation/swarm/proto:plotting_config_py_proto",
+        "//simulation/swarm/py:agent",
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
