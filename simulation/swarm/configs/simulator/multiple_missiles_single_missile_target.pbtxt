@@ -10,7 +10,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -26,7 +26,7 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE
@@ -55,7 +55,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -71,52 +71,7 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
-    }
-    agent_config {
-      missile_type: MICROMISSILE
-      dynamic_config {
-        sensor_config {
-          type: IDEAL
-          frequency: 100
-        }
-      }
-      plotting_config {
-        color: BLUE
-        linestyle: SOLID
-        marker: TRIANGLE_DOWN
-      }
-    }
-  }
-}
-missile_configs {
-  missile_type: HYDRA_70
-  initial_state {
-    position {
-      x: 0
-      y: 10
-      z: 0
-    }
-    velocity {
-      x: 1e-3
-      y: 0
-      z: 2e-3
-    }
-  }
-  dynamic_config {
-    launch_config {
-      launch_time: 0
-    }
-  }
-  plotting_config {
-    color: BLUE
-    linestyle: DOTTED
-    marker: TRIANGLE_UP
-  }
-  submunitions_config {
-    num_submunitions: 7
-    launch_config {
-      launch_time: 10
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE
@@ -145,7 +100,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -161,7 +116,52 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
+      launch_time: 2
+    }
+    agent_config {
+      missile_type: MICROMISSILE
+      dynamic_config {
+        sensor_config {
+          type: IDEAL
+          frequency: 100
+        }
+      }
+      plotting_config {
+        color: BLUE
+        linestyle: SOLID
+        marker: TRIANGLE_DOWN
+      }
+    }
+  }
+}
+missile_configs {
+  missile_type: HYDRA_70
+  initial_state {
+    position {
+      x: 0
+      y: 10
+      z: 0
+    }
+    velocity {
+      x: 1e-3
+      y: 0
+      z: 1e-3
+    }
+  }
+  dynamic_config {
+    launch_config {
+      launch_time: 0
+    }
+  }
+  plotting_config {
+    color: BLUE
+    linestyle: DOTTED
+    marker: TRIANGLE_UP
+  }
+  submunitions_config {
+    num_submunitions: 7
+    launch_config {
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE

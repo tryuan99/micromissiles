@@ -13,8 +13,8 @@ from simulation.swarm.py import constants
 class Micromissile(Missile):
     """Micromissile dynamics."""
 
-    # Coefficient for proportional navigation.
-    PROPORTIONAL_NAVIGATION_COEFFICIENT = 3
+    # Proportional navigation gain.
+    PROPORTIONAL_NAVIGATION_GAIN = 3
 
     def __init__(
         self,
@@ -101,22 +101,22 @@ class Micromissile(Missile):
         # proportional to the rate of change of the bearing.
         azimuth_velocity = sensor_output.velocity.azimuth
         elevation_velocity = sensor_output.velocity.elevation
+        closing_velocity = -sensor_output.velocity.range
 
         # Get the normalized principal axes of the missile.
         normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
 
-        # Calculate the acceleration components along the axes normal to the roll axis.
-        pitch_coefficient = (np.cos(elevation_velocity) *
-                             np.sin(azimuth_velocity))
-        yaw_coefficient = np.sin(elevation_velocity)
-
         # Calculate the desired acceleration vector. The missile cannot
         # accelerate along the roll axis.
-        acceleration_input = (pitch_coefficient * normalized_pitch +
-                              yaw_coefficient * normalized_yaw)
+        acceleration_input = (self.PROPORTIONAL_NAVIGATION_GAIN *
+                              (azimuth_velocity * normalized_pitch +
+                               elevation_velocity * normalized_yaw) *
+                              closing_velocity)
 
-        # Limit the acceleration vector.
-        acceleration_input /= np.linalg.norm(acceleration_input)
-        acceleration_input *= self._get_max_acceleration()
+        # Clamp the acceleration vector.
+        max_acceleration = self._get_max_acceleration()
+        if np.linalg.norm(acceleration_input) > max_acceleration:
+            return (acceleration_input / np.linalg.norm(acceleration_input) *
+                    max_acceleration)
         return acceleration_input

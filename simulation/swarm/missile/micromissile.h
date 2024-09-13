@@ -20,6 +20,9 @@ class Micromissile : public Missile {
   inline static const std::string kStaticConfigFile =
       "simulation/swarm/configs/missile/micromissile.pbtxt";
 
+  // Proportional navigation gain.
+  inline static const double kProportionalNavigationGain = 3;
+
   Micromissile() = default;
 
   explicit Micromissile(const AgentConfig& config) : Missile(config) {

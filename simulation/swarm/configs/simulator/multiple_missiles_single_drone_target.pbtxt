@@ -10,7 +10,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -26,7 +26,7 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE
@@ -55,7 +55,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -71,7 +71,7 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE
@@ -100,7 +100,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -116,7 +116,7 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE
@@ -145,7 +145,7 @@ missile_configs {
     velocity {
       x: 1e-3
       y: 0
-      z: 2e-3
+      z: 1e-3
     }
   }
   dynamic_config {
@@ -161,7 +161,7 @@ missile_configs {
   submunitions_config {
     num_submunitions: 7
     launch_config {
-      launch_time: 10
+      launch_time: 2
     }
     agent_config {
       missile_type: MICROMISSILE

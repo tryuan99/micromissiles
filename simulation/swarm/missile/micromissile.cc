@@ -61,21 +61,22 @@ Eigen::Vector3d Micromissile::CalculateAccelerationInput(
   // to the rate of change of the bearing.
   const auto azimuth_velocity = sensor_output.velocity().azimuth();
   const auto elevation_velocity = sensor_output.velocity().elevation();
-
-  // Calculate the acceleration components along the axes normal to the roll
-  // axis.
-  const auto pitch_coefficient =
-      std::cos(elevation_velocity) * std::sin(azimuth_velocity);
-  const auto yaw_coefficient = std::sin(elevation_velocity);
+  const auto closing_velocity = -sensor_output.velocity().range();
 
   // Calculate the desired acceleration vector. The missile cannot accelerate
   // along the roll axis.
   const auto principal_axes = GetNormalizedPrincipalAxes();
-  const auto acceleration_input = pitch_coefficient * principal_axes.pitch +
-                                  yaw_coefficient * principal_axes.yaw;
+  const auto acceleration_input = kProportionalNavigationGain *
+                                  (azimuth_velocity * principal_axes.pitch +
+                                   elevation_velocity * principal_axes.yaw) *
+                                  closing_velocity;
 
-  // Limit the acceleration vector.
-  return acceleration_input.normalized() * CalculateMaxAcceleration();
+  // Clamp the acceleration vector.
+  const auto max_acceleration = CalculateMaxAcceleration();
+  if (acceleration_input.norm() > max_acceleration) {
+    return acceleration_input.normalized() * max_acceleration;
+  }
+  return acceleration_input;
 }
 
 }  // namespace swarm::missile
