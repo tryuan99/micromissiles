@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
         cv::Vec3d(std::cos(translation_phase), std::sin(translation_phase), 0));
     cube_widget.setPose(pose);
 
-    window.spinOnce(/*time-*/ 1, /*force_redraw=*/false);
+    window.spinOnce(/*time=*/1, /*force_redraw=*/false);
   }
 
   return EXIT_SUCCESS;

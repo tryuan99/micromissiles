@@ -6,10 +6,10 @@
 #include <memory>
 #include <vector>
 
-#include "absl/strings/str_format.h"
 #include "opencv2/core/eigen.hpp"
 #include "opencv2/viz.hpp"
 #include "simulation/swarm/agent.h"
+#include "simulation/swarm/proto/state.pb.h"
 #include "simulation/swarm/state_history.h"
 
 namespace swarm::plotter {

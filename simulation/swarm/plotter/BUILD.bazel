@@ -28,6 +28,7 @@ cc_library(
     deps = [
         ":plotter",
         "//simulation/swarm:agent",
+        "//simulation/swarm:state_history",
         "//simulation/swarm/proto:state_cc_proto",
         "@eigen",
         "@opencv",
@@ -42,7 +43,9 @@ cc_library(
     deps = [
         ":plotter",
         "//simulation/swarm:agent",
+        "//simulation/swarm:state_history",
         "//simulation/swarm/proto:state_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
         "@opencv",
     ],
 )

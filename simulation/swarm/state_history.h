@@ -28,13 +28,18 @@ class StateHistory {
     State state;
   };
 
+  // Iterator types.
+  using iterator = std::list<Record>::iterator;
+  using const_iterator = std::list<Record>::const_iterator;
+  using size_type = std::list<Record>::size_type;
+
   StateHistory() = default;
 
   StateHistory(const StateHistory&) = default;
   StateHistory& operator=(const StateHistory&) = default;
 
   // Return the number of the history records.
-  std::list<Record>::size_type size() const { return records_.size(); }
+  size_type size() const { return records_.size(); }
 
   // Return the earliest history record.
   Record& front() { return records_.front(); }
@@ -51,12 +56,12 @@ class StateHistory {
   void UpdateLast(const Record& record);
 
   // Iterator overrides.
-  std::list<Record>::iterator begin() { return records_.begin(); }
-  std::list<Record>::const_iterator begin() const { return records_.cbegin(); }
-  std::list<Record>::const_iterator cbegin() const { return begin(); }
-  std::list<Record>::iterator end() { return records_.end(); }
-  std::list<Record>::const_iterator end() const { return records_.cend(); }
-  std::list<Record>::const_iterator cend() const { return end(); }
+  iterator begin() { return records_.begin(); }
+  const_iterator begin() const { return records_.cbegin(); }
+  const_iterator cbegin() const { return begin(); }
+  iterator end() { return records_.end(); }
+  const_iterator end() const { return records_.cend(); }
+  const_iterator cend() const { return end(); }
 
  private:
   // List of history records.
