@@ -26,15 +26,17 @@ class Assignment {
 
   virtual ~Assignment() = default;
 
-  // Return the missile-target assignments.
+  // Return the new missile-target assignments.
   const std::forward_list<AssignmentItem>& assignments() const {
     return missile_to_target_assignments_;
   }
 
   // Assign a target to each missile that has not been assigned a target yet.
-  virtual void Assign(
-      const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-      const std::vector<std::unique_ptr<agent::Agent>>& targets) = 0;
+  void Assign(const std::vector<std::unique_ptr<agent::Agent>>& missiles,
+              const std::vector<std::unique_ptr<agent::Agent>>& targets) {
+    missile_to_target_assignments_.clear();
+    AssignImpl(missiles, targets);
+  }
 
  protected:
   // Get the list of assignable missile indices.
@@ -44,6 +46,11 @@ class Assignment {
   // Get the list of active target indices.
   static std::vector<int> GetActiveTargetIndices(
       const std::vector<std::unique_ptr<agent::Agent>>& targets);
+
+  // Assign a target to each missile that has not been assigned a target yet.
+  virtual void AssignImpl(
+      const std::vector<std::unique_ptr<agent::Agent>>& missiles,
+      const std::vector<std::unique_ptr<agent::Agent>>& targets) = 0;
 
   // A list containing the missile-target assignments.
   std::forward_list<AssignmentItem> missile_to_target_assignments_;

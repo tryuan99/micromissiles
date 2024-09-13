@@ -8,7 +8,7 @@
 
 namespace swarm::assignment {
 
-void RoundRobinAssignment::Assign(
+void RoundRobinAssignment::AssignImpl(
     const std::vector<std::unique_ptr<agent::Agent>>& missiles,
     const std::vector<std::unique_ptr<agent::Agent>>& targets) {
   const auto assignable_missile_indices = GetAssignableMissileIndices(missiles);

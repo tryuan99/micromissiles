@@ -18,8 +18,9 @@ class DistanceAssignment : public Assignment {
   DistanceAssignment(const DistanceAssignment&) = default;
   DistanceAssignment& operator=(const DistanceAssignment&) = default;
 
+ protected:
   // Assign a target to each missile that has not been assigned a target yet.
-  void Assign(
+  void AssignImpl(
       const std::vector<std::unique_ptr<agent::Agent>>& missiles,
       const std::vector<std::unique_ptr<agent::Agent>>& targets) override;
 };
