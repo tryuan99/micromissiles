@@ -177,7 +177,9 @@ class Missile(Agent, ABC):
         # Project the acceleration input onto the yaw axis.
         normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
-        lift_acceleration = np.dot(acceleration_input, normalized_yaw)
+        lift_acceleration = np.linalg.norm(
+            acceleration_input -
+            np.dot(acceleration_input, normalized_roll) * normalized_roll)
 
         # Calculate the drag acceleration from the lift acceleration.
         lift_drag_ratio = self.static_config.lift_drag_config.lift_drag_ratio

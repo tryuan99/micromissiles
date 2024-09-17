@@ -117,7 +117,10 @@ double Missile::CalculateLiftInducedDrag(
     const Eigen::Vector3d& acceleration_input) const {
   // Project the acceleration input onto the yaw axis.
   const auto principal_axes = GetNormalizedPrincipalAxes();
-  const auto lift_acceleration = acceleration_input.dot(principal_axes.yaw);
+  const auto lift_acceleration =
+      (acceleration_input -
+       acceleration_input.dot(principal_axes.roll) * principal_axes.roll)
+          .norm();
 
   // Calculate the drag acceleration from the lift acceleration.
   const auto lift_drag_ratio =
