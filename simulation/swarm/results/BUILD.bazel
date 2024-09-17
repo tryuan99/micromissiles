@@ -1,0 +1,30 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "air_drag_terminal_velocity_main",
+    srcs = ["air_drag_terminal_velocity_main.py"],
+    data = ["//simulation/swarm/results/data:air_drag_terminal_velocity_data"],
+    deps = [
+        "//simulation/swarm/py:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "lift_induced_drag_turning_main",
+    srcs = ["lift_induced_drag_turning_main.py"],
+    data = ["//simulation/swarm/results/data:lift_induced_drag_turning_data"],
+    deps = [
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("SciencePlots"),
+    ],
+)

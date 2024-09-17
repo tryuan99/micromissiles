@@ -1,0 +1,11 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "air_drag_terminal_velocity_data",
+    srcs = ["air_drag_terminal_velocity_data.csv"],
+)
+
+filegroup(
+    name = "lift_induced_drag_turning_data",
+    srcs = ["lift_induced_drag_turning_data.csv"],
+)
