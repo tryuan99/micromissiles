@@ -4,6 +4,7 @@
 # Cross-sectional area = 3e-4 m^2
 # Air density = 1.204 kg/m^3
 # Initial speed = 1000 m/s
+# No lift-induced drag, no gravity
 
 Distance [m],Speed [m/s]
 0,1000

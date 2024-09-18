@@ -28,3 +28,17 @@ py_binary(
         requirement("SciencePlots"),
     ],
 )
+
+py_binary(
+    name = "total_drag_turning_main",
+    srcs = ["total_drag_turning_main.py"],
+    data = ["//simulation/swarm/results/data:total_drag_turning_data"],
+    deps = [
+        "//simulation/swarm/py:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("SciencePlots"),
+    ],
+)

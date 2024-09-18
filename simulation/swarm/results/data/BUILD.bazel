@@ -9,3 +9,8 @@ filegroup(
     name = "lift_induced_drag_turning_data",
     srcs = ["lift_induced_drag_turning_data.csv"],
 )
+
+filegroup(
+    name = "total_drag_turning_data",
+    srcs = ["total_drag_turning_data.csv"],
+)
