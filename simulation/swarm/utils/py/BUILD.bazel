@@ -10,3 +10,19 @@ py_library(
         requirement("scipy"),
     ],
 )
+
+py_library(
+    name = "quaternion",
+    srcs = ["quaternion.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "quaternion_test",
+    srcs = ["quaternion_test.py"],
+    deps = [
+        ":quaternion",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
