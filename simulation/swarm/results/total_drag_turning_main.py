@@ -4,7 +4,7 @@ import pandas as pd
 import scienceplots
 from absl import app, flags, logging
 
-from simulation.swarm.py import constants
+from simulation.swarm.utils.py import constants
 
 FLAGS = flags.FLAGS
 

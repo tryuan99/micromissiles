@@ -4,7 +4,7 @@
 #include "base/commandlineflags.h"
 #include "simulation/swarm/proto/swarm_config.pb.h"
 #include "simulation/swarm/swarm_simulator.h"
-#include "simulation/swarm/utils.h"
+#include "utils/protobuf.h"
 
 DEFINE_string(swarm_config, "", "Swarm configuration file.");
 DEFINE_string(output, "", "Output file.");
@@ -17,8 +17,7 @@ int main(int argc, char** argv) {
 
   // Load the swarm configuration.
   const auto swarm_config =
-      swarm::utils::LoadProtobufTextFile<swarm::SwarmConfig>(
-          FLAGS(swarm_config));
+      utils::LoadProtobufTextFile<swarm::SwarmConfig>(FLAGS(swarm_config));
 
   // Simulate the swarms of agents.
   swarm::simulator::SwarmSimulator simulator(swarm_config);

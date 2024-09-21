@@ -6,9 +6,9 @@ cc_library(
     data = ["//simulation/swarm/configs/target:configs"],
     deps = [
         ":target",
-        "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
     ],
 )
 
@@ -49,9 +49,9 @@ cc_library(
     data = ["//simulation/swarm/configs/target:configs"],
     deps = [
         ":target",
-        "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
     ],
 )
 

@@ -1,4 +1,4 @@
-// This file defines some useful utilities.
+// This file defines some useful utilities for Protobuf.
 
 #pragma once
 
@@ -10,7 +10,7 @@
 #include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "google/protobuf/text_format.h"
 
-namespace swarm::utils {
+namespace utils {
 
 // Load the Protobuf text file.
 template <typename T>
@@ -30,11 +30,4 @@ T LoadProtobufTextFile(const std::string& file) {
   return message;
 }
 
-// Generate a random number normally distributed with the given mean and
-// standard deviation.
-double GenerateRandomNormal(double mean, double standard_deviation);
-
-// Generate a random number uniformly distributed over the interval.
-double GenerateRandomUniform(double a, double b);
-
-}  // namespace swarm::utils
+}  // namespace utils

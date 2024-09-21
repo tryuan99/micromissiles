@@ -8,7 +8,7 @@
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
 #include "simulation/swarm/target/target.h"
-#include "simulation/swarm/utils.h"
+#include "utils/protobuf.h"
 
 namespace swarm::target {
 

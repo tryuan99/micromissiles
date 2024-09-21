@@ -7,7 +7,7 @@ from simulation.swarm.proto.sensor_pb2 import SensorOutput
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
 from simulation.swarm.missile.py.missile_interface import Missile
-from simulation.swarm.py import constants
+from simulation.swarm.utils.py import constants
 
 
 class Micromissile(Missile):

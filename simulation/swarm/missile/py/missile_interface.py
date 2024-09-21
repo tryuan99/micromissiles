@@ -5,11 +5,11 @@ from abc import ABC
 import numpy as np
 from simulation.swarm.proto.agent_pb2 import AgentConfig
 
-from simulation.swarm.py import constants
 from simulation.swarm.py.agent import Agent
 from simulation.swarm.py.model_agent import ModelAgent
 from simulation.swarm.sensor.py.sensor import SENSOR_TYPE_ENUM_TO_CLASS
 from simulation.swarm.target.py.target_interface import Target
+from simulation.swarm.utils.py import constants
 
 
 class Missile(Agent, ABC):

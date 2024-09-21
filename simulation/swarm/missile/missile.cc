@@ -4,9 +4,9 @@
 #include <cmath>
 #include <cstdbool>
 
-#include "simulation/swarm/constants.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/sensor/sensor_factory.h"
+#include "simulation/swarm/utils/constants.h"
 
 namespace swarm::missile {
 

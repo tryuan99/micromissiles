@@ -8,6 +8,33 @@ py_library(
     deps = [requirement("numpy")],
 )
 
+cc_library(
+    name = "protobuf",
+    hdrs = ["protobuf.h"],
+    deps = [
+        "@abseil-cpp//absl/strings:str_format",
+        "@com_google_protobuf//:protobuf",
+    ],
+)
+
+cc_test(
+    name = "protobuf_test",
+    srcs = ["protobuf_test.cc"],
+    data = ["//simulation/swarm/configs/missile:configs"],
+    deps = [
+        ":protobuf",
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "random",
+    srcs = ["random.cc"],
+    hdrs = ["random.h"],
+)
+
 py_library(
     name = "struct",
     srcs = ["struct.py"],

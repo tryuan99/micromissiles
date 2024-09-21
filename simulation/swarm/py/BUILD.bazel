@@ -6,21 +6,12 @@ py_library(
     name = "agent",
     srcs = ["agent.py"],
     deps = [
-        ":constants",
         "//simulation/swarm/proto:agent_py_proto",
         "//simulation/swarm/proto:dynamic_config_py_proto",
         "//simulation/swarm/proto:plotting_config_py_proto",
         "//simulation/swarm/proto:state_py_proto",
         "//simulation/swarm/proto:static_config_py_proto",
-        requirement("numpy"),
-        requirement("scipy"),
-    ],
-)
-
-py_library(
-    name = "constants",
-    srcs = ["constants.py"],
-    deps = [
+        "//simulation/swarm/utils/py:constants",
         requirement("numpy"),
         requirement("scipy"),
     ],

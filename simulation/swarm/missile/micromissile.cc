@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "simulation/swarm/proto/sensor.pb.h"
-#include "simulation/swarm/utils.h"
+#include "utils/random.h"
 
 namespace swarm::missile {
 

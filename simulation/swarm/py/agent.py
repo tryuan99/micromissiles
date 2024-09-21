@@ -12,7 +12,7 @@ from simulation.swarm.proto.plotting_config_pb2 import PlottingConfig
 from simulation.swarm.proto.state_pb2 import State
 from simulation.swarm.proto.static_config_pb2 import StaticConfig
 
-from simulation.swarm.py import constants
+from simulation.swarm.utils.py import constants
 
 
 class Agent(ABC):

@@ -1,8 +1,8 @@
-#include "simulation/swarm/utils.h"
+#include "utils/random.h"
 
 #include <random>
 
-namespace swarm::utils {
+namespace utils {
 
 double GenerateRandomNormal(const double mean,
                             const double standard_deviation) {
@@ -19,4 +19,4 @@ double GenerateRandomUniform(const double a, const double b) {
   return distribution(generator);
 }
 
-}  // namespace swarm::utils
+}  // namespace utils

@@ -29,9 +29,9 @@ cc_library(
         ":micromissile",
         ":missile",
         "//simulation/swarm:agent",
-        "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
         "@abseil-cpp//absl/strings:str_format",
         "@eigen",
     ],
@@ -55,10 +55,11 @@ cc_library(
     data = ["//simulation/swarm/configs/missile:configs"],
     deps = [
         ":missile",
-        "//simulation/swarm:utils",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:sensor_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
+        "//utils:random",
         "@eigen",
     ],
 )
@@ -80,11 +81,11 @@ cc_library(
     hdrs = ["missile.h"],
     deps = [
         "//simulation/swarm:agent",
-        "//simulation/swarm:constants",
         "//simulation/swarm:model_agent",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/sensor",
         "//simulation/swarm/sensor:sensor_factory",
+        "//simulation/swarm/utils:constants",
         "@eigen",
     ],
 )

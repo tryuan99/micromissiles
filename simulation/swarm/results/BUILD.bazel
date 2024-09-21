@@ -7,7 +7,7 @@ py_binary(
     srcs = ["air_drag_terminal_velocity_main.py"],
     data = ["//simulation/swarm/results/data:air_drag_terminal_velocity_data"],
     deps = [
-        "//simulation/swarm/py:constants",
+        "//simulation/swarm/utils/py:constants",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
@@ -34,7 +34,7 @@ py_binary(
     srcs = ["total_drag_turning_main.py"],
     data = ["//simulation/swarm/results/data:total_drag_turning_data"],
     deps = [
-        "//simulation/swarm/py:constants",
+        "//simulation/swarm/utils/py:constants",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),

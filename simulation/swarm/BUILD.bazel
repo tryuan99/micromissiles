@@ -5,32 +5,16 @@ cc_library(
     srcs = ["agent.cc"],
     hdrs = ["agent.h"],
     deps = [
-        ":constants",
         ":state_history",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:dynamic_config_cc_proto",
         "//simulation/swarm/proto:plotting_config_cc_proto",
         "//simulation/swarm/proto:state_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
+        "//simulation/swarm/utils:constants",
         "@abseil-cpp//absl/strings:str_format",
         "@boost",
         "@eigen",
-    ],
-)
-
-cc_library(
-    name = "constants",
-    srcs = ["constants.cc"],
-    hdrs = ["constants.h"],
-)
-
-cc_test(
-    name = "constants_test",
-    srcs = ["constants_test.cc"],
-    deps = [
-        ":constants",
-        "@googletest//:gtest",
-        "@googletest//:gtest_main",
     ],
 )
 
@@ -78,10 +62,10 @@ cc_binary(
     data = ["//simulation/swarm/configs/simulator:configs"],
     deps = [
         ":simulator",
-        ":utils",
         "//base",
         "//base:commandlineflags",
         "//simulation/swarm/proto:simulator_config_cc_proto",
+        "//utils:protobuf",
     ],
 )
 
@@ -108,10 +92,10 @@ cc_library(
     hdrs = ["swarm_simulator.h"],
     deps = [
         ":simulator",
-        "//simulation/swarm:utils",
         "//simulation/swarm/proto:simulator_config_cc_proto",
         "//simulation/swarm/proto:state_cc_proto",
         "//simulation/swarm/proto:swarm_config_cc_proto",
+        "//utils:random",
     ],
 )
 
@@ -121,31 +105,9 @@ cc_binary(
     data = ["//simulation/swarm/configs/swarm:configs"],
     deps = [
         ":swarm_simulator",
-        ":utils",
         "//base",
         "//base:commandlineflags",
         "//simulation/swarm/proto:swarm_config_cc_proto",
-    ],
-)
-
-cc_library(
-    name = "utils",
-    srcs = ["utils.cc"],
-    hdrs = ["utils.h"],
-    deps = [
-        "@abseil-cpp//absl/strings:str_format",
-        "@com_google_protobuf//:protobuf",
-    ],
-)
-
-cc_test(
-    name = "utils_test",
-    srcs = ["utils_test.cc"],
-    data = ["//simulation/swarm/configs/missile:configs"],
-    deps = [
-        ":utils",
-        "//simulation/swarm/proto:static_config_cc_proto",
-        "@googletest//:gtest",
-        "@googletest//:gtest_main",
+        "//utils:protobuf",
     ],
 )

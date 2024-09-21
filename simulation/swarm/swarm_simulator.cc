@@ -4,7 +4,7 @@
 #include "simulation/swarm/proto/state.pb.h"
 #include "simulation/swarm/proto/swarm_config.pb.h"
 #include "simulation/swarm/simulator.h"
-#include "simulation/swarm/utils.h"
+#include "utils/random.h"
 
 namespace swarm::simulator {
 
