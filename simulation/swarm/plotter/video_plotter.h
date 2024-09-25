@@ -26,8 +26,9 @@ class VideoPlotter : public Plotter {
  protected:
   // Plot the trajectories of the agents.
   void PlotImpl(
-      double t_step, const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-      const std::vector<std::unique_ptr<agent::Agent>>& targets) override;
+      double t_step,
+      const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+      const std::vector<std::unique_ptr<agent::Agent>>& threats) override;
 
   // Generate a widget.
   static std::unique_ptr<cv::viz::Widget3D> GenerateWidget(

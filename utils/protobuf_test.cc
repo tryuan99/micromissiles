@@ -11,7 +11,7 @@ namespace {
 
 TEST(ProtobufTest, LoadProtobufTextFileTest) {
   const std::string kStaticConfigFile =
-      "simulation/swarm/configs/missile/micromissile.pbtxt";
+      "simulation/swarm/configs/interceptor/micromissile.pbtxt";
   const auto static_config =
       LoadProtobufTextFile<swarm::StaticConfig>(kStaticConfigFile);
   EXPECT_TRUE(static_config.has_acceleration_config());

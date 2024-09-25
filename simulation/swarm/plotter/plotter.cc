@@ -8,14 +8,15 @@
 
 namespace swarm::plotter {
 
-void Plotter::Plot(const double t_step,
-                   const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-                   const std::vector<std::unique_ptr<agent::Agent>>& targets) {
+void Plotter::Plot(
+    const double t_step,
+    const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+    const std::vector<std::unique_ptr<agent::Agent>>& threats) {
   cv::viz::WPlane ground_widget(cv::Size2d(5e4, 5e4), cv::viz::Color::gray());
   ground_widget.setRenderingProperty(cv::viz::OPACITY, 0.4);
   window_.showWidget("Ground", ground_widget);
   window_.showWidget("Coordinates", cv::viz::WCoordinateSystem());
-  PlotImpl(t_step, missiles, targets);
+  PlotImpl(t_step, interceptors, threats);
   window_.spin();
 }
 

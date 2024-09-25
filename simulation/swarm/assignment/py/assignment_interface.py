@@ -1,61 +1,64 @@
-"""The assignment class is an interface for assigning a target to each missile."""
+"""The assignment class is an interface for assigning a threat to each interceptor."""
 
 from abc import ABC, abstractmethod
 
-from simulation.swarm.missile.py.missile_interface import Missile
-from simulation.swarm.target.py.target_interface import Target
+from simulation.swarm.interceptor.py.interceptor_interface import Interceptor
+from simulation.swarm.threat.py.threat_interface import Threat
 
 
 class Assignment(ABC):
     """Assignment interface.
 
-    Missiles with a previously assigned target are ignored.
+    Interceptors with a previously assigned threat are ignored.
 
     Attributes:
-        missiles: A list of missiles.
-        targest: A list of targets.
-        missile_to_target_assignment: A map from the missile index to its
-          assigned target index.
+        interceptors: A list of interceptors.
+        threats: A list of threats.
+        interceptor_to_threat_assignment: A map from the interceptor index to its
+          assigned threat index.
     """
 
-    def __init__(self, missiles: list[Missile], targets: list[Target]) -> None:
-        self.missiles = missiles
-        self.targets = targets
-        self.missile_to_target_assignments: dict[int, int] = {}
-        self._assign_targets()
+    def __init__(self, interceptors: list[Interceptor],
+                 threats: list[Threat]) -> None:
+        self.interceptors = interceptors
+        self.threats = threats
+        self.interceptor_to_threat_assignments: dict[int, int] = {}
+        self._assign_threats()
 
     @abstractmethod
-    def _assign_targets(self) -> None:
-        """Assigns each missile to a target."""
+    def _assign_threats(self) -> None:
+        """Assigns each interceptor to a threat."""
 
     @staticmethod
-    def get_assignable_missile_indices(missiles: list[Missile]) -> list[int]:
-        """Returns the indices of assignable missiles.
+    def get_assignable_interceptor_indices(
+            interceptors: list[Interceptor]) -> list[int]:
+        """Returns the indices of assignable interceptors.
 
         Args:
-            missiles: List of missiles.
+            interceptors: List of interceptors.
 
         Returns:
-            The list of assignable missile indices.
+            The list of assignable interceptor indices.
         """
-        assignable_missile_indices = [
-            missile_index for missile_index, missile in enumerate(missiles)
-            if missile.assignable_to_target()
+        assignable_interceptor_indices = [
+            interceptor_index
+            for interceptor_index, interceptor in enumerate(interceptors)
+            if interceptor.assignable_to_threat()
         ]
-        return assignable_missile_indices
+        return assignable_interceptor_indices
 
     @staticmethod
-    def get_active_target_indices(targets: list[Target]) -> list[int]:
-        """Returns the indices of active targets.
+    def get_active_threat_indices(threats: list[Threat]) -> list[int]:
+        """Returns the indices of active threats.
 
         Args:
-            targets: List of targets.
+            threats: List of threats.
 
         Returns:
-            The list of active target indices.
+            The list of active threat indices.
         """
-        active_target_indices = [
-            target_index for target_index, target in enumerate(targets)
-            if not target.hit
+        active_threat_indices = [
+            threat_index for threat_index, threat in enumerate(threats)
+            if not threat.hit
         ]
-        return active_target_indices
+        return active_threat_indices

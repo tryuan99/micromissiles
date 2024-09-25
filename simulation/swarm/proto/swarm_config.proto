@@ -9,9 +9,9 @@ message SwarmConfig {
   // Step time in seconds.
   float step_time = 1;
 
-  // Missile swarm configurations.
-  repeated AgentSwarmConfig missile_swarm_configs = 2;
+  // Interceptor swarm configurations.
+  repeated AgentSwarmConfig interceptor_swarm_configs = 2;
 
-  // Target swarm configurations.
-  repeated AgentSwarmConfig target_swarm_configs = 3;
+  // Threat swarm configurations.
+  repeated AgentSwarmConfig threat_swarm_configs = 3;
 }

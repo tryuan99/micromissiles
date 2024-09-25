@@ -1,0 +1,99 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "drone",
+    hdrs = ["drone.h"],
+    data = ["//simulation/swarm/configs/threat:configs"],
+    deps = [
+        ":threat",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
+    ],
+)
+
+cc_test(
+    name = "drone_test",
+    srcs = ["drone_test.cc"],
+    deps = [
+        ":drone",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "dummy_threat",
+    hdrs = ["dummy_threat.h"],
+    deps = [
+        ":threat",
+        "//simulation/swarm/proto:agent_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "dummy_threat_test",
+    srcs = ["dummy_threat_test.cc"],
+    deps = [
+        ":dummy_threat",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "missile",
+    hdrs = ["missile.h"],
+    data = ["//simulation/swarm/configs/threat:configs"],
+    deps = [
+        ":threat",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
+    ],
+)
+
+cc_test(
+    name = "missile_test",
+    srcs = ["missile_test.cc"],
+    deps = [
+        ":missile",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "threat",
+    hdrs = ["threat.h"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:agent_cc_proto",
+    ],
+)
+
+cc_library(
+    name = "threat_factory",
+    hdrs = ["threat_factory.h"],
+    deps = [
+        ":drone",
+        ":missile",
+        ":threat",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+    ],
+)
+
+cc_test(
+    name = "threat_factory_test",
+    srcs = ["threat_factory_test.cc"],
+    deps = [
+        ":threat_factory",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

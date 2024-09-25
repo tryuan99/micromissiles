@@ -32,13 +32,13 @@ class Simulator {
   // Simulation step time in seconds.
   double t_step_ = 0;
 
-  // Missiles.
-  std::vector<std::unique_ptr<agent::Agent>> missiles_;
+  // Interceptors.
+  std::vector<std::unique_ptr<agent::Agent>> interceptors_;
 
-  // Targets.
-  std::vector<std::unique_ptr<agent::Agent>> targets_;
+  // Threats.
+  std::vector<std::unique_ptr<agent::Agent>> threats_;
 
-  // Assignment between the missiles and the targets.
+  // Assignment between the interceptors and the threats.
   std::unique_ptr<assignment::Assignment> assignment_;
 
   // Thread pool.

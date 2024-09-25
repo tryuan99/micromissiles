@@ -18,7 +18,7 @@ class SensorFactory {
  public:
   SensorFactory() = default;
 
-  // Create a missile.
+  // Create a sensor.
   template <typename... Args>
   std::unique_ptr<Sensor> CreateSensor(const SensorType type, Args&&... args) {
     switch (type) {

@@ -14,40 +14,40 @@ SimulatorConfig SwarmSimulator::GenerateSimulatorConfig(
   SimulatorConfig simulator_config;
   simulator_config.set_step_time(swarm_config.step_time());
 
-  // Generate swarms of missiles.
-  for (const auto& missile_swarm_config :
-       swarm_config.missile_swarm_configs()) {
-    for (int i = 0; i < missile_swarm_config.num_agents(); ++i) {
-      auto* missile_config = simulator_config.add_missile_configs();
-      missile_config->set_missile_type(
-          missile_swarm_config.agent_config().missile_type());
-      missile_config->mutable_initial_state()->CopyFrom(GenerateRandomState(
-          missile_swarm_config.agent_config().initial_state(),
-          missile_swarm_config.agent_config().standard_deviation()));
-      missile_config->mutable_dynamic_config()->CopyFrom(
-          missile_swarm_config.agent_config().dynamic_config());
-      missile_config->mutable_plotting_config()->CopyFrom(
-          missile_swarm_config.agent_config().plotting_config());
-      missile_config->mutable_submunitions_config()->CopyFrom(
-          missile_swarm_config.agent_config().submunitions_config());
+  // Generate swarms of interceptors.
+  for (const auto& interceptor_swarm_config :
+       swarm_config.interceptor_swarm_configs()) {
+    for (int i = 0; i < interceptor_swarm_config.num_agents(); ++i) {
+      auto* interceptor_config = simulator_config.add_interceptor_configs();
+      interceptor_config->set_interceptor_type(
+          interceptor_swarm_config.agent_config().interceptor_type());
+      interceptor_config->mutable_initial_state()->CopyFrom(GenerateRandomState(
+          interceptor_swarm_config.agent_config().initial_state(),
+          interceptor_swarm_config.agent_config().standard_deviation()));
+      interceptor_config->mutable_dynamic_config()->CopyFrom(
+          interceptor_swarm_config.agent_config().dynamic_config());
+      interceptor_config->mutable_plotting_config()->CopyFrom(
+          interceptor_swarm_config.agent_config().plotting_config());
+      interceptor_config->mutable_submunitions_config()->CopyFrom(
+          interceptor_swarm_config.agent_config().submunitions_config());
     }
   }
 
-  // Generate swarms of targets.
-  for (const auto& target_swarm_config : swarm_config.target_swarm_configs()) {
-    for (int i = 0; i < target_swarm_config.num_agents(); ++i) {
-      auto* target_config = simulator_config.add_target_configs();
-      target_config->set_target_type(
-          target_swarm_config.agent_config().target_type());
-      target_config->mutable_initial_state()->CopyFrom(GenerateRandomState(
-          target_swarm_config.agent_config().initial_state(),
-          target_swarm_config.agent_config().standard_deviation()));
-      target_config->mutable_dynamic_config()->CopyFrom(
-          target_swarm_config.agent_config().dynamic_config());
-      target_config->mutable_plotting_config()->CopyFrom(
-          target_swarm_config.agent_config().plotting_config());
-      target_config->mutable_submunitions_config()->CopyFrom(
-          target_swarm_config.agent_config().submunitions_config());
+  // Generate swarms of threats.
+  for (const auto& threat_swarm_config : swarm_config.threat_swarm_configs()) {
+    for (int i = 0; i < threat_swarm_config.num_agents(); ++i) {
+      auto* threat_config = simulator_config.add_threat_configs();
+      threat_config->set_threat_type(
+          threat_swarm_config.agent_config().threat_type());
+      threat_config->mutable_initial_state()->CopyFrom(GenerateRandomState(
+          threat_swarm_config.agent_config().initial_state(),
+          threat_swarm_config.agent_config().standard_deviation()));
+      threat_config->mutable_dynamic_config()->CopyFrom(
+          threat_swarm_config.agent_config().dynamic_config());
+      threat_config->mutable_plotting_config()->CopyFrom(
+          threat_swarm_config.agent_config().plotting_config());
+      threat_config->mutable_submunitions_config()->CopyFrom(
+          threat_swarm_config.agent_config().submunitions_config());
     }
   }
   return simulator_config;

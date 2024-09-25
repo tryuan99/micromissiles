@@ -6,10 +6,10 @@
 
 #include "base/logging.h"
 #include "simulation/swarm/assignment/distance_assignment.h"
-#include "simulation/swarm/missile/missile_factory.h"
+#include "simulation/swarm/interceptor/interceptor_factory.h"
 #include "simulation/swarm/plotter/plotter_factory.h"
 #include "simulation/swarm/proto/simulator_config.pb.h"
-#include "simulation/swarm/target/target_factory.h"
+#include "simulation/swarm/threat/threat_factory.h"
 #include "utils/thread_pool.h"
 
 namespace swarm::simulator {
@@ -23,18 +23,20 @@ Simulator::Simulator(const SimulatorConfig& simulator_config)
     : t_step_(simulator_config.step_time()),
       assignment_(std::make_unique<assignment::DistanceAssignment>()),
       thread_pool_(::utils::ThreadPool(kNumThreads)) {
-  missiles_.reserve(simulator_config.missile_configs_size());
-  missile::MissileFactory missile_factory;
-  for (const auto& missile_config : simulator_config.missile_configs()) {
-    missiles_.emplace_back(missile_factory.CreateMissile(
-        missile_config.missile_type(), missile_config, /*t_creation=*/0,
+  interceptors_.reserve(simulator_config.interceptor_configs_size());
+  interceptor::InterceptorFactory interceptor_factory;
+  for (const auto& interceptor_config :
+       simulator_config.interceptor_configs()) {
+    interceptors_.emplace_back(interceptor_factory.CreateInterceptor(
+        interceptor_config.interceptor_type(), interceptor_config,
+        /*t_creation=*/0,
         /*ready=*/false));
   }
-  targets_.reserve(simulator_config.target_configs_size());
-  target::TargetFactory target_factory;
-  for (const auto& target_config : simulator_config.target_configs()) {
-    targets_.emplace_back(
-        target_factory.CreateTarget(target_config.target_type(), target_config,
+  threats_.reserve(simulator_config.threat_configs_size());
+  threat::ThreatFactory threat_factory;
+  for (const auto& threat_config : simulator_config.threat_configs()) {
+    threats_.emplace_back(
+        threat_factory.CreateThreat(threat_config.threat_type(), threat_config,
                                     /*t_creation=*/0, /*ready=*/false));
   }
   thread_pool_.Start();
@@ -44,61 +46,63 @@ void Simulator::Run(const double t_end) {
   for (double t = 0; t < t_end; t += t_step_) {
     LOG_EVERY_N(INFO, 1000) << "Simulating time t=" << t << ".";
 
-    // Have all missiles check their targets.
-    for (auto& missile : missiles_) {
-      missile->CheckTarget();
+    // Have all interceptors check their threats.
+    for (auto& interceptor : interceptors_) {
+      interceptor->CheckTarget();
     }
 
     // Allow agents to spawn new instances.
-    std::vector<std::unique_ptr<agent::Agent>> spawned_missiles;
-    std::vector<std::unique_ptr<agent::Agent>> spawned_targets;
-    for (auto& missile : missiles_) {
-      auto spawned = missile->Spawn(t);
-      spawned_missiles.reserve(spawned_missiles.size() + spawned.size());
+    std::vector<std::unique_ptr<agent::Agent>> spawned_interceptors;
+    std::vector<std::unique_ptr<agent::Agent>> spawned_threats;
+    for (auto& interceptor : interceptors_) {
+      auto spawned = interceptor->Spawn(t);
+      spawned_interceptors.reserve(spawned_interceptors.size() +
+                                   spawned.size());
       std::move(spawned.begin(), spawned.end(),
-                std::back_inserter(spawned_missiles));
+                std::back_inserter(spawned_interceptors));
     }
-    for (auto& target : targets_) {
-      auto spawned = target->Spawn(t);
-      spawned_targets.reserve(spawned_targets.size() + spawned.size());
+    for (auto& threat : threats_) {
+      auto spawned = threat->Spawn(t);
+      spawned_threats.reserve(spawned_threats.size() + spawned.size());
       std::move(spawned.begin(), spawned.end(),
-                std::back_inserter(spawned_targets));
+                std::back_inserter(spawned_threats));
     }
-    missiles_.reserve(missiles_.size() + spawned_missiles.size());
-    std::move(spawned_missiles.begin(), spawned_missiles.end(),
-              std::back_inserter(missiles_));
-    targets_.reserve(targets_.size() + spawned_targets.size());
-    std::move(spawned_targets.begin(), spawned_targets.end(),
-              std::back_inserter(targets_));
+    interceptors_.reserve(interceptors_.size() + spawned_interceptors.size());
+    std::move(spawned_interceptors.begin(), spawned_interceptors.end(),
+              std::back_inserter(interceptors_));
+    threats_.reserve(threats_.size() + spawned_threats.size());
+    std::move(spawned_threats.begin(), spawned_threats.end(),
+              std::back_inserter(threats_));
 
-    // Assign the targets to the missiles.
-    assignment_->Assign(missiles_, targets_);
-    for (const auto& [missile_index, target_index] :
+    // Assign the threats to the interceptors.
+    assignment_->Assign(interceptors_, threats_);
+    for (const auto& [interceptor_index, threat_index] :
          assignment_->assignments()) {
-      missiles_[missile_index]->AssignTarget(targets_[target_index].get());
+      interceptors_[interceptor_index]->AssignTarget(
+          threats_[threat_index].get());
     }
 
     // Update the acceleration vector of each agent.
-    for (auto& missile : missiles_) {
-      if (!missile->has_terminated()) {
-        missile->Update(t);
+    for (auto& interceptor : interceptors_) {
+      if (!interceptor->has_terminated()) {
+        interceptor->Update(t);
       }
     }
-    for (auto& target : targets_) {
-      if (!target->has_terminated()) {
-        target->Update(t);
+    for (auto& threat : threats_) {
+      if (!threat->has_terminated()) {
+        threat->Update(t);
       }
     }
 
     // Step to the next time step.
-    for (auto& missile : missiles_) {
-      if (missile->has_launched() && !missile->has_terminated()) {
-        thread_pool_.QueueJob([&]() { missile->Step(t, t_step_); });
+    for (auto& interceptor : interceptors_) {
+      if (interceptor->has_launched() && !interceptor->has_terminated()) {
+        thread_pool_.QueueJob([&]() { interceptor->Step(t, t_step_); });
       }
     }
-    for (auto& target : targets_) {
-      if (target->has_launched() && !target->has_terminated()) {
-        thread_pool_.QueueJob([&]() { target->Step(t, t_step_); });
+    for (auto& threat : threats_) {
+      if (threat->has_launched() && !threat->has_terminated()) {
+        thread_pool_.QueueJob([&]() { threat->Step(t, t_step_); });
       }
     }
     thread_pool_.Wait();
@@ -110,7 +114,7 @@ void Simulator::Plot(const bool animate,
                      const std::string& animation_file) const {
   plotter::PlotterFactory plotter_factory;
   const auto plotter = plotter_factory.CreatePlotter(animate);
-  plotter->Plot(t_step_, missiles_, targets_);
+  plotter->Plot(t_step_, interceptors_, threats_);
 }
 
 }  // namespace swarm::simulator

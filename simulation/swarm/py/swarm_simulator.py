@@ -1,5 +1,5 @@
-"""The swarm simulator class generates a swarm of missiles placed at random
-positions and a swarm of targets placed at random positions with random
+"""The swarm simulator class generates a swarm of interceptors placed at random
+positions and a swarm of threats placed at random positions with random
 velocities.
 """
 
@@ -19,39 +19,40 @@ class SwarmSimulator(Simulator):
         simulator_config = SimulatorConfig()
         simulator_config.step_time = swarm_config.step_time
 
-        # Generate swarms of missiles.
-        for missile_swarm_config in swarm_config.missile_swarm_configs:
-            for _ in range(missile_swarm_config.num_agents):
-                missile_config = simulator_config.missile_configs.add()
-                missile_config.missile_type = missile_swarm_config.agent_config.missile_type
-                missile_config.initial_state.CopyFrom(
+        # Generate swarms of interceptors.
+        for interceptor_swarm_config in swarm_config.interceptor_swarm_configs:
+            for _ in range(interceptor_swarm_config.num_agents):
+                interceptor_config = simulator_config.interceptor_configs.add()
+                interceptor_config.interceptor_type = interceptor_swarm_config.agent_config.interceptor_type
+                interceptor_config.initial_state.CopyFrom(
                     self._generate_random_state(
-                        missile_swarm_config.agent_config.initial_state,
-                        missile_swarm_config.agent_config.standard_deviation,
+                        interceptor_swarm_config.agent_config.initial_state,
+                        interceptor_swarm_config.agent_config.
+                        standard_deviation,
                     ))
-                missile_config.dynamic_config.CopyFrom(
-                    missile_swarm_config.agent_config.dynamic_config)
-                missile_config.plotting_config.CopyFrom(
-                    missile_swarm_config.agent_config.plotting_config)
-                missile_config.submunitions_config.CopyFrom(
-                    missile_swarm_config.agent_config.submunitions_config)
+                interceptor_config.dynamic_config.CopyFrom(
+                    interceptor_swarm_config.agent_config.dynamic_config)
+                interceptor_config.plotting_config.CopyFrom(
+                    interceptor_swarm_config.agent_config.plotting_config)
+                interceptor_config.submunitions_config.CopyFrom(
+                    interceptor_swarm_config.agent_config.submunitions_config)
 
-        # Generate swarms of targets.
-        for target_swarm_config in swarm_config.target_swarm_configs:
-            for _ in range(target_swarm_config.num_agents):
-                target_config = simulator_config.target_configs.add()
-                target_config.target_type = target_swarm_config.agent_config.target_type
-                target_config.initial_state.CopyFrom(
+        # Generate swarms of threats.
+        for threat_swarm_config in swarm_config.threat_swarm_configs:
+            for _ in range(threat_swarm_config.num_agents):
+                threat_config = simulator_config.threat_configs.add()
+                threat_config.threat_type = threat_swarm_config.agent_config.threat_type
+                threat_config.initial_state.CopyFrom(
                     self._generate_random_state(
-                        target_swarm_config.agent_config.initial_state,
-                        target_swarm_config.agent_config.standard_deviation,
+                        threat_swarm_config.agent_config.initial_state,
+                        threat_swarm_config.agent_config.standard_deviation,
                     ))
-                target_config.dynamic_config.CopyFrom(
-                    target_swarm_config.agent_config.dynamic_config)
-                target_config.plotting_config.CopyFrom(
-                    target_swarm_config.agent_config.plotting_config)
-                target_config.submunitions_config.CopyFrom(
-                    target_swarm_config.agent_config.submunitions_config)
+                threat_config.dynamic_config.CopyFrom(
+                    threat_swarm_config.agent_config.dynamic_config)
+                threat_config.plotting_config.CopyFrom(
+                    threat_swarm_config.agent_config.plotting_config)
+                threat_config.submunitions_config.CopyFrom(
+                    threat_swarm_config.agent_config.submunitions_config)
         super().__init__(simulator_config)
 
     @staticmethod

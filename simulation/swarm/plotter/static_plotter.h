@@ -25,16 +25,17 @@ class StaticPlotter : public Plotter {
  protected:
   // Plot the trajectories of the agents.
   void PlotImpl(
-      double t_step, const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-      const std::vector<std::unique_ptr<agent::Agent>>& targets) override;
+      double t_step,
+      const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+      const std::vector<std::unique_ptr<agent::Agent>>& threats) override;
 
  private:
-  // Generate a missile widget.
-  static std::unique_ptr<cv::viz::Widget3D> GenerateMissileWidget(
+  // Generate a interceptor widget.
+  static std::unique_ptr<cv::viz::Widget3D> GenerateInterceptorWidget(
       const State& state, bool hit);
 
-  // Generate a target widget.
-  static std::unique_ptr<cv::viz::Widget3D> GenerateTargetWidget(
+  // Generate a threat widget.
+  static std::unique_ptr<cv::viz::Widget3D> GenerateThreatWidget(
       const State& state, bool hit);
 
   // Generate a trajectory widget.

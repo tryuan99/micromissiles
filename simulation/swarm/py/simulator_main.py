@@ -7,10 +7,10 @@ from simulation.swarm.py.simulator import Simulator
 FLAGS = flags.FLAGS
 
 
-def simulate_missiles_and_targets(simulator_config_file_path: str, output: str,
-                                  animate: bool, animation: str,
-                                  t_end: float) -> None:
-    """Simulates the missiles and the targets.
+def simulate_interceptors_and_threats(simulator_config_file_path: str,
+                                      output: str, animate: bool,
+                                      animation: str, t_end: float) -> None:
+    """Simulates the interceptors and the threats.
 
     Args:
         simulator_config_file_path: Simulator configuration file path.
@@ -32,7 +32,7 @@ def simulate_missiles_and_targets(simulator_config_file_path: str, output: str,
 def main(argv):
     assert len(argv) == 1
 
-    simulate_missiles_and_targets(
+    simulate_interceptors_and_threats(
         FLAGS.simulator_config,
         FLAGS.output,
         FLAGS.animate,

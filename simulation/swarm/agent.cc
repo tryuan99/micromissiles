@@ -48,7 +48,7 @@ bool Agent::HasHitTarget() const {
   const auto target_position = target_->GetPosition();
   const auto distance = (target_position - position).norm();
 
-  // A hit is recorded if the target is within the missile's hit radius.
+  // A hit is recorded if the target is within the agent's hit radius.
   const auto hit_radius = static_config().hit_config().hit_radius();
   return distance <= hit_radius;
 }

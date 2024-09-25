@@ -9,31 +9,32 @@
 namespace swarm::assignment {
 
 void RoundRobinAssignment::AssignImpl(
-    const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-    const std::vector<std::unique_ptr<agent::Agent>>& targets) {
-  const auto assignable_missile_indices = GetAssignableMissileIndices(missiles);
-  if (assignable_missile_indices.size() == 0) {
+    const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+    const std::vector<std::unique_ptr<agent::Agent>>& threats) {
+  const auto assignable_interceptor_indices =
+      GetAssignableInterceptorIndices(interceptors);
+  if (assignable_interceptor_indices.size() == 0) {
     return;
   }
-  const auto active_target_indices = GetActiveTargetIndices(targets);
-  if (active_target_indices.size() == 0) {
+  const auto active_threat_indices = GetActiveThreatIndices(threats);
+  if (active_threat_indices.size() == 0) {
     return;
   }
 
-  for (const auto missile_index : assignable_missile_indices) {
-    const auto next_active_target_index_it =
-        std::upper_bound(active_target_indices.cbegin(),
-                         active_target_indices.cend(), prev_target_index_);
-    const auto next_active_target_index =
-        (next_active_target_index_it == active_target_indices.cend())
+  for (const auto interceptor_index : assignable_interceptor_indices) {
+    const auto next_active_threat_index_it =
+        std::upper_bound(active_threat_indices.cbegin(),
+                         active_threat_indices.cend(), prev_threat_index_);
+    const auto next_active_threat_index =
+        (next_active_threat_index_it == active_threat_indices.cend())
             ? 0
-            : std::distance(active_target_indices.cbegin(),
-                            next_active_target_index_it);
-    const auto next_target_index =
-        active_target_indices[next_active_target_index];
-    missile_to_target_assignments_.emplace_front(missile_index,
-                                                 next_target_index);
-    prev_target_index_ = next_target_index;
+            : std::distance(active_threat_indices.cbegin(),
+                            next_active_threat_index_it);
+    const auto next_threat_index =
+        active_threat_indices[next_active_threat_index];
+    interceptor_to_threat_assignments_.emplace_front(interceptor_index,
+                                                     next_threat_index);
+    prev_threat_index_ = next_threat_index;
   }
 }
 

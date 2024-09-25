@@ -1,4 +1,4 @@
-"""The distance assignment class assigns each missile to the nearest target
+"""The distance assignment class assigns each interceptor to the nearest threat
 that has not been assigned yet.
 """
 
@@ -7,76 +7,79 @@ from collections import namedtuple
 import numpy as np
 
 from simulation.swarm.assignment.py.assignment_interface import Assignment
-from simulation.swarm.missile.py.missile_interface import Missile
-from simulation.swarm.target.py.target_interface import Target
+from simulation.swarm.interceptor.py.interceptor_interface import Interceptor
+from simulation.swarm.threat.py.threat_interface import Threat
 
 
 class DistanceAssignment(Assignment):
     """Assignment based on distance.
 
-    Each missile is assigned to the closest unassigned target. After all
-    targets have been assigned, the remaining missiles will double up on
-    targets.
+    Each interceptor is assigned to the closest unassigned threat. After all
+    threats have been assigned, the remaining interceptors will double up on
+    threats.
     """
 
-    # Missile-target distance named tuple type.
-    MissileTargetDistance = namedtuple(
-        "MissileTargetDistance", ["missile_index", "target_index", "distance"])
+    # Interceptor-threat distance named tuple type.
+    InterceptorThreatDistance = namedtuple(
+        "InterceptorThreatDistance",
+        ["interceptor_index", "threat_index", "distance"])
 
-    def __init__(self, missiles: list[Missile], targets: list[Target]) -> None:
-        super().__init__(missiles, targets)
+    def __init__(self, interceptors: list[Interceptor],
+                 threats: list[Threat]) -> None:
+        super().__init__(interceptors, threats)
 
-    def _assign_targets(self) -> None:
-        """Assigns each missile to a target."""
-        assignable_missile_indices = self.get_assignable_missile_indices(
-            self.missiles)
-        if len(assignable_missile_indices) == 0:
+    def _assign_threats(self) -> None:
+        """Assigns each interceptor to a threat."""
+        assignable_interceptor_indices = self.get_assignable_interceptor_indices(
+            self.interceptors)
+        if len(assignable_interceptor_indices) == 0:
             return
-        active_target_indices = self.get_active_target_indices(self.targets)
-        if len(active_target_indices) == 0:
+        active_threat_indices = self.get_active_threat_indices(self.threats)
+        if len(active_threat_indices) == 0:
             return
 
-        # Get the missile and target positions.
-        missile_positions = [
-            self.missiles[missile_index].get_position()
-            for missile_index in assignable_missile_indices
+        # Get the interceptor and threat positions.
+        interceptor_positions = [
+            self.interceptors[interceptor_index].get_position()
+            for interceptor_index in assignable_interceptor_indices
         ]
-        target_positions = [
-            self.targets[target_index].get_position()
-            for target_index in active_target_indices
+        threat_positions = [
+            self.threats[threat_index].get_position()
+            for threat_index in active_threat_indices
         ]
 
-        # Sort the missile-target distances.
-        missile_target_distances = []
-        for assignable_missile_index, missile_index in enumerate(
-                assignable_missile_indices):
-            for active_target_index, target_index in enumerate(
-                    active_target_indices):
-                distance = (
-                    np.linalg.norm(target_positions[active_target_index] -
-                                   missile_positions[assignable_missile_index]))
-                missile_target_distances.append(
-                    DistanceAssignment.MissileTargetDistance(
-                        missile_index=missile_index,
-                        target_index=target_index,
+        # Sort the interceptor-threat distances.
+        interceptor_threat_distances = []
+        for assignable_interceptor_index, interceptor_index in enumerate(
+                assignable_interceptor_indices):
+            for active_threat_index, threat_index in enumerate(
+                    active_threat_indices):
+                distance = (np.linalg.norm(
+                    threat_positions[active_threat_index] -
+                    interceptor_positions[assignable_interceptor_index]))
+                interceptor_threat_distances.append(
+                    DistanceAssignment.InterceptorThreatDistance(
+                        interceptor_index=interceptor_index,
+                        threat_index=threat_index,
                         distance=distance,
                     ))
-        sorted_missile_target_distances = sorted(missile_target_distances,
-                                                 key=lambda x: x.distance)
+        sorted_interceptor_threat_distances = sorted(
+            interceptor_threat_distances, key=lambda x: x.distance)
 
-        # Assign targets to missiles based on distance.
-        while len(sorted_missile_target_distances) > 0:
-            assigned_missile_indices = set()
-            assigned_target_indices = set()
-            for (missile_index, target_index,
-                 distance) in sorted_missile_target_distances:
-                if (missile_index not in assigned_missile_indices and
-                        target_index not in assigned_target_indices):
-                    self.missile_to_target_assignments[
-                        missile_index] = target_index
-                    assigned_missile_indices.add(missile_index)
-                    assigned_target_indices.add(target_index)
-            sorted_missile_target_distances = set(
+        # Assign threats to interceptors based on distance.
+        while len(sorted_interceptor_threat_distances) > 0:
+            assigned_interceptor_indices = set()
+            assigned_threat_indices = set()
+            for (interceptor_index, threat_index,
+                 distance) in sorted_interceptor_threat_distances:
+                if (interceptor_index not in assigned_interceptor_indices and
+                        threat_index not in assigned_threat_indices):
+                    self.interceptor_to_threat_assignments[
+                        interceptor_index] = threat_index
+                    assigned_interceptor_indices.add(interceptor_index)
+                    assigned_threat_indices.add(threat_index)
+            sorted_interceptor_threat_distances = set(
                 filter(
-                    lambda x: x.missile_index not in assigned_missile_indices,
-                    sorted_missile_target_distances))
+                    lambda x: x.interceptor_index not in
+                    assigned_interceptor_indices,
+                    sorted_interceptor_threat_distances))

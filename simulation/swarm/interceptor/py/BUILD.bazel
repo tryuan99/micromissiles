@@ -1,0 +1,65 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "dummy_interceptor",
+    srcs = ["dummy_interceptor.py"],
+    deps = [
+        ":interceptor_interface",
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+    ],
+)
+
+py_library(
+    name = "hydra_70",
+    srcs = ["hydra_70.py"],
+    data = ["//simulation/swarm/configs/interceptor:configs"],
+    deps = [
+        ":interceptor_interface",
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+        "//simulation/swarm/utils/py:constants",
+        requirement("numpy"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "micromissile",
+    srcs = ["micromissile.py"],
+    data = ["//simulation/swarm/configs/interceptor:configs"],
+    deps = [
+        ":interceptor_interface",
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/proto:sensor_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+        requirement("numpy"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "interceptor",
+    srcs = ["interceptor.py"],
+    deps = [
+        ":hydra_70",
+        ":micromissile",
+        "//simulation/swarm/proto:agent_py_proto",
+    ],
+)
+
+py_library(
+    name = "interceptor_interface",
+    srcs = ["interceptor_interface.py"],
+    deps = [
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/py:agent",
+        "//simulation/swarm/py:model_agent",
+        "//simulation/swarm/sensor/py:sensor",
+        "//simulation/swarm/threat/py:threat_interface",
+        "//simulation/swarm/utils/py:constants",
+        requirement("numpy"),
+    ],
+)

@@ -1,4 +1,4 @@
-// The agent class is an interface for a missile or a target.
+// The agent class is an interface for an interceptor or a threat.
 
 #pragma once
 

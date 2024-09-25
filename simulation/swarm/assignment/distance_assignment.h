@@ -1,5 +1,5 @@
-// The distance assignment class assigns each missile to the nearest target that
-// has not been assigned yet.
+// The distance assignment class assigns each interceptor to the nearest threat
+// that has not been assigned yet.
 
 #pragma once
 
@@ -19,10 +19,11 @@ class DistanceAssignment : public Assignment {
   DistanceAssignment& operator=(const DistanceAssignment&) = default;
 
  protected:
-  // Assign a target to each missile that has not been assigned a target yet.
+  // Assign a threat to each interceptor that has not been assigned a threat
+  // yet.
   void AssignImpl(
-      const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-      const std::vector<std::unique_ptr<agent::Agent>>& targets) override;
+      const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+      const std::vector<std::unique_ptr<agent::Agent>>& threats) override;
 };
 
 }  // namespace swarm::assignment

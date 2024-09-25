@@ -1,4 +1,4 @@
-// The sensor class is an interface for a missile's sensing system.
+// The sensor class is an interface for an agent's sensing system.
 
 #pragma once
 

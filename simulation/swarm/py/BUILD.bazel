@@ -43,10 +43,10 @@ py_library(
     srcs = ["simulator.py"],
     deps = [
         "//simulation/swarm/assignment/py:distance_assignment",
-        "//simulation/swarm/missile/py:missile",
+        "//simulation/swarm/interceptor/py:interceptor",
         "//simulation/swarm/plotter/py:plotter",
         "//simulation/swarm/proto:simulator_config_py_proto",
-        "//simulation/swarm/target/py:target",
+        "//simulation/swarm/threat/py:threat",
         requirement("absl-py"),
         requirement("numpy"),
     ],

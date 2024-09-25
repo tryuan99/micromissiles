@@ -1,0 +1,56 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "drone",
+    srcs = ["drone.py"],
+    data = ["//simulation/swarm/configs/threat:configs"],
+    deps = [
+        ":threat_interface",
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "dummy_threat",
+    srcs = ["dummy_threat.py"],
+    deps = [
+        ":threat_interface",
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+    ],
+)
+
+py_library(
+    name = "missile",
+    srcs = ["missile.py"],
+    data = ["//simulation/swarm/configs/threat:configs"],
+    deps = [
+        ":threat_interface",
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/proto:static_config_py_proto",
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "threat",
+    srcs = ["threat.py"],
+    deps = [
+        ":drone",
+        ":missile",
+        "//simulation/swarm/proto:agent_py_proto",
+    ],
+)
+
+py_library(
+    name = "threat_interface",
+    srcs = ["threat_interface.py"],
+    deps = [
+        "//simulation/swarm/proto:agent_py_proto",
+        "//simulation/swarm/py:agent",
+    ],
+)

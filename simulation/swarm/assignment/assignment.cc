@@ -7,29 +7,29 @@
 
 namespace swarm::assignment {
 
-std::vector<int> Assignment::GetAssignableMissileIndices(
-    const std::vector<std::unique_ptr<agent::Agent>>& missiles) {
-  std::vector<int> assignable_missile_indices;
-  assignable_missile_indices.reserve(missiles.size());
-  for (int missile_index = 0; missile_index < missiles.size();
-       ++missile_index) {
-    if (missiles[missile_index]->assignable()) {
-      assignable_missile_indices.emplace_back(missile_index);
+std::vector<int> Assignment::GetAssignableInterceptorIndices(
+    const std::vector<std::unique_ptr<agent::Agent>>& interceptors) {
+  std::vector<int> assignable_interceptor_indices;
+  assignable_interceptor_indices.reserve(interceptors.size());
+  for (int interceptor_index = 0; interceptor_index < interceptors.size();
+       ++interceptor_index) {
+    if (interceptors[interceptor_index]->assignable()) {
+      assignable_interceptor_indices.emplace_back(interceptor_index);
     }
   }
-  return assignable_missile_indices;
+  return assignable_interceptor_indices;
 }
 
-std::vector<int> Assignment::GetActiveTargetIndices(
-    const std::vector<std::unique_ptr<agent::Agent>>& targets) {
-  std::vector<int> active_target_indices;
-  active_target_indices.reserve(targets.size());
-  for (int target_index = 0; target_index < targets.size(); ++target_index) {
-    if (!targets[target_index]->hit()) {
-      active_target_indices.emplace_back(target_index);
+std::vector<int> Assignment::GetActiveThreatIndices(
+    const std::vector<std::unique_ptr<agent::Agent>>& threats) {
+  std::vector<int> active_threat_indices;
+  active_threat_indices.reserve(threats.size());
+  for (int threat_index = 0; threat_index < threats.size(); ++threat_index) {
+    if (!threats[threat_index]->hit()) {
+      active_threat_indices.emplace_back(threat_index);
     }
   }
-  return active_target_indices;
+  return active_threat_indices;
 }
 
 }  // namespace swarm::assignment

@@ -7,9 +7,9 @@
 #include <vector>
 
 #include "simulation/swarm/agent.h"
-#include "simulation/swarm/missile/dummy_missile.h"
+#include "simulation/swarm/interceptor/dummy_interceptor.h"
 #include "simulation/swarm/proto/agent.pb.h"
-#include "simulation/swarm/target/dummy_target.h"
+#include "simulation/swarm/threat/dummy_threat.h"
 
 namespace swarm::assignment {
 namespace {
@@ -17,71 +17,71 @@ namespace {
 class RoundRobinAssignmentTest : public testing::Test {
  protected:
   RoundRobinAssignmentTest()
-      : missiles_(GenerateMissiles()), targets_(GenerateTargets()) {}
+      : interceptors_(GenerateInterceptors()), threats_(GenerateThreats()) {}
 
-  // Generate the missiles.
-  static std::vector<std::unique_ptr<agent::Agent>> GenerateMissiles() {
-    std::vector<std::unique_ptr<agent::Agent>> missiles;
-    AgentConfig missile_config;
-    missile_config.mutable_initial_state()->mutable_position()->set_x(1);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(2);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(1);
-    missiles.emplace_back(
-        std::make_unique<missile::DummyMissile>(missile_config));
+  // Generate the interceptors.
+  static std::vector<std::unique_ptr<agent::Agent>> GenerateInterceptors() {
+    std::vector<std::unique_ptr<agent::Agent>> interceptors;
+    AgentConfig interceptor_config;
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(2);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptors.emplace_back(
+        std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
 
-    missile_config.mutable_initial_state()->mutable_position()->set_x(10);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(12);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(1);
-    missiles.emplace_back(
-        std::make_unique<missile::DummyMissile>(missile_config));
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(12);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptors.emplace_back(
+        std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
 
-    missile_config.mutable_initial_state()->mutable_position()->set_x(10);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(12);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(1);
-    missiles.emplace_back(
-        std::make_unique<missile::DummyMissile>(missile_config));
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(12);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptors.emplace_back(
+        std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
 
-    missile_config.mutable_initial_state()->mutable_position()->set_x(10);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(10);
-    missile_config.mutable_initial_state()->mutable_position()->set_x(1);
-    missiles.emplace_back(
-        std::make_unique<missile::DummyMissile>(missile_config));
-    return missiles;
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptors.emplace_back(
+        std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
+    return interceptors;
   }
 
-  // Generate the targets.
-  static std::vector<std::unique_ptr<agent::Agent>> GenerateTargets() {
-    std::vector<std::unique_ptr<agent::Agent>> targets;
-    AgentConfig target_config;
-    target_config.mutable_initial_state()->mutable_position()->set_x(10);
-    target_config.mutable_initial_state()->mutable_position()->set_x(15);
-    target_config.mutable_initial_state()->mutable_position()->set_x(2);
-    targets.emplace_back(std::make_unique<target::DummyTarget>(target_config));
+  // Generate the threats.
+  static std::vector<std::unique_ptr<agent::Agent>> GenerateThreats() {
+    std::vector<std::unique_ptr<agent::Agent>> threats;
+    AgentConfig threat_config;
+    threat_config.mutable_initial_state()->mutable_position()->set_x(10);
+    threat_config.mutable_initial_state()->mutable_position()->set_x(15);
+    threat_config.mutable_initial_state()->mutable_position()->set_x(2);
+    threats.emplace_back(std::make_unique<threat::DummyThreat>(threat_config));
 
-    target_config.mutable_initial_state()->mutable_position()->set_x(1);
-    target_config.mutable_initial_state()->mutable_position()->set_x(2);
-    target_config.mutable_initial_state()->mutable_position()->set_x(2);
-    targets.emplace_back(std::make_unique<target::DummyTarget>(target_config));
-    return targets;
+    threat_config.mutable_initial_state()->mutable_position()->set_x(1);
+    threat_config.mutable_initial_state()->mutable_position()->set_x(2);
+    threat_config.mutable_initial_state()->mutable_position()->set_x(2);
+    threats.emplace_back(std::make_unique<threat::DummyThreat>(threat_config));
+    return threats;
   }
 
   // Round-robin assignment.
   RoundRobinAssignment assignment_;
 
-  // Missiles.
-  std::vector<std::unique_ptr<agent::Agent>> missiles_;
+  // Interceptors.
+  std::vector<std::unique_ptr<agent::Agent>> interceptors_;
 
-  // Targets.
-  std::vector<std::unique_ptr<agent::Agent>> targets_;
+  // Threats.
+  std::vector<std::unique_ptr<agent::Agent>> threats_;
 };
 
 TEST_F(RoundRobinAssignmentTest, Assign) {
-  assignment_.Assign(missiles_, targets_);
+  assignment_.Assign(interceptors_, threats_);
   const auto& assignments = assignment_.assignments();
   std::unordered_map<int, int> expected_assignments{
       {0, 0}, {1, 1}, {2, 0}, {3, 1}};
-  for (const auto& [missile_index, target_index] : assignments) {
-    EXPECT_EQ(expected_assignments[missile_index], target_index);
+  for (const auto& [interceptor_index, threat_index] : assignments) {
+    EXPECT_EQ(expected_assignments[interceptor_index], threat_index);
   }
 }
 

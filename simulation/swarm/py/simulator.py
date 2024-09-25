@@ -6,9 +6,10 @@ from simulation.swarm.proto.simulator_config_pb2 import SimulatorConfig
 
 from simulation.swarm.assignment.py.distance_assignment import \
     DistanceAssignment
-from simulation.swarm.missile.py.missile import MISSILE_TYPE_ENUM_TO_CLASS
+from simulation.swarm.interceptor.py.interceptor import \
+    INTERCEPTOR_TYPE_ENUM_TO_CLASS
 from simulation.swarm.plotter.py.plotter import Plotter
-from simulation.swarm.target.py.target import TARGET_TYPE_ENUM_TO_CLASS
+from simulation.swarm.threat.py.threat import THREAT_TYPE_ENUM_TO_CLASS
 
 
 class Simulator:
@@ -16,21 +17,21 @@ class Simulator:
 
     Attributes:
         t_step: Simulation step time in seconds.
-        missiles: List of missiles.
-        targets: List of targets.
+        interceptors: List of interceptors.
+        threats: List of threats.
     """
 
     def __init__(self, simulator_config: SimulatorConfig) -> None:
         self.t_step = simulator_config.step_time
-        self.missiles = [
-            MISSILE_TYPE_ENUM_TO_CLASS[missile_config.missile_type](
-                missile_config, ready=False)
-            for missile_config in simulator_config.missile_configs
+        self.interceptors = [
+            INTERCEPTOR_TYPE_ENUM_TO_CLASS[interceptor_config.interceptor_type](
+                interceptor_config, ready=False)
+            for interceptor_config in simulator_config.interceptor_configs
         ]
-        self.targets = [
-            TARGET_TYPE_ENUM_TO_CLASS[target_config.target_type](target_config,
+        self.threats = [
+            THREAT_TYPE_ENUM_TO_CLASS[threat_config.threat_type](threat_config,
                                                                  ready=False)
-            for target_config in simulator_config.target_configs
+            for threat_config in simulator_config.threat_configs
         ]
 
     def run(self, t_end: float) -> None:
@@ -43,34 +44,36 @@ class Simulator:
         for t in np.arange(0, t_end, self.t_step):
             logging.log_every_n(logging.INFO, "Simulating time t=%f.", 1000, t)
 
-            # Have all missiles check their targets.
-            for missile in self.missiles:
-                missile.check_target()
+            # Have all interceptors check their threats.
+            for interceptor in self.interceptors:
+                interceptor.check_threat()
 
             # Allow agents to spawn new instances.
-            spawned_missiles = []
-            spawned_targets = []
-            for missile in self.missiles:
-                spawned_missiles.extend(missile.spawn(t))
-            for target in self.targets:
-                spawned_targets.extend(target.spawn(t))
-            self.missiles.extend(spawned_missiles)
-            self.targets.extend(spawned_targets)
+            spawned_interceptors = []
+            spawned_threats = []
+            for interceptor in self.interceptors:
+                spawned_interceptors.extend(interceptor.spawn(t))
+            for threat in self.threats:
+                spawned_threats.extend(threat.spawn(t))
+            self.interceptors.extend(spawned_interceptors)
+            self.threats.extend(spawned_threats)
 
-            # Assign the targets to the missiles.
-            target_assignment = DistanceAssignment(self.missiles, self.targets)
-            for (missile_index, target_index
-                ) in target_assignment.missile_to_target_assignments.items():
-                self.missiles[missile_index].assign_target(
-                    self.targets[target_index])
+            # Assign the threats to the interceptors.
+            threat_assignment = DistanceAssignment(self.interceptors,
+                                                   self.threats)
+            for (
+                    interceptor_index, threat_index
+            ) in threat_assignment.interceptor_to_threat_assignments.items():
+                self.interceptors[interceptor_index].assign_threat(
+                    self.threats[threat_index])
 
             # Update the acceleration vector of each agent.
-            for agent in [*self.missiles, *self.targets]:
+            for agent in [*self.interceptors, *self.threats]:
                 if not agent.has_terminated():
                     agent.update(t)
 
             # Step to the next time step.
-            for agent in [*self.missiles, *self.targets]:
+            for agent in [*self.interceptors, *self.threats]:
                 if agent.has_launched() and not agent.has_terminated():
                     agent.step(t, self.t_step)
 
@@ -81,6 +84,6 @@ class Simulator:
             animate: If true, animate the trajectories.
             animation_file: Animation file.
         """
-        agents = [*self.missiles, *self.targets]
+        agents = [*self.interceptors, *self.threats]
         plotter = Plotter(self.t_step, agents)
         plotter.plot(animate, animation_file)

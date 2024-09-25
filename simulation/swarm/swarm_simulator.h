@@ -1,5 +1,5 @@
-// The swarm simulator class generates a swarm of missiles placed at random
-// positions and a swarm of targets placed at random positions with random
+// The swarm simulator class generates a swarm of interceptors placed at random
+// positions and a swarm of threats placed at random positions with random
 // velocities.
 
 #pragma once

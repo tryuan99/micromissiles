@@ -1,0 +1,114 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "dummy_interceptor",
+    hdrs = ["dummy_interceptor.h"],
+    deps = [
+        ":interceptor",
+        "//simulation/swarm/proto:agent_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "dummy_interceptor_test",
+    srcs = ["dummy_interceptor_test.cc"],
+    deps = [
+        ":dummy_interceptor",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "hydra_70",
+    srcs = ["hydra_70.cc"],
+    hdrs = ["hydra_70.h"],
+    data = ["//simulation/swarm/configs/interceptor:configs"],
+    deps = [
+        ":interceptor",
+        ":micromissile",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
+        "@abseil-cpp//absl/strings:str_format",
+        "@eigen",
+    ],
+)
+
+cc_test(
+    name = "hydra_70_test",
+    srcs = ["hydra_70_test.cc"],
+    deps = [
+        ":hydra_70",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "interceptor",
+    srcs = ["interceptor.cc"],
+    hdrs = ["interceptor.h"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm:model_agent",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/sensor",
+        "//simulation/swarm/sensor:sensor_factory",
+        "//simulation/swarm/utils:constants",
+        "@eigen",
+    ],
+)
+
+cc_library(
+    name = "interceptor_factory",
+    hdrs = ["interceptor_factory.h"],
+    deps = [
+        ":hydra_70",
+        ":interceptor",
+        ":micromissile",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@abseil-cpp//absl/strings:str_format",
+    ],
+)
+
+cc_test(
+    name = "interceptor_factory_test",
+    srcs = ["interceptor_factory_test.cc"],
+    deps = [
+        ":interceptor_factory",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "micromissile",
+    srcs = ["micromissile.cc"],
+    hdrs = ["micromissile.h"],
+    data = ["//simulation/swarm/configs/interceptor:configs"],
+    deps = [
+        ":interceptor",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/proto:static_config_cc_proto",
+        "//utils:protobuf",
+        "//utils:random",
+        "@eigen",
+    ],
+)
+
+cc_test(
+    name = "micromissile_test",
+    srcs = ["micromissile_test.cc"],
+    deps = [
+        ":micromissile",
+        "//simulation/swarm/proto:agent_cc_proto",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

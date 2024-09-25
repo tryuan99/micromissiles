@@ -6,14 +6,14 @@ import "simulation/swarm/proto/dynamic_config.proto";
 import "simulation/swarm/proto/state.proto";
 import "simulation/swarm/proto/plotting_config.proto";
 
-// Missile type enumeration.
-enum MissileType {
+// Interceptor type enumeration.
+enum InterceptorType {
   MICROMISSILE = 0;
   HYDRA_70 = 1;
 }
 
-// Target type enumeration.
-enum TargetType {
+// Threat type enumeration.
+enum ThreatType {
   DRONE = 0;
   MISSILE = 1;
 }
@@ -44,10 +44,10 @@ message AgentConfig {
 
   // Agent type.
   oneof type_oneof {
-    // Missile type.
-    MissileType missile_type = 1;
-    // Target type.
-    TargetType target_type = 2;
+    // Interceptor type.
+    InterceptorType interceptor_type = 1;
+    // Threat type.
+    ThreatType threat_type = 2;
   }
 
   // Initial state.

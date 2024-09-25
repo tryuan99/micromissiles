@@ -20,7 +20,7 @@ cc_library(
 cc_test(
     name = "protobuf_test",
     srcs = ["protobuf_test.cc"],
-    data = ["//simulation/swarm/configs/missile:configs"],
+    data = ["//simulation/swarm/configs/interceptor:configs"],
     deps = [
         ":protobuf",
         "//simulation/swarm/proto:static_config_cc_proto",

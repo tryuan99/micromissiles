@@ -16,95 +16,98 @@ namespace swarm::plotter {
 
 void VideoPlotter::PlotImpl(
     const double t_step,
-    const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-    const std::vector<std::unique_ptr<agent::Agent>>& targets) {
+    const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+    const std::vector<std::unique_ptr<agent::Agent>>& threats) {
   // Determine the time span to plot.
   int t_end = 0;
-  for (const auto& missile : missiles) {
-    if (missile->history().back().t > t_end) {
-      t_end = std::ceil(missile->history().back().t);
+  for (const auto& interceptor : interceptors) {
+    if (interceptor->history().back().t > t_end) {
+      t_end = std::ceil(interceptor->history().back().t);
     }
   }
-  for (const auto& target : targets) {
-    if (target->history().back().t > t_end) {
-      t_end = std::ceil(target->history().back().t);
+  for (const auto& threat : threats) {
+    if (threat->history().back().t > t_end) {
+      t_end = std::ceil(threat->history().back().t);
     }
   }
 
-  // Generate widgets for the missiles and the targets.
-  std::vector<std::unique_ptr<cv::viz::Widget3D>> missile_widgets(
-      missiles.size());
-  std::transform(missiles.cbegin(), missiles.cend(), missile_widgets.begin(),
-                 [](const std::unique_ptr<agent::Agent>& missile) {
-                   return GenerateWidget(missile->history().front().state,
+  // Generate widgets for the interceptors and the threats.
+  std::vector<std::unique_ptr<cv::viz::Widget3D>> interceptor_widgets(
+      interceptors.size());
+  std::transform(interceptors.cbegin(), interceptors.cend(),
+                 interceptor_widgets.begin(),
+                 [](const std::unique_ptr<agent::Agent>& interceptor) {
+                   return GenerateWidget(interceptor->history().front().state,
                                          cv::viz::Color::blue());
                  });
-  std::vector<std::unique_ptr<cv::viz::Widget3D>> target_widgets(
-      targets.size());
-  std::transform(targets.cbegin(), targets.cend(), target_widgets.begin(),
-                 [](const std::unique_ptr<agent::Agent>& target) {
-                   return GenerateWidget(target->history().front().state,
+  std::vector<std::unique_ptr<cv::viz::Widget3D>> threat_widgets(
+      threats.size());
+  std::transform(threats.cbegin(), threats.cend(), threat_widgets.begin(),
+                 [](const std::unique_ptr<agent::Agent>& threat) {
+                   return GenerateWidget(threat->history().front().state,
                                          cv::viz::Color::red());
                  });
 
   // Add the widgets to the window.
-  for (int missile_index = 0; missile_index < missile_widgets.size();
-       ++missile_index) {
-    window_.showWidget(absl::StrFormat("Missile %d", missile_index),
-                       *missile_widgets[missile_index]);
+  for (int interceptor_index = 0;
+       interceptor_index < interceptor_widgets.size(); ++interceptor_index) {
+    window_.showWidget(absl::StrFormat("Interceptor %d", interceptor_index),
+                       *interceptor_widgets[interceptor_index]);
   }
-  for (int target_index = 0; target_index < target_widgets.size();
-       ++target_index) {
-    window_.showWidget(absl::StrFormat("Target %d", target_index),
-                       *target_widgets[target_index]);
+  for (int threat_index = 0; threat_index < threat_widgets.size();
+       ++threat_index) {
+    window_.showWidget(absl::StrFormat("Threat %d", threat_index),
+                       *threat_widgets[threat_index]);
   }
 
-  // Maintain an iterator for each missile and target.
-  std::vector<state::StateHistory::const_iterator> missile_iterators(
-      missiles.size());
-  std::transform(missiles.cbegin(), missiles.cend(), missile_iterators.begin(),
-                 [](const std::unique_ptr<agent::Agent>& missile) {
-                   return missile->history().cbegin();
+  // Maintain an iterator for each interceptor and threat.
+  std::vector<state::StateHistory::const_iterator> interceptor_iterators(
+      interceptors.size());
+  std::transform(interceptors.cbegin(), interceptors.cend(),
+                 interceptor_iterators.begin(),
+                 [](const std::unique_ptr<agent::Agent>& interceptor) {
+                   return interceptor->history().cbegin();
                  });
-  std::vector<state::StateHistory::const_iterator> target_iterators(
-      targets.size());
-  std::transform(targets.cbegin(), targets.cend(), target_iterators.begin(),
-                 [](const std::unique_ptr<agent::Agent>& target) {
-                   return target->history().cbegin();
+  std::vector<state::StateHistory::const_iterator> threat_iterators(
+      threats.size());
+  std::transform(threats.cbegin(), threats.cend(), threat_iterators.begin(),
+                 [](const std::unique_ptr<agent::Agent>& threat) {
+                   return threat->history().cbegin();
                  });
 
   // Plot each frame at a time.
   const double t_plot_interval = 1 / kAnimationFps;
   for (double t_plot = 0; t_plot < t_end; t_plot += t_plot_interval) {
-    // Update the missiles.
-    for (int missile_index = 0; missile_index < missiles.size();
-         ++missile_index) {
-      while (missile_iterators[missile_index]->t < t_plot &&
-             missile_iterators[missile_index] !=
-                 missiles[missile_index]->history().cend()) {
-        ++missile_iterators[missile_index];
+    // Update the interceptors.
+    for (int interceptor_index = 0; interceptor_index < interceptors.size();
+         ++interceptor_index) {
+      while (interceptor_iterators[interceptor_index]->t < t_plot &&
+             interceptor_iterators[interceptor_index] !=
+                 interceptors[interceptor_index]->history().cend()) {
+        ++interceptor_iterators[interceptor_index];
       }
       cv::Affine3d pose(
           cv::Mat::eye(3, 3, CV_64F),
-          cv::Vec3d(missile_iterators[missile_index]->state.position().x(),
-                    missile_iterators[missile_index]->state.position().y(),
-                    missile_iterators[missile_index]->state.position().z()));
-      missile_widgets[missile_index]->setPose(pose);
+          cv::Vec3d(
+              interceptor_iterators[interceptor_index]->state.position().x(),
+              interceptor_iterators[interceptor_index]->state.position().y(),
+              interceptor_iterators[interceptor_index]->state.position().z()));
+      interceptor_widgets[interceptor_index]->setPose(pose);
     }
 
-    // Update the targets.
-    for (int target_index = 0; target_index < targets.size(); ++target_index) {
-      while (target_iterators[target_index]->t < t_plot &&
-             target_iterators[target_index] !=
-                 targets[target_index]->history().cend()) {
-        ++target_iterators[target_index];
+    // Update the threats.
+    for (int threat_index = 0; threat_index < threats.size(); ++threat_index) {
+      while (threat_iterators[threat_index]->t < t_plot &&
+             threat_iterators[threat_index] !=
+                 threats[threat_index]->history().cend()) {
+        ++threat_iterators[threat_index];
       }
       cv::Affine3d pose(
           cv::Mat::eye(3, 3, CV_64F),
-          cv::Vec3d(target_iterators[target_index]->state.position().x(),
-                    target_iterators[target_index]->state.position().y(),
-                    target_iterators[target_index]->state.position().z()));
-      target_widgets[target_index]->setPose(pose);
+          cv::Vec3d(threat_iterators[threat_index]->state.position().x(),
+                    threat_iterators[threat_index]->state.position().y(),
+                    threat_iterators[threat_index]->state.position().z()));
+      threat_widgets[threat_index]->setPose(pose);
     }
 
     window_.spinOnce(/*time=*/t_plot_interval, /*force_redraw=*/false);

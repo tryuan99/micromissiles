@@ -16,38 +16,39 @@ namespace swarm::plotter {
 
 void StaticPlotter::PlotImpl(
     const double t_step,
-    const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-    const std::vector<std::unique_ptr<agent::Agent>>& targets) {
-  // Plot the missiles and their trajectories.
-  cv::viz::WWidgetMerger missile_widgets;
-  cv::viz::WWidgetMerger missile_trajectory_widgets;
-  for (const auto& missile : missiles) {
-    missile_widgets.addWidget(
-        *GenerateMissileWidget(missile->state(), missile->hit()));
-    missile_trajectory_widgets.addWidget(
-        *GenerateTrajectoryWidget(missile->history()));
+    const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+    const std::vector<std::unique_ptr<agent::Agent>>& threats) {
+  // Plot the interceptors and their trajectories.
+  cv::viz::WWidgetMerger interceptor_widgets;
+  cv::viz::WWidgetMerger interceptor_trajectory_widgets;
+  for (const auto& interceptor : interceptors) {
+    interceptor_widgets.addWidget(
+        *GenerateInterceptorWidget(interceptor->state(), interceptor->hit()));
+    interceptor_trajectory_widgets.addWidget(
+        *GenerateTrajectoryWidget(interceptor->history()));
   }
-  missile_widgets.finalize();
-  missile_trajectory_widgets.finalize();
-  window_.showWidget("Missiles", missile_widgets);
-  window_.showWidget("Missile Trajectories", missile_trajectory_widgets);
+  interceptor_widgets.finalize();
+  interceptor_trajectory_widgets.finalize();
+  window_.showWidget("Interceptors", interceptor_widgets);
+  window_.showWidget("Interceptor Trajectories",
+                     interceptor_trajectory_widgets);
 
-  // Plot the targets and their trajectories.
-  cv::viz::WWidgetMerger target_widgets;
-  cv::viz::WWidgetMerger target_trajectory_widgets;
-  for (const auto& target : targets) {
-    target_widgets.addWidget(
-        *GenerateTargetWidget(target->state(), target->hit()));
-    target_trajectory_widgets.addWidget(
-        *GenerateTrajectoryWidget(target->history()));
+  // Plot the threats and their trajectories.
+  cv::viz::WWidgetMerger threat_widgets;
+  cv::viz::WWidgetMerger threat_trajectory_widgets;
+  for (const auto& threat : threats) {
+    threat_widgets.addWidget(
+        *GenerateThreatWidget(threat->state(), threat->hit()));
+    threat_trajectory_widgets.addWidget(
+        *GenerateTrajectoryWidget(threat->history()));
   }
-  target_widgets.finalize();
-  target_trajectory_widgets.finalize();
-  window_.showWidget("Targets", target_widgets);
-  window_.showWidget("Target Trajectories", target_trajectory_widgets);
+  threat_widgets.finalize();
+  threat_trajectory_widgets.finalize();
+  window_.showWidget("Threats", threat_widgets);
+  window_.showWidget("Threat Trajectories", threat_trajectory_widgets);
 }
 
-std::unique_ptr<cv::viz::Widget3D> StaticPlotter::GenerateMissileWidget(
+std::unique_ptr<cv::viz::Widget3D> StaticPlotter::GenerateInterceptorWidget(
     const State& state, const bool hit) {
   const Eigen::Vector3d center{state.position().x(), state.position().y(),
                                state.position().z()};
@@ -71,7 +72,7 @@ std::unique_ptr<cv::viz::Widget3D> StaticPlotter::GenerateMissileWidget(
       cv::viz::Color::blue());
 }
 
-std::unique_ptr<cv::viz::Widget3D> StaticPlotter::GenerateTargetWidget(
+std::unique_ptr<cv::viz::Widget3D> StaticPlotter::GenerateThreatWidget(
     const State& state, const bool hit) {
   const Eigen::Vector3d center{state.position().x(), state.position().y(),
                                state.position().z()};

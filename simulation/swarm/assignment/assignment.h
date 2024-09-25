@@ -1,4 +1,5 @@
-// The assignment class is an interface for assigning a target to each missile.
+// The assignment class is an interface for assigning a threat to each
+// interceptor.
 
 #pragma once
 
@@ -15,8 +16,8 @@ namespace swarm::assignment {
 class Assignment {
  public:
   // Assignment item type.
-  // The first element corresponds to the missile index, and the second element
-  // corresponds to the target index.
+  // The first element corresponds to the interceptor index, and the second
+  // element corresponds to the threat index.
   using AssignmentItem = std::pair<int, int>;
 
   Assignment() = default;
@@ -26,34 +27,36 @@ class Assignment {
 
   virtual ~Assignment() = default;
 
-  // Return the new missile-target assignments.
+  // Return the new interceptor-threat assignments.
   const std::forward_list<AssignmentItem>& assignments() const {
-    return missile_to_target_assignments_;
+    return interceptor_to_threat_assignments_;
   }
 
-  // Assign a target to each missile that has not been assigned a target yet.
-  void Assign(const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-              const std::vector<std::unique_ptr<agent::Agent>>& targets) {
-    missile_to_target_assignments_.clear();
-    AssignImpl(missiles, targets);
+  // Assign a threat to each interceptor that has not been assigned a threat
+  // yet.
+  void Assign(const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+              const std::vector<std::unique_ptr<agent::Agent>>& threats) {
+    interceptor_to_threat_assignments_.clear();
+    AssignImpl(interceptors, threats);
   }
 
  protected:
-  // Get the list of assignable missile indices.
-  static std::vector<int> GetAssignableMissileIndices(
-      const std::vector<std::unique_ptr<agent::Agent>>& missiles);
+  // Get the list of assignable interceptor indices.
+  static std::vector<int> GetAssignableInterceptorIndices(
+      const std::vector<std::unique_ptr<agent::Agent>>& interceptors);
 
-  // Get the list of active target indices.
-  static std::vector<int> GetActiveTargetIndices(
-      const std::vector<std::unique_ptr<agent::Agent>>& targets);
+  // Get the list of active threat indices.
+  static std::vector<int> GetActiveThreatIndices(
+      const std::vector<std::unique_ptr<agent::Agent>>& threats);
 
-  // Assign a target to each missile that has not been assigned a target yet.
+  // Assign a threat to each interceptor that has not been assigned a threat
+  // yet.
   virtual void AssignImpl(
-      const std::vector<std::unique_ptr<agent::Agent>>& missiles,
-      const std::vector<std::unique_ptr<agent::Agent>>& targets) = 0;
+      const std::vector<std::unique_ptr<agent::Agent>>& interceptors,
+      const std::vector<std::unique_ptr<agent::Agent>>& threats) = 0;
 
-  // A list containing the missile-target assignments.
-  std::forward_list<AssignmentItem> missile_to_target_assignments_;
+  // A list containing the interceptor-threat assignments.
+  std::forward_list<AssignmentItem> interceptor_to_threat_assignments_;
 };
 
 }  // namespace swarm::assignment

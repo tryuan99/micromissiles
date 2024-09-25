@@ -24,8 +24,8 @@ cc_test(
     deps = [
         ":distance_assignment",
         "//simulation/swarm:agent",
-        "//simulation/swarm/missile:dummy_missile",
-        "//simulation/swarm/target:dummy_target",
+        "//simulation/swarm/interceptor:dummy_interceptor",
+        "//simulation/swarm/threat:dummy_threat",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
@@ -47,8 +47,8 @@ cc_test(
     deps = [
         ":round_robin_assignment",
         "//simulation/swarm:agent",
-        "//simulation/swarm/missile:dummy_missile",
-        "//simulation/swarm/target:dummy_target",
+        "//simulation/swarm/interceptor:dummy_interceptor",
+        "//simulation/swarm/threat:dummy_threat",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

@@ -9,9 +9,9 @@ message SimulatorConfig {
   // Step time in seconds.
   float step_time = 1;
 
-  // Missile configurations.
-  repeated AgentConfig missile_configs = 2;
+  // Interceptor configurations.
+  repeated AgentConfig interceptor_configs = 2;
 
-  // Target configurations.
-  repeated AgentConfig target_configs = 3;
+  // Threat configurations.
+  repeated AgentConfig threat_configs = 3;
 }
