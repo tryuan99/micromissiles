@@ -66,7 +66,7 @@ Eigen::Vector3d Interceptor::CalculateAcceleration(
   const auto air_drag_acceleration = CalculateDrag();
   // Calculate the lift-induced drag.
   const auto lift_induced_drag_acceleration =
-      CalculateLiftInducedDrag(compensated_acceleration_input);
+      CalculateLiftInducedDrag(compensated_acceleration_input + gravity);
   // Calculate the total drag acceleration.
   const auto principal_axes = GetNormalizedPrincipalAxes();
   const auto drag_acceleration =

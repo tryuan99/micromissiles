@@ -230,7 +230,8 @@ class Interceptor(Agent, ABC):
         air_drag_acceleration = self._calculate_drag()
         # Calculate the lift-induced drag.
         lift_induced_drag_acceleration = (
-            self._calculate_lift_induced_drag(compensated_acceleration_input))
+            self._calculate_lift_induced_drag(compensated_acceleration_input +
+                                              gravity))
         # Calculate the total drag acceleration.
         normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
