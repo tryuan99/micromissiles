@@ -1,0 +1,28 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "lqr_solver",
+    hdrs = ["lqr_solver.h"],
+    deps = ["@eigen"],
+)
+
+cc_library(
+    name = "finite_horizon_discrete_time_lqr_solver",
+    srcs = ["finite_horizon_discrete_time_lqr_solver.cc"],
+    hdrs = ["finite_horizon_discrete_time_lqr_solver.h"],
+    deps = [
+        ":lqr_solver",
+        "@eigen",
+    ],
+)
+
+cc_test(
+    name = "finite_horizon_discrete_time_lqr_solver_test",
+    srcs = ["finite_horizon_discrete_time_lqr_solver_test.cc"],
+    deps = [
+        ":finite_horizon_discrete_time_lqr_solver",
+        "@eigen",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
