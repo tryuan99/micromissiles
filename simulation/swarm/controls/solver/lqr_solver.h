@@ -17,6 +17,7 @@ namespace swarm::controls::solver {
 // LQR solver interface.
 class LqrSolver {
  public:
+  LqrSolver() = default;
   LqrSolver(Eigen::MatrixXd A, Eigen::MatrixXd B, Eigen::MatrixXd Q,
             Eigen::MatrixXd R)
       : LqrSolver(std::move(A), std::move(B), std::move(Q), std::move(R),
@@ -36,6 +37,13 @@ class LqrSolver {
 
   // Solve for the optimal feedback matrix.
   virtual void Solve() = 0;
+
+  // Get the feedback matrix K at the given time step.
+  // The feedback control is given by u = -K * x.
+  virtual Eigen::MatrixXd GetFeedbackMatrix(int time_step) const = 0;
+
+  // Get the cost-to-go matrix P at the given time step.
+  virtual Eigen::MatrixXd GetCostToGoMatrix(int time_step) const = 0;
 
  protected:
   // A matrix of the system.
@@ -57,6 +65,7 @@ class LqrSolver {
 // Discrete-time LQR solver.
 class DiscreteTimeLqrSolver : public LqrSolver {
  public:
+  DiscreteTimeLqrSolver() = default;
   DiscreteTimeLqrSolver(Eigen::MatrixXd A, Eigen::MatrixXd B, Eigen::MatrixXd Q,
                         Eigen::MatrixXd R, Eigen::MatrixXd Qf)
       : LqrSolver(std::move(A), std::move(B), std::move(Q), std::move(R)),
@@ -75,6 +84,7 @@ class DiscreteTimeLqrSolver : public LqrSolver {
 // Continuous-time LQR solver.
 class ContinuousTimeLqrSolver : public LqrSolver {
  public:
+  ContinuousTimeLqrSolver() = default;
   ContinuousTimeLqrSolver(Eigen::MatrixXd A, Eigen::MatrixXd B,
                           Eigen::MatrixXd Q, Eigen::MatrixXd R)
       : LqrSolver(std::move(A), std::move(B), std::move(Q), std::move(R)) {}

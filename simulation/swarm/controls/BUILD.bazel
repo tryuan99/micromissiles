@@ -1,6 +1,12 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "controller",
+    hdrs = ["controller.h"],
+    deps = ["@eigen"],
+)
+
+cc_library(
     name = "discretizer",
     srcs = ["discretizer.cc"],
     hdrs = ["discretizer.h"],
@@ -12,6 +18,29 @@ cc_test(
     srcs = ["discretizer_test.cc"],
     deps = [
         ":discretizer",
+        "@eigen",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "mpc_controller",
+    srcs = ["mpc_controller.cc"],
+    hdrs = ["mpc_controller.h"],
+    deps = [
+        ":controller",
+        ":discretizer",
+        "//simulation/swarm/controls/solver:finite_horizon_discrete_time_lqr_solver",
+        "@eigen",
+    ],
+)
+
+cc_test(
+    name = "mpc_controller_test",
+    srcs = ["mpc_controller_test.cc"],
+    deps = [
+        ":mpc_controller",
         "@eigen",
         "@googletest//:gtest",
         "@googletest//:gtest_main",

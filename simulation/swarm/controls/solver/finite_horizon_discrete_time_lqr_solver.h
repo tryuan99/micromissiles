@@ -17,6 +17,7 @@ namespace swarm::controls::solver {
 // Finite-horizon, discrete-time LQR solver.
 class FiniteHorizonDiscreteTimeLqrSolver : public DiscreteTimeLqrSolver {
  public:
+  FiniteHorizonDiscreteTimeLqrSolver() = default;
   FiniteHorizonDiscreteTimeLqrSolver(Eigen::MatrixXd A, Eigen::MatrixXd B,
                                      Eigen::MatrixXd Q, Eigen::MatrixXd R,
                                      Eigen::MatrixXd Qf, const int N)
@@ -30,13 +31,14 @@ class FiniteHorizonDiscreteTimeLqrSolver : public DiscreteTimeLqrSolver {
       const FiniteHorizonDiscreteTimeLqrSolver&) = default;
 
   // Solve for the optimal feedback matrix.
-  void Solve();
+  void Solve() override;
 
   // Get the feedback matrix K at the given time step.
-  Eigen::MatrixXd GetFeedbackMatrix(int time_step) const;
+  // The feedback control is given by u = -K * x.
+  Eigen::MatrixXd GetFeedbackMatrix(int time_step) const override;
 
   // Get the cost-to-go matrix P at the given time step.
-  Eigen::MatrixXd GetCostToGoMatrix(int time_step) const;
+  Eigen::MatrixXd GetCostToGoMatrix(int time_step) const override;
 
  private:
   // Number of time steps in the horizon.
