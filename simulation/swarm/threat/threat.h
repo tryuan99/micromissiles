@@ -18,8 +18,8 @@ class Threat : public agent::Agent {
   Threat(const AgentConfig& config, const double t_creation, const bool ready)
       : Agent(config, t_creation, ready) {}
 
-  Threat(const Threat&) = default;
-  Threat& operator=(const Threat&) = default;
+  Threat(const Threat&) = delete;
+  Threat& operator=(const Threat&) = delete;
 
   virtual ~Threat() = default;
 

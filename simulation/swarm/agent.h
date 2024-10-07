@@ -1,4 +1,5 @@
 // The agent class is an interface for an interceptor or a threat.
+// The model agent models an agent without any configuration.
 
 #pragma once
 
@@ -17,14 +18,17 @@
 
 namespace swarm::agent {
 
+// Forward declarations.
+class ModelAgent;
+
 // Agent interface.
 class Agent {
  public:
   // Principal axes.
   struct PrincipalAxes {
     PrincipalAxes() = default;
-    PrincipalAxes(const Eigen::Vector3d roll, const Eigen::Vector3d pitch,
-                  const Eigen::Vector3d yaw)
+    PrincipalAxes(Eigen::Vector3d roll, Eigen::Vector3d pitch,
+                  Eigen::Vector3d yaw)
         : roll(std::move(roll)), pitch(std::move(pitch)), yaw(std::move(yaw)) {}
 
     // Roll axis.
@@ -53,8 +57,8 @@ class Agent {
       : Agent(std::move(initial_state), /*t_creation=*/0, /*ready=*/true) {}
   Agent(State initial_state, double t_creation, bool ready);
 
-  Agent(const Agent&) = default;
-  Agent& operator=(const Agent&) = default;
+  Agent(const Agent&) = delete;
+  Agent& operator=(const Agent&) = delete;
 
   virtual ~Agent() = default;
 
@@ -93,20 +97,22 @@ class Agent {
   virtual bool assignable() const { return true; }
 
   // Assign the given target to the agent.
-  virtual void AssignTarget(Agent* target) { target_ = target; }
+  void AssignTarget(Agent* target);
 
   // Return whether a target is assigned to the agent.
   bool has_assigned_target() const { return target_ != nullptr; }
 
+  // Return the target assigned to the agent.
+  const Agent& target() const { return *target_; }
+
+  // Return the target model of the assigned target.
+  const Agent& target_model() const { return *target_model_; }
+
   // Check whether the assigned target has been hit.
-  void CheckTarget() {
-    if (has_assigned_target() && target_->hit()) {
-      UnassignTarget();
-    }
-  }
+  void CheckTarget();
 
   // Unassign the target from the agent.
-  virtual void UnassignTarget() { target_ = nullptr; }
+  void UnassignTarget();
 
   // Return the state history of the agent.
   const state::StateHistory& history() const { return state_history_; }
@@ -189,6 +195,9 @@ class Agent {
   // Submunitions configuration of the agent.
   AgentConfig::SubmunitionsConfig submunitions_config_;
 
+  // Model of the target.
+  std::unique_ptr<Agent> target_model_;
+
   // History of the agent.
   state::StateHistory state_history_;
 
@@ -197,6 +206,16 @@ class Agent {
 
   // Boolean indicating whether the agent has hit or been hit.
   bool hit_ = false;
+};
+
+// Model agent.
+class ModelAgent : public Agent {
+ public:
+  ModelAgent() = default;
+  explicit ModelAgent(State initial_state) : Agent(std::move(initial_state)) {}
+
+  ModelAgent(const ModelAgent&) = delete;
+  ModelAgent& operator=(const ModelAgent&) = delete;
 };
 
 }  // namespace swarm::agent

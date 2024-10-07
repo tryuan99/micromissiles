@@ -18,20 +18,11 @@ cc_library(
     ],
 )
 
-cc_library(
-    name = "model_agent",
-    hdrs = ["model_agent.h"],
-    deps = [
-        ":agent",
-        "//simulation/swarm/proto:state_cc_proto",
-    ],
-)
-
 cc_test(
     name = "model_agent_test",
     srcs = ["model_agent_test.cc"],
     deps = [
-        ":model_agent",
+        ":agent",
         "//simulation/swarm/proto:state_cc_proto",
         "@eigen",
         "@googletest//:gtest",

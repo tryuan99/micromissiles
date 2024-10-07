@@ -1,9 +1,8 @@
-#include "simulation/swarm/model_agent.h"
-
 #include <gtest/gtest.h>
 
 #include <Eigen/Dense>
 
+#include "simulation/swarm/agent.h"
 #include "simulation/swarm/proto/state.pb.h"
 
 namespace swarm::agent {
@@ -15,19 +14,25 @@ constexpr double kMaxErrorTolerance = 1e-6;
 class ModelAgentTest : public testing::Test {
  protected:
   // Agent velocity.
-  const Eigen::Vector3d kAgentVelocity{-2, 1, 0};
+  static const Eigen::Vector3d kAgentVelocity;
 
-  ModelAgentTest() {
+  ModelAgentTest() : agent_(ModelAgent(GenerateAgentState())) {}
+
+  // Generate the agent state.
+  static State GenerateAgentState() {
     State agent_state;
     agent_state.mutable_velocity()->set_x(kAgentVelocity(0));
     agent_state.mutable_velocity()->set_y(kAgentVelocity(1));
     agent_state.mutable_velocity()->set_z(kAgentVelocity(2));
-    agent_ = ModelAgent(std::move(agent_state));
+    return agent_state;
   }
 
   // Model agent.
   ModelAgent agent_;
 };
+
+// Agent velocity.
+const Eigen::Vector3d ModelAgentTest::kAgentVelocity{-2, 1, 0};
 
 TEST_F(ModelAgentTest, GetPrincipalAxesRoll) {
   const auto principal_axes = agent_.GetPrincipalAxes();

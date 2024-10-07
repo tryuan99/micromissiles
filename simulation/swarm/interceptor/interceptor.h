@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "simulation/swarm/agent.h"
-#include "simulation/swarm/model_agent.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/sensor/sensor.h"
 
@@ -31,18 +30,6 @@ class Interceptor : public agent::Agent {
   // Return whether a target can be assigned to the interceptor.
   virtual bool assignable() const override {
     return has_launched() && !has_assigned_target();
-  }
-
-  // Assign the given target to the interceptor.
-  void AssignTarget(Agent* target) override {
-    target_ = target;
-    target_model_ = std::make_unique<agent::ModelAgent>(target->state());
-  }
-
-  // Unassign the target from the interceptor.
-  void UnassignTarget() override {
-    target_ = nullptr;
-    target_model_.release();
   }
 
  protected:
@@ -71,9 +58,6 @@ class Interceptor : public agent::Agent {
 
   // Time of the last sensor update.
   double sensor_update_time_ = std::numeric_limits<double>::min();
-
-  // Model of the target.
-  std::unique_ptr<agent::Agent> target_model_;
 
  private:
   // Calculate the gravity projection on the pitch and yaw axes.

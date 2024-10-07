@@ -30,8 +30,8 @@ class Drone : public Threat {
         utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
 
-  Drone(const Drone&) = default;
-  Drone& operator=(const Drone&) = default;
+  Drone(const Drone&) = delete;
+  Drone& operator=(const Drone&) = delete;
 };
 
 }  // namespace swarm::threat

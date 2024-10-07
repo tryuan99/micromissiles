@@ -1,0 +1,37 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "agent_controller",
+    srcs = ["agent_controller.cc"],
+    hdrs = ["agent_controller.h"],
+    deps = [
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/sensor:ideal_sensor",
+        "@eigen",
+    ],
+)
+
+cc_library(
+    name = "pn_controller",
+    srcs = ["pn_controller.cc"],
+    hdrs = ["pn_controller.h"],
+    deps = [
+        ":agent_controller",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:sensor_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "pn_controller_test",
+    srcs = ["pn_controller_test.cc"],
+    deps = [
+        ":pn_controller",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@eigen",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

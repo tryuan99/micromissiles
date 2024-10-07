@@ -7,7 +7,6 @@
 
 #include "simulation/swarm/interceptor/interceptor.h"
 #include "simulation/swarm/proto/agent.pb.h"
-#include "simulation/swarm/proto/sensor.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
 #include "utils/protobuf.h"
 
@@ -19,9 +18,6 @@ class Micromissile : public Interceptor {
   // Static configuration file.
   inline static const std::string kStaticConfigFile =
       "simulation/swarm/configs/interceptor/micromissile.pbtxt";
-
-  // Proportional navigation gain.
-  inline static const double kProportionalNavigationGain = 3;
 
   Micromissile() = default;
 
@@ -44,9 +40,8 @@ class Micromissile : public Interceptor {
   void UpdateMidCourse(double t) override;
 
  private:
-  // Calculate the acceleration input to the sensor output.
-  Eigen::Vector3d CalculateAccelerationInput(
-      const SensorOutput& sensor_output) const;
+  // Calculate the acceleration input based on the target.
+  Eigen::Vector3d CalculateAccelerationInput() const;
 };
 
 }  // namespace swarm::interceptor

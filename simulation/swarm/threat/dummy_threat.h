@@ -17,8 +17,8 @@ class DummyThreat : public Threat {
               const bool ready)
       : Threat(config, t_creation, ready) {}
 
-  DummyThreat(const DummyThreat&) = default;
-  DummyThreat& operator=(const DummyThreat&) = default;
+  DummyThreat(const DummyThreat&) = delete;
+  DummyThreat& operator=(const DummyThreat&) = delete;
 };
 
 }  // namespace swarm::threat

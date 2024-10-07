@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 #include <numbers>
 
-#include "simulation/swarm/model_agent.h"
+#include "simulation/swarm/agent.h"
 #include "simulation/swarm/proto/state.pb.h"
 
 namespace swarm::sensor {
@@ -49,9 +49,15 @@ struct IdealSensorTestParam {
 
 class IdealSensorTest : public testing::TestWithParam<IdealSensorTestParam> {
  protected:
-  IdealSensorTest() : sensor_(IdealSensor(agent_)) {
-    const auto& agent_position = GetParam().agent_position;
-    const auto& agent_velocity = GetParam().agent_velocity;
+  IdealSensorTest()
+      : sensor_(IdealSensor(agent_)),
+        agent_(agent::ModelAgent(GenerateAgentState(GetParam()))),
+        target_(agent::ModelAgent(GenerateTargetState(GetParam()))) {}
+
+  // Generate the agent state.
+  static State GenerateAgentState(const IdealSensorTestParam& param) {
+    const auto& agent_position = param.agent_position;
+    const auto& agent_velocity = param.agent_velocity;
     State agent_state;
     agent_state.mutable_position()->set_x(agent_position(0));
     agent_state.mutable_position()->set_y(agent_position(1));
@@ -59,8 +65,11 @@ class IdealSensorTest : public testing::TestWithParam<IdealSensorTestParam> {
     agent_state.mutable_velocity()->set_x(agent_velocity(0));
     agent_state.mutable_velocity()->set_y(agent_velocity(1));
     agent_state.mutable_velocity()->set_z(agent_velocity(2));
-    agent_ = agent::ModelAgent(std::move(agent_state));
+    return agent_state;
+  }
 
+  // Generate the target state.
+  static State GenerateTargetState(const IdealSensorTestParam& param) {
     const auto& target_position = GetParam().target_position;
     const auto& target_velocity = GetParam().target_velocity;
     State target_state;
@@ -70,7 +79,7 @@ class IdealSensorTest : public testing::TestWithParam<IdealSensorTestParam> {
     target_state.mutable_velocity()->set_x(target_velocity(0));
     target_state.mutable_velocity()->set_y(target_velocity(1));
     target_state.mutable_velocity()->set_z(target_velocity(2));
-    target_ = agent::ModelAgent(std::move(target_state));
+    return target_state;
   }
 
   // Ideal sensor.

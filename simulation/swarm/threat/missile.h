@@ -31,8 +31,8 @@ class Missile : public Threat {
         utils::LoadProtobufTextFile<StaticConfig>(kStaticConfigFile);
   }
 
-  Missile(const Missile&) = default;
-  Missile& operator=(const Missile&) = default;
+  Missile(const Missile&) = delete;
+  Missile& operator=(const Missile&) = delete;
 };
 
 }  // namespace swarm::threat

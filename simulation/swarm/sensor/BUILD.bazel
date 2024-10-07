@@ -16,7 +16,7 @@ cc_test(
     srcs = ["ideal_sensor_test.cc"],
     deps = [
         ":ideal_sensor",
-        "//simulation/swarm:model_agent",
+        "//simulation/swarm:agent",
         "//simulation/swarm/proto:state_cc_proto",
         "@eigen",
         "@googletest//:gtest",

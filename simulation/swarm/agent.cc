@@ -22,13 +22,28 @@ Agent::Agent(const AgentConfig& config, const double t_creation,
   submunitions_config_ = config.submunitions_config();
 }
 
-Agent::Agent(const State initial_state, const double t_creation,
-             const bool ready)
+Agent::Agent(State initial_state, const double t_creation, const bool ready)
     : t_creation_(t_creation),
       state_(std::move(initial_state)),
       flight_phase_(ready ? FlightPhase::READY : FlightPhase::INITIALIZED) {
   // Add the initial state to the history.
   state_history_.Add(state::StateHistory::Record(t_creation_, hit_, state_));
+}
+
+void Agent::AssignTarget(Agent* target) {
+  target_ = target;
+  target_model_ = std::make_unique<ModelAgent>(target->state());
+}
+
+void Agent::CheckTarget() {
+  if (has_assigned_target() && target_->hit()) {
+    UnassignTarget();
+  }
+}
+
+void Agent::UnassignTarget() {
+  target_ = nullptr;
+  target_model_.release();
 }
 
 void Agent::MarkAsHit() {

@@ -54,7 +54,6 @@ cc_library(
     hdrs = ["interceptor.h"],
     deps = [
         "//simulation/swarm:agent",
-        "//simulation/swarm:model_agent",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/sensor",
         "//simulation/swarm/sensor:sensor_factory",
@@ -93,8 +92,8 @@ cc_library(
     data = ["//simulation/swarm/configs/interceptor:configs"],
     deps = [
         ":interceptor",
+        "//simulation/swarm/controller:pn_controller",
         "//simulation/swarm/proto:agent_cc_proto",
-        "//simulation/swarm/proto:sensor_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
         "//utils:protobuf",
         "//utils:random",
