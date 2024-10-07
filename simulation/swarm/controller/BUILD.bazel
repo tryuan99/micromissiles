@@ -13,6 +13,20 @@ cc_library(
 )
 
 cc_library(
+    name = "mpc_controller",
+    srcs = ["mpc_controller.cc"],
+    hdrs = ["mpc_controller.h"],
+    deps = [
+        ":agent_controller",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/controls:mpc_controller",
+        "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/utils:constants",
+        "@eigen",
+    ],
+)
+
+cc_library(
     name = "pn_controller",
     srcs = ["pn_controller.cc"],
     hdrs = ["pn_controller.h"],

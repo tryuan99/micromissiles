@@ -25,4 +25,7 @@ message SensorOutput {
 
   // Range rate in m/s, azimuth and elevation rate in rad/s.
   SphericalCoordinates velocity = 2;
+
+  // Range in m.
+  CartesianCoordinates position_cartesian = 3;
 }

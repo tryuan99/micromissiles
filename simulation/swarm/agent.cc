@@ -114,6 +114,14 @@ double Agent::GetSpeed() const {
   return velocity.norm();
 }
 
+Eigen::Vector3d Agent::GetAcceleration() const {
+  return Eigen::Vector3d{
+      state_.acceleration().x(),
+      state_.acceleration().y(),
+      state_.acceleration().z(),
+  };
+}
+
 Eigen::Vector3d Agent::GetGravity() const {
   return Eigen::Vector3d{
       0, 0, -constants::CalculateGravityAtAltitude(state_.position().z())};

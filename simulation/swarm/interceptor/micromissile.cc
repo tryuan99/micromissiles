@@ -52,7 +52,7 @@ void Micromissile::UpdateMidCourse(const double t) {
 
 Eigen::Vector3d Micromissile::CalculateAccelerationInput() const {
   // The micromissile uses proportional navigation.
-  controller::PnController controller(*this, *target_model_);
+  controller::PnController controller(*this);
   controller.Plan();
   auto acceleration_input = controller.GetOptimalControl();
 

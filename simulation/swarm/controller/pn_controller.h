@@ -16,8 +16,7 @@ class PnController : public AgentController {
   // Proportional navigation gain.
   inline static const double kProportionalNavigationGain = 3;
 
-  PnController(const agent::Agent& agent, const agent::Agent& target)
-      : AgentController(agent, target) {}
+  PnController(const agent::Agent& agent) : AgentController(agent) {}
 
   PnController(PnController&) = default;
   PnController& operator=(PnController&) = default;

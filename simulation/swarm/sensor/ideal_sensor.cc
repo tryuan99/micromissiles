@@ -31,6 +31,14 @@ SensorOutput IdealSensor::SensePosition(const agent::Agent& target) const {
   const auto target_position = target.GetPosition();
   const auto target_relative_position = target_position - position;
 
+  // Set the Cartesian coordinates.
+  position_sensor_output.mutable_position_cartesian()->set_x(
+      target_relative_position(0));
+  position_sensor_output.mutable_position_cartesian()->set_y(
+      target_relative_position(1));
+  position_sensor_output.mutable_position_cartesian()->set_z(
+      target_relative_position(2));
+
   // Calculate the distance to the target.
   position_sensor_output.mutable_position()->set_range(
       target_relative_position.norm());

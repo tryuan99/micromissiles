@@ -84,8 +84,7 @@ class Agent {
 
   // Return whether the agent has launched.
   bool has_launched() const {
-    return flight_phase_ != FlightPhase::INITIALIZED &&
-           flight_phase_ != FlightPhase::READY;
+    return flight_phase_ != FlightPhase::INITIALIZED;
   }
 
   // Return the agent's flight has terminated.
@@ -143,6 +142,9 @@ class Agent {
 
   // Return the speed of the agent.
   double GetSpeed() const;
+
+  // Return the acceleration vector of the agent.
+  Eigen::Vector3d GetAcceleration() const;
 
   // Return the gravity acceleration vector.
   Eigen::Vector3d GetGravity() const;

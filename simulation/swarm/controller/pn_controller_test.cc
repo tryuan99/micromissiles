@@ -15,7 +15,7 @@ class PnControllerTest : public testing::Test {
   PnControllerTest()
       : agent_(agent::ModelAgent(GenerateAgentState())),
         target_(agent::ModelAgent(GenerateTargetState())),
-        controller_(PnController(agent_, target_)) {
+        controller_(PnController(agent_)) {
     agent_.AssignTarget(&target_);
   }
 
@@ -44,7 +44,13 @@ class PnControllerTest : public testing::Test {
   PnController controller_;
 };
 
-TEST_F(PnControllerTest, GetOptimalControl) {
+TEST_F(PnControllerTest, GetOptimalControlAzimuth) {
+  controller_.Plan();
+  EXPECT_TRUE(controller_.GetOptimalControl().isApprox(
+      PnController::kProportionalNavigationGain * Eigen::Vector3d{0, 0, 1}));
+}
+
+TEST_F(PnControllerTest, GetOptimalControlElevation) {
   controller_.Plan();
   EXPECT_TRUE(controller_.GetOptimalControl().isApprox(
       PnController::kProportionalNavigationGain * Eigen::Vector3d{0, 0, 1}));
