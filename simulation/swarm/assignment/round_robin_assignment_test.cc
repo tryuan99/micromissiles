@@ -24,26 +24,26 @@ class RoundRobinAssignmentTest : public testing::Test {
     std::vector<std::unique_ptr<agent::Agent>> interceptors;
     AgentConfig interceptor_config;
     interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(2);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_y(2);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_z(1);
     interceptors.emplace_back(
         std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
 
     interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(12);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_y(12);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_z(1);
     interceptors.emplace_back(
         std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
 
     interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(12);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_y(12);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_z(1);
     interceptors.emplace_back(
         std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
 
     interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(10);
-    interceptor_config.mutable_initial_state()->mutable_position()->set_x(1);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_y(10);
+    interceptor_config.mutable_initial_state()->mutable_position()->set_z(1);
     interceptors.emplace_back(
         std::make_unique<interceptor::DummyInterceptor>(interceptor_config));
     return interceptors;
@@ -54,13 +54,13 @@ class RoundRobinAssignmentTest : public testing::Test {
     std::vector<std::unique_ptr<agent::Agent>> threats;
     AgentConfig threat_config;
     threat_config.mutable_initial_state()->mutable_position()->set_x(10);
-    threat_config.mutable_initial_state()->mutable_position()->set_x(15);
-    threat_config.mutable_initial_state()->mutable_position()->set_x(2);
+    threat_config.mutable_initial_state()->mutable_position()->set_y(15);
+    threat_config.mutable_initial_state()->mutable_position()->set_z(2);
     threats.emplace_back(std::make_unique<threat::DummyThreat>(threat_config));
 
     threat_config.mutable_initial_state()->mutable_position()->set_x(1);
-    threat_config.mutable_initial_state()->mutable_position()->set_x(2);
-    threat_config.mutable_initial_state()->mutable_position()->set_x(2);
+    threat_config.mutable_initial_state()->mutable_position()->set_y(2);
+    threat_config.mutable_initial_state()->mutable_position()->set_z(2);
     threats.emplace_back(std::make_unique<threat::DummyThreat>(threat_config));
     return threats;
   }

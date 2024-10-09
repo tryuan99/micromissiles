@@ -72,7 +72,7 @@ void DistanceAssignment::AssignImpl(
          active_threat_index < active_threat_indices.size();
          ++active_threat_index) {
       const auto distance =
-          (active_threat_positions[assignable_interceptor_index] -
+          (active_threat_positions[active_threat_index] -
            assignable_interceptor_positions[assignable_interceptor_index])
               .norm();
       interceptor_threat_distances.emplace_back(
@@ -110,13 +110,15 @@ void DistanceAssignment::AssignImpl(
         assigned_threat_indices.emplace(threat_index);
       }
     }
-    interceptor_threat_distances.erase(std::remove_if(
-        interceptor_threat_distances.begin(),
-        interceptor_threat_distances.end(),
-        [&](const InterceptorThreatDistance& interceptor_threat_distance) {
-          return assigned_interceptor_indices.contains(
-              interceptor_threat_distance.interceptor_index);
-        }));
+    interceptor_threat_distances.erase(
+        std::remove_if(
+            interceptor_threat_distances.begin(),
+            interceptor_threat_distances.end(),
+            [&](const InterceptorThreatDistance& interceptor_threat_distance) {
+              return assigned_interceptor_indices.contains(
+                  interceptor_threat_distance.interceptor_index);
+            }),
+        interceptor_threat_distances.cend());
   }
 }
 

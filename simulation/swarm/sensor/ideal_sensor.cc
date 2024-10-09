@@ -127,7 +127,7 @@ SensorOutput IdealSensor::SenseVelocity(const agent::Agent& target) const {
   // and points upwards from the target along the azimuth-elevation sphere.
   auto target_elevation = principal_axes.pitch.cross(target_relative_position);
   // If the relative position vector is parallel to the yaw or pitch axis, the
-  // target azimuth vector or the target elevation vector will undefined.
+  // target azimuth vector or the target elevation vector will be undefined.
   if (target_azimuth.norm() == 0) {
     target_azimuth = target_relative_position.cross(target_elevation);
   } else if (target_elevation.norm() == 0) {
