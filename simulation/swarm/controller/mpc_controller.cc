@@ -48,6 +48,7 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
              kNumEqualityConstraints>
       controller;
   controller.setDiscretizationSamplingTime(kSamplingTime);
+  controller.setLoggerLevel(mpc::Logger::log_level::NORMAL);
 
   mpc::NLParameters params;
   params.maximum_iteration = 1000;
@@ -91,15 +92,14 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
           const Eigen::Matrix<double, kPredictionHorizon + 1,
                               kNumInputVariables>& u,
           const double& slack) {
-        return std::sqrt(
-            (x.row(x.rows() - 1).array() *
-             StateVector{std::sqrt(kPositionCostFactor),
-                         std::sqrt(kPositionCostFactor),
-                         std::sqrt(kPositionCostFactor), 0, 0, 0, 1}
-                 .transpose()
-                 .array())
-                .matrix()
-                .norm());
+        return (x.row(x.rows() - 1).array() *
+                StateVector{std::sqrt(kPositionCostFactor),
+                            std::sqrt(kPositionCostFactor),
+                            std::sqrt(kPositionCostFactor), 0, 0, 0, 1}
+                    .transpose()
+                    .array())
+            .square()
+            .sum();
       });
 
   // Define the maximum acceleration inequality constraints.
