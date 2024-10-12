@@ -51,22 +51,13 @@ void Interceptor::UpdateBoost(const double t) {
 }
 
 Eigen::Vector3d Interceptor::CalculateAcceleration(
-    const Eigen::Vector3d& acceleration_input,
-    const bool compensate_for_gravity) const {
-  // Determine the gravity and compensate for it.
+    const Eigen::Vector3d& acceleration_input) const {
   const auto gravity = GetGravity();
-  Eigen::Vector3d compensated_acceleration_input(acceleration_input);
-  if (compensate_for_gravity) {
-    const auto gravity_projection_on_pitch_and_yaw =
-        CalculateGravityProjectionOnPitchAndYaw();
-    compensated_acceleration_input -= gravity_projection_on_pitch_and_yaw;
-  }
-
   // Calculate the air drag.
   const auto air_drag_acceleration = CalculateDrag();
   // Calculate the lift-induced drag.
   const auto lift_induced_drag_acceleration =
-      CalculateLiftInducedDrag(compensated_acceleration_input + gravity);
+      CalculateLiftInducedDrag(acceleration_input + gravity);
   // Calculate the total drag acceleration.
   const auto principal_axes = GetNormalizedPrincipalAxes();
   const auto drag_acceleration =
@@ -74,7 +65,7 @@ Eigen::Vector3d Interceptor::CalculateAcceleration(
       principal_axes.roll;
 
   // Calculate the total acceleration vector.
-  return compensated_acceleration_input + gravity + drag_acceleration;
+  return acceleration_input + gravity + drag_acceleration;
 }
 
 double Interceptor::CalculateMaxAcceleration() const {

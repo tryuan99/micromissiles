@@ -43,8 +43,7 @@ void Micromissile::UpdateMidCourse(const double t) {
   }
 
   // Calculate and set the total acceleration.
-  const auto acceleration = CalculateAcceleration(
-      acceleration_input, /*compensate_for_gravity=*/true);
+  const auto acceleration = CalculateAcceleration(acceleration_input);
   state_.mutable_acceleration()->set_x(acceleration(0));
   state_.mutable_acceleration()->set_y(acceleration(1));
   state_.mutable_acceleration()->set_z(acceleration(2));

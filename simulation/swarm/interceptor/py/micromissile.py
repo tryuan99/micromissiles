@@ -78,8 +78,7 @@ class Micromissile(Interceptor):
             acceleration_input = np.zeros(3)
 
         # Calculate and set the total acceleration.
-        acceleration = self._calculate_total_acceleration(
-            acceleration_input, compensate_for_gravity=True)
+        acceleration = self._calculate_total_acceleration(acceleration_input)
         (
             self.state.acceleration.x,
             self.state.acceleration.y,

@@ -126,27 +126,6 @@ class Interceptor(Agent, ABC):
             self.state.acceleration.z,
         ) = acceleration
 
-    def _calculate_gravity_projection_on_pitch_and_yaw(self) -> np.ndarray:
-        """Calculates the gravity projection on the pitch and yaw axes.
-
-        The interceptor can only compensate for gravity along the pitch and yaw
-        axes.
-
-        Returns:
-            The gravity acceleration in m/s^2 along the pitch and yaw axes.
-        """
-        normalized_roll, normalized_pitch, normalized_yaw = (
-            self.get_normalized_principal_axes())
-        gravity = self.get_gravity()
-
-        # Project the gravity onto the pitch and yaw axes.
-        gravity_projection_pitch_coefficient = np.dot(gravity, normalized_pitch)
-        gravity_projection_yaw_coefficient = np.dot(gravity, normalized_yaw)
-        gravity_projection_on_pitch_and_yaw = (
-            gravity_projection_pitch_coefficient * normalized_pitch +
-            gravity_projection_yaw_coefficient + normalized_yaw)
-        return gravity_projection_on_pitch_and_yaw
-
     def _calculate_drag(self) -> float:
         """Calculates the air drag.
 
@@ -204,34 +183,21 @@ class Interceptor(Agent, ABC):
         return max_acceleration
 
     def _calculate_total_acceleration(
-            self,
-            acceleration_input: np.ndarray,
-            compensate_for_gravity: bool = False) -> np.ndarray:
+            self, acceleration_input: np.ndarray) -> np.ndarray:
         """Calculates the total acceleration vector, including gravity and drag.
 
         Args:
             acceleration_input: Acceleration input vector.
-            compensate_for_gravity: If true, compensate for gravity.
 
         Returns:
             The total x, y, and z acceleration components.
         """
-        # Determine the gravity and compensate for it.
         gravity = self.get_gravity()
-        if compensate_for_gravity:
-            gravity_projection_on_pitch_and_yaw = (
-                self._calculate_gravity_projection_on_pitch_and_yaw())
-            compensated_acceleration_input = (
-                acceleration_input - gravity_projection_on_pitch_and_yaw)
-        else:
-            compensated_acceleration_input = acceleration_input
-
         # Calculate the air drag.
         air_drag_acceleration = self._calculate_drag()
         # Calculate the lift-induced drag.
         lift_induced_drag_acceleration = (
-            self._calculate_lift_induced_drag(compensated_acceleration_input +
-                                              gravity))
+            self._calculate_lift_induced_drag(acceleration_input + gravity))
         # Calculate the total drag acceleration.
         normalized_roll, normalized_pitch, normalized_yaw = (
             self.get_normalized_principal_axes())
@@ -240,6 +206,5 @@ class Interceptor(Agent, ABC):
             normalized_roll)
 
         # Calculate the total acceleration vector.
-        acceleration = (compensated_acceleration_input + gravity +
-                        drag_acceleration)
+        acceleration = (acceleration_input + gravity + drag_acceleration)
         return acceleration

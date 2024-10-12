@@ -41,13 +41,7 @@ class Interceptor : public agent::Agent {
 
   // Calculate the total acceleration vector, including gravity and drag.
   Eigen::Vector3d CalculateAcceleration(
-      const Eigen::Vector3d& acceleration_input) const {
-    return CalculateAcceleration(acceleration_input,
-                                 /*compensate_for_gravity=*/false);
-  }
-  Eigen::Vector3d CalculateAcceleration(
-      const Eigen::Vector3d& acceleration_input,
-      bool compensate_for_gravity) const;
+      const Eigen::Vector3d& acceleration_input) const;
 
   // Calculate the maximum acceleration of the interceptor based on its
   // velocity.
