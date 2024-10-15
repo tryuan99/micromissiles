@@ -60,9 +60,10 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
                                        const unsigned int& time_step) {
     // Define helper variables.
     const auto position = agent_->GetPosition();
+    const auto altitude = position(2);
     const auto velocity = x.segment(3, 3);
-    const auto g = constants::CalculateGravityAtAltitude(position(2));
-    const auto rho = constants::CalculateAirDensityAtAltitude(position(2));
+    const auto g = constants::CalculateGravityAtAltitude(altitude);
+    const auto rho = constants::CalculateAirDensityAtAltitude(altitude);
 
     // Calculate the drag acceleration.
     const auto air_drag_acceleration =
@@ -71,7 +72,10 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
         (2 * agent_->static_config().body_config().mass()) *
         std::pow(velocity.norm(), 2);
     const auto lift_induced_drag_acceleration =
-        (u + Eigen::Vector3d{0, 0, g}).norm() /
+        (u + Eigen::Vector3d{0, 0, g} -
+         Eigen::Vector3d{0, 0, g}.dot(velocity) / std::pow(velocity.norm(), 2) *
+             velocity)
+            .norm() /
         agent_->static_config().lift_drag_config().lift_drag_ratio();
     const auto drag_acceleration =
         air_drag_acceleration + lift_induced_drag_acceleration;
