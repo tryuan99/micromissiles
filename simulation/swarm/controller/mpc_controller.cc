@@ -47,7 +47,6 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
              kPredictionHorizon, kControlHorizon, kNumInequalityConstraints,
              kNumEqualityConstraints>
       controller;
-  controller.setDiscretizationSamplingTime(kSamplingTime);
   controller.setLoggerLevel(mpc::Logger::log_level::NORMAL);
 
   mpc::NLParameters params;
@@ -55,37 +54,40 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
   controller.setOptimizerParameters(params);
 
   // Define the state equation.
-  controller.setStateSpaceFunction([&](StateVector& dx, const StateVector& x,
-                                       const InputVector& u,
-                                       const unsigned int& time_step) {
-    // Define helper variables.
-    const auto position = agent_->GetPosition();
-    const auto altitude = position(2);
-    const auto velocity = x.segment(3, 3);
-    const auto g = constants::CalculateGravityAtAltitude(altitude);
-    const auto rho = constants::CalculateAirDensityAtAltitude(altitude);
+  controller.setStateSpaceFunction(
+      [&](StateVector& x_next, const StateVector& x, const InputVector& u,
+          const unsigned int& time_step) {
+        // Define helper variables.
+        const auto position = agent_->GetPosition();
+        const auto altitude = position(2);
+        const auto velocity = x.segment(3, 3);
+        const auto g = constants::CalculateGravityAtAltitude(altitude);
+        const auto rho = constants::CalculateAirDensityAtAltitude(altitude);
 
-    // Calculate the drag acceleration.
-    const auto air_drag_acceleration =
-        rho * agent_->static_config().lift_drag_config().drag_coefficient() *
-        agent_->static_config().body_config().cross_sectional_area() /
-        (2 * agent_->static_config().body_config().mass()) *
-        std::pow(velocity.norm(), 2);
-    const auto lift_induced_drag_acceleration =
-        (u + Eigen::Vector3d{0, 0, g} -
-         Eigen::Vector3d{0, 0, g}.dot(velocity) / std::pow(velocity.norm(), 2) *
-             velocity)
-            .norm() /
-        agent_->static_config().lift_drag_config().lift_drag_ratio();
-    const auto drag_acceleration =
-        air_drag_acceleration + lift_induced_drag_acceleration;
+        // Calculate the drag acceleration.
+        const auto air_drag_acceleration =
+            rho *
+            agent_->static_config().lift_drag_config().drag_coefficient() *
+            agent_->static_config().body_config().cross_sectional_area() /
+            (2 * agent_->static_config().body_config().mass()) *
+            std::pow(velocity.norm(), 2);
+        const auto input_acceleration = u + Eigen::Vector3d{0, 0, g};
+        const auto lift_induced_drag_acceleration =
+            (input_acceleration - input_acceleration.dot(velocity) /
+                                      std::pow(velocity.norm(), 2) * velocity)
+                .norm() /
+            agent_->static_config().lift_drag_config().lift_drag_ratio();
+        const auto drag_acceleration =
+            air_drag_acceleration + lift_induced_drag_acceleration;
 
-    // Define the dx/dt vector.
-    dx.head(3) = x.segment(3, 3);
-    dx.segment(3, 3) = u - Eigen::Vector3d{0, 0, g} -
-                       drag_acceleration * velocity / velocity.norm();
-    dx(6) = drag_acceleration;
-  });
+        // Define the state vector at the next time step.
+        StateVector x_delta;
+        x_delta.head(3) = velocity;
+        x_delta.segment(3, 3) = u - Eigen::Vector3d{0, 0, g} -
+                                drag_acceleration * velocity / velocity.norm();
+        x_delta(6) = drag_acceleration;
+        x_next = x + kSamplingTime * x_delta;
+      });
 
   // Define the objective function.
   controller.setObjectiveFunction(
