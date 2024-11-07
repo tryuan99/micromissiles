@@ -44,7 +44,7 @@ Simulator::Simulator(const SimulatorConfig& simulator_config)
 
 void Simulator::Run(const double t_end) {
   for (double t = 0; t < t_end; t += t_step_) {
-    LOG_EVERY_N(INFO, 1000) << "Simulating time t=" << t << ".";
+    LOG(INFO) << "Simulating time t=" << t << ".";
 
     // Have all interceptors check their threats.
     for (auto& interceptor : interceptors_) {

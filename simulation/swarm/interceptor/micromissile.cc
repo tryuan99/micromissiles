@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 #include <cmath>
 
+#include "simulation/swarm/controller/mpc_controller.h"
 #include "simulation/swarm/controller/pn_controller.h"
 #include "utils/random.h"
 
@@ -20,8 +21,8 @@ void Micromissile::UpdateMidCourse(const double t) {
     const auto sensor_update_period =
         1 / dynamic_config().sensor_config().frequency();
     if (t - sensor_update_time_ >= sensor_update_period) {
-      // TODO(titan): Use some guidance filter to estimate the state from the
-      // sensor output.
+      // TODO(titan): Use the non-ideal sensor and a guidance filter to estimate
+      // the state from the sensor output.
       target_model_->SetState(target_->state());
       sensor_update_time_ = t;
     }
@@ -51,7 +52,7 @@ void Micromissile::UpdateMidCourse(const double t) {
 
 Eigen::Vector3d Micromissile::CalculateAccelerationInput() const {
   // The micromissile uses proportional navigation.
-  controller::PnController controller(*this);
+  controller::MpcController controller(*this);
   controller.Plan();
   auto acceleration_input = controller.GetOptimalControl();
 

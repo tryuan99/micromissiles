@@ -20,6 +20,16 @@ cc_binary(
 )
 
 cc_binary(
+    name = "mpc_example_main",
+    srcs = ["mpc_example_main.cc"],
+    deps = [
+        "//base",
+        "@eigen",
+        "@libmpc",
+    ],
+)
+
+cc_binary(
     name = "opencv_gui_example_main",
     srcs = ["opencv_gui_example_main.cc"],
     deps = [

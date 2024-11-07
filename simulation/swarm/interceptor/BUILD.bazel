@@ -92,6 +92,7 @@ cc_library(
     data = ["//simulation/swarm/configs/interceptor:configs"],
     deps = [
         ":interceptor",
+        "//simulation/swarm/controller:mpc_controller",
         "//simulation/swarm/controller:pn_controller",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",

@@ -197,14 +197,14 @@ class Agent {
   // Submunitions configuration of the agent.
   AgentConfig::SubmunitionsConfig submunitions_config_;
 
+  // Target assigned to the agent.
+  Agent* target_ = nullptr;
+
   // Model of the target.
   std::unique_ptr<Agent> target_model_;
 
   // History of the agent.
   state::StateHistory state_history_;
-
-  // Target assigned to the agent.
-  Agent* target_ = nullptr;
 
   // Boolean indicating whether the agent has hit or been hit.
   bool hit_ = false;

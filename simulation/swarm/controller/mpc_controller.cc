@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 
+#include "base/logging.h"
 #include "mpc/NLMPC.hpp"
 #include "simulation/swarm/controls/mpc_controller.h"
 #include "simulation/swarm/proto/sensor.pb.h"
@@ -14,13 +15,16 @@ namespace {
 constexpr int kNumStateVariables = 7;
 
 // Number of input variables.
-constexpr int kNumInputVariables = 3;
+constexpr int kNumInputVariables = 2;
 
 // Position cost factor.
-constexpr double kPositionCostFactor = 2;
+constexpr double kPositionCostFactor = 1;
+
+// Lost speed cost factor.
+constexpr double kLostSpeedCostFactor = 1;
 
 // Prediction horizon in number of time steps.
-constexpr int kPredictionHorizon = 10;
+constexpr int kPredictionHorizon = 5;
 
 // Control horizon in number of time steps.
 constexpr int kControlHorizon = 5;
@@ -32,13 +36,24 @@ constexpr double kSamplingTime = 0.01;  // seconds
 constexpr int kNumInequalityConstraints = kPredictionHorizon + 1;
 
 // Number of equality constraints.
-constexpr int kNumEqualityConstraints = kPredictionHorizon + 1;
+constexpr int kNumEqualityConstraints = 0;
+
+// Tolerance.
+constexpr double kTolerance = 0.01;
 
 // Type aliases.
 using StateVector = Eigen::Vector<double, kNumStateVariables>;
 using StateMatrix =
     Eigen::Matrix<double, kNumStateVariables, kNumStateVariables>;
 using InputVector = Eigen::Vector<double, kNumInputVariables>;
+
+// Calculate the normal vectors.
+Eigen::Matrix<double, 3, 2> CalculateNormalVectors(const Eigen::Vector3d& u) {
+  Eigen::Matrix<double, 3, 2> normal_vectors;
+  normal_vectors.col(0) = Eigen::Vector3d{0, 0, 1}.cross(u).normalized();
+  normal_vectors.col(1) = normal_vectors.col(0).cross(u).normalized();
+  return normal_vectors;
+}
 }  // namespace
 
 void MpcController::PlanImpl(const SensorOutput& sensor_output) {
@@ -50,7 +65,11 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
   controller.setLoggerLevel(mpc::Logger::log_level::NORMAL);
 
   mpc::NLParameters params;
-  params.maximum_iteration = 1000;
+  params.relative_ftol = kTolerance;
+  params.relative_xtol = kTolerance;
+  params.absolute_ftol = kTolerance;
+  params.absolute_xtol = kTolerance;
+  params.maximum_iteration = 10000;
   controller.setOptimizerParameters(params);
 
   // Define the state equation.
@@ -58,11 +77,13 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
       [&](StateVector& x_next, const StateVector& x, const InputVector& u,
           const unsigned int& time_step) {
         // Define helper variables.
-        const auto position = agent_->GetPosition();
+        const auto position = x.head(3);
         const auto altitude = position(2);
-        const auto velocity = x.segment(3, 3);
         const auto g = constants::CalculateGravityAtAltitude(altitude);
         const auto rho = constants::CalculateAirDensityAtAltitude(altitude);
+
+        const auto velocity = x.segment(3, 3);
+        const auto normal_vectors = CalculateNormalVectors(velocity);
 
         // Calculate the drag acceleration.
         const auto air_drag_acceleration =
@@ -71,7 +92,8 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
             agent_->static_config().body_config().cross_sectional_area() /
             (2 * agent_->static_config().body_config().mass()) *
             std::pow(velocity.norm(), 2);
-        const auto input_acceleration = u + Eigen::Vector3d{0, 0, g};
+        const auto input_acceleration =
+            normal_vectors * u + Eigen::Vector3d{0, 0, g};
         const auto lift_induced_drag_acceleration =
             (input_acceleration - input_acceleration.dot(velocity) /
                                       std::pow(velocity.norm(), 2) * velocity)
@@ -83,7 +105,7 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
         // Define the state vector at the next time step.
         StateVector x_delta;
         x_delta.head(3) = velocity;
-        x_delta.segment(3, 3) = u - Eigen::Vector3d{0, 0, g} -
+        x_delta.segment(3, 3) = normal_vectors * u - Eigen::Vector3d{0, 0, g} -
                                 drag_acceleration * velocity / velocity.norm();
         x_delta(6) = drag_acceleration;
         x_next = x + kSamplingTime * x_delta;
@@ -98,14 +120,16 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
           const Eigen::Matrix<double, kPredictionHorizon + 1,
                               kNumInputVariables>& u,
           const double& slack) {
-        return (x.row(x.rows() - 1).array() *
-                StateVector{std::sqrt(kPositionCostFactor),
-                            std::sqrt(kPositionCostFactor),
-                            std::sqrt(kPositionCostFactor), 0, 0, 0, 1}
-                    .transpose()
-                    .array())
-            .square()
-            .sum();
+        return -(x.row(x.rows() - 1).array() *
+                 StateVector{std::sqrt(kPositionCostFactor),
+                             std::sqrt(kPositionCostFactor),
+                             std::sqrt(kPositionCostFactor), 0, 0, 0, 0}
+                     .transpose()
+                     .array())
+                    .square()
+                    .sum() +
+               kLostSpeedCostFactor *
+                   std::pow(x.coeff(x.rows() - 1, kNumStateVariables - 1), 2);
       });
 
   // Define the maximum acceleration inequality constraints.
@@ -131,21 +155,8 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
         }
       });
 
-  // Define the normal acceleration equality constraints.
-  controller.setEqConFunction(
-      [&](Eigen::Vector<double, kNumEqualityConstraints>& equalities,
-          const Eigen::Matrix<double, kPredictionHorizon + 1,
-                              kNumStateVariables>& x,
-          const Eigen::Matrix<double, kPredictionHorizon + 1,
-                              kNumInputVariables>& u) {
-        for (int i = 0; i < kNumEqualityConstraints; ++i) {
-          equalities(i) = u.row(i).dot(x.row(i).segment(3, 3));
-        }
-      });
-
   // Define the initial state vector.
   const auto velocity = agent_->GetVelocity();
-  const auto normalized_velocity = velocity.normalized();
   const StateVector initial_state{sensor_output.position_cartesian().x(),
                                   sensor_output.position_cartesian().y(),
                                   sensor_output.position_cartesian().z(),
@@ -155,11 +166,16 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
                                   0};
 
   // Run the optimizer.
+  const auto normal_vectors = CalculateNormalVectors(velocity);
   mpc::Result<kNumInputVariables> result =
       controller.optimize(initial_state, InputVector::Zero());
-  const Eigen::Vector3d& acceleration_input = result.cmd;
+  const Eigen::Vector3d& acceleration_input = normal_vectors * result.cmd;
+  LOG(INFO) << "Optimal input: " << acceleration_input;
+  LOG(INFO) << "Feasible: " << result.is_feasible;
+  LOG(INFO) << "Status: " << result.status;
 
   // Extract the normal acceleration input only.
+  const auto normalized_velocity = velocity.normalized();
   acceleration_input_ =
       acceleration_input -
       acceleration_input.dot(normalized_velocity) * normalized_velocity;
