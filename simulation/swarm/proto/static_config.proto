@@ -56,6 +56,12 @@ message HitConfig {
   float kill_probability = 2;
 }
 
+// Controller configuration.
+message ControllerConfig {
+  // Proportional navigation range threshold in m.
+  float proportional_navigation_range_threshold = 1;
+}
+
 // Static configuration.
 message StaticConfig {
   // Acceleration configuration.
@@ -72,4 +78,7 @@ message StaticConfig {
 
   // Hit configuration.
   HitConfig hit_config = 5;
+
+  // Controller configuration.
+  ControllerConfig controller_config = 6;
 }

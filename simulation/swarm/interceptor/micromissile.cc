@@ -2,9 +2,13 @@
 
 #include <Eigen/Dense>
 #include <cmath>
+#include <memory>
 
+#include "simulation/swarm/controller/agent_controller.h"
 #include "simulation/swarm/controller/mpc_controller.h"
 #include "simulation/swarm/controller/pn_controller.h"
+#include "simulation/swarm/proto/sensor.pb.h"
+#include "simulation/swarm/sensor/ideal_sensor.h"
 #include "utils/random.h"
 
 namespace swarm::interceptor {
@@ -52,9 +56,9 @@ void Micromissile::UpdateMidCourse(const double t) {
 
 Eigen::Vector3d Micromissile::CalculateAccelerationInput() const {
   // The micromissile uses proportional navigation.
-  controller::MpcController controller(*this);
-  controller.Plan();
-  auto acceleration_input = controller.GetOptimalControl();
+  auto controller = GetController();
+  controller->Plan();
+  auto acceleration_input = controller->GetOptimalControl();
 
   // Clamp the acceleration vector.
   const auto max_acceleration = CalculateMaxAcceleration();
@@ -62,6 +66,18 @@ Eigen::Vector3d Micromissile::CalculateAccelerationInput() const {
     return acceleration_input.normalized() * max_acceleration;
   }
   return acceleration_input;
+}
+
+std::unique_ptr<controller::AgentController> Micromissile::GetController()
+    const {
+  sensor::IdealSensor sensor(*this);
+  const auto sensor_output = sensor.Sense(*target_model_);
+  if (sensor_output.position().range() <
+      static_config_.controller_config()
+          .proportional_navigation_range_threshold()) {
+    return std::make_unique<controller::PnController>(*this);
+  }
+  return std::make_unique<controller::MpcController>(*this);
 }
 
 }  // namespace swarm::interceptor

@@ -3,8 +3,10 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <memory>
 #include <string>
 
+#include "simulation/swarm/controller/agent_controller.h"
 #include "simulation/swarm/interceptor/interceptor.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
@@ -42,6 +44,9 @@ class Micromissile : public Interceptor {
  private:
   // Calculate the acceleration input based on the target.
   Eigen::Vector3d CalculateAccelerationInput() const;
+
+  // Get the controller to use for the micromissile.
+  std::unique_ptr<controller::AgentController> GetController() const;
 };
 
 }  // namespace swarm::interceptor

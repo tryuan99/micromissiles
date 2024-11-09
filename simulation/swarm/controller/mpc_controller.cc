@@ -18,7 +18,7 @@ constexpr int kNumStateVariables = 7;
 constexpr int kNumInputVariables = 2;
 
 // Position cost factor.
-constexpr double kPositionCostFactor = 1;
+constexpr double kPositionCostFactor = 0;
 
 // Lost speed cost factor.
 constexpr double kLostSpeedCostFactor = 1;
@@ -79,21 +79,22 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
         // Define helper variables.
         const auto position = x.head(3);
         const auto altitude = position(2);
-        const auto g = constants::CalculateGravityAtAltitude(altitude);
-        const auto rho = constants::CalculateAirDensityAtAltitude(altitude);
+        const auto gravity = constants::CalculateGravityAtAltitude(altitude);
+        const auto air_density =
+            constants::CalculateAirDensityAtAltitude(altitude);
 
         const auto velocity = x.segment(3, 3);
         const auto normal_vectors = CalculateNormalVectors(velocity);
 
         // Calculate the drag acceleration.
         const auto air_drag_acceleration =
-            rho *
+            air_density *
             agent_->static_config().lift_drag_config().drag_coefficient() *
             agent_->static_config().body_config().cross_sectional_area() /
             (2 * agent_->static_config().body_config().mass()) *
             std::pow(velocity.norm(), 2);
         const auto input_acceleration =
-            normal_vectors * u + Eigen::Vector3d{0, 0, g};
+            normal_vectors * u - Eigen::Vector3d{0, 0, gravity};
         const auto lift_induced_drag_acceleration =
             (input_acceleration - input_acceleration.dot(velocity) /
                                       std::pow(velocity.norm(), 2) * velocity)
@@ -105,7 +106,8 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
         // Define the state vector at the next time step.
         StateVector x_delta;
         x_delta.head(3) = velocity;
-        x_delta.segment(3, 3) = normal_vectors * u - Eigen::Vector3d{0, 0, g} -
+        x_delta.segment(3, 3) = normal_vectors * u -
+                                Eigen::Vector3d{0, 0, gravity} -
                                 drag_acceleration * velocity / velocity.norm();
         x_delta(6) = drag_acceleration;
         x_next = x + kSamplingTime * x_delta;

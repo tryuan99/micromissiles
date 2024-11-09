@@ -20,3 +20,6 @@ body_config {
 hit_config {
   hit_radius: 1
 }
+controller_config {
+  proportional_navigation_range_threshold: 3000
+}
