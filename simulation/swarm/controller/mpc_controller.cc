@@ -2,11 +2,15 @@
 
 #include <Eigen/Dense>
 
+#include "base/commandlineflags.h"
 #include "base/logging.h"
 #include "mpc/NLMPC.hpp"
 #include "simulation/swarm/controls/mpc_controller.h"
 #include "simulation/swarm/proto/sensor.pb.h"
 #include "simulation/swarm/utils/constants.h"
+
+DEFINE_bool(log_mpc, false,
+            "If true, log verbose messages for the MPC controller.");
 
 namespace swarm::controller {
 
@@ -62,7 +66,8 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
              kPredictionHorizon, kControlHorizon, kNumInequalityConstraints,
              kNumEqualityConstraints>
       controller;
-  controller.setLoggerLevel(mpc::Logger::log_level::NORMAL);
+  controller.setLoggerLevel(FLAGS(log_mpc) ? mpc::Logger::log_level::NORMAL
+                                           : mpc::Logger::log_level::ALERT);
 
   mpc::NLParameters params;
   params.relative_ftol = kTolerance;
@@ -171,10 +176,10 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
   const auto normal_vectors = CalculateNormalVectors(velocity);
   mpc::Result<kNumInputVariables> result =
       controller.optimize(initial_state, InputVector::Zero());
-  const Eigen::Vector3d& acceleration_input = normal_vectors * result.cmd;
-  LOG(INFO) << "Optimal input: " << acceleration_input;
-  LOG(INFO) << "Feasible: " << result.is_feasible;
-  LOG(INFO) << "Status: " << result.status;
+  const Eigen::Vector3d acceleration_input = normal_vectors * result.cmd;
+  LOG_IF(INFO, FLAGS(log_mpc)) << "Optimal input: " << acceleration_input;
+  LOG_IF(INFO, FLAGS(log_mpc))
+      << "Feasible: " << result.is_feasible << ", status: " << result.status;
 
   // Extract the normal acceleration input only.
   const auto normalized_velocity = velocity.normalized();
