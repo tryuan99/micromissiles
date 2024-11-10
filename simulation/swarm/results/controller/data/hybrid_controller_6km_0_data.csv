@@ -1,6 +1,7 @@
 # Interceptor: Micromissile launched from Hydra-70 at 11.3 degrees above horizon
 # Target: Drone at (6000, 0, 150) moving at (-10, 0, 0)
 # Controller: MPC controller until 1 km to target, then proportional navigation
+# MPC controller: distance cost factor = 0, speed cost factor = 1
 
 Time since launch [s],Distance to target [m],Interceptor speed [m/s]
 2.32,4232.74,1709.8

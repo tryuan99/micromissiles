@@ -9,44 +9,50 @@ from simulation.swarm.utils.py import constants
 FLAGS = flags.FLAGS
 
 
-def compare_controllers(data: str, pn_data: str) -> None:
-    """Compares the two controllers over time and over distance to target.
+def plot_interceptor_speed_over_time(data: list[str],
+                                     labels: list[str]) -> None:
+    """Plot the interceptor speed over time for each controller.
 
     Args:
-        data: Controller data filename.
-        pn_data: Proportional navigation controller filename.
+        data: Data filenames.
+        labels: Plot labels.
     """
-    # Open the controller data file.
-    df = pd.read_csv(data, comment="#")
-    time_column, distance_to_target_column, speed_column = df.columns
-    logging.info(df.describe())
-
-    # Open the proportional navigation controller data file.
-    pn_df = pd.read_csv(pn_data, comment="#")
-    pn_time_column, pn_distance_to_target_column, pn_speed_column = pn_df.columns
-    logging.info(pn_df.describe())
-
-    # Plot the interceptor speed over time.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
-    ax.plot(df[time_column], df[speed_column], label="Hybrid controller")
-    ax.plot(pn_df[pn_time_column],
-            pn_df[pn_speed_column],
-            label="PN controller")
+
+    # Open the controller data files.
+    for controller_data, label in zip(data, labels):
+        df = pd.read_csv(controller_data, comment="#")
+        time_column, distance_to_target_column, speed_column = df.columns
+        logging.info(df.describe())
+
+        # Plot the interceptor speed over time.
+        ax.plot(df[time_column], df[speed_column], label=label)
     ax.set_xlabel("Time since launch [s]")
     ax.set_ylabel("Interceptor speed [m/s]")
     ax.legend()
     plt.show()
 
-    # Plot the interceptor speed distance to target.
+
+def plot_interceptor_speed_over_distance_to_target(data: list[str],
+                                                   labels: list[str]) -> None:
+    """Plot the interceptor speed over distance to target for each controller.
+
+    Args:
+        data: Data filenames.
+        labels: Plot labels.
+    """
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
-    ax.plot(df[distance_to_target_column],
-            df[speed_column],
-            label="Hybrid controller")
-    ax.plot(pn_df[pn_distance_to_target_column],
-            pn_df[pn_speed_column],
-            label="PN controller")
+
+    # Open the controller data files.
+    for controller_data, label in zip(data, labels):
+        df = pd.read_csv(controller_data, comment="#")
+        time_column, distance_to_target_column, speed_column = df.columns
+        logging.info(df.describe())
+
+        # Plot the interceptor speed over distance to target.
+        ax.plot(df[distance_to_target_column], df[speed_column], label=label)
     ax.invert_xaxis()
     ax.set_xlabel("Distance to target [m]")
     ax.set_ylabel("Interceptor speed [m/s]")
@@ -57,17 +63,24 @@ def compare_controllers(data: str, pn_data: str) -> None:
 def main(argv):
     assert len(argv) == 1
 
-    compare_controllers(FLAGS.data, FLAGS.pn_data)
+    plot_interceptor_speed_over_time(FLAGS.data, FLAGS.labels)
+    plot_interceptor_speed_over_distance_to_target(FLAGS.data, FLAGS.labels)
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string(
-        "data",
-        "simulation/swarm/results/controller/data/hybrid_controller_6km_data.csv",
-        "Controller data filename.")
-    flags.DEFINE_string(
-        "pn_data",
+    flags.DEFINE_multi_string("data", [
+        "simulation/swarm/results/controller/data/hybrid_controller_6km_0_data.csv",
+        "simulation/swarm/results/controller/data/hybrid_controller_6km_0_25_data.csv",
+        "simulation/swarm/results/controller/data/hybrid_controller_6km_1_data.csv",
+        "simulation/swarm/results/controller/data/hybrid_controller_6km_4_data.csv",
         "simulation/swarm/results/controller/data/pn_controller_6km_data.csv",
-        "Proportional navigation controller data filename.")
+    ], "Data filenames.")
+    flags.DEFINE_multi_string("labels", [
+        "Hybrid controller (distance cost factor = 0, speed cost factor = 1)",
+        "Hybrid controller (distance cost factor = 0.25, speed cost factor = 1)",
+        "Hybrid controller (distance cost factor = 1, speed cost factor = 1)",
+        "Hybrid controller (distance cost factor = 4, speed cost factor = 1)",
+        "PN controller",
+    ], "Plot labels.")
 
     app.run(main)
