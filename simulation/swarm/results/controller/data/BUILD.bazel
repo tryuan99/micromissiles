@@ -1,0 +1,9 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "controller_data",
+    srcs = [
+        "hybrid_controller_6km_data.csv",
+        "pn_controller_6km_data.csv",
+    ],
+)

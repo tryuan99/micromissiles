@@ -98,7 +98,8 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "data", "simulation/swarm/results/data/total_drag_turning_data.csv",
+        "data",
+        "simulation/swarm/results/dynamics/data/total_drag_turning_data.csv",
         "Data filename.")
 
     app.run(main)

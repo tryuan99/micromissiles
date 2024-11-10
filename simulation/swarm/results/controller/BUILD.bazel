@@ -1,0 +1,17 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "controller_comparison_main",
+    srcs = ["controller_comparison_main.py"],
+    data = ["//simulation/swarm/results/controller/data:controller_data"],
+    deps = [
+        "//simulation/swarm/utils/py:constants",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("SciencePlots"),
+    ],
+)
