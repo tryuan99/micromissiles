@@ -110,7 +110,9 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
 
         // Define the state vector at the next time step.
         StateVector x_delta;
-        x_delta.head(3) = velocity;
+        // The distance to target changes with the agent's velocity and the
+        // target's velocity.
+        x_delta.head(3) = velocity - agent_->target_model().GetVelocity();
         x_delta.segment(3, 3) = normal_vectors * u -
                                 Eigen::Vector3d{0, 0, gravity} -
                                 drag_acceleration * velocity / velocity.norm();
@@ -127,6 +129,9 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
           const Eigen::Matrix<double, kPredictionHorizon + 1,
                               kNumInputVariables>& u,
           const double& slack) {
+        // TODO(titan): Figure out why the distance to target cost must be
+        // negative for the correct behavior to emerge. The speed cost remains
+        // positive.
         return -(x.row(x.rows() - 1).array() *
                  StateVector{std::sqrt(kPositionCostFactor),
                              std::sqrt(kPositionCostFactor),
