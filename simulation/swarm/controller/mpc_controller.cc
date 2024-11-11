@@ -82,7 +82,10 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
       [&](StateVector& x_next, const StateVector& x, const InputVector& u,
           const unsigned int& time_step) {
         // Define helper variables.
-        const auto position = x.head(3);
+        // Assume that the altitude does not change by much during the planning
+        // horizon, so use the initial altitude to calculate the gravity and air
+        // density for the entire horizon.
+        const auto position = agent_->GetPosition();
         const auto altitude = position(2);
         const auto gravity = constants::CalculateGravityAtAltitude(altitude);
         const auto air_density =
