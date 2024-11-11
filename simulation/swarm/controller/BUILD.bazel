@@ -13,6 +13,30 @@ cc_library(
 )
 
 cc_library(
+    name = "apn_controller",
+    srcs = ["apn_controller.cc"],
+    hdrs = ["apn_controller.h"],
+    deps = [
+        ":pn_controller",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:sensor_cc_proto",
+    ],
+)
+
+cc_test(
+    name = "apn_controller_test",
+    srcs = ["apn_controller_test.cc"],
+    deps = [
+        ":apn_controller",
+        "//simulation/swarm:agent",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@eigen",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "mpc_controller",
     srcs = ["mpc_controller.cc"],
     hdrs = ["mpc_controller.h"],

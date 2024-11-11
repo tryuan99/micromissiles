@@ -23,7 +23,7 @@ class PnController : public AgentController {
 
  protected:
   // Plan the next optimal control(s).
-  void PlanImpl(const SensorOutput& sensor_output) override;
+  virtual void PlanImpl(const SensorOutput& sensor_output) override;
 };
 
 }  // namespace swarm::controller
