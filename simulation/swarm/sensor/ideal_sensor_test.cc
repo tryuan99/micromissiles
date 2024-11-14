@@ -94,35 +94,35 @@ class IdealSensorTest : public testing::TestWithParam<IdealSensorTestParam> {
 
 TEST_P(IdealSensorTest, SensePositionRange) {
   const auto expected_range = GetParam().expected_range;
-  const auto sensor_output = sensor_.SensePosition(target_);
+  const auto sensor_output = sensor_.Sense(target_);
   EXPECT_NEAR(sensor_output.position().range(), expected_range,
               kMaxErrorTolerance);
 }
 
 TEST_P(IdealSensorTest, SensePositionAzimuth) {
   const auto expected_azimuth = GetParam().expected_azimuth;
-  const auto sensor_output = sensor_.SensePosition(target_);
+  const auto sensor_output = sensor_.Sense(target_);
   EXPECT_NEAR(sensor_output.position().azimuth(), expected_azimuth,
               kMaxErrorTolerance);
 }
 
 TEST_P(IdealSensorTest, SensePositionElevation) {
   const auto expected_elevation = GetParam().expected_elevation;
-  const auto sensor_output = sensor_.SensePosition(target_);
+  const auto sensor_output = sensor_.Sense(target_);
   EXPECT_NEAR(sensor_output.position().elevation(), expected_elevation,
               kMaxErrorTolerance);
 }
 
 TEST_P(IdealSensorTest, SenseVelocityRange) {
   const auto expected_range_rate = GetParam().expected_range_rate;
-  const auto sensor_output = sensor_.SenseVelocity(target_);
+  const auto sensor_output = sensor_.Sense(target_);
   EXPECT_NEAR(sensor_output.velocity().range(), expected_range_rate,
               kMaxErrorTolerance);
 }
 
 TEST_P(IdealSensorTest, SenseVelocityAzimuth) {
   const auto expected_azimuth_velocity = GetParam().expected_azimuth_velocity;
-  const auto sensor_output = sensor_.SenseVelocity(target_);
+  const auto sensor_output = sensor_.Sense(target_);
   EXPECT_NEAR(sensor_output.velocity().azimuth(), expected_azimuth_velocity,
               kMaxErrorTolerance);
 }
@@ -130,7 +130,7 @@ TEST_P(IdealSensorTest, SenseVelocityAzimuth) {
 TEST_P(IdealSensorTest, SenseVelocityElevation) {
   const auto expected_elevation_velocity =
       GetParam().expected_elevation_velocity;
-  const auto sensor_output = sensor_.SenseVelocity(target_);
+  const auto sensor_output = sensor_.Sense(target_);
   EXPECT_NEAR(sensor_output.velocity().elevation(), expected_elevation_velocity,
               kMaxErrorTolerance);
 }

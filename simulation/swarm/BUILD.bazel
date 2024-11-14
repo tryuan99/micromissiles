@@ -11,6 +11,7 @@ cc_library(
         "//simulation/swarm/proto:plotting_config_cc_proto",
         "//simulation/swarm/proto:state_cc_proto",
         "//simulation/swarm/proto:static_config_cc_proto",
+        "//simulation/swarm/proto:transformation_cc_proto",
         "//simulation/swarm/utils:constants",
         "@abseil-cpp//absl/strings:str_format",
         "@boost",

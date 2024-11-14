@@ -10,6 +10,7 @@
 #include "absl/strings/str_format.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
+#include "simulation/swarm/proto/transformation.pb.h"
 #include "simulation/swarm/utils/constants.h"
 
 namespace swarm::agent {
@@ -120,6 +121,198 @@ Eigen::Vector3d Agent::GetAcceleration() const {
       state_.acceleration().y(),
       state_.acceleration().z(),
   };
+}
+
+Transformation Agent::GetRelativeTransformation(const Agent& agent) const {
+  // TODO(titan): The transformation should be relative to the agent's roll,
+  // pitch, and yaw.
+  Transformation relative_transformation;
+
+  // Find the relative position transformation.
+  const auto position_transformation = GetRelativePositionTransformation(agent);
+  relative_transformation.MergeFrom(position_transformation);
+
+  // Find the relative velocity transformation.
+  const auto velocity_transformation = GetRelativeVelocityTransformation(agent);
+  relative_transformation.MergeFrom(velocity_transformation);
+
+  // Find the relative acceleration transformation.
+  const auto acceleration_transformation =
+      GetRelativeAccelerationTransformation(agent);
+  relative_transformation.MergeFrom(acceleration_transformation);
+
+  return relative_transformation;
+}
+
+Transformation Agent::GetRelativePositionTransformation(
+    const Agent& agent) const {
+  Transformation position_transformation;
+  const auto principal_axes = GetNormalizedPrincipalAxes();
+
+  // Calculate the relative position of the agent.
+  const auto position = GetPosition();
+  const auto agent_position = agent.GetPosition();
+  const auto relative_position = agent_position - position;
+
+  // Set the Cartesian coordinates.
+  position_transformation.mutable_position_cartesian()->set_x(
+      relative_position(0));
+  position_transformation.mutable_position_cartesian()->set_y(
+      relative_position(1));
+  position_transformation.mutable_position_cartesian()->set_z(
+      relative_position(2));
+
+  // Calculate the distance to the agent.
+  position_transformation.mutable_position()->set_range(
+      relative_position.norm());
+
+  // Project the relative position vector onto the yaw axis.
+  const auto relative_position_projection_on_yaw =
+      relative_position.dot(principal_axes.yaw) * principal_axes.yaw;
+  // Project the relative position vector onto the roll-pitch plane.
+  const auto relative_position_projection_on_roll_pitch_plane =
+      relative_position - relative_position_projection_on_yaw;
+
+  // Determine the sign of the elevation.
+  const auto elevation_sign =
+      relative_position_projection_on_yaw.dot(principal_axes.yaw) >= 0 ? 1 : -1;
+
+  // Calculate the elevation.
+  position_transformation.mutable_position()->set_elevation(
+      elevation_sign *
+      std::atan(relative_position_projection_on_yaw.norm() /
+                relative_position_projection_on_roll_pitch_plane.norm()));
+
+  // Project the projection onto the roll axis.
+  const auto relative_position_projection_on_roll =
+      relative_position_projection_on_roll_pitch_plane.dot(
+          principal_axes.roll) *
+      principal_axes.roll;
+  // Find the projection onto the pitch axis.
+  const auto relative_position_projection_on_pitch =
+      relative_position_projection_on_roll_pitch_plane -
+      relative_position_projection_on_roll;
+
+  if (relative_position_projection_on_pitch.norm() > 0 ||
+      relative_position_projection_on_roll.norm() > 0) {
+    // Determine the sign of the azimuth.
+    const auto azimuth_sign =
+        relative_position_projection_on_pitch.dot(principal_axes.pitch) >= 0
+            ? 1
+            : -1;
+
+    // Calculate the azimuth.
+    position_transformation.mutable_position()->set_azimuth(
+        azimuth_sign * std::atan(relative_position_projection_on_pitch.norm() /
+                                 relative_position_projection_on_roll.norm()));
+  }
+  return position_transformation;
+}
+
+Transformation Agent::GetRelativeVelocityTransformation(
+    const Agent& agent) const {
+  Transformation velocity_transformation;
+  const auto principal_axes = GetNormalizedPrincipalAxes();
+
+  // Calculate the relative position of the agent.
+  const auto position = GetPosition();
+  const auto agent_position = agent.GetPosition();
+  const auto relative_position = agent_position - position;
+
+  // Calculate the relative velocity of the agent.
+  const auto velocity = GetVelocity();
+  const auto agent_velocity = agent.GetVelocity();
+  const auto relative_velocity = agent_velocity - velocity;
+
+  // Set the Cartesian coordinates.
+  velocity_transformation.mutable_velocity_cartesian()->set_x(
+      relative_velocity(0));
+  velocity_transformation.mutable_velocity_cartesian()->set_y(
+      relative_velocity(1));
+  velocity_transformation.mutable_velocity_cartesian()->set_z(
+      relative_velocity(2));
+
+  // Project the relative velocity vector onto the relative position vector.
+  const auto velocity_projection_on_relative_position =
+      relative_velocity.dot(relative_position) /
+      std::pow(relative_position.norm(), 2) * relative_position;
+
+  // Determine the sign of the range rate.
+  const auto range_rate_sign =
+      velocity_projection_on_relative_position.dot(relative_position) >= 0 ? 1
+                                                                           : -1;
+
+  // Calculate the range rate.
+  velocity_transformation.mutable_velocity()->set_range(
+      range_rate_sign * velocity_projection_on_relative_position.norm());
+
+  // Project the relative velocity vector onto the sphere passing through the
+  // agent.
+  const auto velocity_projection_on_azimuth_elevation_sphere =
+      relative_velocity - velocity_projection_on_relative_position;
+
+  // The azimuth vector is orthogonal to the relative position vector and points
+  // to the starboard of the agent along the azimuth-elevation sphere.
+  auto azimuth = relative_position.cross(principal_axes.yaw);
+  // The elevation vector is orthogonal to the relative position vector and
+  // points upwards from the agent along the azimuth-elevation sphere.
+  auto elevation = principal_axes.pitch.cross(relative_position);
+  // If the relative position vector is parallel to the yaw or pitch axis, the
+  // azimuth vector or the elevation vector will be undefined.
+  if (azimuth.norm() == 0) {
+    azimuth = relative_position.cross(elevation);
+  } else if (elevation.norm() == 0) {
+    elevation = azimuth.cross(relative_position);
+  }
+
+  // Project the relative velocity vector on the azimuth-elevation sphere onto
+  // the azimuth vector.
+  const auto velocity_projection_on_azimuth =
+      velocity_projection_on_azimuth_elevation_sphere.dot(azimuth) /
+      std::pow(azimuth.norm(), 2) * azimuth;
+
+  // Determine the sign of the azimuth velocity.
+  const auto azimuth_velocity_sign =
+      velocity_projection_on_azimuth.dot(azimuth) >= 0 ? 1 : -1;
+
+  // Calculate the time derivative of the azimuth.
+  velocity_transformation.mutable_velocity()->set_azimuth(
+      azimuth_velocity_sign * velocity_projection_on_azimuth.norm() /
+      relative_position.norm());
+
+  // Project the velocity vector on the azimuth-elevation sphere onto the
+  // elevation vector.
+  const auto velocity_projection_on_elevation =
+      velocity_projection_on_azimuth_elevation_sphere -
+      velocity_projection_on_azimuth;
+
+  // Determine the sign of the elevation velocity.
+  const auto elevation_velocity_sign =
+      velocity_projection_on_elevation.dot(elevation) >= 0 ? 1 : -1;
+
+  // Calculate the time derivative of the elevation.
+  velocity_transformation.mutable_velocity()->set_elevation(
+      elevation_velocity_sign * velocity_projection_on_elevation.norm() /
+      relative_position.norm());
+  return velocity_transformation;
+}
+
+Transformation Agent::GetRelativeAccelerationTransformation(
+    const Agent& agent) const {
+  Transformation acceleration_transformation;
+
+  // Since the agent's acceleration is an input, the relative acceleration is
+  // just the agent's acceleration.
+  const auto agent_acceleration = agent.GetAcceleration();
+
+  // Set the Cartesian coordinates.
+  acceleration_transformation.mutable_acceleration_cartesian()->set_x(
+      agent_acceleration(0));
+  acceleration_transformation.mutable_acceleration_cartesian()->set_y(
+      agent_acceleration(1));
+  acceleration_transformation.mutable_acceleration_cartesian()->set_z(
+      agent_acceleration(2));
+  return acceleration_transformation;
 }
 
 Eigen::Vector3d Agent::GetGravity() const {

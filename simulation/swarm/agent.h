@@ -14,6 +14,7 @@
 #include "simulation/swarm/proto/plotting_config.pb.h"
 #include "simulation/swarm/proto/state.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
+#include "simulation/swarm/proto/transformation.pb.h"
 #include "simulation/swarm/state_history.h"
 
 namespace swarm::agent {
@@ -146,6 +147,9 @@ class Agent {
   // Return the acceleration vector of the agent.
   Eigen::Vector3d GetAcceleration() const;
 
+  // Return the relative transformation to another agent.
+  Transformation GetRelativeTransformation(const Agent& agent) const;
+
   // Return the gravity acceleration vector.
   Eigen::Vector3d GetGravity() const;
 
@@ -208,6 +212,17 @@ class Agent {
 
   // Boolean indicating whether the agent has hit or been hit.
   bool hit_ = false;
+
+ private:
+  // Return the relative position transformation to another agent.
+  Transformation GetRelativePositionTransformation(const Agent& agent) const;
+
+  // Return the relative velocity transformation to another agent.
+  Transformation GetRelativeVelocityTransformation(const Agent& agent) const;
+
+  // Return the relative acceleration transformation to another agent.
+  Transformation GetRelativeAccelerationTransformation(
+      const Agent& agent) const;
 };
 
 // Model agent.

@@ -19,14 +19,6 @@ class IdealSensor : public Sensor {
 
   // Sense the target.
   SensorOutput Sense(const agent::Agent& target) const override;
-
-  // Sense the position of a target, including the range, the azimuth, and the
-  // elevation.
-  SensorOutput SensePosition(const agent::Agent& target) const;
-
-  // Sense the velocity of a target, including the range rate, the azimuth rate
-  // of change, and the elevation rate of change.
-  SensorOutput SenseVelocity(const agent::Agent& target) const;
 };
 
 }  // namespace swarm::sensor
