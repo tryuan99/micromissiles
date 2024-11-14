@@ -113,6 +113,15 @@ TEST_P(IdealSensorTest, SensePositionElevation) {
               kMaxErrorTolerance);
 }
 
+TEST_P(IdealSensorTest, SensePositionCartesian) {
+  const auto sensor_output = sensor_.Sense(target_);
+  Eigen::Vector3d position_cartesian{sensor_output.position_cartesian().x(),
+                                     sensor_output.position_cartesian().y(),
+                                     sensor_output.position_cartesian().z()};
+  EXPECT_TRUE(position_cartesian.isApprox(target_.GetPosition() -
+                                          agent_.GetPosition()));
+}
+
 TEST_P(IdealSensorTest, SenseVelocityRange) {
   const auto expected_range_rate = GetParam().expected_range_rate;
   const auto sensor_output = sensor_.Sense(target_);

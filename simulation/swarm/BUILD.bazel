@@ -31,6 +31,18 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "model_agent_transformation_test",
+    srcs = ["model_agent_transformation_test.cc"],
+    deps = [
+        ":agent",
+        "//simulation/swarm/proto:state_cc_proto",
+        "@eigen",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
 cc_library(
     name = "simulator",
     srcs = ["simulator.cc"],
