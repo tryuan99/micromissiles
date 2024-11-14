@@ -6,7 +6,7 @@
 #include "base/logging.h"
 #include "mpc/NLMPC.hpp"
 #include "simulation/swarm/controls/mpc_controller.h"
-#include "simulation/swarm/proto/sensor.pb.h"
+#include "simulation/swarm/proto/transformation.pb.h"
 #include "simulation/swarm/utils/constants.h"
 
 DEFINE_bool(log_mpc, false,
@@ -60,7 +60,7 @@ Eigen::Matrix<double, 3, 2> CalculateNormalVectors(const Eigen::Vector3d& u) {
 }
 }  // namespace
 
-void MpcController::PlanImpl(const SensorOutput& sensor_output) {
+void MpcController::PlanImpl(const Transformation& relative_transformation) {
   // Initialize the nonlinear model-predictive control controller.
   mpc::NLMPC<kNumStateVariables, kNumInputVariables, kNumStateVariables,
              kPredictionHorizon, kControlHorizon, kNumInequalityConstraints,
@@ -172,13 +172,14 @@ void MpcController::PlanImpl(const SensorOutput& sensor_output) {
 
   // Define the initial state vector.
   const auto velocity = agent_->GetVelocity();
-  const StateVector initial_state{sensor_output.position_cartesian().x(),
-                                  sensor_output.position_cartesian().y(),
-                                  sensor_output.position_cartesian().z(),
-                                  velocity(0),
-                                  velocity(1),
-                                  velocity(2),
-                                  0};
+  const StateVector initial_state{
+      relative_transformation.position_cartesian().x(),
+      relative_transformation.position_cartesian().y(),
+      relative_transformation.position_cartesian().z(),
+      velocity(0),
+      velocity(1),
+      velocity(2),
+      0};
 
   // Run the optimizer.
   const auto normal_vectors = CalculateNormalVectors(velocity);

@@ -1,15 +1,16 @@
 #include "simulation/swarm/controller/pn_controller.h"
 
-#include "simulation/swarm/proto/sensor.pb.h"
+#include "simulation/swarm/proto/transformation.pb.h"
 
 namespace swarm::controller {
 
-void PnController::PlanImpl(const SensorOutput& sensor_output) {
+void PnController::PlanImpl(const Transformation& relative_transformation) {
   // In proportional navigation, the acceleration vector should be proportional
   // to the rate of change of the bearing.
-  const auto azimuth_velocity = sensor_output.velocity().azimuth();
-  const auto elevation_velocity = sensor_output.velocity().elevation();
-  const auto closing_velocity = -sensor_output.velocity().range();
+  const auto azimuth_velocity = relative_transformation.velocity().azimuth();
+  const auto elevation_velocity =
+      relative_transformation.velocity().elevation();
+  const auto closing_velocity = -relative_transformation.velocity().range();
 
   // Calculate the desired acceleration vector. The missile cannot accelerate
   // along the roll axis.

@@ -3,9 +3,10 @@
 namespace swarm::controller {
 
 void AgentController::Plan() {
-  // Sense the target.
-  const auto sensor_output = sensor_.Sense(agent_->target_model());
-  PlanImpl(sensor_output);
+  // Find the relative transformation to the target..
+  const auto relative_transformation =
+      agent_->GetRelativeTransformation(agent_->target_model());
+  PlanImpl(relative_transformation);
 }
 
 }  // namespace swarm::controller

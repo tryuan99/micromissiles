@@ -7,7 +7,7 @@
 
 #include "simulation/swarm/agent.h"
 #include "simulation/swarm/controller/pn_controller.h"
-#include "simulation/swarm/proto/sensor.pb.h"
+#include "simulation/swarm/proto/transformation.pb.h"
 
 namespace swarm::controller {
 
@@ -21,7 +21,7 @@ class ApnController : public PnController {
 
  protected:
   // Plan the next optimal control(s).
-  void PlanImpl(const SensorOutput& sensor_output) override;
+  void PlanImpl(const Transformation& relative_transformation) override;
 };
 
 }  // namespace swarm::controller

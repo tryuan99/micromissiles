@@ -6,8 +6,7 @@ cc_library(
     hdrs = ["agent_controller.h"],
     deps = [
         "//simulation/swarm:agent",
-        "//simulation/swarm/proto:sensor_cc_proto",
-        "//simulation/swarm/sensor:ideal_sensor",
+        "//simulation/swarm/proto:transformation_cc_proto",
         "@eigen",
     ],
 )
@@ -19,7 +18,8 @@ cc_library(
     deps = [
         ":pn_controller",
         "//simulation/swarm:agent",
-        "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/proto:transformation_cc_proto",
+        "@eigen",
     ],
 )
 
@@ -46,7 +46,7 @@ cc_library(
         "//base:logging",
         "//simulation/swarm:agent",
         "//simulation/swarm/controls:mpc_controller",
-        "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/proto:transformation_cc_proto",
         "//simulation/swarm/utils:constants",
         "@eigen",
         "@libmpc",
@@ -60,7 +60,7 @@ cc_library(
     deps = [
         ":agent_controller",
         "//simulation/swarm:agent",
-        "//simulation/swarm/proto:sensor_cc_proto",
+        "//simulation/swarm/proto:transformation_cc_proto",
     ],
 )
 

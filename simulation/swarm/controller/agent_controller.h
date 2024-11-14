@@ -5,16 +5,14 @@
 #include <Eigen/Dense>
 
 #include "simulation/swarm/agent.h"
-#include "simulation/swarm/proto/sensor.pb.h"
-#include "simulation/swarm/sensor/ideal_sensor.h"
+#include "simulation/swarm/proto/transformation.pb.h"
 
 namespace swarm::controller {
 
 // Agent controller interface.
 class AgentController {
  public:
-  AgentController(const agent::Agent& agent)
-      : agent_(&agent), sensor_(sensor::IdealSensor(agent)) {}
+  AgentController(const agent::Agent& agent) : agent_(&agent) {}
 
   AgentController(AgentController&) = default;
   AgentController& operator=(AgentController&) = default;
@@ -31,17 +29,13 @@ class AgentController {
 
  protected:
   // Plan the next optimal control(s).
-  virtual void PlanImpl(const SensorOutput& sensor_output) = 0;
+  virtual void PlanImpl(const Transformation& relative_transformation) = 0;
 
   // Agent to be controlled.
   const agent::Agent* agent_ = nullptr;
 
   // Optimal control.
   Eigen::Vector3d acceleration_input_;
-
- private:
-  // Ideal sensor to sense the target assigned to the agent.
-  sensor::IdealSensor sensor_;
 };
 
 }  // namespace swarm::controller
