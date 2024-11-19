@@ -39,6 +39,9 @@ class Interceptor : public agent::Agent {
   // Update the interceptor's state in the boost phase.
   void UpdateBoost(double t) override;
 
+  // Update the interceptor's state in the midcourse phase.
+  void UpdateMidCourse(double t) override;
+
   // Calculate the total acceleration vector, including gravity and drag.
   Eigen::Vector3d CalculateAcceleration(
       const Eigen::Vector3d& acceleration_input) const;
@@ -54,6 +57,9 @@ class Interceptor : public agent::Agent {
   double sensor_update_time_ = std::numeric_limits<double>::min();
 
  private:
+  // Calculate the acceleration input based on the target.
+  Eigen::Vector3d CalculateAccelerationInput() const;
+
   // Calculate the gravity projection on the pitch and yaw axes.
   Eigen::Vector3d CalculateGravityProjectionOnPitchAndYaw() const;
 

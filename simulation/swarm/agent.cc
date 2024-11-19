@@ -8,10 +8,16 @@
 #include <stdexcept>
 
 #include "absl/strings/str_format.h"
+#include "base/commandlineflags.h"
+#include "base/logging.h"
 #include "simulation/swarm/proto/agent.pb.h"
 #include "simulation/swarm/proto/static_config.pb.h"
 #include "simulation/swarm/proto/transformation.pb.h"
 #include "simulation/swarm/utils/constants.h"
+
+DECLARE_float(launch_angle);
+DECLARE_float(dispense_time);
+DECLARE_float(light_time);
 
 namespace swarm::agent {
 
@@ -340,6 +346,14 @@ void Agent::Update(const double t) {
   }
   // TODO(titan): Determine when to enter the terminal phase.
 
+  // Log the agent's telemetry.
+  const auto position = GetPosition();
+  const auto velocity = GetVelocity();
+  LOG(INFO).NoPrefix() << FLAGS(launch_angle) << "," << FLAGS(dispense_time)
+                       << "," << FLAGS(light_time) << "," << t << ","
+                       << position(0) << "," << position(2) << ","
+                       << velocity(0) << "," << velocity(2);
+
   switch (flight_phase_) {
     case FlightPhase::INITIALIZED: {
       return;
@@ -397,6 +411,7 @@ void Agent::Step(const double t_start, const double t_step) {
     // Check if the agent has hit the ground.
     if (position_z < 0) {
       x_dot = Vector6d::Zero();
+      flight_phase_ = FlightPhase::TERMINATED;
     } else {
       x_dot = Vector6d{
           // dx/dt = vx

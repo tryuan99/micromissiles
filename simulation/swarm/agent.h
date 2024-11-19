@@ -157,7 +157,7 @@ class Agent {
   double GetDynamicPressure() const;
 
   // Update the agent's state according to the environment.
-  void Update(double t);
+  virtual void Update(double t);
 
   // Step forward the simulation by simulating the dynamics of the agent.
   void Step(double t_start, double t_step);

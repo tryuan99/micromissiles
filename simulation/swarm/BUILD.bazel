@@ -1,3 +1,5 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
@@ -6,6 +8,8 @@ cc_library(
     hdrs = ["agent.h"],
     deps = [
         ":state_history",
+        "//base:commandlineflags",
+        "//base:logging",
         "//simulation/swarm/proto:agent_cc_proto",
         "//simulation/swarm/proto:dynamic_config_cc_proto",
         "//simulation/swarm/proto:plotting_config_cc_proto",
@@ -16,6 +20,16 @@ cc_library(
         "@abseil-cpp//absl/strings:str_format",
         "@boost",
         "@eigen",
+    ],
+)
+
+py_binary(
+    name = "interceptor_characterization_simulator_main",
+    srcs = ["interceptor_characterization_simulator_main.py"],
+    data = [":simulator_main"],
+    deps = [
+        requirement("absl-py"),
+        requirement("numpy"),
     ],
 )
 

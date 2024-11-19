@@ -44,10 +44,6 @@ class Hydra70 : public Interceptor {
   // Spawn the submunitions.
   std::vector<std::unique_ptr<agent::Agent>> Spawn(double t) override;
 
- protected:
-  // Update the agent's state in the midcourse flight phase.
-  void UpdateMidCourse(double t) override;
-
  private:
   // Create a submunition based on its type.
   template <typename... Args>

@@ -41,13 +41,43 @@ void Interceptor::UpdateBoost(const double t) {
   const auto principal_axes = GetNormalizedPrincipalAxes();
   const auto boost_acceleration =
       static_config().boost_config().boost_acceleration() * constants::kGravity;
-  const auto acceleration_input = boost_acceleration * principal_axes.roll;
+  // Calculate the acceleration input to oppose gravity.
+  Eigen::Vector3d anti_gravity = CalculateAccelerationInput();
+  const auto acceleration_input =
+      boost_acceleration * principal_axes.roll + anti_gravity;
 
   // Calculate and set the total acceleration.
   const auto acceleration = CalculateAcceleration(acceleration_input);
   state_.mutable_acceleration()->set_x(acceleration(0));
   state_.mutable_acceleration()->set_y(acceleration(1));
   state_.mutable_acceleration()->set_z(acceleration(2));
+}
+
+void Interceptor::UpdateMidCourse(const double t) {
+  // Calculate the acceleration input to oppose gravity.
+  Eigen::Vector3d acceleration_input = CalculateAccelerationInput();
+
+  // Calculate and set the total acceleration.
+  const auto acceleration = CalculateAcceleration(acceleration_input);
+  state_.mutable_acceleration()->set_x(acceleration(0));
+  state_.mutable_acceleration()->set_y(acceleration(1));
+  state_.mutable_acceleration()->set_z(acceleration(2));
+}
+
+Eigen::Vector3d Interceptor::CalculateAccelerationInput() const {
+  // Counter gravity.
+  const auto gravity = GetGravity();
+  const auto principal_axes = GetNormalizedPrincipalAxes();
+  // Project the gravity to be normal to the velocity vector.
+  Eigen::Vector3d acceleration_input =
+      gravity - gravity.dot(principal_axes.roll) * principal_axes.roll;
+
+  // Clamp the acceleration vector.
+  const auto max_acceleration = CalculateMaxAcceleration();
+  if (acceleration_input.norm() > max_acceleration) {
+    return acceleration_input.normalized() * max_acceleration;
+  }
+  return acceleration_input;
 }
 
 Eigen::Vector3d Interceptor::CalculateAcceleration(

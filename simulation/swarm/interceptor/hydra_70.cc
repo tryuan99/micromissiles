@@ -39,20 +39,10 @@ std::vector<std::unique_ptr<agent::Agent>> Hydra70::Spawn(const double t) {
                             t, /*ready=*/true));
     }
     has_spawned_ = true;
+    flight_phase_ = FlightPhase::TERMINATED;
     return spawned_interceptors;
   }
   return std::vector<std::unique_ptr<agent::Agent>>();
-}
-
-void Hydra70::UpdateMidCourse(const double t) {
-  // The Hydra-70 rocket is unguided, so only consider gravity and drag.
-  Eigen::Vector3d acceleration_input = Eigen::Vector3d::Zero();
-
-  // Calculate and set the total acceleration.
-  const auto acceleration = CalculateAcceleration(acceleration_input);
-  state_.mutable_acceleration()->set_x(acceleration(0));
-  state_.mutable_acceleration()->set_y(acceleration(1));
-  state_.mutable_acceleration()->set_z(acceleration(2));
 }
 
 template <typename... Args>

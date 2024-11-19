@@ -1,0 +1,49 @@
+step_time: 0.01
+interceptor_configs {
+  interceptor_type: HYDRA_70
+  initial_state {
+    position {
+      x: 0
+      y: 0
+      z: 0
+    }
+    velocity {
+      x: 0 # Set by flag.
+      y: 0
+      z: 0 # Set by flag.
+    }
+  }
+  dynamic_config {
+    launch_config {
+      launch_time: 0
+    }
+  }
+  plotting_config {
+    color: BLUE
+    linestyle: DOTTED
+    marker: TRIANGLE_UP
+  }
+  submunitions_config {
+    num_submunitions: 1
+    launch_config {
+      launch_time: 0 # Set by flag.
+    }
+    agent_config {
+      interceptor_type: MICROMISSILE
+      dynamic_config {
+        launch_config {
+          launch_time: 0 # Set by flag.
+        }
+        sensor_config {
+          type: IDEAL
+          frequency: 100
+        }
+      }
+      plotting_config {
+        color: BLUE
+        linestyle: SOLID
+        marker: TRIANGLE_DOWN
+      }
+    }
+  }
+}

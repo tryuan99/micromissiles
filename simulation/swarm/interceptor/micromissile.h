@@ -37,14 +37,6 @@ class Micromissile : public Interceptor {
   Micromissile(const Micromissile&) = delete;
   Micromissile& operator=(const Micromissile&) = delete;
 
- protected:
-  // Update the agent's state in the midcourse flight phase.
-  void UpdateMidCourse(double t) override;
-
- private:
-  // Calculate the acceleration input based on the target.
-  Eigen::Vector3d CalculateAccelerationInput() const;
-
   // Get the controller to use for the micromissile.
   std::unique_ptr<controller::AgentController> GetController() const;
 };

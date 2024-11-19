@@ -1,5 +1,6 @@
 #include "simulation/swarm/simulator.h"
 
+#include <algorithm>
 #include <cstdbool>
 #include <memory>
 #include <utility>
@@ -44,7 +45,7 @@ Simulator::Simulator(const SimulatorConfig& simulator_config)
 
 void Simulator::Run(const double t_end) {
   for (double t = 0; t < t_end; t += t_step_) {
-    LOG(INFO) << "Simulating time t=" << t << ".";
+    // LOG(INFO) << "Simulating time t=" << t << ".";
 
     // Have all interceptors check their threats.
     for (auto& interceptor : interceptors_) {
@@ -105,7 +106,18 @@ void Simulator::Run(const double t_end) {
         thread_pool_.QueueJob([&]() { threat->Step(t, t_step_); });
       }
     }
+
     thread_pool_.Wait();
+
+    // Check if any agents are still alive.
+    const auto has_terminated = [](const std::unique_ptr<agent::Agent>& agent) {
+      return agent->has_terminated();
+    };
+    if (std::all_of(interceptors_.cbegin(), interceptors_.cend(),
+                    has_terminated) &&
+        std::all_of(threats_.cbegin(), threats_.cend(), has_terminated)) {
+      break;
+    }
   }
 }
 
