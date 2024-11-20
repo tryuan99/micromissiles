@@ -1,6 +1,7 @@
 """Custom color maps for Matplotlib."""
 
 import matplotlib.colors as mcolors
+import numpy as np
 
 # Parula. Adapted from Matlab R2022b. https://stackoverflow.com/a/60007513.
 COLOR_MAP_PARULA = mcolors.ListedColormap(
@@ -265,6 +266,29 @@ COLOR_MAP_PARULA = mcolors.ListedColormap(
     name="parula",
 )
 
+# Dictionary of Matplotlib colormaps.
 COLOR_MAPS = {
     "parula": COLOR_MAP_PARULA,
+}
+
+
+def convert_colormap_to_rgb(colormap: mcolors.Colormap) -> list[str]:
+    """Converts the Matplotlib colormap to a list of RGB values.
+
+    Plotly uses RGB values.
+
+    Args:
+        colormap: Matplotlib colormap.
+
+    Returns:
+        The RGB values.
+    """
+    rgb_values = colormap(np.arange(colormap.N), bytes=True)[:, :3]
+    return [f"rgb({', '.join(map(str, rgb))})" for rgb in rgb_values]
+
+
+# Dictionary of RGB colormaps.
+COLOR_MAPS_RGB = {
+    name: convert_colormap_to_rgb(colormap)
+    for name, colormap in COLOR_MAPS.items()
 }
