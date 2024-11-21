@@ -32,9 +32,11 @@ def main(argv):
         FLAGS.x_start,
         FLAGS.x_end,
         FLAGS.x_step,
+        FLAGS.x_interpolation_step,
         FLAGS.y_start,
         FLAGS.y_end,
         FLAGS.y_step,
+        FLAGS.y_interpolation_step,
     )
 
 
@@ -49,6 +51,10 @@ if __name__ == "__main__":
     flags.DEFINE_float("y_end", 10000, "y-position range end in meters.")
     flags.DEFINE_float("x_step", 1000, "x-position range step in meters.")
     flags.DEFINE_float("y_step", 1000, "y-position range step in meters.")
+    flags.DEFINE_float("x_interpolation_step", 100,
+                       "x-position interpolation step in meters.")
+    flags.DEFINE_float("y_interpolation_step", 100,
+                       "y-position interpolation step in meters.")
     flags.mark_flag_as_required("csv_file")
 
     app.run(main)

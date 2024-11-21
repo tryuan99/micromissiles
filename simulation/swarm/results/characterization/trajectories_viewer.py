@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import scienceplots
+import scipy.interpolate
 from absl import logging
 
 from utils.visualization.color_maps import COLOR_MAPS, COLOR_MAPS_RGB
@@ -64,11 +65,13 @@ class TrajectoriesViewer:
             > (self.df[self.submunition_dispense_time_column] +
                self.df[self.submunition_light_time_column]))
 
+        # Set the Matplotlib style.
+        plt.style.use(["science", "grid"])
+
     def plot_all_trajectories(self) -> None:
         """Plots all trajectories."""
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(
-            figsize=(12, 12),
+            figsize=(12, 6),
             subplot_kw={"projection": "3d"},
         )
         scatter = ax.scatter(
@@ -99,7 +102,6 @@ class TrajectoriesViewer:
                     submunition_dispense_time])
 
         # Plot the trajectories with the given submunition dispense time.
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(figsize=(12, 6))
         scatter = ax.scatter(
             df_with_submunition_dispense_time[self.px_column],
@@ -125,7 +127,6 @@ class TrajectoriesViewer:
         df_at_time = self.df[(self.df[self.time_column] == time)]
 
         # Plot the trajectory points in Matplotlib.
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(figsize=(12, 6))
         scatter = ax.scatter(
             df_at_time[self.px_column],
@@ -193,7 +194,6 @@ class TrajectoriesViewer:
                                 (self.df[self.time_column] < time)]
 
         # Plot the trajectory points in Matplotlib.
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(figsize=(12, 6))
         scatter = ax.scatter(
             df_within_box[self.px_column],
@@ -211,7 +211,6 @@ class TrajectoriesViewer:
 
         # Plot the trajectory points separated by the submunition dispense time
         # in Matplotlib.
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(
             figsize=(12, 6),
             subplot_kw={"projection": "3d"},
@@ -322,7 +321,6 @@ class TrajectoriesViewer:
                                 (self.df[self.time_column] < time)]
 
         # Plot the trajectory points in Matplotlib.
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(figsize=(12, 6))
         scatter = ax.scatter(
             df_within_box[self.px_column],
@@ -370,8 +368,9 @@ class TrajectoriesViewer:
         fig.show()
 
     def find_optimal_trajectories(self, x_start: float, x_end: float,
-                                  x_step: float, y_start: float, y_end: float,
-                                  y_step: float) -> None:
+                                  x_step: float, x_interpolation_step: float,
+                                  y_start: float, y_end: float, y_step: float,
+                                  y_interpolation_step: float) -> None:
         """Finds the optimal trajectories that maximize speed or minimize time
         to intercept.
 
@@ -384,9 +383,11 @@ class TrajectoriesViewer:
             x_start: x-position range start in meters.
             x_end: x-position range end in meters.
             x_step: x-position range step in meters.
+            x_interpolation_step: x-position interpolation step in meters.
             y_start: y-position range start in meters.
             y_end: y-position range end in meters.
             y_step: y-position range step in meters.
+            y_interpolation_step: y-position interpolation step in meters.
         """
         # Find the optimal trajectory points for each position.
         max_speed_indices = []
@@ -411,7 +412,6 @@ class TrajectoriesViewer:
         # Plot the trajectory points with the maximum speed in Matplotlib.
         # The color of the points denotes the time.
         df_max_speed = self.df.iloc[np.unique(max_speed_indices)]
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(
             figsize=(12, 6),
             subplot_kw={"projection": "3d"},
@@ -428,6 +428,42 @@ class TrajectoriesViewer:
         ax.set_zlabel("Maximum speed [m/s]")
         ax.set_title("Trajectory points with maximum speed")
         plt.colorbar(scatter)
+        plt.show()
+
+        # Interpolate the trajectory points with the maximum speed time and
+        # plot the interpolated surface in Matplotlib.
+        max_speed_interpolator = scipy.interpolate.CloughTocher2DInterpolator(
+            df_max_speed[[self.px_column, self.py_column]],
+            df_max_speed[self.speed_column],
+        )
+        x = np.arange(
+            df_max_speed[self.px_column].min(),
+            df_max_speed[self.px_column].max() + x_interpolation_step,
+            x_interpolation_step,
+        )
+        y = np.arange(
+            df_max_speed[self.py_column].min(),
+            df_max_speed[self.py_column].max() + y_interpolation_step,
+            y_interpolation_step,
+        )
+        X, Y = np.meshgrid(x, y)
+        max_speed_interpolated = max_speed_interpolator(X, Y)
+
+        fig, ax = plt.subplots(
+            figsize=(12, 6),
+            subplot_kw={"projection": "3d"},
+        )
+        surf = ax.plot_surface(
+            X,
+            Y,
+            max_speed_interpolated,
+            cmap=COLOR_MAPS["parula"],
+        )
+        ax.set_xlabel("Position [m]")
+        ax.set_ylabel("Altitude [m]")
+        ax.set_zlabel("Maximum speed [m/s]")
+        ax.set_title("Maximum speed")
+        plt.colorbar(surf)
         plt.show()
 
         # Plot the trajectory points with the maximum speed in Plotly.
@@ -465,9 +501,8 @@ class TrajectoriesViewer:
         # Plot the trajectory points with the minimum time in Matplotlib.
         # The color of the points denotes the speed.
         df_min_time = self.df.iloc[np.unique(min_time_indices)]
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(
-            figsize=(12, 8),
+            figsize=(12, 6),
             subplot_kw={"projection": "3d"},
         )
         scatter = ax.scatter(
@@ -482,6 +517,42 @@ class TrajectoriesViewer:
         ax.set_zlabel("Minimum time [s]")
         ax.set_title("Trajectory points with minimum time")
         plt.colorbar(scatter)
+        plt.show()
+
+        # Interpolate the trajectory points with the minimum time and plot the
+        # interpolated surface in Matplotlib.
+        min_time_interpolator = scipy.interpolate.CloughTocher2DInterpolator(
+            df_min_time[[self.px_column, self.py_column]],
+            df_min_time[self.time_column],
+        )
+        x = np.arange(
+            df_min_time[self.px_column].min(),
+            df_min_time[self.px_column].max() + x_interpolation_step,
+            x_interpolation_step,
+        )
+        y = np.arange(
+            df_min_time[self.py_column].min(),
+            df_min_time[self.py_column].max() + y_interpolation_step,
+            y_interpolation_step,
+        )
+        X, Y = np.meshgrid(x, y)
+        min_time_interpolated = min_time_interpolator(X, Y)
+
+        fig, ax = plt.subplots(
+            figsize=(12, 6),
+            subplot_kw={"projection": "3d"},
+        )
+        surf = ax.plot_surface(
+            X,
+            Y,
+            min_time_interpolated,
+            cmap=COLOR_MAPS["parula"].reversed(),
+        )
+        ax.set_xlabel("Position [m]")
+        ax.set_ylabel("Altitude [m]")
+        ax.set_zlabel("Minimum time [s]")
+        ax.set_title("Minimum time")
+        plt.colorbar(surf)
         plt.show()
 
         # Plot the trajectory points with the minimum time in Plotly.
