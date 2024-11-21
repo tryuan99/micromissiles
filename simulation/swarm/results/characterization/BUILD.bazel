@@ -1,0 +1,26 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "trajectories_viewer",
+    srcs = ["trajectories_viewer.py"],
+    deps = [
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("plotly"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "trajectories_viewer_main",
+    srcs = ["trajectories_viewer_main.py"],
+    deps = [
+        ":trajectories_viewer",
+        requirement("absl-py"),
+    ],
+)
