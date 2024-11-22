@@ -449,21 +449,22 @@ class TrajectoriesViewer:
         X, Y = np.meshgrid(x, y)
         max_speed_interpolated = max_speed_interpolator(X, Y)
 
-        fig, ax = plt.subplots(
-            figsize=(12, 6),
-            subplot_kw={"projection": "3d"},
-        )
-        surf = ax.plot_surface(
-            X,
-            Y,
+        fig, ax = plt.subplots(figsize=(12, 6))
+        image = ax.imshow(
             max_speed_interpolated,
             cmap=COLOR_MAPS["parula"],
+            origin="lower",
+            extent=(
+                df_max_speed[self.py_column].min() - 0.5,
+                df_max_speed[self.py_column].max() - 0.5,
+                df_max_speed[self.px_column].min() - 0.5,
+                df_max_speed[self.px_column].max() - 0.5,
+            ),
         )
         ax.set_xlabel("Position [m]")
         ax.set_ylabel("Altitude [m]")
-        ax.set_zlabel("Maximum speed [m/s]")
         ax.set_title("Maximum speed")
-        plt.colorbar(surf)
+        plt.colorbar(image)
         plt.show()
 
         # Plot the trajectory points with the maximum speed in Plotly.
@@ -538,21 +539,22 @@ class TrajectoriesViewer:
         X, Y = np.meshgrid(x, y)
         min_time_interpolated = min_time_interpolator(X, Y)
 
-        fig, ax = plt.subplots(
-            figsize=(12, 6),
-            subplot_kw={"projection": "3d"},
-        )
-        surf = ax.plot_surface(
-            X,
-            Y,
+        fig, ax = plt.subplots(figsize=(12, 6))
+        image = ax.imshow(
             min_time_interpolated,
             cmap=COLOR_MAPS["parula"].reversed(),
+            origin="lower",
+            extent=(
+                df_min_time[self.py_column].min() - 0.5,
+                df_min_time[self.py_column].max() - 0.5,
+                df_min_time[self.px_column].min() - 0.5,
+                df_min_time[self.px_column].max() - 0.5,
+            ),
         )
         ax.set_xlabel("Position [m]")
         ax.set_ylabel("Altitude [m]")
-        ax.set_zlabel("Minimum time [s]")
         ax.set_title("Minimum time")
-        plt.colorbar(surf)
+        plt.colorbar(image)
         plt.show()
 
         # Plot the trajectory points with the minimum time in Plotly.
