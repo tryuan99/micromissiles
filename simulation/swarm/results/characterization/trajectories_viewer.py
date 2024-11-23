@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import scienceplots
 import scipy.interpolate
 from absl import logging
@@ -172,8 +173,13 @@ class TrajectoriesViewer:
         fig.show()
 
     def plot_reachability_around_position_before_time_color_speed(
-            self, x_start: float, x_end: float, y_start: float, y_end: float,
-            time: float) -> None:
+        self,
+        x_start: float,
+        x_end: float,
+        y_start: float,
+        y_end: float,
+        time: float,
+    ) -> None:
         """Plots the trajectory points within the given box before the given
         time.
         
@@ -299,8 +305,13 @@ class TrajectoriesViewer:
         fig.show()
 
     def plot_reachability_around_position_before_time_color_time(
-            self, x_start: float, x_end: float, y_start: float, y_end: float,
-            time: float) -> None:
+        self,
+        x_start: float,
+        x_end: float,
+        y_start: float,
+        y_end: float,
+        time: float,
+    ) -> None:
         """Plots the trajectory points within the given box before the given
         time.
         
@@ -367,10 +378,17 @@ class TrajectoriesViewer:
         )
         fig.show()
 
-    def find_optimal_trajectories(self, x_start: float, x_end: float,
-                                  x_step: float, x_interpolation_step: float,
-                                  y_start: float, y_end: float, y_step: float,
-                                  y_interpolation_step: float) -> None:
+    def find_optimal_trajectories(
+        self,
+        x_start: float,
+        x_end: float,
+        x_step: float,
+        x_interpolation_step: float,
+        y_start: float,
+        y_end: float,
+        y_step: float,
+        y_interpolation_step: float,
+    ) -> None:
         """Finds the optimal trajectories that maximize speed or minimize time
         to intercept.
 
@@ -427,44 +445,7 @@ class TrajectoriesViewer:
         ax.set_ylabel("Altitude [m]")
         ax.set_zlabel("Maximum speed [m/s]")
         ax.set_title("Trajectory points with maximum speed")
-        plt.colorbar(scatter)
-        plt.show()
-
-        # Interpolate the trajectory points with the maximum speed time and
-        # plot the interpolated surface in Matplotlib.
-        max_speed_interpolator = scipy.interpolate.CloughTocher2DInterpolator(
-            df_max_speed[[self.px_column, self.py_column]],
-            df_max_speed[self.speed_column],
-        )
-        x = np.arange(
-            df_max_speed[self.px_column].min(),
-            df_max_speed[self.px_column].max() + x_interpolation_step,
-            x_interpolation_step,
-        )
-        y = np.arange(
-            df_max_speed[self.py_column].min(),
-            df_max_speed[self.py_column].max() + y_interpolation_step,
-            y_interpolation_step,
-        )
-        X, Y = np.meshgrid(x, y)
-        max_speed_interpolated = max_speed_interpolator(X, Y)
-
-        fig, ax = plt.subplots(figsize=(12, 6))
-        image = ax.imshow(
-            max_speed_interpolated,
-            cmap=COLOR_MAPS["parula"],
-            origin="lower",
-            extent=(
-                df_max_speed[self.py_column].min() - 0.5,
-                df_max_speed[self.py_column].max() - 0.5,
-                df_max_speed[self.px_column].min() - 0.5,
-                df_max_speed[self.px_column].max() - 0.5,
-            ),
-        )
-        ax.set_xlabel("Position [m]")
-        ax.set_ylabel("Altitude [m]")
-        ax.set_title("Maximum speed")
-        plt.colorbar(image)
+        plt.colorbar(scatter, label="Time [s]")
         plt.show()
 
         # Plot the trajectory points with the maximum speed in Plotly.
@@ -499,6 +480,199 @@ class TrajectoriesViewer:
         )
         fig.show()
 
+        # Interpolate the trajectory points with the maximum speed.
+        x = np.arange(
+            df_max_speed[self.px_column].min(),
+            df_max_speed[self.px_column].max() + x_interpolation_step,
+            x_interpolation_step,
+        )
+        y = np.arange(
+            df_max_speed[self.py_column].min(),
+            df_max_speed[self.py_column].max() + y_interpolation_step,
+            y_interpolation_step,
+        )
+        X, Y = np.meshgrid(x, y)
+
+        # Interpolate the maximum speed.
+        max_speed_interpolator = scipy.interpolate.CloughTocher2DInterpolator(
+            df_max_speed[[self.px_column, self.py_column]],
+            df_max_speed[self.speed_column],
+        )
+        max_speed_interpolated = max_speed_interpolator(X, Y)
+
+        # Interpolate the carrier launch angle.
+        max_speed_carrier_launch_angle_interpolator = (
+            scipy.interpolate.CloughTocher2DInterpolator(
+                df_max_speed[[self.px_column, self.py_column]],
+                df_max_speed[self.carrier_launch_angle_column],
+            ))
+        max_speed_carrier_launch_angle_interpolated = (
+            max_speed_carrier_launch_angle_interpolator(X, Y))
+
+        # Plot the interpolated maximum speed in Matplotlib.
+        fig, ax = plt.subplots(figsize=(12, 6))
+        image = ax.imshow(
+            max_speed_interpolated,
+            cmap=COLOR_MAPS["parula"],
+            origin="lower",
+            extent=(
+                df_max_speed[self.py_column].min() - 0.5,
+                df_max_speed[self.py_column].max() - 0.5,
+                df_max_speed[self.px_column].min() - 0.5,
+                df_max_speed[self.px_column].max() - 0.5,
+            ),
+        )
+        ax.contour(
+            X,
+            Y,
+            max_speed_interpolated,
+            colors="black",
+        )
+        ax.set_xlabel("Position [m]")
+        ax.set_ylabel("Altitude [m]")
+        ax.set_title("Maximum speed")
+        plt.colorbar(image, label="Maximum speed [m/s]")
+        plt.show()
+
+        # Plot the interpolated maximum speed in Plotly 2D.
+        fig = px.imshow(
+            max_speed_interpolated,
+            x=x,
+            y=y,
+            color_continuous_scale=COLOR_MAPS_RGB["parula"],
+            origin="lower",
+            title="Maximum speed",
+            labels={
+                "x": "Position [m]",
+                "y": "Altitude [m]",
+                "color": "Maximum speed [m/s]",
+            },
+        )
+        fig.update_layout(
+            autosize=False,
+            width=1200,
+            height=800,
+            font_family="Helvetica",
+        )
+        fig.show()
+
+        # Plot the interpolated maximum speed in Plotly 3D.
+        fig = go.Figure(data=[
+            go.Surface(
+                x=x,
+                y=y,
+                z=max_speed_interpolated,
+                colorscale=COLOR_MAPS_RGB["parula"],
+                colorbar_title_text="Maximum speed [m/s]",
+                contours={
+                    "z": {
+                        "show": True,
+                    },
+                },
+            )
+        ])
+        fig.update_layout(
+            title={"text": "Maximum speed"},
+            scene={
+                "xaxis": {
+                    "title": "Position [m]",
+                },
+                "yaxis": {
+                    "title": "Altitude [m]",
+                },
+                "zaxis": {
+                    "title": "Maximum speed [m/s]",
+                },
+            },
+            autosize=False,
+            width=1200,
+            height=800,
+            font_family="Helvetica",
+        )
+        fig.show()
+
+        # Plot the interpolated launch angle in Matplotlib.
+        fig, ax = plt.subplots(figsize=(12, 6))
+        image = ax.imshow(
+            max_speed_carrier_launch_angle_interpolated,
+            cmap=COLOR_MAPS["parula"],
+            origin="lower",
+            extent=(
+                df_max_speed[self.py_column].min() - 0.5,
+                df_max_speed[self.py_column].max() - 0.5,
+                df_max_speed[self.px_column].min() - 0.5,
+                df_max_speed[self.px_column].max() - 0.5,
+            ),
+        )
+        ax.contour(
+            X,
+            Y,
+            max_speed_carrier_launch_angle_interpolated,
+            colors="black",
+        )
+        ax.set_xlabel("Position [m]")
+        ax.set_ylabel("Altitude [m]")
+        ax.set_title("Launch angle for maximum speed")
+        plt.colorbar(image, label="Carrier launch angle [deg]")
+        plt.show()
+
+        # Plot the interpolated launch angle in Plotly 2D.
+        fig = px.imshow(
+            max_speed_carrier_launch_angle_interpolated,
+            x=x,
+            y=y,
+            color_continuous_scale=COLOR_MAPS_RGB["parula"],
+            origin="lower",
+            title="Launch angle for maximum speed",
+            labels={
+                "x": "Position [m]",
+                "y": "Altitude [m]",
+                "color": "Carrier launch angle [deg]",
+            },
+        )
+        fig.update_layout(
+            autosize=False,
+            width=1200,
+            height=800,
+            font_family="Helvetica",
+        )
+        fig.show()
+
+        # Plot the interpolated launch angle in Plotly 3D.
+        fig = go.Figure(data=[
+            go.Surface(
+                x=x,
+                y=y,
+                z=max_speed_carrier_launch_angle_interpolated,
+                colorscale=COLOR_MAPS_RGB["parula"],
+                colorbar_title_text="Carrier launch angle [deg]",
+                contours={
+                    "z": {
+                        "show": True,
+                    },
+                },
+            )
+        ])
+        fig.update_layout(
+            title={"text": "Launch angle for maximum speed"},
+            scene={
+                "xaxis": {
+                    "title": "Position [m]",
+                },
+                "yaxis": {
+                    "title": "Altitude [m]",
+                },
+                "zaxis": {
+                    "title": "Carrier launch angle [deg]",
+                },
+            },
+            autosize=False,
+            width=1200,
+            height=800,
+            font_family="Helvetica",
+        )
+        fig.show()
+
         # Plot the trajectory points with the minimum time in Matplotlib.
         # The color of the points denotes the speed.
         df_min_time = self.df.iloc[np.unique(min_time_indices)]
@@ -517,44 +691,7 @@ class TrajectoriesViewer:
         ax.set_ylabel("Altitude [m]")
         ax.set_zlabel("Minimum time [s]")
         ax.set_title("Trajectory points with minimum time")
-        plt.colorbar(scatter)
-        plt.show()
-
-        # Interpolate the trajectory points with the minimum time and plot the
-        # interpolated surface in Matplotlib.
-        min_time_interpolator = scipy.interpolate.CloughTocher2DInterpolator(
-            df_min_time[[self.px_column, self.py_column]],
-            df_min_time[self.time_column],
-        )
-        x = np.arange(
-            df_min_time[self.px_column].min(),
-            df_min_time[self.px_column].max() + x_interpolation_step,
-            x_interpolation_step,
-        )
-        y = np.arange(
-            df_min_time[self.py_column].min(),
-            df_min_time[self.py_column].max() + y_interpolation_step,
-            y_interpolation_step,
-        )
-        X, Y = np.meshgrid(x, y)
-        min_time_interpolated = min_time_interpolator(X, Y)
-
-        fig, ax = plt.subplots(figsize=(12, 6))
-        image = ax.imshow(
-            min_time_interpolated,
-            cmap=COLOR_MAPS["parula"].reversed(),
-            origin="lower",
-            extent=(
-                df_min_time[self.py_column].min() - 0.5,
-                df_min_time[self.py_column].max() - 0.5,
-                df_min_time[self.px_column].min() - 0.5,
-                df_min_time[self.px_column].max() - 0.5,
-            ),
-        )
-        ax.set_xlabel("Position [m]")
-        ax.set_ylabel("Altitude [m]")
-        ax.set_title("Minimum time")
-        plt.colorbar(image)
+        plt.colorbar(scatter, label="Speed [m/s]")
         plt.show()
 
         # Plot the trajectory points with the minimum time in Plotly.
@@ -586,5 +723,107 @@ class TrajectoriesViewer:
             height=800,
             font_family="Helvetica",
             legend_orientation="h",
+        )
+        fig.show()
+
+        # Interpolate the trajectory points with the minimum time.
+        x = np.arange(
+            df_min_time[self.px_column].min(),
+            df_min_time[self.px_column].max() + x_interpolation_step,
+            x_interpolation_step,
+        )
+        y = np.arange(
+            df_min_time[self.py_column].min(),
+            df_min_time[self.py_column].max() + y_interpolation_step,
+            y_interpolation_step,
+        )
+        X, Y = np.meshgrid(x, y)
+
+        # Interpolate the minimum time.
+        min_time_interpolator = scipy.interpolate.CloughTocher2DInterpolator(
+            df_min_time[[self.px_column, self.py_column]],
+            df_min_time[self.time_column],
+        )
+        min_time_interpolated = min_time_interpolator(X, Y)
+
+        # Plot the interpolated minimum time in Matplotlib.
+        fig, ax = plt.subplots(figsize=(12, 6))
+        image = ax.imshow(
+            min_time_interpolated,
+            cmap=COLOR_MAPS["parula"].reversed(),
+            origin="lower",
+            extent=(
+                df_min_time[self.py_column].min() - 0.5,
+                df_min_time[self.py_column].max() - 0.5,
+                df_min_time[self.px_column].min() - 0.5,
+                df_min_time[self.px_column].max() - 0.5,
+            ),
+        )
+        ax.contour(
+            X,
+            Y,
+            min_time_interpolated,
+            colors="black",
+        )
+        ax.set_xlabel("Position [m]")
+        ax.set_ylabel("Altitude [m]")
+        ax.set_title("Minimum time")
+        plt.colorbar(image, label="Minimum time [s]")
+        plt.show()
+
+        # Plot the interpolated maximum speed in Plotly 2D.
+        fig = px.imshow(
+            min_time_interpolated,
+            x=x,
+            y=y,
+            color_continuous_scale=COLOR_MAPS_RGB["parula"],
+            origin="lower",
+            title="Minimum time",
+            labels={
+                "x": "Position [m]",
+                "y": "Altitude [m]",
+                "color": "Minimum time [s]",
+            },
+        )
+        fig.update_layout(
+            autosize=False,
+            width=1200,
+            height=800,
+            font_family="Helvetica",
+        )
+        fig.show()
+
+        # Plot the interpolated minimum time in Plotly 3D.
+        fig = go.Figure(data=[
+            go.Surface(
+                x=x,
+                y=y,
+                z=min_time_interpolated,
+                colorscale=COLOR_MAPS_RGB["parula"],
+                colorbar_title_text="Minimum time [s]",
+                contours={
+                    "z": {
+                        "show": True,
+                    },
+                },
+            )
+        ])
+        fig.update_layout(
+            title={"text": "Minimum time"},
+            scene={
+                "xaxis": {
+                    "title": "Position [m]",
+                },
+                "yaxis": {
+                    "title": "Altitude [m]",
+                },
+                "zaxis": {
+                    "title": "Minimum time [s]",
+                },
+            },
+            autosize=False,
+            width=1200,
+            height=800,
+            font_family="Helvetica",
         )
         fig.show()
