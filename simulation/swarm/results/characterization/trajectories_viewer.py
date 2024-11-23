@@ -1,8 +1,11 @@
 """The trajectories viewer processes and plots the simulated trajectories.
 
 For an example of a trajectories CSV file containing the trajectories of a
-Hydra-70 carrier interceptor with a micromissile interceptor, see
-https://drive.google.com/file/d/1_CWr8wQK_lumAY-2NtcY0-6_mn9DDOyl/view?usp=sharing.
+Hydra-70 carrier interceptor with a micromissile interceptor, see one of the
+following CSV files:
+- https://drive.google.com/file/d/1_CWr8wQK_lumAY-2NtcY0-6_mn9DDOyl/view
+- https://drive.google.com/file/d/1aR6F4_AAPiGW7UakczYtwo2uKZnvHT-W/view
+- https://drive.google.com/file/d/13SbRva6yr3YIKUitowfXM6CCY_PapzRh/view
 """
 
 import matplotlib.pyplot as plt
