@@ -779,7 +779,7 @@ class TrajectoriesViewer:
             min_time_interpolated,
             x=x,
             y=y,
-            color_continuous_scale=COLOR_MAPS_RGB["parula"],
+            color_continuous_scale=COLOR_MAPS_RGB["parula"][::-1],
             origin="lower",
             title="Minimum time",
             labels={
@@ -802,7 +802,7 @@ class TrajectoriesViewer:
                 x=x,
                 y=y,
                 z=min_time_interpolated,
-                colorscale=COLOR_MAPS_RGB["parula"],
+                colorscale=COLOR_MAPS_RGB["parula"][::-1],
                 colorbar_title_text="Minimum time [s]",
                 contours={
                     "z": {
