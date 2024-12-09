@@ -8,8 +8,8 @@ from simulation.antenna.antenna import Antenna
 class PatchAntenna(Antenna):
     """Patch antenna.
 
-    The patch antenna lies in the x-y plane, fed in the y-direction (W parallel
-    to the x-axis and L parallel to the y-axis).
+    The patch antenna lies in the x-y plane, fed in the +y-direction (W
+    parallel to the x-axis and L parallel to the y-axis).
 
     Attributes:
         width: Width in units of lambda.
@@ -51,10 +51,10 @@ class PatchAntenna(Antenna):
 
         Adapted from https://www.antenna-theory.com/antennas/patches/antenna.php.
         The equation assumes that the patch antenna lies in the x-y plane, fed
-        in the y-direction (W parallel to the x-axis and L parallel to the
+        in the +y-direction (W parallel to the x-axis and L parallel to the
         y-axis). The azimuth is the angle on the x-y plane measured
-        counterclockwise from the y-axis, and the elevation is the angle
-        measured from the z-axis.
+        counterclockwise from the y-axis to the -x-axis, and the elevation is
+        the angle measured from the z-axis to the x-y plane.
 
         Args:
             azimuth: Azimuth in radians.

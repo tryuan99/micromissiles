@@ -30,13 +30,13 @@ def sweep_azimuth_spectrum(num_antennas: int, antenna_spacing: float) -> None:
     array = AntennaArray(elements)
     spectrum = AntennaArray1DSpectrum(array)
 
-    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    theta = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
     # Plot the spectrum in an animation.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 8))
-    line, = ax.plot(theta, np.zeros(len(theta)))
+    fig, ax = plt.subplots(figsize=(12, 6))
+    line, = ax.plot(azimuth, np.zeros(len(azimuth)))
 
     def init_animation() -> None:
         """Initializes the animation."""
@@ -52,14 +52,14 @@ def sweep_azimuth_spectrum(num_antennas: int, antenna_spacing: float) -> None:
             frame: Azimuth to plot.
         """
         arrival = AntennaArrayArrival(azimuth=frame)
-        data = spectrum.calculate_azimuth_spectrum(arrival, theta)
-        line.set_data(theta, 20 * np.log10(np.abs(data)))
-        ax.set_title(f"Azimuth spectrum (theta = {frame})")
+        data = spectrum.calculate_azimuth_spectrum(arrival, azimuth)
+        line.set_data(azimuth, 20 * np.log10(np.abs(data)))
+        ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
 
     anim = animation.FuncAnimation(
         fig,
         update_animation,
-        frames=azimuth,
+        frames=azimuth_sweep,
         init_func=init_animation,
         interval=ANIMATION_INTERVAL,
     )
@@ -82,13 +82,13 @@ def sweep_azimuth_spectrum_resolution(num_antennas: int, antenna_spacing: float,
     array = AntennaArray(elements)
     spectrum = AntennaArray1DSpectrum(array)
 
-    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    theta = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
     # Plot the spectrum in an animation.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 8))
-    line, = ax.plot(theta, np.zeros(len(theta)))
+    fig, ax = plt.subplots(figsize=(12, 6))
+    line, = ax.plot(azimuth, np.zeros(len(azimuth)))
 
     def init_animation() -> None:
         """Initializes the animation."""
@@ -107,14 +107,14 @@ def sweep_azimuth_spectrum_resolution(num_antennas: int, antenna_spacing: float,
             AntennaArrayArrival(azimuth=frame),
             AntennaArrayArrival(azimuth=frame + delta_azimuth),
         ]
-        data = spectrum.calculate_azimuth_spectrum(arrivals, theta)
-        line.set_data(theta, 20 * np.log10(np.abs(data)))
-        ax.set_title(f"Azimuth spectrum (theta = {frame})")
+        data = spectrum.calculate_azimuth_spectrum(arrivals, azimuth)
+        line.set_data(azimuth, 20 * np.log10(np.abs(data)))
+        ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
 
     anim = animation.FuncAnimation(
         fig,
         update_animation,
-        frames=azimuth,
+        frames=azimuth_sweep,
         init_func=init_animation,
         interval=ANIMATION_INTERVAL,
     )

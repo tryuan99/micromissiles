@@ -18,7 +18,7 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
     # Plot the antenna array elements.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(
-        figsize=(12, 8),
+        figsize=(12, 6),
         subplot_kw={"projection": "3d"},
     )
     for element in array.elements:

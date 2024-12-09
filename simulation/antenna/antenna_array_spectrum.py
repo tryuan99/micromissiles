@@ -22,12 +22,12 @@ class AntennaArraySpectrum(ABC):
     @abstractmethod
     def calculate_azimuth_spectrum(self, arrivals: AntennaArrayArrival |
                                    list[AntennaArrayArrival],
-                                   theta: np.ndarray) -> np.ndarray:
+                                   azimuth: np.ndarray) -> np.ndarray:
         """Calculates the azimuth spectrum of the antenna array.
 
         Args:
             arrivals: Antenna array arrivals.
-            theta: Azimuth angles.
+            azimuth: Azimuth angles.
 
         Returns:
             The spectrum of the antenna array.
@@ -36,12 +36,12 @@ class AntennaArraySpectrum(ABC):
     @abstractmethod
     def calculate_elevation_spectrum(self, arrivals: AntennaArrayArrival |
                                      list[AntennaArrayArrival],
-                                     phi: np.ndarray) -> np.ndarray:
+                                     elevation: np.ndarray) -> np.ndarray:
         """Calculates the elevation spectrum of the antenna array.
 
         Args:
             arrivals: Antenna array arrivals.
-            phi: Elevation angles.
+            elevation: Elevation angles.
 
         Returns:
             The spectrum of the antenna array.

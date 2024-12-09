@@ -28,16 +28,20 @@ def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
     """
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    theta, phi = np.meshgrid(azimuth, elevation, indexing="ij")
+    azimuth_mesh, elevation_mesh = np.meshgrid(
+        azimuth,
+        elevation,
+        indexing="ij",
+    )
 
     horn_antenna = HornAntenna(a, b, a1, b1, rho1, rho2)
-    pattern = horn_antenna.calculate_pattern(theta, phi)
+    pattern = horn_antenna.calculate_pattern(azimuth_mesh, elevation_mesh)
 
     # Convert from spherical coordinates to Cartesian coordinates.
     r = constants.mag2db(pattern + 1)
-    x = -r * np.sin(theta) * np.cos(phi)
-    y = r * np.sin(phi)
-    z = r * np.cos(theta) * np.cos(phi)
+    x = -r * np.sin(azimuth_mesh) * np.cos(elevation_mesh)
+    y = r * np.sin(elevation_mesh)
+    z = r * np.cos(azimuth_mesh) * np.cos(elevation_mesh)
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(vmin=np.min(r), vmax=np.max(r))
@@ -47,7 +51,7 @@ def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
     # Plot the radiation pattern.
     plt.style.use("science")
     fig, ax = plt.subplots(
-        figsize=(12, 8),
+        figsize=(12, 6),
         subplot_kw={"projection": "3d"},
     )
     ax.plot_surface(
@@ -87,11 +91,11 @@ def plot_radiation_pattern_2d(a: float, b: float, a1: float, b1: float,
     pattern = horn_antenna.calculate_pattern(azimuth=azimuth, elevation=0)
     plt.style.use("science")
     fig, ax = plt.subplots(
-        figsize=(12, 8),
+        figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
     ax.plot(azimuth, constants.mag2db(pattern + 1))
-    ax.set_xlabel(r"Azimuth $\theta$")
+    ax.set_xlabel("Azimuth")
     plt.show()
 
     # Plot the radiation pattern along zero azimuth.
@@ -99,11 +103,11 @@ def plot_radiation_pattern_2d(a: float, b: float, a1: float, b1: float,
     pattern = horn_antenna.calculate_pattern(azimuth=0, elevation=elevation)
     plt.style.use("science")
     fig, ax = plt.subplots(
-        figsize=(12, 8),
+        figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
     ax.plot(elevation, constants.mag2db(pattern + 1))
-    ax.set_xlabel(r"Elevation $\phi$")
+    ax.set_xlabel("Elevation")
     plt.show()
 
 

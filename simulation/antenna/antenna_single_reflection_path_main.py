@@ -41,7 +41,7 @@ def plot_reflectance_for_single_reflection_path_at_boresight(
     # Calculate the reflectance for each radar cross section and plot it as a
     # function of the distance.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(12, 6))
     for rcs_index, rcs in enumerate(RADAR_CROSS_SECTIONS):
         azimuth_reflectance = constants.power2db(
             (tx_antenna.calculate_pattern(azimuth=-alpha, elevation=0) *
@@ -90,7 +90,7 @@ def plot_reflectance_for_single_reflection_path_over_azimuth(
     # Calculate the reflectance for each azimuth and plot it as a function of
     # the distance.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(12, 6))
     for azimuth in AZIMUTHS:
         azimuth_reflectance = constants.power2db(
             (tx_antenna.calculate_pattern(azimuth=azimuth - alpha, elevation=0)
@@ -101,7 +101,7 @@ def plot_reflectance_for_single_reflection_path_over_azimuth(
         ax.plot(DISTANCES,
                 azimuth_reflectance,
                 linestyle="--",
-                label=rf"$\theta = {azimuth * 180 / np.pi:.2f}^\circ$")
+                label=rf"Azimuth = ${azimuth * 180 / np.pi:.2f}^\circ$")
     ax.axhline(-40, color="black", linestyle="-", label="Reflectance threshold")
     ax.set_xlabel("Distance [m]")
     ax.set_ylabel("Reflectance [dB]")
@@ -126,7 +126,7 @@ def plot_reflectance_for_single_reflection_path_over_elevation(
     # Calculate the reflectance for each elevation and plot it as a function of
     # the distance.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(12, 6))
     for elevation in ELEVATIONS:
         elevation_reflectance = constants.power2db(
             (tx_antenna.calculate_pattern(azimuth=0,
@@ -138,7 +138,7 @@ def plot_reflectance_for_single_reflection_path_over_elevation(
         ax.plot(DISTANCES,
                 elevation_reflectance,
                 linestyle="--",
-                label=rf"$\phi = {elevation * 180 / np.pi:.2f}^\circ$")
+                label=rf"Elevation = ${elevation * 180 / np.pi:.2f}^\circ$")
     ax.axhline(-40, color="black", linestyle="-", label="Reflectance threshold")
     ax.set_xlabel("Distance [m]")
     ax.set_ylabel("Reflectance [dB]")
@@ -164,7 +164,7 @@ def plot_reflectance_for_single_reflection_path_over_azimuth_and_elevation(
     # Calculate the reflectance for each azimuth and elevation and plot it as a
     # function of the distance.
     plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(12, 6))
     for azimuth in AZIMUTHS[-2:]:
         for elevation in ELEVATIONS[-2:]:
             reflectance = constants.power2db(
@@ -175,11 +175,12 @@ def plot_reflectance_for_single_reflection_path_over_azimuth_and_elevation(
                                                elevation=elevation) *
                   rx_antenna.calculate_pattern(azimuth=0, elevation=0)))**2 *
                 range**2 / (4 * np.pi * r**4)) + rcs
-            ax.plot(DISTANCES,
-                    reflectance,
-                    linestyle="--",
-                    label=(rf"$\theta = {azimuth * 180 / np.pi:.2f}^\circ$, "
-                           rf"$\phi = {elevation * 180 / np.pi:.2f}^\circ$"))
+            ax.plot(
+                DISTANCES,
+                reflectance,
+                linestyle="--",
+                label=(rf"Azimuth = ${azimuth * 180 / np.pi:.2f}^\circ$, "
+                       rf"elevation = ${elevation * 180 / np.pi:.2f}^\circ$"))
     ax.axhline(-40, color="black", linestyle="-", label="Reflectance threshold")
     ax.set_xlabel("Distance [m]")
     ax.set_ylabel("Reflectance [dB]")

@@ -10,7 +10,7 @@ class HornAntenna(Antenna):
     """Horn antenna.
 
     The aperture of the horn antenna lies in the x-y plane, fed in the
-    z-direction (a and a1 parallel to the x-axis and b and b1 parallel to the
+    +z-direction (a and a1 parallel to the x-axis and b and b1 parallel to the
     y-axis). The E-field is polarized along the y-axis.
     a and b refer to the dimensions of the antenna aperture before the flare,
     and a1 and b1 refer to the dimensions of the antenna aperture after the
@@ -66,10 +66,10 @@ class HornAntenna(Antenna):
         Adapted from "Antenna Theory: Analysis and Design" by Constantine A.
         Balanis.
         The equation assumes that the aperture of the horn antenna lies in the
-        x-y plane, fed in the z-direction (a and a1 parallel to the x-axis and
+        x-y plane, fed in the +z-direction (a and a1 parallel to the x-axis and
         b and b1 parallel to the y-axis). The azimuth is the angle on the x-y
-        plane measured counterclockwise from the x-axis, and the elevation is
-        the angle measured from the z-axis.
+        plane measured counterclockwise from the x-axis to the y-axis, and the
+        elevation is the angle measured from the z-axis to the x-y plane.
         See page 26 for the coordinate system.
 
         Args:

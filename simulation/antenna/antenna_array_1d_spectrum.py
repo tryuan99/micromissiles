@@ -21,12 +21,12 @@ class AntennaArray1DSpectrum(AntennaArraySpectrum):
 
     def calculate_azimuth_spectrum(self, arrivals: AntennaArrayArrival |
                                    list[AntennaArrayArrival],
-                                   theta: np.ndarray) -> np.ndarray:
+                                   azimuth: np.ndarray) -> np.ndarray:
         """Calculates the azimuth spectrum of the antenna array.
 
         Args:
             arrivals: Antenna array arrivals.
-            theta: Azimuth angles.
+            azimuth: Azimuth angles.
 
         Returns:
             The spectrum of the antenna array.
@@ -35,21 +35,21 @@ class AntennaArray1DSpectrum(AntennaArraySpectrum):
         spatial_samples = self.array.get_spatial_samples(arrivals)
 
         # Calculate the DFT matrix.
-        dft = np.zeros((len(theta), len(self.array.elements)),
+        dft = np.zeros((len(azimuth), len(self.array.elements)),
                        dtype=np.complex128)
-        for index, azimuth in enumerate(theta):
+        for index, azimuth in enumerate(azimuth):
             dft[index] = self.array.get_spatial_samples(
                 AntennaArrayArrival(azimuth=azimuth))
         return np.conj(dft) @ spatial_samples
 
     def calculate_elevation_spectrum(self, arrivals: AntennaArrayArrival |
                                      list[AntennaArrayArrival],
-                                     phi: np.ndarray) -> np.ndarray:
+                                     elevation: np.ndarray) -> np.ndarray:
         """Calculates the elevation spectrum of the antenna array.
 
         Args:
             arrivals: Antenna array arrivals.
-            phi: Elevation angles.
+            elevation: Elevation angles.
 
         Returns:
             The spectrum of the antenna array.

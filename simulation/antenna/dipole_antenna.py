@@ -1,7 +1,6 @@
 """The dipole antenna class represents a single dipole antenna."""
 
 import numpy as np
-import scipy.special
 
 from simulation.antenna.antenna import Antenna
 
@@ -45,7 +44,8 @@ class DipoleAntenna(Antenna):
         Balanis.
         The equation assumes that the dipole antenna lies along the y-axis. The
         azimuth is the angle on the x-z plane measured counterclockwise from
-        the z-axis, and the elevation is the angle measured from the y-axis.
+        the z-axis to the x-axis, and the elevation is the angle measured from
+        the y-axis to the x-z plane.
         See page 146 for the coordinate system.
 
         Args:
