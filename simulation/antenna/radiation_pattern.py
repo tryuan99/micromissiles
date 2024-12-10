@@ -4,6 +4,7 @@ an antenna from HFSS.
 
 import numpy as np
 import pandas as pd
+import scipy.interpolate
 
 from simulation.antenna.antenna import Antenna
 from utils import constants
@@ -85,5 +86,36 @@ class RadiationPattern(Antenna):
         Returns:
             The magnitude of the radiation pattern.
         """
-        # TODO(titan): To be implemented.
-        return np.zeros(azimuth.shape)
+        df = self.df.copy()
+
+        # Remove duplicate values at theta = -90 degrees.
+        df = df[df[self.phi_column] != -90]
+
+        # The interpolator requires data points to have a theta between 0 and 180
+        # degrees and a phi between 0 and 360 degrees, so "flip" the data
+        # points with a negative theta.
+        flipped_indices = df[self.theta_column] < 0
+        df.loc[flipped_indices, self.theta_column] *= -1
+        df.loc[flipped_indices, self.phi_column] += 180
+
+        # Mod the thetas to be positive and the phis to be between -180 and 180
+        # degrees.
+        df[self.theta_column] %= 180
+        df.loc[df[self.phi_column] >= 180, self.phi_column] -= 360
+
+        # Filter out the data points at either pole, where theta = 0 or theta
+        # = 180 degrees.
+        filtered_indices = ((df[self.theta_column] != 0) &
+                            (df[self.theta_column] != 180))
+        df = df[filtered_indices]
+
+        # Sort the Dataframe in increasing theta.
+        df.sort_values(by=[self.theta_column, self.phi_column], inplace=True)
+
+        # Interpolate the simulated radiation pattern over the entire sphere.
+        theta = constants.deg2rad(df[self.theta_column].unique())
+        phi = constants.deg2rad(df[self.phi_column].unique())
+        rE = df[self.rE_column].to_numpy().reshape(len(theta), len(phi))
+        interpolator = scipy.interpolate.RectSphereBivariateSpline(
+            theta, phi, rE)
+        return interpolator(elevation, azimuth, grid=False)

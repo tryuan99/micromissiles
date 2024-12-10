@@ -183,6 +183,7 @@ py_library(
         "//utils:constants",
         requirement("numpy"),
         requirement("pandas"),
+        requirement("scipy"),
     ],
 )
 
