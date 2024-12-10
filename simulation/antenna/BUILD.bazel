@@ -174,3 +174,27 @@ py_binary(
         requirement("numpy"),
     ],
 )
+
+py_library(
+    name = "radiation_pattern",
+    srcs = ["radiation_pattern.py"],
+    deps = [
+        ":antenna",
+        "//utils:constants",
+        requirement("numpy"),
+        requirement("pandas"),
+    ],
+)
+
+py_binary(
+    name = "radiation_pattern_main",
+    srcs = ["radiation_pattern_main.py"],
+    deps = [
+        ":radiation_pattern",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
