@@ -190,6 +190,7 @@ py_library(
 py_binary(
     name = "radiation_pattern_main",
     srcs = ["radiation_pattern_main.py"],
+    data = ["//simulation/antenna/data:radiation_pattern_data"],
     deps = [
         ":radiation_pattern",
         "//utils/visualization:color_maps",

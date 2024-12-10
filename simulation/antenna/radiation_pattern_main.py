@@ -112,7 +112,10 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string("data", None, "Simulated radiation pattern CSV file.")
-    flags.mark_flag_as_required("data")
+    flags.DEFINE_string(
+        "data",
+        "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv",
+        "Simulated radiation pattern CSV file.",
+    )
 
     app.run(main)
