@@ -1,14 +1,14 @@
-"""Runs the k-means clustering algorithm and plots the clusters and the
+"""Runs the agglomerative clustering algorithm and plots the clusters and the
 points.
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
-from absl import app, flags
+from absl import app, flags, logging
 
+from utils.clustering.agglomerative_clusterer import AgglomerativeClusterer
 from utils.clustering.clusterer import Point
-from utils.clustering.k_means_clusterer import KMeansClusterer
 
 FLAGS = flags.FLAGS
 
@@ -34,17 +34,37 @@ def _generate_random_points(num_points: int) -> list[Point]:
     return points
 
 
-def run_k_means_clustering(num_points: int, num_clusters: int) -> None:
-    """Runs k-means clustering.
+def run_agglomerative_clustering(num_points: int, max_size: int,
+                                 threshold: float) -> None:
+    """Runs agglomerative clustering.
 
     Args:
         num_points: Number of points.
-        num_clusters: Number of clusters.
+        max_size: Maximum cluster size.
+        threshold: Distance threshold for convergence.
     """
     # Cluster the points.
     points = _generate_random_points(num_points)
-    clusterer = KMeansClusterer(points, num_clusters)
+    clusterer = AgglomerativeClusterer(points, max_size, threshold)
     clusterer.cluster()
+
+    logging.info("Number of clusters: %d", len(clusterer.clusters))
+
+    # Log the mean and maximum radii of the clusters.
+    cluster_radii = [cluster.radius() for cluster in clusterer.clusters]
+    logging.info(
+        "Cluster mean radius: %f, max radius: %f",
+        np.mean(cluster_radii),
+        np.max(cluster_radii),
+    )
+
+    # Log the mean and maximum sizes of the clusters.
+    cluster_sizes = [cluster.size() for cluster in clusterer.clusters]
+    logging.info(
+        "Cluster mean size: %f, max size: %f",
+        np.mean(cluster_sizes),
+        np.max(cluster_sizes),
+    )
 
     # Plot the clusters and the points.
     plt.style.use(["science", "grid"])
@@ -69,11 +89,13 @@ def run_k_means_clustering(num_points: int, num_clusters: int) -> None:
 def main(argv):
     assert len(argv) == 1, argv
 
-    run_k_means_clustering(FLAGS.num_points, FLAGS.num_clusters)
+    run_agglomerative_clustering(FLAGS.num_points, FLAGS.max_size,
+                                 FLAGS.threshold)
 
 
 if __name__ == "__main__":
-    flags.DEFINE_integer("num_points", 200, "Number of points.")
-    flags.DEFINE_integer("num_clusters", 28, "Number of clusters.")
+    flags.DEFINE_integer("num_points", 500, "Number of points.")
+    flags.DEFINE_integer("max_size", 7, "Maximum cluster size.")
+    flags.DEFINE_float("threshold", 1, "Distance threshold for convergence.")
 
     app.run(main)

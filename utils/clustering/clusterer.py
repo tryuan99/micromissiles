@@ -17,7 +17,7 @@ class Point:
     def __init__(self, x: float, y: float, z: float = 0) -> None:
         self.x = x
         self.y = y
-        self.z = 0
+        self.z = z
 
     def coordinates(self) -> np.ndarray:
         """Returns the coordinates of the point."""
@@ -44,15 +44,58 @@ class Point:
 
 
 class Cluster(Point):
-    """Cluster of points."""
+    """Cluster of points.
 
-    def __init__(self, x: float, y: float, z: float = 0) -> None:
+    Attributes:
+        points: List of points belonging to this cluster.
+    """
+
+    def __init__(self,
+                 x: float = None,
+                 y: float = None,
+                 z: float = 0,
+                 point: Point = None) -> None:
+        if point is not None:
+            x, y, z = point.coordinates()
+            self.points = [point]
+        else:
+            self.points: list[Point] = []
         super().__init__(x, y, z)
-        self.points: list[Point] = []
+
+    def size(self) -> int:
+        """Returns the size of the cluster."""
+        return len(self.points)
 
     def empty(self) -> bool:
         """Returns whether the cluster is emtpy."""
-        return len(self.points) == 0
+        return self.size() == 0
+
+    def radius(self) -> float:
+        """Returns the radius of the cluster.
+
+        The radius is defined as the maximum distance from the centroid to a
+        point belonging to the cluster.
+        """
+        point_coordinates = np.array(
+            [point.coordinates() for point in self.points])
+        distances_to_points = np.linalg.norm(
+            point_coordinates - self.coordinates(),
+            axis=1,
+        )
+        return np.max(distances_to_points)
+
+    def centroid(self) -> np.ndarray:
+        """Returns the coordinates of the centroid."""
+        if self.empty():
+            return self.coordinates()
+        return np.mean(
+            [point.coordinates() for point in self.points],
+            axis=0,
+        )
+
+    def recenter(self) -> None:
+        """Recenters the centroid to be the mean of all points."""
+        self.x, self.y, self.z = self.centroid()
 
     def add_point(self, point: Point) -> None:
         """Adds a point to the cluster.
@@ -70,6 +113,14 @@ class Cluster(Point):
         """
         self.points.extend(points)
 
+    def merge_cluster(self, cluster: Self) -> None:
+        """Merges another cluster into this cluster.
+
+        Args:
+            cluster: Cluster to merge with.
+        """
+        self.add_points(cluster.points)
+
 
 class Clusterer(ABC):
     """Interface for a clustering algorithm.
@@ -77,18 +128,12 @@ class Clusterer(ABC):
     Attributes:
         points: List of points to cluster.
         clusters: List of clusters.
-        cluster_indices: Index of the cluster to which the point belongs.
     """
 
     def __init__(self, points: list[Point]) -> None:
         self.points = points
         self.clusters: list[Cluster] = []
-        self.cluster_indices = np.zeros(len(points), dtype=np.int64)
 
     @abstractmethod
-    def cluster(self, epsilon: float = 1e-3) -> None:
-        """Clusters the points.
-
-        Args:
-            epsilon: Distance threshold for convergence.
-        """
+    def cluster(self) -> None:
+        """Clusters the points."""

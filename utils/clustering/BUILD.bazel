@@ -3,6 +3,29 @@ load("@pip_deps//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "agglomerative_clusterer",
+    srcs = ["agglomerative_clusterer.py"],
+    deps = [
+        ":clusterer",
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_binary(
+    name = "agglomerative_clusterer_main",
+    srcs = ["agglomerative_clusterer_main.py"],
+    deps = [
+        ":agglomerative_clusterer",
+        ":clusterer",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
     name = "clusterer",
     srcs = ["clusterer.py"],
     deps = [requirement("numpy")],
@@ -22,6 +45,7 @@ py_binary(
     name = "k_means_clusterer_main",
     srcs = ["k_means_clusterer_main.py"],
     deps = [
+        ":clusterer",
         ":k_means_clusterer",
         requirement("absl-py"),
         requirement("matplotlib"),

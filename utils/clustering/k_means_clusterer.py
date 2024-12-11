@@ -13,18 +13,19 @@ class KMeansClusterer(Clusterer):
 
     Attributes:
         k: Number of clusters.
+        threshold: Distortion threshold for convergence.
     """
 
-    def __init__(self, points: list[Point], k: int) -> None:
+    def __init__(self,
+                 points: list[Point],
+                 k: int,
+                 threshold: float = 1e-3) -> None:
         super().__init__(points)
         self.k = k
+        self.threshold = threshold
 
-    def cluster(self, epsilon: float = 1e-3) -> None:
-        """Clusters the points.
-
-        Args:
-            epsilon: Distance threshold for convergence.
-        """
+    def cluster(self) -> None:
+        """Clusters the points."""
         # Create the data matrix.
         data = np.array([point.coordinates() for point in self.points])
 
@@ -32,7 +33,7 @@ class KMeansClusterer(Clusterer):
         codebook, distortion = scipy.cluster.vq.kmeans(
             data,
             self.k,
-            thresh=epsilon,
+            thresh=self.threshold,
         )
         self.clusters = [Cluster(*centroid) for centroid in codebook]
 
@@ -43,5 +44,4 @@ class KMeansClusterer(Clusterer):
                 axis=1,
             )
             cluster_idx = np.argmin(distance_to_centroids)
-            self.cluster_indices[point_idx] = cluster_idx
             self.clusters[cluster_idx].add_point(point)
