@@ -14,7 +14,7 @@ FLAGS = flags.FLAGS
 
 def _generate_random_point() -> np.ndarray:
     """Generates a random point.
-    
+
     Returns:
         The x and y coordinates of the point.
     """
@@ -25,7 +25,7 @@ def _generate_random_point() -> np.ndarray:
 
 def _generate_random_points(num_points: int) -> list[Point]:
     """Generates random points.
-    
+
     Returns:
         A list of generated points.
     """
@@ -47,18 +47,18 @@ def run_k_means(num_points: int, num_clusters: int) -> None:
     # Plot the clusters and the points.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
-    for point_idx, point in enumerate(points):
+    for cluster_idx, cluster in enumerate(clusterer.clusters):
+        for point in cluster.points:
+            ax.scatter(
+                point.x,
+                point.y,
+                c=f"C{cluster_idx}",
+            )
         ax.scatter(
-            point.x,
-            point.y,
-            c=f"C{clusterer.centroid_indices[point_idx]}",
-        )
-    for centroid_idx, centroid in enumerate(clusterer.centroids):
-        ax.scatter(
-            centroid.x,
-            centroid.y,
+            cluster.x,
+            cluster.y,
             s=300,
-            c=f"C{centroid_idx}",
+            c=f"C{cluster_idx}",
             marker="*",
         )
     plt.show()
