@@ -1,0 +1,30 @@
+load("@pip_deps//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "clusterer",
+    srcs = ["clusterer.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "k_means_clusterer",
+    srcs = ["k_means_clusterer.py"],
+    deps = [
+        ":clusterer",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "k_means_clusterer_main",
+    srcs = ["k_means_clusterer_main.py"],
+    deps = [
+        ":k_means_clusterer",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
