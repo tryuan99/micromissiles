@@ -19,6 +19,14 @@ class Point:
         self.y = y
         self.z = 0
 
+    def coordinates(self) -> np.ndarray:
+        """Returns the coordinates of the point."""
+        return np.array([
+            self.x,
+            self.y,
+            self.z,
+        ])
+
     def calculate_distance(self, point: Self) -> float:
         """Calculates the distance to another point.
 

@@ -3,6 +3,7 @@ points.
 """
 
 import numpy as np
+import scipy.cluster
 
 from utils.clustering.clusterer import Cluster, Clusterer, Point
 
@@ -24,73 +25,23 @@ class KMeansClusterer(Clusterer):
         Args:
             epsilon: Distance threshold for convergence.
         """
-        # Initialize the centroids randomly.
-        points_coordinates = np.array([[
-            point.x,
-            point.y,
-            point.z,
-        ] for point in self.points])
-        self.clusters = [
-            Cluster(
-                np.random.uniform(
-                    np.min(points_coordinates[:, 0]),
-                    np.max(points_coordinates[:, 0]),
-                ),
-                np.random.uniform(
-                    np.min(points_coordinates[:, 1]),
-                    np.max(points_coordinates[:, 1]),
-                ),
-                np.random.uniform(
-                    np.min(points_coordinates[:, 2]),
-                    np.max(points_coordinates[:, 2]),
-                ),
-            ) for _ in range(self.k)
-        ]
+        # Create the data matrix.
+        data = np.array([point.coordinates() for point in self.points])
 
-        converged = False
-        while not converged:
-            # Determine the closest centroid to each point.
-            for point_idx, point in enumerate(self.points):
-                distances = [
-                    cluster.calculate_distance(point)
-                    for cluster in self.clusters
-                ]
-                cluster_idx = np.argmin(distances)
-                self.cluster_indices[point_idx] = cluster_idx
-                self.clusters[cluster_idx].add_point(point)
+        # Run k-means clustering.
+        codebook, distortion = scipy.cluster.vq.kmeans(
+            data,
+            self.k,
+            thresh=epsilon,
+        )
+        self.clusters = [Cluster(*centroid) for centroid in codebook]
 
-            # Calculate the new clusters as the mean of all assigned points.
-            converged = True
-            for cluster_idx, cluster in enumerate(self.clusters):
-                if cluster.empty():
-                    new_cluster = Cluster(
-                        np.random.uniform(
-                            np.min(points_coordinates[:, 0]),
-                            np.max(points_coordinates[:, 0]),
-                        ),
-                        np.random.uniform(
-                            np.min(points_coordinates[:, 1]),
-                            np.max(points_coordinates[:, 1]),
-                        ),
-                        np.random.uniform(
-                            np.min(points_coordinates[:, 2]),
-                            np.max(points_coordinates[:, 2]),
-                        ),
-                    )
-                else:
-                    new_cluster = Cluster(*np.mean(
-                        [[
-                            point.x,
-                            point.y,
-                            point.z,
-                        ] for point in cluster.points],
-                        axis=0,
-                    ))
-                    new_cluster.add_points(cluster.points)
-
-                # Check whether the algorithm has converged by checking whether
-                # the cluster has moved.
-                if new_cluster.calculate_distance(cluster) > epsilon:
-                    converged = False
-
-                self.clusters[cluster_idx] = new_cluster
+        # For each point, find the closest centroid.
+        for point_idx, point in enumerate(self.points):
+            distance_to_centroids = np.linalg.norm(
+                codebook - point.coordinates(),
+                axis=1,
+            )
+            cluster_idx = np.argmin(distance_to_centroids)
+            self.cluster_indices[point_idx] = cluster_idx
+            self.clusters[cluster_idx].add_point(point)

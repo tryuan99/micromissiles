@@ -71,7 +71,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_integer("num_points", 20, "Number of points.")
-    flags.DEFINE_integer("num_clusters", 4, "Number of clusters.")
+    flags.DEFINE_integer("num_points", 200, "Number of points.")
+    flags.DEFINE_integer("num_clusters", 28, "Number of clusters.")
 
     app.run(main)
