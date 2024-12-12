@@ -137,3 +137,22 @@ class Clusterer(ABC):
     @abstractmethod
     def cluster(self) -> None:
         """Clusters the points."""
+
+
+class SizeAndRadiusConstrainedClusterer(Clusterer):
+    """Interface for a clustering algorithm with size and radius constraints.
+
+    Attributes:
+        max_size: Maximum cluster size.
+        max_radius: Maximum cluster radius.
+    """
+
+    def __init__(
+        self,
+        points: list[Point],
+        max_size: int,
+        max_radius: float,
+    ) -> None:
+        super().__init__(points)
+        self.max_size = max_size
+        self.max_radius = max_radius

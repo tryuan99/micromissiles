@@ -1,26 +1,25 @@
 """The agglomerative clusterer greedily aggregates clusters that are closest to
-each other assuming that the resulting cluster satisfies the size constraint.
+each other assuming that the resulting cluster satisfies the size constraint
+and radius constraints.
 """
 
 import numpy as np
 import scipy.spatial
 
-from utils.clustering.clusterer import Cluster, Clusterer, Point
+from utils.clustering.clusterer import (Cluster, Point,
+                                        SizeAndRadiusConstrainedClusterer)
 
 
-class AgglomerativeClusterer(Clusterer):
-    """Agglomerative clusterer.
+class AgglomerativeClusterer(SizeAndRadiusConstrainedClusterer):
+    """Agglomerative clustering algorithm."""
 
-    Attributes:
-        max_size: Maximum cluster size.
-        threshold: Maximum distance between two clusters for aggregation.
-    """
-
-    def __init__(self, points: list[Point], max_size: int,
-                 threshold: float) -> None:
-        super().__init__(points)
-        self.max_size = max_size
-        self.threshold = threshold
+    def __init__(
+        self,
+        points: list[Point],
+        max_size: int,
+        max_radius: float,
+    ) -> None:
+        super().__init__(points, max_size, max_radius)
 
     def cluster(self) -> None:
         """Clusters the points."""
@@ -42,16 +41,19 @@ class AgglomerativeClusterer(Clusterer):
             cluster_idx_1, cluster_idx_2 = np.unravel_index(
                 np.argmin(distances), distances.shape)
 
-            # Check whether the minimum distance exceeds the distance
-            # threshold, in which case the algorithm has converged.
-            if distances[cluster_idx_1, cluster_idx_2] > self.threshold:
+            # Check whether the minimum distance exceeds the maximum cluster
+            # radius, in which case the algorithm has converged.
+            # This produces a conservative solution because the radius of a
+            # merged cluster is less than or equal to the sum of the origina
+            # cluster radii due to the triangle inequality.
+            if distances[cluster_idx_1, cluster_idx_2] >= self.max_radius:
                 converged = True
                 break
 
             # Check whether merging the two clusters would violate the size
             # constraint.
             if (self.clusters[cluster_idx_1].size() +
-                    self.clusters[cluster_idx_2].size()) >= self.max_size:
+                    self.clusters[cluster_idx_2].size()) > self.max_size:
                 distances[cluster_idx_1, cluster_idx_2] = np.inf
                 continue
 

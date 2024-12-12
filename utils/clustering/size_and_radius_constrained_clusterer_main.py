@@ -1,5 +1,5 @@
-"""Runs the agglomerative clustering algorithm and plots the clusters and the
-points.
+"""Runs the size and radius-constrained clustering algorithm and plots the
+clusters and the points.
 """
 
 import matplotlib.pyplot as plt
@@ -9,8 +9,17 @@ from absl import app, flags, logging
 
 from utils.clustering.agglomerative_clusterer import AgglomerativeClusterer
 from utils.clustering.clusterer import Point
+from utils.clustering.k_means_clusterer import ConstrainedKMeansClusterer
+from utils.clustering.min_cost_flow_clusterer import MinClostFlowClusterer
 
 FLAGS = flags.FLAGS
+
+# Dictionary of size and radius-constrained clustering algorithms.
+CLUSTERERS = {
+    "k_means": ConstrainedKMeansClusterer,
+    "agglomerative": AgglomerativeClusterer,
+    "min_cost_flow": MinClostFlowClusterer,
+}
 
 
 def _generate_random_point() -> np.ndarray:
@@ -34,18 +43,23 @@ def _generate_random_points(num_points: int) -> list[Point]:
     return points
 
 
-def run_agglomerative_clustering(num_points: int, max_size: int,
-                                 threshold: float) -> None:
-    """Runs agglomerative clustering.
+def run_size_and_radius_constrained_clustering(
+    clusterer_type: str,
+    num_points: int,
+    max_size: int,
+    threshold: float,
+) -> None:
+    """Runs the size and radius-constrained clustering algorithm.
 
     Args:
+        clusterer_type: Clustering algorithm.
         num_points: Number of points.
         max_size: Maximum cluster size.
         threshold: Distance threshold for convergence.
     """
     # Cluster the points.
     points = _generate_random_points(num_points)
-    clusterer = AgglomerativeClusterer(points, max_size, threshold)
+    clusterer = CLUSTERERS[clusterer_type](points, max_size, threshold)
     clusterer.cluster()
 
     logging.info("Number of clusters: %d", len(clusterer.clusters))
@@ -75,27 +89,58 @@ def run_agglomerative_clustering(num_points: int, max_size: int,
                 point.x,
                 point.y,
                 c=f"C{cluster_idx}",
+                alpha=0.2,
             )
         ax.scatter(
             cluster.x,
             cluster.y,
-            s=300,
+            s=100,
             c=f"C{cluster_idx}",
             marker="*",
         )
+    plt.show()
+
+    # Plot a histogram of the cluster radii.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.hist(
+        cluster_radii,
+        bins=np.arange(
+            np.min(cluster_radii),
+            np.max(cluster_radii),
+            0.005,
+        ),
+    )
+    plt.show()
+
+    # Plot a histogram of the cluster sizes.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.hist(
+        cluster_sizes,
+        bins=np.arange(
+            np.min(cluster_sizes) - 0.5,
+            np.max(cluster_sizes) + 1,
+        ),
+    )
     plt.show()
 
 
 def main(argv):
     assert len(argv) == 1, argv
 
-    run_agglomerative_clustering(FLAGS.num_points, FLAGS.max_size,
-                                 FLAGS.threshold)
+    run_size_and_radius_constrained_clustering(
+        FLAGS.clusterer,
+        FLAGS.num_points,
+        FLAGS.max_size,
+        FLAGS.threshold,
+    )
 
 
 if __name__ == "__main__":
-    flags.DEFINE_integer("num_points", 500, "Number of points.")
+    flags.DEFINE_enum("clusterer", None, CLUSTERERS.keys(),
+                      "Clustering algorithm.")
+    flags.DEFINE_integer("num_points", 1000, "Number of points.")
     flags.DEFINE_integer("max_size", 7, "Maximum cluster size.")
-    flags.DEFINE_float("threshold", 1, "Distance threshold for convergence.")
+    flags.DEFINE_float("threshold", 0.5, "Distance threshold for convergence.")
+    flags.mark_flag_as_required("clusterer")
 
     app.run(main)

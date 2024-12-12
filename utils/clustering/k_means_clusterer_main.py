@@ -5,7 +5,7 @@ points.
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
-from absl import app, flags
+from absl import app, flags, logging
 
 from utils.clustering.clusterer import Point
 from utils.clustering.k_means_clusterer import KMeansClusterer
@@ -46,6 +46,24 @@ def run_k_means_clustering(num_points: int, num_clusters: int) -> None:
     clusterer = KMeansClusterer(points, num_clusters)
     clusterer.cluster()
 
+    logging.info("Number of clusters: %d", len(clusterer.clusters))
+
+    # Log the mean and maximum radii of the clusters.
+    cluster_radii = [cluster.radius() for cluster in clusterer.clusters]
+    logging.info(
+        "Cluster mean radius: %f, max radius: %f",
+        np.mean(cluster_radii),
+        np.max(cluster_radii),
+    )
+
+    # Log the mean and maximum sizes of the clusters.
+    cluster_sizes = [cluster.size() for cluster in clusterer.clusters]
+    logging.info(
+        "Cluster mean size: %f, max size: %f",
+        np.mean(cluster_sizes),
+        np.max(cluster_sizes),
+    )
+
     # Plot the clusters and the points.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -55,14 +73,38 @@ def run_k_means_clustering(num_points: int, num_clusters: int) -> None:
                 point.x,
                 point.y,
                 c=f"C{cluster_idx}",
+                alpha=0.25,
             )
         ax.scatter(
             cluster.x,
             cluster.y,
-            s=300,
+            s=100,
             c=f"C{cluster_idx}",
             marker="*",
         )
+    plt.show()
+
+    # Plot a histogram of the cluster radii.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.hist(
+        cluster_radii,
+        bins=np.arange(
+            np.min(cluster_radii),
+            np.max(cluster_radii),
+            0.005,
+        ),
+    )
+    plt.show()
+
+    # Plot a histogram of the cluster sizes.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.hist(
+        cluster_sizes,
+        bins=np.arange(
+            np.min(cluster_sizes) - 0.5,
+            np.max(cluster_sizes) + 1,
+        ),
+    )
     plt.show()
 
 
@@ -73,7 +115,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_integer("num_points", 200, "Number of points.")
-    flags.DEFINE_integer("num_clusters", 28, "Number of clusters.")
+    flags.DEFINE_integer("num_points", 1000, "Number of points.")
+    flags.DEFINE_integer("num_clusters", 250, "Number of clusters.")
 
     app.run(main)
