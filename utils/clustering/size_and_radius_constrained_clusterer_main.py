@@ -47,7 +47,7 @@ def run_size_and_radius_constrained_clustering(
     clusterer_type: str,
     num_points: int,
     max_size: int,
-    threshold: float,
+    max_radius: float,
 ) -> None:
     """Runs the size and radius-constrained clustering algorithm.
 
@@ -55,11 +55,11 @@ def run_size_and_radius_constrained_clustering(
         clusterer_type: Clustering algorithm.
         num_points: Number of points.
         max_size: Maximum cluster size.
-        threshold: Distance threshold for convergence.
+        max_radius: Maximum cluster radius.
     """
     # Cluster the points.
     points = _generate_random_points(num_points)
-    clusterer = CLUSTERERS[clusterer_type](points, max_size, threshold)
+    clusterer = CLUSTERERS[clusterer_type](points, max_size, max_radius)
     clusterer.cluster()
 
     logging.info("Number of clusters: %d", len(clusterer.clusters))
@@ -84,19 +84,21 @@ def run_size_and_radius_constrained_clustering(
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for cluster_idx, cluster in enumerate(clusterer.clusters):
-        for point in cluster.points:
-            ax.scatter(
-                point.x,
-                point.y,
-                c=f"C{cluster_idx}",
-                alpha=0.2,
-            )
+        point_coordinates = np.array(
+            [point.coordinates() for point in cluster.points])
+        ax.scatter(
+            point_coordinates[:, 0],
+            point_coordinates[:, 1],
+            c=f"C{cluster_idx}",
+            alpha=0.2,
+        )
         ax.scatter(
             cluster.x,
             cluster.y,
             s=100,
             c=f"C{cluster_idx}",
             marker="*",
+            alpha=0.75,
         )
     plt.show()
 
@@ -110,6 +112,7 @@ def run_size_and_radius_constrained_clustering(
             0.005,
         ),
     )
+    ax.axvline(max_radius, linestyle="--", linewidth=2)
     plt.show()
 
     # Plot a histogram of the cluster sizes.
@@ -121,6 +124,7 @@ def run_size_and_radius_constrained_clustering(
             np.max(cluster_sizes) + 1,
         ),
     )
+    ax.axvline(max_size, linestyle="--", linewidth=2)
     plt.show()
 
 
@@ -131,7 +135,7 @@ def main(argv):
         FLAGS.clusterer,
         FLAGS.num_points,
         FLAGS.max_size,
-        FLAGS.threshold,
+        FLAGS.max_radius,
     )
 
 
@@ -140,7 +144,7 @@ if __name__ == "__main__":
                       "Clustering algorithm.")
     flags.DEFINE_integer("num_points", 1000, "Number of points.")
     flags.DEFINE_integer("max_size", 7, "Maximum cluster size.")
-    flags.DEFINE_float("threshold", 0.5, "Distance threshold for convergence.")
+    flags.DEFINE_float("max_radius", 0.5, "Maximum cluster radius.")
     flags.mark_flag_as_required("clusterer")
 
     app.run(main)
