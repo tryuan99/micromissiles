@@ -44,8 +44,8 @@ class AgglomerativeClusterer(SizeAndRadiusConstrainedClusterer):
             # Check whether the minimum distance exceeds the maximum cluster
             # radius, in which case the algorithm has converged.
             # This produces a conservative solution because the radius of a
-            # merged cluster is less than or equal to the sum of the origina
-            # cluster radii due to the triangle inequality.
+            # merged cluster is less than or equal to the sum of the original
+            # cluster radii.
             if distances[cluster_idx_1, cluster_idx_2] >= self.max_radius:
                 converged = True
                 break

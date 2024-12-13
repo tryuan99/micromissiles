@@ -28,6 +28,19 @@ py_library(
     ],
 )
 
+py_binary(
+    name = "k_means_clusterer_main",
+    srcs = ["k_means_clusterer_main.py"],
+    deps = [
+        ":clusterer",
+        ":k_means_clusterer",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
 py_library(
     name = "min_cost_flow_clusterer",
     srcs = ["min_cost_flow_clusterer.py"],
