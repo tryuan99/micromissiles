@@ -1,0 +1,126 @@
+module(name = "micromissiles")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+bazel_dep(
+    name = "abseil-cpp",
+    version = "20240116.2",
+)
+bazel_dep(
+    name = "eigen",
+    version = "4.0.0-20241125",
+)
+bazel_dep(
+    name = "googletest",
+    version = "1.15.2",
+)
+bazel_dep(
+    name = "platforms",
+    version = "0.0.10",
+)
+bazel_dep(
+    name = "protobuf",
+    version = "29.1",
+    repo_name = "com_google_protobuf",
+)
+bazel_dep(
+    name = "rules_cc",
+    version = "0.1.0",
+)
+bazel_dep(
+    name = "rules_foreign_cc",
+    version = "0.13.0",
+)
+bazel_dep(
+    name = "rules_pkg",
+    version = "1.0.1",
+)
+bazel_dep(
+    name = "rules_python",
+    version = "1.0.0",
+)
+
+# Boost library.
+BOOST_VERSION = "1.87.0"
+
+http_archive(
+    name = "boost",
+    build_file = "//third_party/boost:boost.BUILD",
+    sha256 = "f55c340aa49763b1925ccf02b2e83f35fdcf634c9d5164a2acb87540173c741d",
+    strip_prefix = "boost_{}".format(BOOST_VERSION.replace(".", "_")),
+    url = "https://archives.boost.io/release/{}/source/boost_{}.tar.gz".format(
+        BOOST_VERSION,
+        BOOST_VERSION.replace(".", "_"),
+    ),
+)
+
+# libmpc++ library.
+LIBMPC_VERSION = "0.6.2"
+
+http_archive(
+    name = "libmpc",
+    build_file = "//third_party/libmpc:libmpc.BUILD",
+    sha256 = "6aab3f029f8fc706987a0b5f34bf0b5f7c0403e1a0961072cd4db47d73ba95e5",
+    strip_prefix = "libmpc-{}".format(LIBMPC_VERSION),
+    url = "https://github.com/nicolapiccinelli/libmpc/archive/refs/tags/{}.tar.gz".format(LIBMPC_VERSION),
+)
+
+# NLopt library.
+NLOPT_VERSION = "2.9.1"
+
+http_archive(
+    name = "nlopt",
+    build_file = "//third_party/nlopt:nlopt.BUILD",
+    sha256 = "1e6c33f8cbdc4138d525f3326c231f14ed50d99345561e85285638c49b64ee93",
+    strip_prefix = "nlopt-{}".format(NLOPT_VERSION),
+    url = "https://github.com/stevengj/nlopt/archive/refs/tags/v{}.tar.gz".format(NLOPT_VERSION),
+)
+
+# OpenCV library.
+OPENCV_VERSION = "4.10.0"
+
+http_archive(
+    name = "opencv",
+    build_file = "//third_party/opencv:opencv.BUILD",
+    sha256 = "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9",
+    strip_prefix = "opencv-{}".format(OPENCV_VERSION),
+    url = "https://github.com/opencv/opencv/archive/refs/tags/{}.tar.gz".format(OPENCV_VERSION),
+)
+
+# OpenCV modules.
+OPENCV_CONTRIB_VERSION = "4.10.0"
+
+http_archive(
+    name = "opencv_contrib",
+    build_file = "//third_party/opencv_contrib:opencv_contrib.BUILD",
+    sha256 = "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1",
+    strip_prefix = "opencv_contrib-{}".format(OPENCV_CONTRIB_VERSION),
+    url = "https://github.com/opencv/opencv_contrib/archive/refs/tags/{}.tar.gz".format(OPENCV_CONTRIB_VERSION),
+)
+
+# OSQP library.
+OSQP_COMMIT_HASH = "e303d106e33c4aefce6964e668b443c99d9da86e"
+
+http_archive(
+    name = "osqp",
+    build_file = "//third_party/osqp:osqp.BUILD",
+    sha256 = "3d7b0d48f0f2460d57f41130f117b8ccb40cc1b4d39f0536c5fed83470d5d11d",
+    strip_prefix = "osqp-{}".format(OSQP_COMMIT_HASH),
+    url = "https://github.com/osqp/osqp/archive/{}.tar.gz".format(OSQP_COMMIT_HASH),
+)
+
+# Configure the Python toolchain.
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.12",
+)
+
+# Load pip dependencies.
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pypi",
+    python_version = "3.12",
+    requirements_lock = "//deps:requirements.txt",
+)
+use_repo(pip, "pypi")

@@ -14,7 +14,7 @@ cmake(
     cache_entries = {
         "BUILD_SHARED_LIBS": "ON",
         "BUILD_LIST": ",".join(OPENCV_MODULES),
-        "OPENCV_EXTRA_MODULES_PATH": "$$EXT_BUILD_ROOT/external/opencv_contrib/modules",
+        "OPENCV_EXTRA_MODULES_PATH": "$$EXT_BUILD_ROOT/external/+_repo_rules+opencv_contrib/modules",
         "WITH_EIGEN": "ON",
         "WITH_VTK": "ON",
         "BUILD_ZLIB": "OFF",

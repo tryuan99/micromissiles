@@ -1,7 +1,6 @@
 """This module defines the OpenCV modules and libraries."""
 
-load("@//third_party/opencv:workspace.bzl", "OPENCV_VERSION")
-
+OPENCV_VERSION = "4.10.0"
 OPENCV_MODULES = [
     "core",
     "highgui",
