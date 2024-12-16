@@ -52,8 +52,23 @@ py_library(
 )
 
 py_binary(
-    name = "size_and_radius_constrained_clusterer_main",
-    srcs = ["size_and_radius_constrained_clusterer_main.py"],
+    name = "size_and_radius_constrained_clusterer_2d_main",
+    srcs = ["size_and_radius_constrained_clusterer_2d_main.py"],
+    deps = [
+        ":agglomerative_clusterer",
+        ":clusterer",
+        ":k_means_clusterer",
+        ":min_cost_flow_clusterer",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "size_and_radius_constrained_clusterer_3d_main",
+    srcs = ["size_and_radius_constrained_clusterer_3d_main.py"],
     deps = [
         ":agglomerative_clusterer",
         ":clusterer",

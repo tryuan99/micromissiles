@@ -1,5 +1,5 @@
-"""Runs the size and radius-constrained clustering algorithm and plots the
-clusters and the points.
+"""Runs the size and radius-constrained clustering algorithm on 2D points and
+plots the clusters and the points.
 """
 
 import matplotlib.pyplot as plt
