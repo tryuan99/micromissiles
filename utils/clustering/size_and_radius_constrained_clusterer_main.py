@@ -100,6 +100,7 @@ def run_size_and_radius_constrained_clustering(
             marker="*",
             alpha=0.75,
         )
+    ax.set_aspect("equal", adjustable="box")
     plt.show()
 
     # Plot a histogram of the cluster radii.
@@ -107,8 +108,8 @@ def run_size_and_radius_constrained_clustering(
     ax.hist(
         cluster_radii,
         bins=np.arange(
-            np.min(cluster_radii),
-            np.max(cluster_radii),
+            0,
+            np.max(cluster_radii) + 0.01,
             0.005,
         ),
     )

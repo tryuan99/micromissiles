@@ -82,6 +82,7 @@ def run_k_means_clustering(num_points: int, num_clusters: int) -> None:
             c=f"C{cluster_idx}",
             marker="*",
         )
+    ax.set_aspect("equal", adjustable="box")
     plt.show()
 
     # Plot a histogram of the cluster radii.
