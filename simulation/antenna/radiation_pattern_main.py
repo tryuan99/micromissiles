@@ -15,20 +15,26 @@ FLAGS = flags.FLAGS
 
 def plot_radiation_pattern_3d_scatter(csv_file: str) -> None:
     """Plots the simulated 3D radiation pattern as a scatter plot.
-    
+
     Args:
         csv_file: Simulated radiation pattern CSV file.
     """
     radiation_pattern = RadiationPattern(csv_file)
-    rE = radiation_pattern.df[radiation_pattern.rE_column]
+    gain = radiation_pattern.df[radiation_pattern.gain_column]
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = rE - rE.min()
+    r = gain - gain.min()
     x, y, z = radiation_pattern.transform_to_cartesian()
 
     # Generate the face colors.
-    norm = matplotlib.colors.Normalize(vmin=np.min(r), vmax=np.max(r))
-    m = cm.ScalarMappable(cmap=COLOR_MAPS["parula"], norm=norm)
+    norm = matplotlib.colors.Normalize(
+        vmin=np.min(gain),
+        vmax=np.max(gain),
+    )
+    m = cm.ScalarMappable(
+        cmap=COLOR_MAPS["parula"],
+        norm=norm,
+    )
     m.set_array([])
 
     # Plot the radiation pattern.
@@ -55,7 +61,7 @@ def plot_radiation_pattern_3d_scatter(csv_file: str) -> None:
 
 def plot_radiation_pattern_3d(csv_file: str) -> None:
     """Plots the interpolated 3D radiation pattern.
-    
+
     Args:
         csv_file: Simulated radiation pattern CSV file.
     """
@@ -68,17 +74,23 @@ def plot_radiation_pattern_3d(csv_file: str) -> None:
     )
 
     radiation_pattern = RadiationPattern(csv_file)
-    pattern = radiation_pattern.calculate_pattern(azimuth_mesh, elevation_mesh)
+    gain = radiation_pattern.calculate_pattern(azimuth_mesh, elevation_mesh)
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = pattern - np.min(pattern)
+    r = gain - np.min(gain)
     x = -r * np.sin(azimuth_mesh) * np.cos(elevation_mesh)
     y = r * np.sin(elevation_mesh)
     z = r * np.cos(azimuth_mesh) * np.cos(elevation_mesh)
 
     # Generate the face colors.
-    norm = matplotlib.colors.Normalize(vmin=np.min(r), vmax=np.max(r))
-    m = cm.ScalarMappable(cmap=COLOR_MAPS["parula"], norm=norm)
+    norm = matplotlib.colors.Normalize(
+        vmin=np.min(gain),
+        vmax=np.max(gain),
+    )
+    m = cm.ScalarMappable(
+        cmap=COLOR_MAPS["parula"],
+        norm=norm,
+    )
     m.set_array([])
 
     # Plot the radiation pattern.

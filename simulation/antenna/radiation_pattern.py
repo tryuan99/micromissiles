@@ -25,21 +25,21 @@ class RadiationPattern(Antenna):
         df: Dataframe containing the simulated radiation pattern.
         phi_column: Dataframe column corresponding to phi.
         theta_column: Dataframe column corresponding to theta.
-        rE_colun: Dataframe column corresponding to the far-field E field
-          magnitude.
+        gain_column: Dataframe column corresponding to the far-field antenna
+          gain.
     """
 
     def __init__(self, data_csv: str) -> None:
         super().__init__()
         self.df = pd.read_csv(data_csv, comment="#")
-        self.phi_column, self.theta_column, self.rE_column = self.df.columns
+        self.phi_column, self.theta_column, self.gain_column = self.df.columns
 
     def transform_to_cartesian(
             self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the Cartesian coordinates of the data points.
 
         The x-coordinates, y-coordinates, and z-coordinates are normalized.
-        
+
         Returns:
             A tuple consisting of the x-coordinates, y-coordinates, and
             z-coordinates.
@@ -115,7 +115,7 @@ class RadiationPattern(Antenna):
         # Interpolate the simulated radiation pattern over the entire sphere.
         theta = constants.deg2rad(df[self.theta_column].unique())
         phi = constants.deg2rad(df[self.phi_column].unique())
-        rE = df[self.rE_column].to_numpy().reshape(len(theta), len(phi))
+        gain = df[self.gain_column].to_numpy().reshape(len(theta), len(phi))
         interpolator = scipy.interpolate.RectSphereBivariateSpline(
-            theta, phi, rE)
+            theta, phi, gain)
         return interpolator(elevation, azimuth, grid=False)
