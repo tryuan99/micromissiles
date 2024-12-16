@@ -117,10 +117,11 @@ immutabledict==4.2.1 \
     --hash=sha256:c56a26ced38c236f79e74af3ccce53772827cef5c3bce7cab33ff2060f756373 \
     --hash=sha256:d91017248981c72eb66c8ff9834e99c2f53562346f23e7f51e7a5ebcf66a3bcc
     # via ortools
-joblib==1.2.0 \
-    --hash=sha256:091138ed78f800342968c523bdde947e7a305b8594b910a0fea2ab83c3c6d385 \
-    --hash=sha256:e1cee4a79e4af22881164f218d4311f60074197fb707e082e803b61f6d137018
+joblib==1.4.2 \
+    --hash=sha256:06d478d5674cbc267e7496a410ee875abd68e4340feff4490bcb7afb88060ae6 \
+    --hash=sha256:2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e
     # via
+    #   -r deps/requirements.in
     #   k-means-constrained
     #   scikit-learn
 k-means-constrained==0.7.5 \
@@ -341,9 +342,7 @@ ortools==9.11.4210 \
     --hash=sha256:d5a17a37aeaa7d149e2fe8c8dfd5f09630ae28ad734a109ad55536605f8059df \
     --hash=sha256:d9b858f0273e19f81555428d54d407428d0a70a8cb5df2c320935bb735f2c6bb \
     --hash=sha256:db9186bbc7a30538f277e704e9e77ff52bc75aa2c17095a125b2dc212a75cf8e
-    # via
-    #   -r deps/requirements.in
-    #   k-means-constrained
+    # via k-means-constrained
 osqp==0.6.3 \
     --hash=sha256:0084e3d733c75687d68bc133bc380ce471dfe6f7724af2718a43491782eec8d6 \
     --hash=sha256:03e460e683ec2ce0f839353ddfa3c4c8ffa509ab8cf6a2b2afbb586fa453e180 \

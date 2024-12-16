@@ -667,7 +667,7 @@
         "bzlTransitiveDigest": "kdii45NmMG1BfOytLDW2+uqmir2ULL/AAn8YeZB4s2o=",
         "usagesDigest": "8H7oWpNtTJX00TRuqCUFO/so7xn0ghwWAtEshHj1qPw=",
         "recordedFileInputs": {
-          "@@//deps/requirements.txt": "4f7c65eb1a8a02506d0d01dad93c1cd6bd6cec882b57b6d4bdde3c65661f475c",
+          "@@//deps/requirements.txt": "6ce047d954a9c42ba63c57e6e877f59be594ac10c85d7cd08234dda596653637",
           "@@protobuf+//python/requirements.txt": "983be60d3cec4b319dcab6d48aeb3f5b2f7c3350f26b3a9e97486c37967c73c5",
           "@@rules_fuzzing+//fuzzing/requirements.txt": "ab04664be026b632a0d2a2446c4f65982b7654f5b6851d2f9d399a19b7242a5b",
           "@@rules_python+//tools/publish/requirements_darwin.txt": "2994136eab7e57b083c3de76faf46f70fad130bc8e7360a7fed2b288b69e79dc",
@@ -839,7 +839,7 @@
               "dep_template": "@pypi//{name}:{target}",
               "python_interpreter_target": "@@rules_python++python+python_3_12_host//:python",
               "repo": "pypi_312",
-              "requirement": "joblib==1.2.0     --hash=sha256:091138ed78f800342968c523bdde947e7a305b8594b910a0fea2ab83c3c6d385     --hash=sha256:e1cee4a79e4af22881164f218d4311f60074197fb707e082e803b61f6d137018"
+              "requirement": "joblib==1.4.2     --hash=sha256:06d478d5674cbc267e7496a410ee875abd68e4340feff4490bcb7afb88060ae6     --hash=sha256:2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e"
             }
           },
           "pypi_312_k_means_constrained": {
