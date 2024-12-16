@@ -112,7 +112,12 @@ def run_size_and_radius_constrained_clustering(
             0.005,
         ),
     )
-    ax.axvline(max_radius, linestyle="--", linewidth=2)
+    ax.axvline(
+        max_radius,
+        color="red",
+        linestyle="--",
+        linewidth=2,
+    )
     plt.show()
 
     # Plot a histogram of the cluster sizes.
@@ -124,7 +129,12 @@ def run_size_and_radius_constrained_clustering(
             np.max(cluster_sizes) + 1,
         ),
     )
-    ax.axvline(max_size, linestyle="--", linewidth=2)
+    ax.axvline(
+        max_size,
+        color="red",
+        linestyle="--",
+        linewidth=2,
+    )
     plt.show()
 
 
