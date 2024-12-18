@@ -12,6 +12,7 @@ class Point:
     Attributes:
         x: x-coordinate.
         y: y-coordinate.
+        z: z-coordinate.
     """
 
     def __init__(self, x: float, y: float, z: float = 0) -> None:
