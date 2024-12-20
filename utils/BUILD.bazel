@@ -8,6 +8,22 @@ py_library(
     deps = [requirement("numpy")],
 )
 
+py_library(
+    name = "coordinates",
+    srcs = ["coordinates.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "coordinates_test",
+    srcs = ["coordinates_test.py"],
+    deps = [
+        ":coordinates",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
 cc_library(
     name = "protobuf",
     hdrs = ["protobuf.h"],
@@ -26,6 +42,22 @@ cc_test(
         "//simulation/swarm/proto:static_config_cc_proto",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
+    ],
+)
+
+py_library(
+    name = "quaternion",
+    srcs = ["quaternion.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "quaternion_test",
+    srcs = ["quaternion_test.py"],
+    deps = [
+        ":quaternion",
+        requirement("absl-py"),
+        requirement("numpy"),
     ],
 )
 

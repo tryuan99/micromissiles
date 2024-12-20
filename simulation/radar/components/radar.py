@@ -3,10 +3,10 @@
 import numpy as np
 import scipy.constants
 
-from simulation.radar.components.coordinates import PolarCoordinates
 from simulation.radar.components.noise import GaussianNoise
 from simulation.radar.components.target import Target
 from utils import constants
+from utils.coordinates import SphericalCoordinates
 
 # Default temperature in Celsius.
 DEFAULT_TEMPERATURE = 30  # Celsius
@@ -273,8 +273,8 @@ class Radar:
             elevation: Elevation in rad.
         """
         # Find the unit vector in the given azmiuth and elevation.
-        polar_coordinates = PolarCoordinates(1, azimuth, elevation)
-        direction = polar_coordinates.transform_to_cartesian().coordinates
+        spherical_coordinates = SphericalCoordinates(1, azimuth, elevation)
+        direction = spherical_coordinates.transform_to_cartesian().coordinates()
 
         # Project the 3D position of each antenna onto the unit direction vector
         # to find the length of the projection in units of lambda/2.

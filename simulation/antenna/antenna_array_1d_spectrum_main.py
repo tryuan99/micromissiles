@@ -10,6 +10,7 @@ from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayArrival,
                                               AntennaArrayElement)
 from simulation.antenna.antenna_array_1d_spectrum import AntennaArray1DSpectrum
+from utils import constants
 
 FLAGS = flags.FLAGS
 
@@ -53,7 +54,7 @@ def sweep_azimuth_spectrum(num_antennas: int, antenna_spacing: float) -> None:
         """
         arrival = AntennaArrayArrival(azimuth=frame)
         data = spectrum.calculate_azimuth_spectrum(arrival, azimuth)
-        line.set_data(azimuth, 20 * np.log10(np.abs(data)))
+        line.set_data(azimuth, constants.mag2db(np.abs(data)))
         ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
 
     anim = animation.FuncAnimation(
@@ -66,8 +67,11 @@ def sweep_azimuth_spectrum(num_antennas: int, antenna_spacing: float) -> None:
     plt.show()
 
 
-def sweep_azimuth_spectrum_resolution(num_antennas: int, antenna_spacing: float,
-                                      delta_azimuth: float) -> None:
+def sweep_azimuth_spectrum_resolution(
+    num_antennas: int,
+    antenna_spacing: float,
+    delta_azimuth: float,
+) -> None:
     """Sweeps the azimuth spectrum as a function of the azimuth with two targets.
 
     Args:
@@ -108,7 +112,7 @@ def sweep_azimuth_spectrum_resolution(num_antennas: int, antenna_spacing: float,
             AntennaArrayArrival(azimuth=frame + delta_azimuth),
         ]
         data = spectrum.calculate_azimuth_spectrum(arrivals, azimuth)
-        line.set_data(azimuth, 20 * np.log10(np.abs(data)))
+        line.set_data(azimuth, constants.mag2db(np.abs(data)))
         ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
 
     anim = animation.FuncAnimation(

@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from simulation.radar.components.coordinates import PolarCoordinates
+from utils.coordinates import SphericalCoordinates
 
 
 class Target:
@@ -51,5 +51,5 @@ class Target:
         """
         d = self.get_distance_over_time(
             t_axis)  # Distance from the origin at each sample in m.
-        coordinates = PolarCoordinates(d, self.azimuth, self.elevation)
-        return coordinates.transform_to_cartesian().coordinates
+        coordinates = SphericalCoordinates(d, self.azimuth, self.elevation)
+        return coordinates.transform_to_cartesian().coordinates()

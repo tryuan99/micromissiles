@@ -109,6 +109,8 @@ py_library(
     deps = [
         ":antenna",
         ":isotropic_antenna",
+        "//utils:coordinates",
+        "//utils:quaternion",
         requirement("numpy"),
     ],
 )
@@ -120,6 +122,7 @@ py_binary(
         ":antenna_array",
         requirement("absl-py"),
         requirement("matplotlib"),
+        requirement("numpy"),
         requirement("SciencePlots"),
     ],
 )
@@ -131,6 +134,23 @@ py_test(
         ":antenna_array",
         requirement("absl-py"),
         requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "antenna_array_radiation_pattern_main",
+    srcs = ["antenna_array_radiation_pattern_main.py"],
+    data = ["//simulation/antenna/data:radiation_pattern_data"],
+    deps = [
+        ":antenna_array",
+        ":radiation_pattern",
+        "//utils:constants",
+        "//utils:coordinates",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
     ],
 )
 
@@ -159,6 +179,7 @@ py_binary(
     deps = [
         ":antenna_array",
         ":antenna_array_1d_spectrum",
+        "//utils:constants",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
@@ -193,6 +214,7 @@ py_binary(
     data = ["//simulation/antenna/data:radiation_pattern_data"],
     deps = [
         ":radiation_pattern",
+        "//utils:constants",
         "//utils/visualization:color_maps",
         requirement("absl-py"),
         requirement("matplotlib"),

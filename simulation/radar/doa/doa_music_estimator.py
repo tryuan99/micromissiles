@@ -8,12 +8,11 @@ for more details.
 
 import numpy as np
 
-from simulation.radar.components.coordinates import (CartesianCoordinates,
-                                                     PolarCoordinates)
 from simulation.radar.components.radar import Radar
 from simulation.radar.components.samples import Samples
 from simulation.radar.components.spatial_samples import SpatialSamples
 from simulation.radar.doa.doa_estimator import DoaEstimator
+from utils.coordinates import CartesianCoordinates, SphericalCoordinates
 
 # Number of targets in the azimuth-elevation spectrum.
 NUM_TARGETS = 1
@@ -73,8 +72,9 @@ class DoaMusicEstimator(DoaEstimator):
         """
         antenna_azimuth_coordinates, antenna_elevation_coordinates = np.meshgrid(
             np.arange(self.shape[-1]), np.arange(self.shape[-2]), indexing="ij")
-        antenna_azimuth_coordinates = antenna_azimuth_coordinates.flatten()
-        antenna_elevation_coordinates = antenna_elevation_coordinates.flatten()
+        antenna_azimuth_coordinates = antenna_azimuth_coordinates().flatten()
+        antenna_elevation_coordinates = (
+            antenna_elevation_coordinates().flatten())
         return antenna_azimuth_coordinates, antenna_elevation_coordinates
 
     def _get_direction_vectors(self) -> CartesianCoordinates:
@@ -87,8 +87,8 @@ class DoaMusicEstimator(DoaEstimator):
         elevation, azimuth = np.meshgrid(self.get_output_axis1(),
                                          self.get_output_axis2(),
                                          indexing="ij")
-        polar_coordinates = PolarCoordinates(1, azimuth, elevation)
-        return polar_coordinates.transform_to_cartesian()
+        spherical_coordinates = SphericalCoordinates(1, azimuth, elevation)
+        return spherical_coordinates.transform_to_cartesian()
 
     def _get_arrival_vectors(self) -> np.ndarray:
         """Gets the arrival vectors for every azimuth and elevation hypothesis.
@@ -104,7 +104,7 @@ class DoaMusicEstimator(DoaEstimator):
         num_antennas = np.multiply.reduce(self.shape[-2:])
         (antenna_azimuth_coordinates,
          antenna_elevation_coordinates) = self._get_antenna_coordinates()
-        direction_vectors = self._get_direction_vectors().coordinates
+        direction_vectors = self._get_direction_vectors().coordinates()
         arrival_vectors = np.zeros((*self.get_output_shape(), num_antennas),
                                    dtype=np.complex128)
         for antenna_index in range(num_antennas):

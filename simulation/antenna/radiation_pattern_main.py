@@ -8,6 +8,7 @@ from absl import app, flags
 from matplotlib import cm
 
 from simulation.antenna.radiation_pattern import RadiationPattern
+from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
@@ -20,16 +21,16 @@ def plot_radiation_pattern_3d_scatter(csv_file: str) -> None:
         csv_file: Simulated radiation pattern CSV file.
     """
     radiation_pattern = RadiationPattern(csv_file)
-    gain = radiation_pattern.df[radiation_pattern.gain_column]
+    gain_db = radiation_pattern.df[radiation_pattern.gain_db_column]
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = gain - gain.min()
+    r = gain_db - gain_db.min()
     x, y, z = radiation_pattern.transform_to_cartesian()
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
-        vmin=np.min(gain),
-        vmax=np.max(gain),
+        vmin=np.min(gain_db),
+        vmax=np.max(gain_db),
     )
     m = cm.ScalarMappable(
         cmap=COLOR_MAPS["parula"],
@@ -75,17 +76,18 @@ def plot_radiation_pattern_3d(csv_file: str) -> None:
 
     radiation_pattern = RadiationPattern(csv_file)
     gain = radiation_pattern.calculate_pattern(azimuth_mesh, elevation_mesh)
+    gain_db = constants.power2db(gain)
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = gain - np.min(gain)
+    r = gain_db - np.min(gain_db)
     x = -r * np.sin(azimuth_mesh) * np.cos(elevation_mesh)
     y = r * np.sin(elevation_mesh)
     z = r * np.cos(azimuth_mesh) * np.cos(elevation_mesh)
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
-        vmin=np.min(gain),
-        vmax=np.max(gain),
+        vmin=np.min(gain_db),
+        vmax=np.max(gain_db),
     )
     m = cm.ScalarMappable(
         cmap=COLOR_MAPS["parula"],
@@ -103,7 +105,7 @@ def plot_radiation_pattern_3d(csv_file: str) -> None:
         x,
         y,
         z,
-        facecolors=COLOR_MAPS["parula"](norm(r)),
+        facecolors=COLOR_MAPS["parula"](norm(gain_db)),
         shade=False,
         antialiased=False,
     )

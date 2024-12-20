@@ -26,13 +26,24 @@ class RadiationPattern(Antenna):
         phi_column: Dataframe column corresponding to phi.
         theta_column: Dataframe column corresponding to theta.
         gain_column: Dataframe column corresponding to the far-field antenna
-          gain.
+          gain on a linear scale.
+        gain_db_column: Dataframe column corresponding to the far-field antenna
+          gain in dB.
     """
 
     def __init__(self, data_csv: str) -> None:
         super().__init__()
         self.df = pd.read_csv(data_csv, comment="#")
-        self.phi_column, self.theta_column, self.gain_column = self.df.columns
+        (
+            self.phi_column,
+            self.theta_column,
+            self.gain_db_column,
+        ) = self.df.columns
+
+        # Convert the gain in dB to a linear scale.
+        self.gain_column = "Gain"
+        self.df[self.gain_column] = (constants.db2power(
+            self.df[self.gain_db_column]))
 
     def transform_to_cartesian(
             self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:

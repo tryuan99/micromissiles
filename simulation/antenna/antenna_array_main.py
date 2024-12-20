@@ -1,6 +1,7 @@
 """Plots the antenna array elements."""
 
 import matplotlib.pyplot as plt
+import numpy as np
 import scienceplots
 from absl import app, flags
 
@@ -21,12 +22,19 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
     )
-    for element in array.elements:
-        ax.scatter(*element.coordinates, s=120, marker="^")
+    element_coordinates = np.array(
+        [element.coordinates() for element in array.elements])
+    ax.scatter(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        s=120,
+        marker="^",
+    )
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
     ax.set_zlabel(r"$z$")
-    ax.view_init(30, -135, vertical_axis="y")
+    ax.view_init(30, -45, vertical_axis="y")
     plt.show()
 
 

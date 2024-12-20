@@ -69,10 +69,10 @@ py_library(
     srcs = ["doa_music_estimator.py"],
     deps = [
         ":doa_estimator",
-        "//simulation/radar/components:coordinates",
         "//simulation/radar/components:radar",
         "//simulation/radar/components:samples",
         "//simulation/radar/components:spatial_samples",
+        "//utils:coordinates",
         requirement("numpy"),
     ],
 )

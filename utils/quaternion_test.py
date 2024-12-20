@@ -1,8 +1,7 @@
 import numpy as np
 from absl.testing import absltest
 
-from simulation.swarm.utils.py.quaternion import (PointQuaternion, Quaternion,
-                                                  RotationQuaternion)
+from utils.quaternion import PointQuaternion, Quaternion, RotationQuaternion
 
 
 class QuaternionTestCase(absltest.TestCase):

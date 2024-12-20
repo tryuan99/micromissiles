@@ -73,22 +73,6 @@ py_binary(
 )
 
 py_library(
-    name = "coordinates",
-    srcs = ["coordinates.py"],
-    deps = [requirement("numpy")],
-)
-
-py_test(
-    name = "coordinates_test",
-    srcs = ["coordinates_test.py"],
-    deps = [
-        ":coordinates",
-        requirement("absl-py"),
-        requirement("numpy"),
-    ],
-)
-
-py_library(
     name = "noise",
     srcs = ["noise.py"],
     deps = [
@@ -121,10 +105,10 @@ py_library(
     name = "radar",
     srcs = ["radar.py"],
     deps = [
-        ":coordinates",
         ":noise",
         ":target",
         "//utils:constants",
+        "//utils:coordinates",
         requirement("numpy"),
         requirement("scipy"),
     ],
@@ -162,7 +146,7 @@ py_library(
     name = "target",
     srcs = ["target.py"],
     deps = [
-        ":coordinates",
+        "//utils:coordinates",
         requirement("numpy"),
     ],
 )
