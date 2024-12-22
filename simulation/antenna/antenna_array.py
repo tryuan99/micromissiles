@@ -10,7 +10,7 @@ import numpy as np
 from simulation.antenna.antenna import Antenna
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
 from utils.coordinates import CartesianCoordinates, SphericalCoordinates
-from utils.quaternion import RotationQuaternion
+from utils.quaternion import PointQuaternion, RotationQuaternion
 
 
 class AntennaArrayElement:
@@ -18,6 +18,7 @@ class AntennaArrayElement:
 
     Attributes:
         cartesian_coordinates: Cartesian coordinates.
+        antenna: Antenna of the element.
         orientation: Orientation of the antenna element.
     """
 
@@ -48,6 +49,66 @@ class AntennaArrayElement:
     def coordinates(self) -> np.ndarray:
         """Returns the Cartesian coordinates."""
         return self.cartesian_coordinates.coordinates()
+
+    def boresight(self) -> np.ndarray:
+        """Returns the boresight direction."""
+        return self._orient(np.array([0, 0, 1]))
+
+    def vertical(self) -> np.ndarray:
+        """Returns the vertical direction."""
+        return self._orient(np.array([0, 1, 0]))
+
+    def right(self) -> np.ndarray:
+        """Returns the right direction, which corresponds to an azimuth of 90
+        degrees.
+        """
+        return self._orient(np.array([-1, 0, 0]))
+
+    def calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
+        """Calculates the oriented radiation pattern of the antenna element.
+
+        The azimuth and elevation are in the global coordinate system.
+
+        Args:
+            azimuth: Azimuth in radians.
+            elevation: Elevation in radians.
+
+        Returns:
+            The magnitude of the radiation pattern.
+        """
+        coordinates = np.array(
+            SphericalCoordinates.transform_to_cartesian_arrays(
+                1,
+                azimuth,
+                elevation,
+            ))
+        transformed = np.apply_along_axis(self._orient, 0, coordinates)
+        _, transformed_azimuth, transformed_elevation = (
+            CartesianCoordinates.transform_to_spherical_arrays(
+                transformed[0],
+                transformed[1],
+                transformed[2],
+            ))
+        return self.antenna.calculate_pattern(
+            transformed_azimuth,
+            transformed_elevation,
+        )
+
+    def _orient(self, vector: np.ndarray) -> np.ndarray:
+        """Rotate the vector according to the orientation of the antenna
+        element.
+
+        This operation corresponds to transforming the vector from the
+        coordinate system of the antenna element to the global coordinate
+        system.
+        """
+        quaternion = PointQuaternion(coordinates=vector)
+        transformed = quaternion.rotate(self.orientation)
+        return transformed.v
 
 
 class AntennaArrayArrival:
@@ -141,8 +202,8 @@ class AntennaArray:
     def calculate_radiation_pattern(
         self,
         beam_steer: AntennaArrayBeamSteer,
-        azimuth: np.ndarray,
-        elevation: np.ndarray,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
     ) -> np.ndarray:
         """Calculates the radiation pattern of the antenna array at the given
         azimuths and elevations.
@@ -158,13 +219,13 @@ class AntennaArray:
         direction = beam_steer.direction()
         pattern_directions = np.moveaxis(
             SphericalCoordinates.transform_to_cartesian_arrays(
-                np.ones(np.broadcast_shapes(azimuth.shape, elevation.shape)),
+                1,
                 azimuth,
                 elevation,
             ), 0, -1)
         return np.sum(
             [
-                element.antenna.calculate_pattern(azimuth, elevation) *
+                element.calculate_pattern(azimuth, elevation) *
                 np.exp(-1j * 2 * np.pi *
                        np.dot(element.coordinates(), direction)) *
                 np.exp(1j * 2 * np.pi *
@@ -219,7 +280,7 @@ class AntennaArray:
         """
         direction = arrival.direction()
         return (amplitude * arrival.amplitude * np.array([
-            element.antenna.calculate_pattern(
+            element.calculate_pattern(
                 arrival.azimuth,
                 arrival.elevation,
             ) * np.exp(-1j *

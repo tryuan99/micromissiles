@@ -31,18 +31,45 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
     )
-    element_coordinates = np.array(
-        [element.coordinates() for element in array.elements])
-    ax.scatter(
-        element_coordinates[:, 0],
-        element_coordinates[:, 1],
-        element_coordinates[:, 2],
-        s=120,
-        marker="^",
-    )
+    for element in array.elements:
+        coordinates = element.coordinates()
+        ax.scatter(
+            *coordinates,
+            s=120,
+            c="C0",
+            marker="^",
+            alpha=0.5,
+        )
+        ax.quiver(
+            *coordinates,
+            *element.boresight(),
+            length=0.1,
+            normalize=True,
+            color="C0",
+        )
+        ax.quiver(
+            *coordinates,
+            *element.right(),
+            length=0.1,
+            normalize=True,
+            color="C1",
+        )
+        ax.quiver(
+            *coordinates,
+            *element.vertical(),
+            length=0.1,
+            normalize=True,
+            color="C2",
+        )
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
     ax.set_zlabel(r"$z$")
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+    zmin, zmax = ax.get_zlim()
+    ax.set_xlim(min(xmin, -0.1), xmax)
+    ax.set_ylim(ymin, max(ymax, 0.1))
+    ax.set_zlim(zmin, max(zmax, 0.1))
     ax.view_init(30, -45, vertical_axis="y")
     plt.show()
 

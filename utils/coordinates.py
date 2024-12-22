@@ -18,7 +18,7 @@ We use spherical coordinates for the azimuth and elevation.
 The azimuth denotes the angle from the projection of the target onto the x-z
 plane to the z-axis, where a positive azimuth denotes a negative x-coordinate
 and a negative azimuth denotes a positive x-coordinate.
-    azimuth = arctan(-x / z)
+    azimuth = arctan2(-x / z)
 The elevation denotes the angle from the target to its projection onto the
 x-z plane, where a positive elevation denotes a positive y-coordinate
 and a negative elevation denotes a negative y-coordinate.
@@ -71,10 +71,28 @@ class CartesianCoordinates(Coordinates):
         Returns:
             The spherical coordinates.
         """
-        range = np.sqrt(self.x**2 + self.y**2 + self.z**2)
-        azimuth = np.arctan(-self.x / self.z)
-        elevation = np.arctan(self.y / np.sqrt(self.x**2 + self.z**2))
+        range, azimuth, elevation = self.transform_to_spherical_arrays(
+            self.x,
+            self.y,
+            self.z,
+        )
         return SphericalCoordinates(range, azimuth, elevation)
+
+    @staticmethod
+    def transform_to_spherical_arrays(
+        x: float | np.ndarray,
+        y: float | np.ndarray,
+        z: float | np.ndarray,
+    ) -> tuple[float | np.ndarray, float | np.ndarray, float | np.ndarray]:
+        """Transforms the coordinates to spherical coordinates.
+
+        Returns:
+            The spherical coordinates.
+        """
+        range = np.sqrt(x**2 + y**2 + z**2)
+        azimuth = -np.arctan2(x, z)
+        elevation = np.arctan(np.divide(y, np.sqrt(x**2 + z**2)))
+        return range, azimuth, elevation
 
 
 class SphericalCoordinates(Coordinates):
@@ -115,7 +133,7 @@ class SphericalCoordinates(Coordinates):
 
     @staticmethod
     def transform_to_cartesian_arrays(
-        rnge: float | np.ndarray,
+        range: float | np.ndarray,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
     ) -> tuple[float | np.ndarray, float | np.ndarray, float | np.ndarray]:
@@ -124,7 +142,7 @@ class SphericalCoordinates(Coordinates):
         Returns:
             The x, y, and z-coordinates.
         """
-        x = -rnge * np.sin(azimuth) * np.cos(elevation)
-        y = rnge * np.sin(elevation)
-        z = rnge * np.cos(azimuth) * np.cos(elevation)
+        x = -range * np.sin(azimuth) * np.cos(elevation)
+        y = range * np.sin(elevation)
+        z = range * np.cos(azimuth) * np.cos(elevation)
         return x, y, z

@@ -4,6 +4,80 @@ from absl.testing import absltest
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayArrival,
                                               AntennaArrayElement)
+from utils.quaternion import RotationQuaternion
+
+
+class AntennaArrayElementTestCase(absltest.TestCase):
+
+    def test_coordinates(self):
+        element = AntennaArrayElement(x=1, y=2, z=3)
+        np.testing.assert_array_equal(
+            element.coordinates(),
+            np.array([1, 2, 3]),
+        )
+
+    def test_boresight(self):
+        element = AntennaArrayElement(x=1, y=2, z=3)
+        np.testing.assert_array_equal(
+            element.boresight(),
+            np.array([0, 0, 1]),
+        )
+        element = AntennaArrayElement(
+            x=1,
+            y=2,
+            z=3,
+            orientation=RotationQuaternion(
+                theta=np.pi / 2,
+                axis=np.array([0, 1, 0]),
+            ),
+        )
+        np.testing.assert_allclose(
+            element.boresight(),
+            np.array([1, 0, 0]),
+            atol=1e-12,
+        )
+
+    def test_vertical(self):
+        element = AntennaArrayElement(x=1, y=2, z=3)
+        np.testing.assert_array_equal(
+            element.vertical(),
+            np.array([0, 1, 0]),
+        )
+        element = AntennaArrayElement(
+            x=1,
+            y=2,
+            z=3,
+            orientation=RotationQuaternion(
+                theta=np.pi / 2,
+                axis=np.array([1, 0, 0]),
+            ),
+        )
+        np.testing.assert_allclose(
+            element.vertical(),
+            np.array([0, 0, 1]),
+            atol=1e-12,
+        )
+
+    def test_right(self):
+        element = AntennaArrayElement(x=1, y=2, z=3)
+        np.testing.assert_array_equal(
+            element.right(),
+            np.array([-1, 0, 0]),
+        )
+        element = AntennaArrayElement(
+            x=1,
+            y=2,
+            z=3,
+            orientation=RotationQuaternion(
+                theta=-np.pi / 2,
+                axis=np.array([0, 0, 1]),
+            ),
+        )
+        np.testing.assert_allclose(
+            element.right(),
+            np.array([0, 1, 0]),
+            atol=1e-12,
+        )
 
 
 class AntennaArrayTestCase(absltest.TestCase):
