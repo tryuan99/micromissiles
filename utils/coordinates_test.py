@@ -6,7 +6,7 @@ from utils.coordinates import CartesianCoordinates, SphericalCoordinates
 
 class CartesianCoordinatesTestCase(absltest.TestCase):
 
-    cartesian_coordinates = CartesianCoordinates(2, -1, 3)
+    cartesian_coordinates = CartesianCoordinates(x=2, y=-1, z=3)
 
     def test_transform_to_spherical(self):
         spherical_coordinates = (
@@ -28,9 +28,11 @@ class CartesianCoordinatesTestCase(absltest.TestCase):
                                self.cartesian_coordinates.z)
 
     def test_signed_azimuth(self):
-        cartesian_coordinates = CartesianCoordinates(0,
-                                                     np.sqrt(2) / 2,
-                                                     -np.sqrt(2) / 2)
+        cartesian_coordinates = CartesianCoordinates(
+            x=0,
+            y=np.sqrt(2) / 2,
+            z=-np.sqrt(2) / 2,
+        )
         spherical_coordinates = cartesian_coordinates.transform_to_spherical()
         self.assertAlmostEqual(spherical_coordinates.range, 1)
         self.assertAlmostEqual(spherical_coordinates.azimuth, -np.pi)
@@ -39,7 +41,11 @@ class CartesianCoordinatesTestCase(absltest.TestCase):
 
 class SphericalCoordinatesTestCase(absltest.TestCase):
 
-    spherical_coordinates = SphericalCoordinates(2, np.pi / 6, np.pi / 3)
+    spherical_coordinates = SphericalCoordinates(
+        range=2,
+        azimuth=np.pi / 6,
+        elevation=np.pi / 3,
+    )
 
     def test_transform_to_cartesian(self):
         cartesian_coordinates = (

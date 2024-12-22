@@ -30,7 +30,6 @@ def _generate_random_point() -> np.ndarray:
     """
     azimuth = np.random.uniform(-np.pi / 2, np.pi / 2)
     elevation = np.random.uniform(0, np.pi / 6)
-    direction = np.random.uniform(-np.pi / 2, np.pi / 2)
     distance = np.random.uniform(8, 12)
     return distance * np.array([
         np.cos(elevation) * np.cos(azimuth),

@@ -87,7 +87,11 @@ class DoaMusicEstimator(DoaEstimator):
         elevation, azimuth = np.meshgrid(self.get_output_axis1(),
                                          self.get_output_axis2(),
                                          indexing="ij")
-        spherical_coordinates = SphericalCoordinates(1, azimuth, elevation)
+        spherical_coordinates = SphericalCoordinates(
+            range=1,
+            azimuth=azimuth,
+            elevation=elevation,
+        )
         return spherical_coordinates.transform_to_cartesian()
 
     def _get_arrival_vectors(self) -> np.ndarray:

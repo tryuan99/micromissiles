@@ -273,7 +273,11 @@ class Radar:
             elevation: Elevation in rad.
         """
         # Find the unit vector in the given azmiuth and elevation.
-        spherical_coordinates = SphericalCoordinates(1, azimuth, elevation)
+        spherical_coordinates = SphericalCoordinates(
+            range=1,
+            azimuth=azimuth,
+            elevation=elevation,
+        )
         direction = spherical_coordinates.transform_to_cartesian().coordinates()
 
         # Project the 3D position of each antenna onto the unit direction vector

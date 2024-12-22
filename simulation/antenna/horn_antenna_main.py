@@ -9,6 +9,7 @@ from matplotlib import cm
 
 from simulation.antenna.horn_antenna import HornAntenna
 from utils import constants
+from utils.coordinates import SphericalCoordinates
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
@@ -39,9 +40,11 @@ def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
 
     # Convert from spherical coordinates to Cartesian coordinates.
     r = constants.mag2db(pattern + 1)
-    x = -r * np.sin(azimuth_mesh) * np.cos(elevation_mesh)
-    y = r * np.sin(elevation_mesh)
-    z = r * np.cos(azimuth_mesh) * np.cos(elevation_mesh)
+    x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
+        range=r,
+        azimuth=azimuth_mesh,
+        elevation=elevation_mesh,
+    )
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(vmin=np.min(r), vmax=np.max(r))

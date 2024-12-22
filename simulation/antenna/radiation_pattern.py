@@ -8,6 +8,7 @@ import scipy.interpolate
 
 from simulation.antenna.antenna import Antenna
 from utils import constants
+from utils.coordinates import SphericalCoordinates
 
 
 class RadiationPattern(Antenna):
@@ -74,9 +75,11 @@ class RadiationPattern(Antenna):
             The magnitude of the radiation pattern.
         """
         # Transform the coordinate systems.
-        x = -np.sin(azimuth) * np.cos(elevation)
-        y = np.sin(elevation)
-        z = np.cos(azimuth) * np.cos(elevation)
+        x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
+            range=1,
+            azimuth=azimuth,
+            elevation=elevation,
+        )
         azimuth_pattern = np.arccos(x / np.sqrt(x**2 + y**2))
         azimuth_pattern = np.nan_to_num(azimuth_pattern)
         if isinstance(azimuth_pattern, np.ndarray):

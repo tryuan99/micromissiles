@@ -100,9 +100,9 @@ def plot_antenna_array_radiation_pattern(
     radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
     r = radiation_pattern_db - np.min(radiation_pattern_db)
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
-        r,
-        azimuth_mesh,
-        elevation_mesh,
+        x=r,
+        y=azimuth_mesh,
+        z=elevation_mesh,
     )
 
     # Generate the face colors.

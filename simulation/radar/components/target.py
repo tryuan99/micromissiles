@@ -49,7 +49,11 @@ class Target:
             (x, y, z), where x, y, and z correspond to the x, y, and z-positions
             of the target along the given time axis.
         """
-        d = self.get_distance_over_time(
+        distance = self.get_distance_over_time(
             t_axis)  # Distance from the origin at each sample in m.
-        coordinates = SphericalCoordinates(d, self.azimuth, self.elevation)
+        coordinates = SphericalCoordinates(
+            range=distance,
+            azimuth=self.azimuth,
+            elevation=self.elevation,
+        )
         return coordinates.transform_to_cartesian().coordinates()

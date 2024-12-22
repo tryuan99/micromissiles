@@ -76,7 +76,11 @@ class CartesianCoordinates(Coordinates):
             self.y,
             self.z,
         )
-        return SphericalCoordinates(range, azimuth, elevation)
+        return SphericalCoordinates(
+            range=range,
+            azimuth=azimuth,
+            elevation=elevation,
+        )
 
     @staticmethod
     def transform_to_spherical_arrays(
@@ -106,11 +110,11 @@ class SphericalCoordinates(Coordinates):
 
     def __init__(
         self,
-        rnge: float | np.ndarray,
+        range: float | np.ndarray,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
     ) -> None:
-        self.range = rnge
+        self.range = range
         self.azimuth = azimuth
         self.elevation = elevation
 
@@ -129,7 +133,7 @@ class SphericalCoordinates(Coordinates):
             self.azimuth,
             self.elevation,
         )
-        return CartesianCoordinates(x, y, z)
+        return CartesianCoordinates(x=x, y=y, z=z)
 
     @staticmethod
     def transform_to_cartesian_arrays(

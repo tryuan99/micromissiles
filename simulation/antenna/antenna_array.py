@@ -82,16 +82,16 @@ class AntennaArrayElement:
         """
         coordinates = np.array(
             SphericalCoordinates.transform_to_cartesian_arrays(
-                1,
-                azimuth,
-                elevation,
+                range=1,
+                azimuth=azimuth,
+                elevation=elevation,
             ))
         transformed = np.apply_along_axis(self._orient, 0, coordinates)
         _, transformed_azimuth, transformed_elevation = (
             CartesianCoordinates.transform_to_spherical_arrays(
-                transformed[0],
-                transformed[1],
-                transformed[2],
+                x=transformed[0],
+                y=transformed[1],
+                z=transformed[2],
             ))
         return self.antenna.calculate_pattern(
             transformed_azimuth,
@@ -131,7 +131,7 @@ class AntennaArrayArrival:
         self.spherical_coordinates = coordinates
         if self.spherical_coordinates is None:
             self.spherical_coordinates = SphericalCoordinates(
-                rnge=1,
+                range=1,
                 azimuth=azimuth,
                 elevation=elevation,
             )
@@ -150,7 +150,8 @@ class AntennaArrayArrival:
 
     def direction(self) -> np.ndarray:
         """Returns the unit direction vector."""
-        return self.spherical_coordinates.transform_to_cartesian().coordinates()
+        return (
+            self.spherical_coordinates.transform_to_cartesian().coordinates())
 
 
 class AntennaArrayBeamSteer:
@@ -169,7 +170,7 @@ class AntennaArrayBeamSteer:
         self.spherical_coordinates = coordinates
         if self.spherical_coordinates is None:
             self.spherical_coordinates = SphericalCoordinates(
-                rnge=1,
+                range=1,
                 azimuth=azimuth,
                 elevation=elevation,
             )
@@ -219,9 +220,9 @@ class AntennaArray:
         direction = beam_steer.direction()
         pattern_directions = np.moveaxis(
             SphericalCoordinates.transform_to_cartesian_arrays(
-                1,
-                azimuth,
-                elevation,
+                range=1,
+                azimuth=azimuth,
+                elevation=elevation,
             ), 0, -1)
         return np.sum(
             [
