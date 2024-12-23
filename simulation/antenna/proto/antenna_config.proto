@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package antenna;
+
+// Isotropic antenna configuration.
+message IsotropicAntennaConfig {}
+
+// Dipole antenna configuration.
+message DipoleAntennaConfig {
+  // Length in units of lambda.
+  // The length specifies the total length of the dipole.
+  float length = 1;
+}
+
+// Horn antenna configuration.
+message HornAntennaConfig {
+  // Width in units of lambda before the flare.
+  float a = 1;
+
+  // Height in units of lambda before the flare.
+  float b = 2;
+
+  // Width in units of lambda after the flare.
+  float a1 = 3;
+
+  // Height in units of lambda after the flare.
+  float b1 = 4;
+
+  // Depth of the pyramid in the y-z plane in units of lambda.
+  float rho1 = 5;
+
+  // Depth of the pyramid in the x-z plane in units of lambda.
+  float rho2 = 6;
+}
+
+// Patch antenna configuration.
+message PatchAntennaConfig {
+  // Width in units of lambda.
+  float width = 1;
+
+  // Length in units of lambda.
+  float length = 2;
+}
+
+// Arbitrary radiation pattern.
+message RadiationPatternConfig {
+  // Path to the radiation pattern CSV file.
+  string data = 1;
+}
+
+// Antenna configuration.
+message AntennaConfig {
+  // Type-specific configuration.
+  oneof type_oneof {
+    // Isotropic antenna configuration.
+    IsotropicAntennaConfig isotropic = 1;
+
+    // Dipole antenna configuration.
+    DipoleAntennaConfig dipole = 2;
+
+    // Horn antenna configuration.
+    HornAntennaConfig horn = 3;
+
+    // Patch antenna configuration.
+    PatchAntennaConfig patch = 4;
+
+    // Radiation pattern configuration.
+    RadiationPatternConfig radiation_pattern = 5;
+  }
+}

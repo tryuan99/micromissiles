@@ -1,0 +1,38 @@
+load("@protobuf//bazel:proto_library.bzl", "proto_library")
+load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
+
+package(default_visibility = ["//visibility:public"])
+
+proto_library(
+    name = "antenna_array_config_proto",
+    srcs = ["antenna_array_config.proto"],
+    deps = [
+        ":antenna_config_proto",
+        ":geometry_proto",
+    ],
+)
+
+py_proto_library(
+    name = "antenna_array_config_py_proto",
+    deps = [":antenna_array_config_proto"],
+)
+
+proto_library(
+    name = "antenna_config_proto",
+    srcs = ["antenna_config.proto"],
+)
+
+py_proto_library(
+    name = "antenna_config_py_proto",
+    deps = [":antenna_config_proto"],
+)
+
+proto_library(
+    name = "geometry_proto",
+    srcs = ["geometry.proto"],
+)
+
+py_proto_library(
+    name = "geometry_py_proto",
+    deps = [":geometry_proto"],
+)

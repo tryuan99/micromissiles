@@ -28,7 +28,9 @@ py_library(
     srcs = ["antenna_array.py"],
     deps = [
         ":antenna",
+        ":antenna_factory",
         ":isotropic_antenna",
+        "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils:coordinates",
         "//utils:quaternion",
         requirement("numpy"),
@@ -105,6 +107,37 @@ py_binary(
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("SciencePlots"),
+    ],
+)
+
+py_library(
+    name = "antenna_factory",
+    srcs = ["antenna_factory.py"],
+    data = ["//simulation/antenna/data:radiation_pattern_data"],
+    deps = [
+        ":antenna",
+        ":dipole_antenna",
+        ":horn_antenna",
+        ":isotropic_antenna",
+        ":patch_antenna",
+        ":radiation_pattern",
+        "//simulation/antenna/proto:antenna_config_py_proto",
+    ],
+)
+
+py_test(
+    name = "antenna_factory_test",
+    srcs = ["antenna_factory_test.py"],
+    deps = [
+        ":antenna_factory",
+        ":dipole_antenna",
+        ":horn_antenna",
+        ":isotropic_antenna",
+        ":patch_antenna",
+        ":radiation_pattern",
+        "//simulation/antenna/proto:antenna_config_py_proto",
+        requirement("absl-py"),
+        requirement("numpy"),
     ],
 )
 

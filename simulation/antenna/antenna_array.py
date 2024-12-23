@@ -5,10 +5,15 @@ The boresight of the antenna array is in the positive z-direction while a
 planar antenna array will lie in the x-y plane.
 """
 
+from typing import Self
+
 import numpy as np
 
 from simulation.antenna.antenna import Antenna
+from simulation.antenna.antenna_factory import AntennaFactory
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
+from simulation.antenna.proto.antenna_array_config_pb2 import \
+    AntennaArrayElementConfig
 from utils.coordinates import CartesianCoordinates, SphericalCoordinates
 from utils.quaternion import PointQuaternion, RotationQuaternion
 
@@ -28,7 +33,7 @@ class AntennaArrayElement:
         y: float = 0,
         z: float = 0,
         coordinates: CartesianCoordinates = None,
-        antenna: Antenna = None,
+        antenna: Antenna = IsotropicAntenna(),
         orientation: RotationQuaternion = RotationQuaternion(
             theta=0,
             axis=np.array([0, 0, 1]),
@@ -42,9 +47,37 @@ class AntennaArrayElement:
                 z=z,
             )
         self.antenna = antenna
-        if self.antenna is None:
-            self.antenna = IsotropicAntenna()
         self.orientation = orientation
+
+    @classmethod
+    def create(cls,
+               antenna_array_element_config: AntennaArrayElementConfig) -> Self:
+        """Creates an antenna array element according to the configuration.
+
+        Args:
+            antenna_array_element_config: Antenna array element configuration.
+
+        Returns:
+            The antenna array element instance.
+        """
+        antenna = (AntennaFactory.create_antenna(
+            antenna_array_element_config.antenna_config))
+        position = CartesianCoordinates(
+            x=antenna_array_element_config.position.x,
+            y=antenna_array_element_config.position.y,
+            z=antenna_array_element_config.position.z,
+        )
+        orientation = RotationQuaternion(
+            theta=antenna_array_element_config.orientation.theta,
+            x=antenna_array_element_config.orientation.x,
+            y=antenna_array_element_config.orientation.y,
+            z=antenna_array_element_config.orientation.z,
+        )
+        return AntennaArrayElement(
+            coordinates=position,
+            antenna=antenna,
+            orientation=orientation,
+        )
 
     def coordinates(self) -> np.ndarray:
         """Returns the Cartesian coordinates."""

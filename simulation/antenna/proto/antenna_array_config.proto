@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package antenna;
+
+import "simulation/antenna/proto/antenna_config.proto";
+import "simulation/antenna/proto/geometry.proto";
+
+// Antenna array element configuration.
+message AntennaArrayElementConfig {
+  // Position.
+  CartesianCoordinates position = 1;
+
+  // Orientation.
+  Quaternion orientation = 2;
+
+  // Antenna configuration.
+  AntennaConfig antenna_config = 3;
+}
+
+// Antenna array configuration.
+message AntennaArrayConfig {
+  // Antenna array element configurations.
+  repeated AntennaArrayElementConfig antenna_array_element_configs = 1;
+}

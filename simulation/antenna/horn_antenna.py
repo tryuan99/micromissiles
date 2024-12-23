@@ -19,7 +19,7 @@ class HornAntenna(Antenna):
 
     Attributes:
         a: Width in units of lambda before the flare.
-        b: Height in uints of lambda before the flare.
+        b: Height in units of lambda before the flare.
         a1: Width in units of lambda after the flare.
         b1: Height in units of lambda after the flare.
         rho1: Depth of the pyramid in the y-z plane in units of lambda.

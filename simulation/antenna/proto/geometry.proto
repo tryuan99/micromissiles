@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package antenna;
+
+// Cartesian coordinates.
+message CartesianCoordinates {
+  // x-coordinate.
+  float x = 1;
+
+  // y-coordinate.
+  float y = 2;
+
+  // z-coordinate.
+  float z = 3;
+}
+
+// Quaternion.
+// The axis vector does not need to be normalized.
+message Quaternion {
+  // Theta in radians.
+  float theta = 1;
+
+  // x-coordinate of the axis.
+  float x = 2;
+
+  // y-coordinate of the axis.
+  float y = 3;
+
+  // z-coordinate of the axis.
+  float z = 4;
+}
