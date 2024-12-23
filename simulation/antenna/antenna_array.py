@@ -308,16 +308,15 @@ class AntennaArray:
             The spatial samples for each antenna array element.
         """
         if isinstance(arrivals, list):
-            spatial_samples = np.zeros(
-                len(self.elements),
-                dtype=np.complex128,
+            return np.sum(
+                [
+                    self._get_spatial_samples_for_arrival(
+                        arrival,
+                        amplitude,
+                    ) for arrival in arrivals
+                ],
+                axis=0,
             )
-            for arrival in arrivals:
-                spatial_samples += self._get_spatial_samples_for_arrival(
-                    arrival,
-                    amplitude,
-                )
-            return spatial_samples
         return self._get_spatial_samples_for_arrival(arrivals, amplitude)
 
     def _get_spatial_samples_for_arrival(
@@ -336,10 +335,11 @@ class AntennaArray:
         """
         direction = arrival.direction()
         return (amplitude * arrival.amplitude * np.array([
-            element.calculate_pattern(
-                arrival.azimuth,
-                arrival.elevation,
-            ) * np.exp(-1j *
-                       (2 * np.pi * np.dot(element.coordinates(), direction) +
-                        arrival.offset)) for element in self.elements
+            np.sqrt(
+                element.calculate_pattern(
+                    arrival.azimuth,
+                    arrival.elevation,
+                )) *
+            np.exp(-1j * (2 * np.pi * np.dot(element.coordinates(), direction) +
+                          arrival.offset)) for element in self.elements
         ]))

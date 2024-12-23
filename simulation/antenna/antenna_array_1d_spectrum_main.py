@@ -38,7 +38,7 @@ def sweep_azimuth_spectrum(array: AntennaArray) -> None:
         ax.set_title("Azimuth spectrum")
         ax.set_xlabel("Azimuth in rad")
         ax.set_ylabel("Magnitude in dB")
-        ax.set_ylim((-20, 20))
+        ax.set_ylim((-20, 25))
 
     def update_animation(frame: float) -> None:
         """Updates the animation for the next frame.
@@ -85,7 +85,7 @@ def sweep_azimuth_spectrum_resolution(
         ax.set_title("Azimuth spectrum")
         ax.set_xlabel("Azimuth in rad")
         ax.set_ylabel("Magnitude in dB")
-        ax.set_ylim((-20, 20))
+        ax.set_ylim((-20, 25))
 
     def update_animation(frame: float) -> None:
         """Updates the animation for the next frame.

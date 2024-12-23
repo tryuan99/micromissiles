@@ -22,6 +22,12 @@ class RadiationPattern(Antenna):
     plane while phi corresponds to the angle measured counterclockwise from the
     x-axis to the y-axis.
 
+    The dataframe should have three columns in the following order:
+        phi: The angle in degrees measured counterclockwise from the x-axis to
+          the y-axis.
+        theta: The angle in degrees measured from the z-axis to the x-y plane.
+        gain: The far-field antenna gain in dB.
+
     Attributes:
         df: Dataframe containing the radiation pattern.
         phi_column: Dataframe column corresponding to phi.
@@ -30,10 +36,12 @@ class RadiationPattern(Antenna):
           gain on a linear scale.
         gain_db_column: Dataframe column corresponding to the far-field antenna
           gain in dB.
+        interpolator: The interpolator of the radiation pattern.
     """
 
     def __init__(self, data_csv: str) -> None:
         super().__init__()
+
         self.df = pd.read_csv(data_csv, comment="#")
         (
             self.phi_column,
@@ -46,15 +54,16 @@ class RadiationPattern(Antenna):
         self.df[self.gain_column] = (constants.db2power(
             self.df[self.gain_db_column]))
 
+        # Interpolate the radiation pattern.
+        self.interpolator = self._interpolate_pattern()
+
     def transform_to_cartesian(
             self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the Cartesian coordinates of the data points.
 
-        The x-coordinates, y-coordinates, and z-coordinates are normalized.
-
         Returns:
-            A tuple consisting of the x-coordinates, y-coordinates, and
-            z-coordinates.
+            A tuple consisting of the normalized x-coordinates, y-coordinates,
+            and z-coordinates.
         """
         x = (np.sin(constants.deg2rad(self.df[self.theta_column])) *
              np.cos(constants.deg2rad(self.df[self.phi_column])))
@@ -90,29 +99,26 @@ class RadiationPattern(Antenna):
         elif y < 0:
             azimuth_pattern *= -1
         elevation_pattern = np.arccos(z)
-        return self._calculate_pattern(azimuth_pattern, elevation_pattern)
+        return self.interpolator(
+            elevation_pattern,
+            azimuth_pattern,
+            grid=False,
+        )
 
-    def _calculate_pattern(
-        self,
-        azimuth: float | np.ndarray,
-        elevation: float | np.ndarray,
-    ) -> float | np.ndarray:
-        """Calculates the radiation pattern of the antenna.
-
-        Args:
-            azimuth: Azimuth in radians.
-            elevation: Elevation in radians.
+    def _interpolate_pattern(
+            self) -> scipy.interpolate.RectSphereBivariateSpline:
+        """Interpolates the radiation pattern of the antenna.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The interpolator of the radiation pattern.
         """
         df = self.df.copy()
 
         # Remove duplicate values at theta = -90 degrees.
         df = df[df[self.phi_column] != -90]
 
-        # The interpolator requires data points to have a theta between 0 and 180
-        # degrees and a phi between 0 and 360 degrees, so "flip" the data
+        # The interpolator requires data points to have a theta between 0 and
+        # 180 degrees and a phi between 0 and 360 degrees, so "flip" the data
         # points with a negative theta.
         flipped_indices = df[self.theta_column] < 0
         df.loc[flipped_indices, self.theta_column] *= -1
@@ -136,6 +142,4 @@ class RadiationPattern(Antenna):
         theta = constants.deg2rad(df[self.theta_column].unique())
         phi = constants.deg2rad(df[self.phi_column].unique())
         gain = df[self.gain_column].to_numpy().reshape(len(theta), len(phi))
-        interpolator = scipy.interpolate.RectSphereBivariateSpline(
-            theta, phi, gain)
-        return interpolator(elevation, azimuth, grid=False)
+        return scipy.interpolate.RectSphereBivariateSpline(theta, phi, gain)

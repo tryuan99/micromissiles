@@ -103,9 +103,9 @@ def plot_antenna_array_radiation_pattern(
     radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
     r = radiation_pattern_db - np.min(radiation_pattern_db)
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
-        x=r,
-        y=azimuth_mesh,
-        z=elevation_mesh,
+        range=r,
+        azimuth=azimuth_mesh,
+        elevation=elevation_mesh,
     )
 
     # Generate the face colors.
@@ -158,9 +158,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string("config",
-                        "simulation/antenna/configs/ula_4_isotropic.pbtxt",
-                        "Antenna array configuration.")
+    flags.DEFINE_string(
+        "config", "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+        "Antenna array configuration.")
     flags.DEFINE_float("azimuth", 0, "Azimuth in radians.")
     flags.DEFINE_float("elevation", 0, "Elevation in radians.")
 
