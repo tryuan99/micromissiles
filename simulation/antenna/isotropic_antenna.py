@@ -8,8 +8,11 @@ from simulation.antenna.antenna import Antenna
 class IsotropicAntenna(Antenna):
     """Isotropic antenna."""
 
-    def calculate_pattern(self, azimuth: float | np.ndarray,
-                          elevation: float | np.ndarray) -> float | np.ndarray:
+    def calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Args:

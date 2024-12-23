@@ -20,8 +20,11 @@ class DipoleAntenna(Antenna):
         super().__init__()
         self.length = length
 
-    def calculate_pattern(self, azimuth: float | np.ndarray,
-                          elevation: float | np.ndarray) -> float | np.ndarray:
+    def calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -36,8 +39,11 @@ class DipoleAntenna(Antenna):
         elevation_pattern = np.pi / 2 - elevation
         return self._calculate_pattern(azimuth_pattern, elevation_pattern)
 
-    def _calculate_pattern(self, azimuth: float | np.ndarray,
-                           elevation: float | np.ndarray) -> float | np.ndarray:
+    def _calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Adapted from "Antenna Theory: Analysis and Design" by Constantine A.

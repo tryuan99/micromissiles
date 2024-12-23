@@ -1,5 +1,5 @@
-"""The radiation pattern class interpolates the simulated radiation pattern of
-an antenna from HFSS.
+"""The radiation pattern class interpolates the radiation pattern of an
+antenna, including the simulated antenna radiation pattern from HFSS.
 """
 
 import numpy as np
@@ -23,7 +23,7 @@ class RadiationPattern(Antenna):
     x-axis to the y-axis.
 
     Attributes:
-        df: Dataframe containing the simulated radiation pattern.
+        df: Dataframe containing the radiation pattern.
         phi_column: Dataframe column corresponding to phi.
         theta_column: Dataframe column corresponding to theta.
         gain_column: Dataframe column corresponding to the far-field antenna
@@ -63,8 +63,11 @@ class RadiationPattern(Antenna):
         z = np.cos(constants.deg2rad(self.df[self.theta_column]))
         return x, y, z
 
-    def calculate_pattern(self, azimuth: float | np.ndarray,
-                          elevation: float | np.ndarray) -> float | np.ndarray:
+    def calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -89,8 +92,11 @@ class RadiationPattern(Antenna):
         elevation_pattern = np.arccos(z)
         return self._calculate_pattern(azimuth_pattern, elevation_pattern)
 
-    def _calculate_pattern(self, azimuth: float | np.ndarray,
-                           elevation: float | np.ndarray) -> float | np.ndarray:
+    def _calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -126,7 +132,7 @@ class RadiationPattern(Antenna):
         # Sort the Dataframe in increasing theta.
         df.sort_values(by=[self.theta_column, self.phi_column], inplace=True)
 
-        # Interpolate the simulated radiation pattern over the entire sphere.
+        # Interpolate the radiation pattern over the entire sphere.
         theta = constants.deg2rad(df[self.theta_column].unique())
         phi = constants.deg2rad(df[self.phi_column].unique())
         gain = df[self.gain_column].to_numpy().reshape(len(theta), len(phi))

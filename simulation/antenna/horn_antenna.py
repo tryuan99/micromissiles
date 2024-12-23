@@ -26,8 +26,15 @@ class HornAntenna(Antenna):
         rho2: Depth of the pyramid in the x-z plane in units of lambda.
     """
 
-    def __init__(self, a: float, b: float, a1: float, b1: float, rho1: float,
-                 rho2: float) -> None:
+    def __init__(
+        self,
+        a: float,
+        b: float,
+        a1: float,
+        b1: float,
+        rho1: float,
+        rho2: float,
+    ) -> None:
         super().__init__()
         self.a = a
         self.b = b
@@ -36,8 +43,11 @@ class HornAntenna(Antenna):
         self.rho1 = rho1
         self.rho2 = rho2
 
-    def calculate_pattern(self, azimuth: float | np.ndarray,
-                          elevation: float | np.ndarray) -> float | np.ndarray:
+    def calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -62,8 +72,11 @@ class HornAntenna(Antenna):
         elevation_pattern = np.arccos(z)
         return self._calculate_pattern(azimuth_pattern, elevation_pattern)
 
-    def _calculate_pattern(self, azimuth: float | np.ndarray,
-                           elevation: float | np.ndarray) -> float | np.ndarray:
+    def _calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Adapted from "Antenna Theory: Analysis and Design" by Constantine A.

@@ -1,4 +1,4 @@
-"""Plots the simulated radiation pattern of an antenna."""
+"""Plots the radiation pattern of an antenna."""
 
 import matplotlib.colors
 import matplotlib.pyplot as plt
@@ -16,10 +16,10 @@ FLAGS = flags.FLAGS
 
 
 def plot_radiation_pattern_3d_scatter(csv_file: str) -> None:
-    """Plots the simulated 3D radiation pattern as a scatter plot.
+    """Plots the 3D radiation pattern as a scatter plot.
 
     Args:
-        csv_file: Simulated radiation pattern CSV file.
+        csv_file: Radiation pattern CSV file.
     """
     radiation_pattern = RadiationPattern(csv_file)
     gain_db = radiation_pattern.df[radiation_pattern.gain_db_column]
@@ -65,7 +65,7 @@ def plot_radiation_pattern_3d(csv_file: str) -> None:
     """Plots the interpolated 3D radiation pattern.
 
     Args:
-        csv_file: Simulated radiation pattern CSV file.
+        csv_file: Radiation pattern CSV file.
     """
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     flags.DEFINE_string(
         "data",
         "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv",
-        "Simulated radiation pattern CSV file.",
+        "Radiation pattern CSV file.",
     )
 
     app.run(main)

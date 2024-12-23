@@ -13,7 +13,7 @@ class AntennaArray1DSpectrum(AntennaArraySpectrum):
 
     def __init__(self, array: AntennaArray) -> None:
         for element in array.elements:
-            if element.y != 0:
+            if element.cartesian_coordinates.y != 0:
                 raise ValueError(
                     "All antenna array elements must lie on a horizontal plane."
                 )

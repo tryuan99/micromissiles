@@ -15,8 +15,14 @@ from utils.visualization.color_maps import COLOR_MAPS
 FLAGS = flags.FLAGS
 
 
-def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
-                              rho1: float, rho2: float) -> None:
+def plot_radiation_pattern_3d(
+    a: float,
+    b: float,
+    a1: float,
+    b1: float,
+    rho1: float,
+    rho2: float,
+) -> None:
     """Plots the 3D radiation pattern of a horn antenna.
 
     Args:
@@ -74,8 +80,14 @@ def plot_radiation_pattern_3d(a: float, b: float, a1: float, b1: float,
     plt.show()
 
 
-def plot_radiation_pattern_2d(a: float, b: float, a1: float, b1: float,
-                              rho1: float, rho2: float) -> None:
+def plot_radiation_pattern_2d(
+    a: float,
+    b: float,
+    a1: float,
+    b1: float,
+    rho1: float,
+    rho2: float,
+) -> None:
     """Plots the 2D radiation pattern of a horn antenna along zero elevation and
     along zero azimuth.
 
@@ -117,10 +129,22 @@ def plot_radiation_pattern_2d(a: float, b: float, a1: float, b1: float,
 def main(argv):
     assert len(argv) == 1, argv
 
-    plot_radiation_pattern_3d(FLAGS.a, FLAGS.b, FLAGS.a1, FLAGS.b1, FLAGS.rho1,
-                              FLAGS.rho2)
-    plot_radiation_pattern_2d(FLAGS.a, FLAGS.b, FLAGS.a1, FLAGS.b1, FLAGS.rho1,
-                              FLAGS.rho2)
+    plot_radiation_pattern_3d(
+        FLAGS.a,
+        FLAGS.b,
+        FLAGS.a1,
+        FLAGS.b1,
+        FLAGS.rho1,
+        FLAGS.rho2,
+    )
+    plot_radiation_pattern_2d(
+        FLAGS.a,
+        FLAGS.b,
+        FLAGS.a1,
+        FLAGS.b1,
+        FLAGS.rho1,
+        FLAGS.rho2,
+    )
 
 
 if __name__ == "__main__":

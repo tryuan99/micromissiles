@@ -22,8 +22,11 @@ class PatchAntenna(Antenna):
         self.width = width
         self.length = length
 
-    def calculate_pattern(self, azimuth: float | np.ndarray,
-                          elevation: float | np.ndarray) -> float | np.ndarray:
+    def calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -48,8 +51,11 @@ class PatchAntenna(Antenna):
         elevation_pattern = np.arccos(z)
         return self._calculate_pattern(azimuth_pattern, elevation_pattern)
 
-    def _calculate_pattern(self, azimuth: float | np.ndarray,
-                           elevation: float | np.ndarray) -> float | np.ndarray:
+    def _calculate_pattern(
+        self,
+        azimuth: float | np.ndarray,
+        elevation: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Calculates the radiation pattern of the antenna.
 
         Adapted from https://www.antenna-theory.com/antennas/patches/antenna.php.

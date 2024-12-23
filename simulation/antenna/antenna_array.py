@@ -12,8 +12,8 @@ import numpy as np
 from simulation.antenna.antenna import Antenna
 from simulation.antenna.antenna_factory import AntennaFactory
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayElementConfig
+from simulation.antenna.proto.antenna_array_config_pb2 import (
+    AntennaArrayConfig, AntennaArrayElementConfig)
 from utils.coordinates import CartesianCoordinates, SphericalCoordinates
 from utils.quaternion import PointQuaternion, RotationQuaternion
 
@@ -50,8 +50,10 @@ class AntennaArrayElement:
         self.orientation = orientation
 
     @classmethod
-    def create(cls,
-               antenna_array_element_config: AntennaArrayElementConfig) -> Self:
+    def create(
+        cls,
+        antenna_array_element_config: AntennaArrayElementConfig,
+    ) -> Self:
         """Creates an antenna array element according to the configuration.
 
         Args:
@@ -73,7 +75,7 @@ class AntennaArrayElement:
             y=antenna_array_element_config.orientation.y,
             z=antenna_array_element_config.orientation.z,
         )
-        return AntennaArrayElement(
+        return cls(
             coordinates=position,
             antenna=antenna,
             orientation=orientation,
@@ -232,6 +234,26 @@ class AntennaArray:
 
     def __init__(self, elements: list[AntennaArrayElement]) -> None:
         self.elements = elements
+
+    @classmethod
+    def create(
+        cls,
+        antenna_array_config: AntennaArrayConfig,
+    ) -> Self:
+        """Creates an antenna array according to the configuration.
+
+        Args:
+            antenna_array_config: Antenna array configuration.
+
+        Returns:
+            The antenna array instance.
+        """
+        elements = [
+            AntennaArrayElement.create(antenna_array_element_config)
+            for antenna_array_element_config in
+            antenna_array_config.antenna_array_element_configs
+        ]
+        return cls(elements)
 
     def calculate_radiation_pattern(
         self,

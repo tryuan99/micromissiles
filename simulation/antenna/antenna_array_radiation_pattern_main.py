@@ -1,5 +1,6 @@
 """Plots the radiation pattern of an antenna array."""
 
+import google.protobuf
 import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +12,8 @@ from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer,
                                               AntennaArrayElement)
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
+from simulation.antenna.proto.antenna_array_config_pb2 import \
+    AntennaArrayConfig
 from simulation.antenna.radiation_pattern import RadiationPattern
 from utils import constants
 from utils.coordinates import SphericalCoordinates
@@ -141,17 +144,11 @@ def plot_antenna_array_radiation_pattern(
 def main(argv):
     assert len(argv) == 1, argv
 
-    # Create the antenna array.
-    radiation_pattern = IsotropicAntenna()
-    if FLAGS.data is not None:
-        radiation_pattern = RadiationPattern(FLAGS.data)
-    elements = [
-        AntennaArrayElement(
-            x=FLAGS.antenna_spacing * i,
-            antenna=radiation_pattern,
-        ) for i in range(FLAGS.num_antennas)
-    ]
-    array = AntennaArray(elements)
+    # Parse the antenna array configuration and create the antenna array.
+    with open(FLAGS.config, "r") as antenna_array_config_file:
+        antenna_array_config = google.protobuf.text_format.Parse(
+            antenna_array_config_file.read(), AntennaArrayConfig())
+    array = AntennaArray.create(antenna_array_config)
     beam_steer = AntennaArrayBeamSteer(
         azimuth=FLAGS.azimuth,
         elevation=FLAGS.elevation,
@@ -161,14 +158,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string(
-        "data",
-        "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv",
-        "Simulated radiation pattern CSV file.",
-    )
-    flags.DEFINE_integer("num_antennas", 4, "Number of antennas.")
-    flags.DEFINE_float("antenna_spacing", 0.5,
-                       "Antenna spacing in units of lambda.")
+    flags.DEFINE_string("config",
+                        "simulation/antenna/configs/ula_4_isotropic.pbtxt",
+                        "Antenna array configuration.")
     flags.DEFINE_float("azimuth", 0, "Azimuth in radians.")
     flags.DEFINE_float("elevation", 0, "Elevation in radians.")
 
