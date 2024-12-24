@@ -15,16 +15,16 @@ from utils import constants
 
 FLAGS = flags.FLAGS
 
+# Animation interval in milliseconds.
 ANIMATION_INTERVAL = 20  # milliseconds
 
 
-def sweep_azimuth_spectrum(array: AntennaArray) -> None:
+def sweep_azimuth_spectrum(spectrum: AntennaArray1DSpectrum) -> None:
     """Sweeps the azimuth spectrum as a function of the azimuth.
 
     Args:
-        array: Antenna array.
+        spectrum: 1D antenna array spectrum.
     """
-    spectrum = AntennaArray1DSpectrum(array)
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
@@ -33,12 +33,13 @@ def sweep_azimuth_spectrum(array: AntennaArray) -> None:
     fig, ax = plt.subplots(figsize=(12, 6))
     line, = ax.plot(azimuth, np.zeros(len(azimuth)))
 
-    def init_animation() -> None:
-        """Initializes the animation."""
-        ax.set_title("Azimuth spectrum")
-        ax.set_xlabel("Azimuth in rad")
-        ax.set_ylabel("Magnitude in dB")
-        ax.set_ylim((-20, 25))
+    # Configure the axes.
+    azimuth_spectrum = spectrum.calculate_azimuth_spectrum(
+        AntennaArrayArrival(azimuth=0), azimuth)
+    ax.set_xlabel("Azimuth in rad")
+    ax.set_ylabel("Magnitude in dB")
+    ax.set_ylim(-20, np.max(constants.mag2db(np.abs(azimuth_spectrum))) + 5)
+    ax.set_title("Azimuth spectrum")
 
     def update_animation(frame: float) -> None:
         """Updates the animation for the next frame.
@@ -55,23 +56,21 @@ def sweep_azimuth_spectrum(array: AntennaArray) -> None:
         fig,
         update_animation,
         frames=azimuth_sweep,
-        init_func=init_animation,
         interval=ANIMATION_INTERVAL,
     )
     plt.show()
 
 
 def sweep_azimuth_spectrum_resolution(
-    array: AntennaArray,
+    spectrum: AntennaArray1DSpectrum,
     delta_azimuth: float,
 ) -> None:
     """Sweeps the azimuth spectrum as a function of the azimuth with two targets.
 
     Args:
-        array: Antenna array.
+        spectrum: 1D antenna array spectrum.
         delta_azimuth: Difference in azimuth.
     """
-    spectrum = AntennaArray1DSpectrum(array)
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
@@ -80,12 +79,13 @@ def sweep_azimuth_spectrum_resolution(
     fig, ax = plt.subplots(figsize=(12, 6))
     line, = ax.plot(azimuth, np.zeros(len(azimuth)))
 
-    def init_animation() -> None:
-        """Initializes the animation."""
-        ax.set_title("Azimuth spectrum")
-        ax.set_xlabel("Azimuth in rad")
-        ax.set_ylabel("Magnitude in dB")
-        ax.set_ylim((-20, 25))
+    # Configure the axes.
+    azimuth_spectrum = spectrum.calculate_azimuth_spectrum(
+        AntennaArrayArrival(azimuth=0, amplitude=2), azimuth)
+    ax.set_xlabel("Azimuth in rad")
+    ax.set_ylabel("Magnitude in dB")
+    ax.set_ylim(-20, np.max(constants.mag2db(np.abs(azimuth_spectrum))) + 5)
+    ax.set_title("Azimuth spectrum")
 
     def update_animation(frame: float) -> None:
         """Updates the animation for the next frame.
@@ -97,15 +97,15 @@ def sweep_azimuth_spectrum_resolution(
             AntennaArrayArrival(azimuth=frame),
             AntennaArrayArrival(azimuth=frame + delta_azimuth),
         ]
-        data = spectrum.calculate_azimuth_spectrum(arrivals, azimuth)
-        line.set_data(azimuth, constants.mag2db(np.abs(data)))
+        azimuth_spectrum = spectrum.calculate_azimuth_spectrum(
+            arrivals, azimuth)
+        line.set_data(azimuth, constants.mag2db(np.abs(azimuth_spectrum)))
         ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
 
     anim = animation.FuncAnimation(
         fig,
         update_animation,
         frames=azimuth_sweep,
-        init_func=init_animation,
         interval=ANIMATION_INTERVAL,
     )
     plt.show()
@@ -119,9 +119,10 @@ def main(argv):
         antenna_array_config = google.protobuf.text_format.Parse(
             antenna_array_config_file.read(), AntennaArrayConfig())
     array = AntennaArray.create(antenna_array_config)
+    spectrum = AntennaArray1DSpectrum(array)
 
-    sweep_azimuth_spectrum(array)
-    sweep_azimuth_spectrum_resolution(array, FLAGS.delta_azimuth)
+    sweep_azimuth_spectrum(spectrum)
+    sweep_azimuth_spectrum_resolution(spectrum, FLAGS.delta_azimuth)
 
 
 if __name__ == "__main__":

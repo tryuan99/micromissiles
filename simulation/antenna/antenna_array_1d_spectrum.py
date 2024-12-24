@@ -37,13 +37,10 @@ class AntennaArray1DSpectrum(AntennaArraySpectrum):
         spatial_samples = self.array.get_spatial_samples(arrivals)
 
         # Calculate the DFT matrix.
-        dft = np.zeros(
-            (len(azimuth), len(self.array.elements)),
-            dtype=np.complex128,
-        )
-        for index, azimuth in enumerate(azimuth):
-            dft[index] = self.array.get_spatial_samples(
-                AntennaArrayArrival(azimuth=azimuth))
+        dft = np.array([
+            self.array.get_spatial_samples(AntennaArrayArrival(azimuth=azimuth))
+            for azimuth in azimuth
+        ])
         return np.conj(dft) @ spatial_samples
 
     def calculate_elevation_spectrum(

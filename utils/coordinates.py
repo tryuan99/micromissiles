@@ -93,10 +93,19 @@ class CartesianCoordinates(Coordinates):
         Returns:
             The spherical coordinates.
         """
+        shape = np.broadcast_shapes(
+            np.shape(x),
+            np.shape(y),
+            np.shape(z),
+        )
         range = np.sqrt(x**2 + y**2 + z**2)
         azimuth = -np.arctan2(x, z)
         elevation = np.arctan(y / np.sqrt(x**2 + z**2))
-        return range, azimuth, elevation
+        return (
+            np.broadcast_to(range, shape),
+            np.broadcast_to(azimuth, shape),
+            np.broadcast_to(elevation, shape),
+        )
 
 
 class SphericalCoordinates(Coordinates):
@@ -146,7 +155,16 @@ class SphericalCoordinates(Coordinates):
         Returns:
             The x, y, and z-coordinates.
         """
+        shape = np.broadcast_shapes(
+            np.shape(range),
+            np.shape(azimuth),
+            np.shape(elevation),
+        )
         x = -range * np.sin(azimuth) * np.cos(elevation)
         y = range * np.sin(elevation)
         z = range * np.cos(azimuth) * np.cos(elevation)
-        return x, y, z
+        return (
+            np.broadcast_to(x, shape),
+            np.broadcast_to(y, shape),
+            np.broadcast_to(z, shape),
+        )

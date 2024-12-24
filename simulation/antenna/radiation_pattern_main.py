@@ -15,13 +15,13 @@ from utils.visualization.color_maps import COLOR_MAPS
 FLAGS = flags.FLAGS
 
 
-def plot_radiation_pattern_3d_scatter(csv_file: str) -> None:
+def plot_radiation_pattern_3d_scatter(
+        radiation_pattern: RadiationPattern) -> None:
     """Plots the 3D radiation pattern as a scatter plot.
 
     Args:
-        csv_file: Radiation pattern CSV file.
+        radiation_pattern: Radiation pattern.
     """
-    radiation_pattern = RadiationPattern(csv_file)
     gain_db = radiation_pattern.df[radiation_pattern.gain_db_column]
 
     # Convert from spherical coordinates to Cartesian coordinates.
@@ -61,11 +61,11 @@ def plot_radiation_pattern_3d_scatter(csv_file: str) -> None:
     plt.show()
 
 
-def plot_radiation_pattern_3d(csv_file: str) -> None:
+def plot_radiation_pattern_3d(radiation_pattern: RadiationPattern) -> None:
     """Plots the interpolated 3D radiation pattern.
 
     Args:
-        csv_file: Radiation pattern CSV file.
+        radiation_pattern: Radiation pattern.
     """
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
@@ -75,7 +75,6 @@ def plot_radiation_pattern_3d(csv_file: str) -> None:
         indexing="ij",
     )
 
-    radiation_pattern = RadiationPattern(csv_file)
     gain = radiation_pattern.calculate_pattern(azimuth_mesh, elevation_mesh)
     gain_db = constants.power2db(gain)
 
@@ -121,11 +120,45 @@ def plot_radiation_pattern_3d(csv_file: str) -> None:
     plt.show()
 
 
+def plot_radiation_pattern_2d(radiation_pattern: RadiationPattern) -> None:
+    """Plots the interpolated 2D radiation pattern along zero elevation and
+    along zero azimuth.
+
+    Args:
+        radiation_pattern: Radiation pattern.
+    """
+    # Plot the radiation pattern along zero elevation.
+    azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
+    gain = radiation_pattern.calculate_pattern(azimuth=azimuth, elevation=0)
+    plt.style.use("science")
+    fig, ax = plt.subplots(
+        figsize=(12, 6),
+        subplot_kw={"projection": "polar"},
+    )
+    ax.plot(azimuth, constants.power2db(gain + 1))
+    ax.set_xlabel("Azimuth")
+    plt.show()
+
+    # Plot the radiation pattern along zero azimuth.
+    elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    gain = radiation_pattern.calculate_pattern(azimuth=0, elevation=elevation)
+    plt.style.use("science")
+    fig, ax = plt.subplots(
+        figsize=(12, 6),
+        subplot_kw={"projection": "polar"},
+    )
+    ax.plot(elevation, constants.power2db(gain + 1))
+    ax.set_xlabel("Elevation")
+    plt.show()
+
+
 def main(argv):
     assert len(argv) == 1, argv
 
-    plot_radiation_pattern_3d_scatter(FLAGS.data)
-    plot_radiation_pattern_3d(FLAGS.data)
+    radiation_pattern = RadiationPattern(FLAGS.data)
+    plot_radiation_pattern_3d_scatter(radiation_pattern)
+    plot_radiation_pattern_3d(radiation_pattern)
+    plot_radiation_pattern_2d(radiation_pattern)
 
 
 if __name__ == "__main__":

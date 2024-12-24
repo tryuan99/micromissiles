@@ -285,23 +285,25 @@ class AntennaArray:
             The radiation pattern of the antenna array.
         """
         direction = beam_steer.direction()
-        pattern_directions = np.moveaxis(
+        pattern_directions = np.array(
             SphericalCoordinates.transform_to_cartesian_arrays(
                 range=1,
                 azimuth=azimuth,
                 elevation=elevation,
-            ), 0, -1)
+            ))
         return np.sum(
             [
-                element.calculate_pattern(azimuth, elevation) *
+                np.sqrt(element.calculate_pattern(azimuth, elevation)) *
                 np.exp(-1j * 2 * np.pi *
                        np.dot(element.coordinates(), direction)) *
-                np.exp(1j * 2 * np.pi *
-                       np.dot(pattern_directions, element.coordinates()))
-                for element in self.elements
+                np.exp(1j * 2 * np.pi * np.tensordot(
+                    pattern_directions,
+                    element.coordinates(),
+                    axes=((0), (0)),
+                )) for element in self.elements
             ],
             axis=0,
-        )
+        )**2
 
     def get_spatial_samples(
         self,

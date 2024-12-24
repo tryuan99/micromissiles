@@ -69,7 +69,6 @@ py_binary(
     data = ["//simulation/antenna/configs"],
     deps = [
         ":antenna_array",
-        ":radiation_pattern",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils:constants",
         "//utils:coordinates",
