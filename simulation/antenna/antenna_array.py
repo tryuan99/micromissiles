@@ -15,7 +15,7 @@ from simulation.antenna.isotropic_antenna import IsotropicAntenna
 from simulation.antenna.proto.antenna_array_config_pb2 import (
     AntennaArrayConfig, AntennaArrayElementConfig)
 from utils.coordinates import CartesianCoordinates, SphericalCoordinates
-from utils.quaternion import PointQuaternion, RotationQuaternion
+from utils.quaternion import RotationQuaternion
 
 
 class AntennaArrayElement:
@@ -115,13 +115,19 @@ class AntennaArrayElement:
         Returns:
             The magnitude of the radiation pattern.
         """
+        # Transform the direction vectors from spherical coordinates to
+        # Cartesian coordinates.
         coordinates = np.array(
             SphericalCoordinates.transform_to_cartesian_arrays(
                 range=1,
                 azimuth=azimuth,
                 elevation=elevation,
             ))
-        transformed = np.apply_along_axis(self._orient, 0, coordinates)
+        # Transform the direction vectors from the coordinate system of the
+        # antenna element to the global coordinate system.
+        transformed = self._orient(coordinates)
+        # Transform the transformed direction vectors from Cartesian
+        # coordinates to spherical coordinates.
         _, transformed_azimuth, transformed_elevation = (
             CartesianCoordinates.transform_to_spherical_arrays(
                 x=transformed[0],
@@ -133,17 +139,22 @@ class AntennaArrayElement:
             transformed_elevation,
         )
 
-    def _orient(self, vector: np.ndarray) -> np.ndarray:
-        """Rotate the vector according to the orientation of the antenna
+    def _orient(self, vectors: np.ndarray) -> np.ndarray:
+        """Transform the vectors according to the orientation of the antenna
         element.
 
         This operation corresponds to transforming the vector from the
         coordinate system of the antenna element to the global coordinate
         system.
+
+        Args:
+            vectors: Vectors to be transformed.
+
+        Returns:
+            The transformed vectors.
         """
-        quaternion = PointQuaternion(coordinates=vector)
-        transformed = quaternion.rotate(self.orientation)
-        return transformed.v
+        rotation_matrix = self.orientation.rotation_matrix()
+        return np.tensordot(rotation_matrix, vectors, axes=((1), (0)))
 
 
 class AntennaArrayArrival:
@@ -222,7 +233,8 @@ class AntennaArrayBeamSteer:
 
     def direction(self) -> np.ndarray:
         """Returns the unit direction vector."""
-        return self.spherical_coordinates.transform_to_cartesian().coordinates()
+        return (
+            self.spherical_coordinates.transform_to_cartesian().coordinates())
 
 
 class AntennaArray:
@@ -334,7 +346,7 @@ class AntennaArray:
             Spatial samples for each antenna array element.
         """
         direction = arrival.direction()
-        return (amplitude * arrival.amplitude * np.array([
+        return amplitude * arrival.amplitude * np.array([
             np.sqrt(
                 element.calculate_pattern(
                     arrival.azimuth,
@@ -342,4 +354,4 @@ class AntennaArray:
                 )) *
             np.exp(-1j * (2 * np.pi * np.dot(element.coordinates(), direction) +
                           arrival.offset)) for element in self.elements
-        ]))
+        ])

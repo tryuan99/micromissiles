@@ -19,6 +19,10 @@ class Quaternion:
         self.s = s
         self.v = v
 
+    def array(self) -> np.ndarray:
+        """Returns the quaternion as a 4-dimensional vector."""
+        return np.array([self.s, *self.v])
+
     def add(self, other: Self) -> Self:
         """Adds two quaternions.
 
@@ -69,7 +73,7 @@ class Quaternion:
 
     def norm(self) -> float:
         """Returns the norm of the quaternion."""
-        return np.sqrt(self.s**2 + np.linalg.norm(self.v)**2)
+        return np.linalg.norm(self.array())
 
     def conjugate(self) -> Self:
         """Returns the conjugate of the quaternion."""
@@ -88,7 +92,7 @@ class Quaternion:
         Returns:
             The dot product with another quaternion.
         """
-        return self.s * other.s + np.dot(self.v, other.v)
+        return np.dot(self.array(), other.array())
 
     def rotate(self, other: "RotationQuaternion") -> Self:
         """Rotates the quaternion.
@@ -100,6 +104,13 @@ class Quaternion:
             The quaternion after rotation.
         """
         return other.multiply(self).multiply(other.inverse())
+
+    def rotation_matrix(self) -> np.ndarray:
+        """Returns the rotation matrix represented by the quaternion."""
+        cross_product_matrix = np.cross(np.eye(3), self.v)
+        return (np.outer(self.v, self.v) + self.s**2 * np.eye(3) +
+                2 * self.s * cross_product_matrix +
+                cross_product_matrix @ cross_product_matrix)
 
 
 class PointQuaternion(Quaternion):

@@ -95,7 +95,7 @@ class CartesianCoordinates(Coordinates):
         """
         range = np.sqrt(x**2 + y**2 + z**2)
         azimuth = -np.arctan2(x, z)
-        elevation = np.arctan(np.divide(y, np.sqrt(x**2 + z**2)))
+        elevation = np.arctan(y / np.sqrt(x**2 + z**2))
         return range, azimuth, elevation
 
 

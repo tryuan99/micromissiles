@@ -58,6 +58,7 @@ py_test(
         ":quaternion",
         requirement("absl-py"),
         requirement("numpy"),
+        requirement("scipy"),
     ],
 )
 

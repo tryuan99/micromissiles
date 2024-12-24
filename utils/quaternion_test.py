@@ -1,10 +1,15 @@
 import numpy as np
+import scipy.spatial
 from absl.testing import absltest
 
 from utils.quaternion import PointQuaternion, Quaternion, RotationQuaternion
 
 
 class QuaternionTestCase(absltest.TestCase):
+
+    def test_array(self):
+        q = Quaternion(s=-5, v=np.array([1, 5, -3]))
+        np.testing.assert_allclose(q.array(), np.array([-5, 1, 5, -3]))
 
     def test_add(self):
         p = Quaternion(s=1, v=np.array([1, 2, 3]))
@@ -53,6 +58,14 @@ class QuaternionTestCase(absltest.TestCase):
         t = p.rotate(q.compose(r))
         self.assertAlmostEqual(s.s, t.s)
         np.testing.assert_allclose(s.v, t.v, atol=1e-12)
+
+    def test_rotation_matrix(self):
+        q = RotationQuaternion(theta=np.pi / 2, x=1, y=2, z=-1)
+        r = scipy.spatial.transform.Rotation.from_quat(
+            q.array(),
+            scalar_first=True,
+        )
+        np.testing.assert_allclose(q.rotation_matrix(), r.as_matrix())
 
 
 if __name__ == "__main__":
