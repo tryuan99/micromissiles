@@ -44,7 +44,7 @@ class AntennaFactoryTestCase(absltest.TestCase):
     def test_create_radiation_pattern(self):
         antenna_config = AntennaConfig()
         antenna_config.radiation_pattern.data = (
-            "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+            "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
         )
         antenna = AntennaFactory.create_antenna(antenna_config)
         self.assertIsInstance(antenna, RadiationPattern)

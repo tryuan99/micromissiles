@@ -164,7 +164,7 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string(
         "data",
-        "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv",
+        "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv",
         "Radiation pattern CSV file.",
     )
 

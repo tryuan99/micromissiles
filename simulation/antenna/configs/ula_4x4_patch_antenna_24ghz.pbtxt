@@ -12,7 +12,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -30,7 +30,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -48,7 +48,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -66,7 +66,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -84,7 +84,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -102,7 +102,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -120,7 +120,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -138,7 +138,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -156,7 +156,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -174,7 +174,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -192,7 +192,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -210,7 +210,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -228,7 +228,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -246,7 +246,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -264,7 +264,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
@@ -282,7 +282,7 @@ antenna_array_element_configs {
   }
   antenna_config {
     radiation_pattern {
-      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil.csv"
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
     }
   }
 }
