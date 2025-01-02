@@ -3,6 +3,15 @@ load("@pypi//:requirements.bzl", "requirement")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "animator",
+    srcs = ["animator.py"],
+    deps = [
+        requirement("matplotlib"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
     name = "color_maps",
     srcs = ["color_maps.py"],
     deps = [

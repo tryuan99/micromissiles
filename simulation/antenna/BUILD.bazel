@@ -72,6 +72,7 @@ py_binary(
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils:constants",
         "//utils:coordinates",
+        "//utils/visualization:animator",
         "//utils/visualization:color_maps",
         requirement("absl-py"),
         requirement("matplotlib"),

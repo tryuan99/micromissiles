@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
 from absl import app, flags
-from matplotlib import animation, cm
+from matplotlib import artist, cm
+from matplotlib.lines import Line2D
 
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer)
@@ -14,6 +15,7 @@ from simulation.antenna.proto.antenna_array_config_pb2 import \
     AntennaArrayConfig
 from utils import constants
 from utils.coordinates import SphericalCoordinates
+from utils.visualization.animator import Animator2D, Animator3D
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS
@@ -29,7 +31,7 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         array: Antenna array.
     """
     # Plot the antenna array elements.
-    plt.style.use(["science", "grid"])
+    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -120,7 +122,7 @@ def plot_antenna_array_radiation_pattern_3d(
     m.set_array([])
 
     # Plot the radiation pattern of the antenna array.
-    plt.style.use(["science", "grid"])
+    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -203,18 +205,12 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
 
     # Sweep the azimuth.
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(
-        figsize=(12, 6),
-        subplot_kw={"projection": "3d"},
-    )
     radiation_pattern = array.calculate_radiation_pattern(
         AntennaArrayBeamSteer(azimuth=0, elevation=0),
         azimuth_mesh,
         elevation_mesh,
     )
     radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
-    surf = None
     max_radius = np.max(radiation_pattern_db) - np.min(radiation_pattern_db)
 
     # Generate the face colors.
@@ -227,25 +223,17 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
         norm=norm,
     )
     m.set_array([])
-    plt.colorbar(m, ax=ax)
 
-    # Configure the axes.
-    ax.set_xlabel(r"$x$")
-    ax.set_ylabel(r"$y$")
-    ax.set_zlabel(r"$z$")
-    ax.set_xlim(-max_radius, max_radius)
-    ax.set_ylim(-max_radius, max_radius)
-    ax.set_zlim(-1, max_radius)
-    ax.set_title("Radiation pattern")
-    ax.view_init(30, -45, vertical_axis="y")
+    # Configure and run the animation.
+    animator = Animator3D()
 
-    def update_animation(frame: float) -> None:
-        """Updates the animation for the next frame.
+    def update_surface(surf: artist.Artist, frame: float) -> None:
+        """Returns the surface at each frame.
 
         Args:
+            surf: Surface.
             frame: Azimuth to plot.
         """
-        nonlocal surf
         radiation_pattern = array.calculate_radiation_pattern(
             AntennaArrayBeamSteer(azimuth=frame, elevation=0),
             azimuth_mesh,
@@ -259,9 +247,8 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             elevation=elevation_mesh,
         )
 
-        if surf is not None:
-            surf.remove()
-        surf = ax.plot_surface(
+        surf.remove()
+        return animator.axes().plot_surface(
             x,
             y,
             z,
@@ -269,30 +256,38 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             shade=False,
             antialiased=False,
         )
-        ax.set_title(rf"Radiation pattern (azimuth = ${frame}$ rad)")
 
-    anim = animation.FuncAnimation(
-        fig,
-        update_animation,
-        frames=azimuth_sweep,
-        interval=ANIMATION_INTERVAL,
+    animator.add_artist(artist.Artist(), update_surface)
+    animator.add_colorbar(m)
+    animator.set_labels(r"$x$", r"$y$", r"$z$")
+    animator.set_limits(
+        xlim=(-max_radius, max_radius),
+        ylim=(-max_radius, max_radius),
+        zlim=(-1, max_radius),
     )
-    plt.show()
+
+    def update_title(azimuth: float) -> str:
+        """Returns the title at each frame.
+
+        Args:
+            azimuth: Azimuth to plot.
+        """
+        return rf"Radiation pattern (azimuth = ${azimuth}$ rad)"
+
+    animator.set_title("Radiation pattern", update_title)
+    animator.view_init(30, -45, vertical_axis="y")
+    animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
+    animator.show()
 
     # Sweep the elevation.
     elevation_sweep = np.linspace(np.pi / 2, -np.pi / 2, 180, endpoint=False)
-    plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(
-        figsize=(12, 6),
-        subplot_kw={"projection": "3d"},
-    )
     radiation_pattern = array.calculate_radiation_pattern(
         AntennaArrayBeamSteer(azimuth=0, elevation=0),
         azimuth_mesh,
         elevation_mesh,
     )
     radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
-    surf = None
+    max_radius = np.max(radiation_pattern_db) - np.min(radiation_pattern_db)
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
@@ -304,25 +299,17 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
         norm=norm,
     )
     m.set_array([])
-    plt.colorbar(m, ax=ax)
 
-    # Configure the axes.
-    ax.set_xlabel(r"$x$")
-    ax.set_ylabel(r"$y$")
-    ax.set_zlabel(r"$z$")
-    ax.set_xlim(-max_radius, max_radius)
-    ax.set_ylim(-max_radius, max_radius)
-    ax.set_zlim(-1, max_radius)
-    ax.set_title("Radiation pattern")
-    ax.view_init(30, -45, vertical_axis="y")
+    # Configure and run the animation.
+    animator = Animator3D()
 
-    def update_animation(frame: float) -> None:
-        """Updates the animation for the next frame.
+    def update_surface(surf: artist.Artist, frame: float) -> None:
+        """Returns the surface at each frame.
 
         Args:
+            surf: Surface.
             frame: Elevation to plot.
         """
-        nonlocal surf
         radiation_pattern = array.calculate_radiation_pattern(
             AntennaArrayBeamSteer(azimuth=0, elevation=frame),
             azimuth_mesh,
@@ -336,9 +323,8 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             elevation=elevation_mesh,
         )
 
-        if surf is not None:
-            surf.remove()
-        surf = ax.plot_surface(
+        surf.remove()
+        return animator.axes().plot_surface(
             x,
             y,
             z,
@@ -346,15 +332,28 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             shade=False,
             antialiased=False,
         )
-        ax.set_title(rf"Radiation pattern (elevation = ${frame}$ rad)")
 
-    anim = animation.FuncAnimation(
-        fig,
-        update_animation,
-        frames=elevation_sweep,
-        interval=ANIMATION_INTERVAL,
+    animator.add_artist(artist.Artist(), update_surface)
+    animator.add_colorbar(m)
+    animator.set_labels(r"$x$", r"$y$", r"$z$")
+    animator.set_limits(
+        xlim=(-max_radius, max_radius),
+        ylim=(-max_radius, max_radius),
+        zlim=(-1, max_radius),
     )
-    plt.show()
+
+    def update_title(elevation: float) -> str:
+        """Returns the title at each frame.
+
+        Args:
+            elevation: Elevation to plot.
+        """
+        return rf"Radiation pattern (elevation = ${elevation}$ rad)"
+
+    animator.set_title("Radiation pattern", update_title)
+    animator.view_init(30, -45, vertical_axis="y")
+    animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
+    animator.show()
 
 
 def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
@@ -368,25 +367,15 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
-    plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 6))
-    line, = ax.plot(azimuth, np.zeros(len(azimuth)))
+    # Configure and run the animation.
+    animator = Animator2D()
+    line = Line2D(azimuth, np.zeros(len(azimuth)))
 
-    # Configure the axes.
-    radiation_pattern = array.calculate_radiation_pattern(
-        AntennaArrayBeamSteer(azimuth=0, elevation=0),
-        azimuth=azimuth,
-        elevation=0,
-    )
-    ax.set_xlabel("Azimuth in rad")
-    ax.set_ylabel("Magnitude in dB")
-    ax.set_ylim(-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5)
-    ax.set_title("Radiation pattern")
-
-    def update_animation(frame: float) -> None:
-        """Updates the animation for the next frame.
+    def update_line(line: artist.Artist, frame: float) -> artist.Artist:
+        """Returns the line at each frame.
 
         Args:
+            line: Line.
             frame: Azimuth to plot.
         """
         radiation_pattern = array.calculate_radiation_pattern(
@@ -395,39 +384,45 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             elevation=0,
         )
         line.set_data(azimuth, constants.power2db(np.abs(radiation_pattern)))
-        ax.set_title(rf"Radiation pattern (azimuth = ${frame}$ rad)")
+        return line
 
-    anim = animation.FuncAnimation(
-        fig,
-        update_animation,
-        frames=azimuth_sweep,
-        interval=ANIMATION_INTERVAL,
+    animator.add_artist(line, update_line)
+    animator.set_labels("Azimuth [rad]", "Magnitude [dB]")
+    radiation_pattern = array.calculate_radiation_pattern(
+        AntennaArrayBeamSteer(azimuth=0, elevation=0),
+        azimuth=azimuth,
+        elevation=0,
     )
-    plt.show()
+    animator.set_limits(
+        xlim=(np.min(azimuth), np.max(azimuth)),
+        ylim=(-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5),
+    )
+
+    def update_title(azimuth: float) -> str:
+        """Returns the title at each frame.
+
+        Args:
+            azimuth: Azimuth to plot.
+        """
+        return rf"Radiation pattern (azimuth = ${azimuth}$ rad)"
+
+    animator.set_title("Radiation pattern", update_title)
+    animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
+    animator.show()
 
     # Sweep the elevation.
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
-    plt.style.use(["science", "grid"])
-    fig, ax = plt.subplots(figsize=(12, 6))
-    line, = ax.plot(elevation, np.zeros(len(elevation)))
+    # Configure and run the animation.
+    animator = Animator2D()
+    line = Line2D(elevation, np.zeros(len(elevation)))
 
-    # Configure the axes.
-    radiation_pattern = array.calculate_radiation_pattern(
-        AntennaArrayBeamSteer(azimuth=0, elevation=0),
-        azimuth=0,
-        elevation=elevation,
-    )
-    ax.set_xlabel("Elevation in rad")
-    ax.set_ylabel("Magnitude in dB")
-    ax.set_ylim(-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5)
-    ax.set_title("Radiation pattern")
-
-    def update_animation(frame: float) -> None:
-        """Updates the animation for the next frame.
+    def update_line(line: artist.Artist, frame: float) -> artist.Artist:
+        """Returns the line at each frame.
 
         Args:
+            line: Line.
             frame: Elevation to plot.
         """
         radiation_pattern = array.calculate_radiation_pattern(
@@ -435,16 +430,32 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             azimuth=0,
             elevation=elevation,
         )
-        line.set_data(azimuth, constants.power2db(np.abs(radiation_pattern)))
-        ax.set_title(rf"Radiation pattern (elevation = ${frame}$ rad)")
+        line.set_data(elevation, constants.power2db(np.abs(radiation_pattern)))
+        return line
 
-    anim = animation.FuncAnimation(
-        fig,
-        update_animation,
-        frames=elevation_sweep,
-        interval=ANIMATION_INTERVAL,
+    animator.add_artist(line, update_line)
+    animator.set_labels("Elevation [rad]", "Magnitude [dB]")
+    radiation_pattern = array.calculate_radiation_pattern(
+        AntennaArrayBeamSteer(azimuth=0, elevation=0),
+        azimuth=0,
+        elevation=elevation,
     )
-    plt.show()
+    animator.set_limits(
+        xlim=(np.min(elevation), np.max(elevation)),
+        ylim=(-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5),
+    )
+
+    def update_title(elevation: float) -> str:
+        """Returns the title at each frame.
+
+        Args:
+            elevation: Elevation to plot.
+        """
+        return rf"Radiation pattern (elevation = ${elevation}$ rad)"
+
+    animator.set_title("Radiation pattern", update_title)
+    animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
+    animator.show()
 
 
 def main(argv):
