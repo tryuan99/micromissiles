@@ -82,6 +82,23 @@ py_binary(
     ],
 )
 
+py_binary(
+    name = "antenna_array_radiation_pattern_comparison_main",
+    srcs = ["antenna_array_radiation_pattern_comparison_main.py"],
+    data = ["//simulation/antenna/configs"],
+    deps = [
+        ":antenna_array",
+        "//simulation/antenna/proto:antenna_array_config_py_proto",
+        "//utils:constants",
+        "//utils/visualization:animator",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+        requirement("protobuf"),
+    ],
+)
+
 py_library(
     name = "antenna_array_spectrum",
     srcs = ["antenna_array_spectrum.py"],

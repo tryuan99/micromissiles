@@ -36,36 +36,55 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
     )
-    for element in array.elements:
-        coordinates = element.coordinates()
-        ax.scatter(
-            *coordinates,
-            s=120,
-            c="C0",
-            marker="^",
-            alpha=0.5,
-        )
-        ax.quiver(
-            *coordinates,
-            *element.boresight(),
-            length=0.1,
-            normalize=True,
-            color="C0",
-        )
-        ax.quiver(
-            *coordinates,
-            *element.right(),
-            length=0.1,
-            normalize=True,
-            color="C1",
-        )
-        ax.quiver(
-            *coordinates,
-            *element.vertical(),
-            length=0.1,
-            normalize=True,
-            color="C2",
-        )
+    element_coordinates = np.array(
+        [element.coordinates() for element in array.elements])
+    ax.scatter(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        s=120,
+        c=f"C0",
+        marker="^",
+        alpha=0.4,
+    )
+    element_boresights = np.array(
+        [element.boresight() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        element_boresights[:, 0],
+        element_boresights[:, 1],
+        element_boresights[:, 2],
+        length=0.1,
+        normalize=True,
+        color="C0",
+    )
+    element_rights = np.array([element.right() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        element_rights[:, 0],
+        element_rights[:, 1],
+        element_rights[:, 2],
+        length=0.1,
+        normalize=True,
+        color="C1",
+    )
+    element_verticals = np.array(
+        [element.vertical() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        element_verticals[:, 0],
+        element_verticals[:, 1],
+        element_verticals[:, 2],
+        length=0.1,
+        normalize=True,
+        color="C2",
+    )
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
     ax.set_zlabel(r"$z$")
@@ -352,7 +371,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
 
     animator.set_title("Radiation pattern", update_title)
     animator.view_init(30, -45, vertical_axis="y")
-    animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
+    animator.configure_animation(elevation_sweep, ANIMATION_INTERVAL)
     animator.show()
 
 
@@ -454,7 +473,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         return rf"Radiation pattern (elevation = ${elevation}$ rad)"
 
     animator.set_title("Radiation pattern", update_title)
-    animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
+    animator.configure_animation(elevation_sweep, ANIMATION_INTERVAL)
     animator.show()
 
 
