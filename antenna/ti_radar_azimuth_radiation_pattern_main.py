@@ -13,7 +13,7 @@ FLAGS = flags.FLAGS
 
 def plot_azimuth_radiation_pattern(data: str) -> None:
     """Plots the azimuth radiation pattern of the radar antennas.
-    
+
     Args:
         data: Data filename.
     """

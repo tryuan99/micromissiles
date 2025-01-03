@@ -22,7 +22,7 @@ from utils.visualization.color_maps import COLOR_MAPS, COLOR_MAPS_RGB
 
 class TrajectoriesViewer:
     """Trajectories viewer.
-    
+
     Attributes:
         df: Dataframe containing all trajectories.
         carrier_launch_angle_column: Carrier interceptor launch angle column.
@@ -96,7 +96,7 @@ class TrajectoriesViewer:
     def plot_trajectories_with_dispense_time(
             self, submunition_dispense_time: float) -> None:
         """Plots all trajectories with the given submunition dispense time.
-        
+
         Args:
             submunition_dispense_time: Submunition dispense time in seconds.
         """
@@ -123,7 +123,7 @@ class TrajectoriesViewer:
 
     def plot_reachability_at_time(self, time: float) -> None:
         """Plots the trajectory points at the given time.
-        
+
         Args:
             time: Time in seconds.
         """
@@ -185,9 +185,9 @@ class TrajectoriesViewer:
     ) -> None:
         """Plots the trajectory points within the given box before the given
         time.
-        
+
         The color of the points denotes the speed.
-        
+
         Args:
             x_start: x-position range start in meters.
             x_end: x-position range end in meters.
@@ -317,9 +317,9 @@ class TrajectoriesViewer:
     ) -> None:
         """Plots the trajectory points within the given box before the given
         time.
-        
+
         The color of the points denotes the time.
-        
+
         Args:
             x_start: x-position range start in meters.
             x_end: x-position range end in meters.
@@ -399,7 +399,7 @@ class TrajectoriesViewer:
         centered at that position. Afterwards, we find the trajectory point
         with the maximum speed or with the minimum time and plot these optimal
         trajectory points.
-        
+
         Args:
             x_start: x-position range start in meters.
             x_end: x-position range end in meters.

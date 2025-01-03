@@ -13,7 +13,7 @@ FLAGS = flags.FLAGS
 
 def plot_elevation_radiation_pattern(data: str) -> None:
     """Plots the elevation radiation pattern of the radar antennas.
-    
+
     Args:
         data: Data filename.
     """
