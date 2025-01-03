@@ -7,7 +7,7 @@ import numpy as np
 import scienceplots
 from absl import app, flags, logging
 
-from utils.clustering.clusterer import Point
+from utils.clustering.cluster import Point
 from utils.clustering.k_means_clusterer import KMeansClusterer
 
 FLAGS = flags.FLAGS

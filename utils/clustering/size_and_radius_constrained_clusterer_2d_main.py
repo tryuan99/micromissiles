@@ -8,7 +8,7 @@ import scienceplots
 from absl import app, flags, logging
 
 from utils.clustering.agglomerative_clusterer import AgglomerativeClusterer
-from utils.clustering.clusterer import Point
+from utils.clustering.cluster import Point
 from utils.clustering.k_means_clusterer import ConstrainedKMeansClusterer
 from utils.clustering.min_cost_flow_clusterer import MinClostFlowClusterer
 

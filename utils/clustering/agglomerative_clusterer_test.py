@@ -2,7 +2,7 @@ import numpy as np
 from absl.testing import absltest
 
 from utils.clustering.agglomerative_clusterer import AgglomerativeClusterer
-from utils.clustering.clusterer import Point
+from utils.clustering.cluster import Point
 
 # List of points to cluster.
 POINTS = [

@@ -1,15 +1,7 @@
 import numpy as np
 from absl.testing import absltest
 
-from utils.clustering.clusterer import Cluster, Point
-
-# List of points to cluster.
-POINTS = [
-    Point(x=0, y=0),
-    Point(x=0, y=1),
-    Point(x=0, y=1.5),
-    Point(x=0, y=2),
-]
+from utils.clustering.cluster import Cluster, Point
 
 
 class PointTestCase(absltest.TestCase):
@@ -52,7 +44,7 @@ class ClusterTestCase(absltest.TestCase):
             [Point(x=0, y=radius), Point(x=0, y=-radius)])
         self.assertAlmostEqual(cluster.radius(), radius)
 
-    def test_radius(self):
+    def test_centroid(self):
         radius = 3
         cluster = self.generate_cluster([
             Point(x=x * radius, y=y * radius) for x in [-1, 1] for y in [-1, 1]

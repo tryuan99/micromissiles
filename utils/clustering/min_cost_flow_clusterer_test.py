@@ -1,7 +1,7 @@
 import numpy as np
 from absl.testing import absltest
 
-from utils.clustering.clusterer import Point
+from utils.clustering.cluster import Point
 from utils.clustering.min_cost_flow_clusterer import MinClostFlowClusterer
 
 # List of points to cluster.

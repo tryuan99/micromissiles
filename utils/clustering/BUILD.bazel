@@ -6,6 +6,7 @@ py_library(
     name = "agglomerative_clusterer",
     srcs = ["agglomerative_clusterer.py"],
     deps = [
+        ":cluster",
         ":clusterer",
         requirement("numpy"),
         requirement("scipy"),
@@ -17,7 +18,23 @@ py_test(
     srcs = ["agglomerative_clusterer_test.py"],
     deps = [
         ":agglomerative_clusterer",
-        ":clusterer",
+        ":cluster",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "cluster",
+    srcs = ["cluster.py"],
+    deps = [requirement("numpy")],
+)
+
+py_test(
+    name = "cluster_test",
+    srcs = ["cluster_test.py"],
+    deps = [
+        ":cluster",
         requirement("absl-py"),
         requirement("numpy"),
     ],
@@ -26,23 +43,14 @@ py_test(
 py_library(
     name = "clusterer",
     srcs = ["clusterer.py"],
-    deps = [requirement("numpy")],
-)
-
-py_test(
-    name = "clusterer_test",
-    srcs = ["clusterer_test.py"],
-    deps = [
-        ":clusterer",
-        requirement("absl-py"),
-        requirement("numpy"),
-    ],
+    deps = [":cluster"],
 )
 
 py_library(
     name = "k_means_clusterer",
     srcs = ["k_means_clusterer.py"],
     deps = [
+        ":cluster",
         ":clusterer",
         requirement("numpy"),
         requirement("scipy"),
@@ -53,7 +61,7 @@ py_test(
     name = "k_means_clusterer_test",
     srcs = ["k_means_clusterer_test.py"],
     deps = [
-        ":clusterer",
+        ":cluster",
         ":k_means_clusterer",
         requirement("absl-py"),
         requirement("numpy"),
@@ -64,7 +72,7 @@ py_binary(
     name = "k_means_clusterer_main",
     srcs = ["k_means_clusterer_main.py"],
     deps = [
-        ":clusterer",
+        ":cluster",
         ":k_means_clusterer",
         requirement("absl-py"),
         requirement("matplotlib"),
@@ -77,6 +85,7 @@ py_library(
     name = "min_cost_flow_clusterer",
     srcs = ["min_cost_flow_clusterer.py"],
     deps = [
+        ":cluster",
         ":clusterer",
         requirement("numpy"),
         requirement("k-means-constrained"),
@@ -87,7 +96,7 @@ py_test(
     name = "min_cost_flow_clusterer_test",
     srcs = ["min_cost_flow_clusterer_test.py"],
     deps = [
-        ":clusterer",
+        ":cluster",
         ":min_cost_flow_clusterer",
         requirement("absl-py"),
         requirement("numpy"),
@@ -99,7 +108,7 @@ py_binary(
     srcs = ["size_and_radius_constrained_clusterer_2d_main.py"],
     deps = [
         ":agglomerative_clusterer",
-        ":clusterer",
+        ":cluster",
         ":k_means_clusterer",
         ":min_cost_flow_clusterer",
         requirement("absl-py"),
@@ -114,7 +123,7 @@ py_binary(
     srcs = ["size_and_radius_constrained_clusterer_3d_main.py"],
     deps = [
         ":agglomerative_clusterer",
-        ":clusterer",
+        ":cluster",
         ":k_means_clusterer",
         ":min_cost_flow_clusterer",
         requirement("absl-py"),

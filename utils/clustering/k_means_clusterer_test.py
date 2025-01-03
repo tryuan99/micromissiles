@@ -1,7 +1,7 @@
 import numpy as np
 from absl.testing import absltest
 
-from utils.clustering.clusterer import Point
+from utils.clustering.cluster import Point
 from utils.clustering.k_means_clusterer import (ConstrainedKMeansClusterer,
                                                 KMeansClusterer)
 

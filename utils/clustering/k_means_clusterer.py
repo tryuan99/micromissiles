@@ -5,7 +5,8 @@ points.
 import numpy as np
 import scipy.cluster
 
-from utils.clustering.clusterer import (Cluster, Clusterer, Point,
+from utils.clustering.cluster import Cluster, Point
+from utils.clustering.clusterer import (Clusterer,
                                         SizeAndRadiusConstrainedClusterer)
 
 # Distortion threshold for convergence.
@@ -61,8 +62,7 @@ class ConstrainedKMeansClusterer(SizeAndRadiusConstrainedClusterer):
         point_coordinates = np.array(
             [point.coordinates() for point in self.points])
 
-        converged = False
-        while not converged:
+        while True:
             # Run k-means clustering on the points.
             centroids, labels = scipy.cluster.vq.kmeans2(
                 point_coordinates,
@@ -90,7 +90,6 @@ class ConstrainedKMeansClusterer(SizeAndRadiusConstrainedClusterer):
             num_overpopulated_clusters = np.sum(cluster_sizes > self.max_size)
             num_oversized_clusters = np.sum(cluster_radii > self.max_radius)
             if num_overpopulated_clusters == 0 and num_oversized_clusters == 0:
-                converged = True
                 break
             num_clusters += int(
                 np.ceil(

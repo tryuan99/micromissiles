@@ -6,8 +6,8 @@ and radius constraints.
 import numpy as np
 import scipy.spatial
 
-from utils.clustering.clusterer import (Cluster, Point,
-                                        SizeAndRadiusConstrainedClusterer)
+from utils.clustering.cluster import Cluster, Point
+from utils.clustering.clusterer import SizeAndRadiusConstrainedClusterer
 
 
 class AgglomerativeClusterer(SizeAndRadiusConstrainedClusterer):
@@ -36,8 +36,7 @@ class AgglomerativeClusterer(SizeAndRadiusConstrainedClusterer):
         # Set all zero distances to infinite distances.
         distances[distances == 0] = np.inf
 
-        converged = False
-        while not converged:
+        while True:
             cluster_idx_1, cluster_idx_2 = np.unravel_index(
                 np.argmin(distances), distances.shape)
 
@@ -47,7 +46,6 @@ class AgglomerativeClusterer(SizeAndRadiusConstrainedClusterer):
             # merged cluster is less than or equal to the sum of the original
             # cluster radii.
             if distances[cluster_idx_1, cluster_idx_2] >= self.max_radius:
-                converged = True
                 break
 
             # Check whether merging the two clusters would violate the size

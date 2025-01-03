@@ -9,8 +9,8 @@ clusters' centroids.
 import numpy as np
 from k_means_constrained import KMeansConstrained
 
-from utils.clustering.clusterer import (Cluster, Point,
-                                        SizeAndRadiusConstrainedClusterer)
+from utils.clustering.cluster import Cluster, Point
+from utils.clustering.clusterer import SizeAndRadiusConstrainedClusterer
 
 
 class MinClostFlowClusterer(SizeAndRadiusConstrainedClusterer):
@@ -31,8 +31,7 @@ class MinClostFlowClusterer(SizeAndRadiusConstrainedClusterer):
             [point.coordinates() for point in self.points])
 
         iteration = 0
-        converged = False
-        while not converged:
+        while True:
             iteration += 1
 
             # Run constrained k-means clustering on the points.
@@ -61,7 +60,6 @@ class MinClostFlowClusterer(SizeAndRadiusConstrainedClusterer):
             # Check whether the radius constraint is satisfied, in which case
             # the algorithm has converged.
             if max_cluster_radius <= self.max_radius:
-                converged = True
                 break
 
             # Increase the number of clusters if the size and radius
