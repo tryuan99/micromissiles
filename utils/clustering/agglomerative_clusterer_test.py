@@ -57,6 +57,20 @@ class AgglomerativeClustererTestCase(absltest.TestCase):
         )
         clusterer.cluster()
         self.assertEqual(len(clusterer.clusters), 3)
+        clusters = sorted(
+            clusterer.clusters,
+            key=lambda cluster: cluster.coordinates()[1],
+        )
+        self.assertEqual(clusters[0].size(), 1)
+        np.testing.assert_allclose(clusters[0].centroid(), np.array([0, 0, 0]))
+        self.assertEqual(clusters[1].size(), 2)
+        np.testing.assert_allclose(clusters[1].centroid(),
+                                   np.array([0, 1.25, 0]))
+        self.assertEqual(clusters[2].size(), 1)
+        np.testing.assert_allclose(
+            clusters[2].centroid(),
+            np.array([0, 2.5, 0]),
+        )
 
 
 if __name__ == "__main__":
