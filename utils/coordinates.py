@@ -11,7 +11,7 @@ Radars and antennas use the following coordinate system:
     -------------> z
 
 The target and boresight are in the positive z-direction.
-The antennas are positioned in the x-y plane at z=0, where "horizontal"
+The antennas are positioned in the x-y plane at z = 0, where "horizontal"
 denotes the x-direction and "vertical" denotes the y-direction.
 
 We use spherical coordinates for the azimuth and elevation.
@@ -19,9 +19,9 @@ The azimuth denotes the angle from the projection of the target onto the x-z
 plane to the z-axis, where a positive azimuth denotes a negative x-coordinate
 and a negative azimuth denotes a positive x-coordinate.
     azimuth = arctan2(-x / z)
-The elevation denotes the angle from the target to its projection onto the
-x-z plane, where a positive elevation denotes a positive y-coordinate
-and a negative elevation denotes a negative y-coordinate.
+The elevation denotes the angle from a target's projection onto the x-z plane
+to the target, where a positive elevation denotes a positive y-coordinate and a
+negative elevation denotes a negative y-coordinate.
     elevation = arctan(y / sqrt(x^2 + z^2))
 Converting to Cartesian coordinates:
     x = -tan(azimuth) * z = -r * sin(azimuth) * cos(elevation)
