@@ -15,6 +15,10 @@ bazel_dep(
     version = "1.15.2",
 )
 bazel_dep(
+    name = "pico-sdk",
+    version = "2.1.0",
+)
+bazel_dep(
     name = "platforms",
     version = "0.0.10",
 )
@@ -37,6 +41,18 @@ bazel_dep(
 bazel_dep(
     name = "rules_python",
     version = "1.0.0",
+)
+
+# Pico SDK toolchains.
+register_toolchains(
+    "@pico-sdk//bazel/toolchain:linux-x86_64-rp2040",
+    "@pico-sdk//bazel/toolchain:linux-x86_64-rp2350",
+    "@pico-sdk//bazel/toolchain:win-x86_64-rp2040",
+    "@pico-sdk//bazel/toolchain:win-x86_64-rp2350",
+    "@pico-sdk//bazel/toolchain:mac-x86_64-rp2040",
+    "@pico-sdk//bazel/toolchain:mac-x86_64-rp2350",
+    "@pico-sdk//bazel/toolchain:mac-aarch64-rp2040",
+    "@pico-sdk//bazel/toolchain:mac-aarch64-rp2350",
 )
 
 # Boost library.

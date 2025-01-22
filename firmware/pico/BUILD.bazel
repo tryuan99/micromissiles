@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+sh_binary(
+    name = "load_uf2",
+    srcs = ["load_uf2.sh"],
+)

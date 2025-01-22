@@ -1,0 +1,21 @@
+package(default_visibility = ["//visibility:public"])
+
+platform(
+    name = "pico",
+    flags = [
+        "--@pico-sdk//bazel/config:PICO_BOARD=pico",
+        "--no@pico-sdk//bazel/config:PICO_STDIO_UART",
+        "--@pico-sdk//bazel/config:PICO_STDIO_USB",
+    ],
+    parents = ["@pico-sdk//bazel/platform:rp2040"],
+)
+
+platform(
+    name = "pico2",
+    flags = [
+        "--@pico-sdk//bazel/config:PICO_BOARD=pico2",
+        "--no@pico-sdk//bazel/config:PICO_STDIO_UART",
+        "--@pico-sdk//bazel/config:PICO_STDIO_USB",
+    ],
+    parents = ["@pico-sdk//bazel/platform:rp2350"],
+)
