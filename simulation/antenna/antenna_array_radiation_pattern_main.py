@@ -187,6 +187,11 @@ def plot_antenna_array_radiation_pattern_2d(
         subplot_kw={"projection": "polar"},
     )
     ax.plot(azimuth, radiation_pattern_db)
+    ax.axvline(
+        beam_steer.elevation,
+        color="red",
+        linestyle="--",
+    )
     ax.set_xlabel("Azimuth")
     plt.show()
 
@@ -204,6 +209,11 @@ def plot_antenna_array_radiation_pattern_2d(
         subplot_kw={"projection": "polar"},
     )
     ax.plot(elevation, radiation_pattern_db)
+    ax.axvline(
+        beam_steer.azimuth,
+        color="red",
+        linestyle="--",
+    )
     ax.set_xlabel("Elevation")
     plt.show()
 
@@ -406,15 +416,37 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         return line
 
     animator.add_artist(line, update_line)
-    animator.set_labels("Azimuth [rad]", "Magnitude [dB]")
+
+    # Add a line to mark the current azimuth.
     radiation_pattern = array.calculate_radiation_pattern(
         AntennaArrayBeamSteer(azimuth=0, elevation=0),
         azimuth=azimuth,
         elevation=0,
     )
+    ylim = (-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5)
+    azimuth_line = Line2D(
+        np.zeros(2),
+        ylim,
+        color="red",
+        linestyle="--",
+    )
+
+    def update_azimuth_line(line: artist.Artist, frame: float) -> artist.Artist:
+        """Returns the azimuth line at each frame.
+
+            Args:
+                line: Line.
+                frame: Azimuth to plot.
+            """
+        line.set_xdata([frame, frame])
+        return line
+
+    animator.add_artist(azimuth_line, update_azimuth_line)
+
+    animator.set_labels("Azimuth [rad]", "Magnitude [dB]")
     animator.set_limits(
         xlim=(np.min(azimuth), np.max(azimuth)),
-        ylim=(-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5),
+        ylim=ylim,
     )
 
     def update_title(azimuth: float) -> str:
@@ -453,15 +485,38 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         return line
 
     animator.add_artist(line, update_line)
-    animator.set_labels("Elevation [rad]", "Magnitude [dB]")
+
+    # Add a line to mark the current elevation.
     radiation_pattern = array.calculate_radiation_pattern(
         AntennaArrayBeamSteer(azimuth=0, elevation=0),
         azimuth=0,
         elevation=elevation,
     )
+    ylim = (-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5)
+    elevation_line = Line2D(
+        np.zeros(2),
+        ylim,
+        color="red",
+        linestyle="--",
+    )
+
+    def update_elevation_line(line: artist.Artist,
+                              frame: float) -> artist.Artist:
+        """Returns the elevation line at each frame.
+
+            Args:
+                line: Line.
+                frame: Elevation to plot.
+            """
+        line.set_xdata([frame, frame])
+        return line
+
+    animator.add_artist(elevation_line, update_elevation_line)
+
+    animator.set_labels("Elevation [rad]", "Magnitude [dB]")
     animator.set_limits(
         xlim=(np.min(elevation), np.max(elevation)),
-        ylim=(-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5),
+        ylim=ylim,
     )
 
     def update_title(elevation: float) -> str:

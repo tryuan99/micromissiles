@@ -112,6 +112,11 @@ def plot_antenna_array_radiation_pattern_2d(
         radiation_pattern_db = (
             constants.power2db(np.abs(radiation_pattern) + 1))
         ax.plot(azimuth, radiation_pattern_db, label=label)
+    ax.axvline(
+        beam_steer.azimuth,
+        color="red",
+        linestyle="--",
+    )
     ax.set_xlabel("Azimuth")
     ax.legend()
     plt.show()
@@ -132,6 +137,11 @@ def plot_antenna_array_radiation_pattern_2d(
         radiation_pattern_db = (
             constants.power2db(np.abs(radiation_pattern) + 1))
         ax.plot(elevation, radiation_pattern_db, label=label)
+    ax.axvline(
+        beam_steer.elevation,
+        color="red",
+        linestyle="--",
+    )
     ax.set_xlabel("Elevation")
     ax.legend()
     plt.show()
@@ -200,10 +210,32 @@ def animate_antenna_array_radiation_pattern_2d(
             elevation=0,
         )
         max_gain = max(np.max(np.abs(radiation_pattern)), max_gain)
+
+    # Add a line to mark the current azimuth.
+    ylim = (-20, constants.power2db(max_gain) + 5)
+    azimuth_line = Line2D(
+        np.zeros(2),
+        ylim,
+        color="red",
+        linestyle="--",
+    )
+
+    def update_azimuth_line(line: artist.Artist, frame: float) -> artist.Artist:
+        """Returns the azimuth line at each frame.
+
+            Args:
+                line: Line.
+                frame: Azimuth to plot.
+            """
+        line.set_xdata([frame, frame])
+        return line
+
+    animator.add_artist(azimuth_line, update_azimuth_line)
+
     animator.set_labels("Azimuth [rad]", "Magnitude [dB]")
     animator.set_limits(
         xlim=(np.min(azimuth), np.max(azimuth)),
-        ylim=(-20, constants.power2db(max_gain) + 5),
+        ylim=ylim,
     )
 
     def update_title(azimuth: float) -> str:
@@ -270,10 +302,33 @@ def animate_antenna_array_radiation_pattern_2d(
             elevation=elevation,
         )
         max_gain = max(np.max(np.abs(radiation_pattern)), max_gain)
+
+    # Add a line to mark the current elevation.
+    ylim = (-20, constants.power2db(max_gain) + 5)
+    elevation_line = Line2D(
+        np.zeros(2),
+        ylim,
+        color="red",
+        linestyle="--",
+    )
+
+    def update_elevation_line(line: artist.Artist,
+                              frame: float) -> artist.Artist:
+        """Returns the elevation line at each frame.
+
+            Args:
+                line: Line.
+                frame: Elevation to plot.
+            """
+        line.set_xdata([frame, frame])
+        return line
+
+    animator.add_artist(elevation_line, update_elevation_line)
+
     animator.set_labels("Elevation [rad]", "Magnitude [dB]")
     animator.set_limits(
         xlim=(np.min(elevation), np.max(elevation)),
-        ylim=(-20, constants.power2db(max_gain) + 5),
+        ylim=ylim,
     )
 
     def update_title(elevation: float) -> str:
