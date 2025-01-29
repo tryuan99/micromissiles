@@ -87,17 +87,20 @@ class AntennaArrayElement:
 
     def boresight(self) -> np.ndarray:
         """Returns the boresight direction."""
-        return self._orient(np.array([0, 0, 1]))
+        return (self._transform_global_to_antenna_coordinates(
+            np.array([0, 0, 1])))
 
     def vertical(self) -> np.ndarray:
         """Returns the vertical direction."""
-        return self._orient(np.array([0, 1, 0]))
+        return (self._transform_global_to_antenna_coordinates(
+            np.array([0, 1, 0])))
 
     def right(self) -> np.ndarray:
         """Returns the right direction, which corresponds to an azimuth of 90
         degrees.
         """
-        return self._orient(np.array([-1, 0, 0]))
+        return (self._transform_global_to_antenna_coordinates(
+            np.array([-1, 0, 0])))
 
     def calculate_pattern(
         self,
@@ -125,7 +128,7 @@ class AntennaArrayElement:
             ))
         # Transform the direction vectors from the coordinate system of the
         # antenna element to the global coordinate system.
-        transformed = self._orient(coordinates)
+        transformed = self._transform_antenna_to_global_coordinates(coordinates)
         # Transform the transformed direction vectors from Cartesian
         # coordinates to spherical coordinates.
         _, transformed_azimuth, transformed_elevation = (
@@ -139,13 +142,10 @@ class AntennaArrayElement:
             transformed_elevation,
         )
 
-    def _orient(self, vectors: np.ndarray) -> np.ndarray:
-        """Transform the vectors according to the orientation of the antenna
-        element.
-
-        This operation corresponds to transforming the vector from the
-        coordinate system of the antenna element to the global coordinate
-        system.
+    def _transform_global_to_antenna_coordinates(
+            self, vectors: np.ndarray) -> np.ndarray:
+        """Transform the vectors from the global coordinate system to the
+        coordinate system of the antenna element.
 
         Args:
             vectors: Vectors to be transformed.
@@ -154,6 +154,20 @@ class AntennaArrayElement:
             The transformed vectors.
         """
         rotation_matrix = self.orientation.rotation_matrix()
+        return np.tensordot(rotation_matrix, vectors, axes=((1), (0)))
+
+    def _transform_antenna_to_global_coordinates(
+            self, vectors: np.ndarray) -> np.ndarray:
+        """Transform the vectors from the coordinate system of the antenna
+        element to the global coordinate system.
+
+        Args:
+            vectors: Vectors to be transformed.
+
+        Returns:
+            The transformed vectors.
+        """
+        rotation_matrix = self.orientation.inverse().rotation_matrix()
         return np.tensordot(rotation_matrix, vectors, axes=((1), (0)))
 
 
