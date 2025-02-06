@@ -1,3 +1,5 @@
+load("@pypi//:requirements.bzl", "requirement")
+
 package(default_visibility = ["//visibility:public"])
 
 cc_binary(
@@ -26,6 +28,17 @@ cc_binary(
         "//base",
         "@eigen",
         "@libmpc",
+    ],
+)
+
+py_binary(
+    name = "multi_objective_optimizer_example_main",
+    srcs = ["multi_objective_optimizer_example_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("pymoo"),
+        requirement("SciencePlots"),
     ],
 )
 
