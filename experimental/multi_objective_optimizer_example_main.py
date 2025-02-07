@@ -27,21 +27,20 @@ def main(argv):
 
     # Plot the Pareto front.
     plt.style.use(["science", "grid"])
-    plot = pymoo.visualization.scatter.Scatter(
-        figsize=(12, 6),
-        labels=[r"$f_1$", r"$f_2$"],
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.scatter(
+        result.F[:, 0],
+        result.F[:, 1],
     )
-    plot.add(
-        problem.pareto_front(),
-        plot_type="line",
-        color="black",
-        alpha=0.7,
-    )
-    plot.add(
-        result.F,
+    pareto_front = problem.pareto_front()
+    ax.plot(
+        pareto_front[:, 0],
+        pareto_front[:, 1],
         color="red",
     )
-    plot.show()
+    ax.set_xlabel(r"$f_1$")
+    ax.set_ylabel(r"$f_2$")
+    plt.show()
 
     # Print the design space values.
     logging.info(result.X)

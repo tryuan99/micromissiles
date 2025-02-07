@@ -21,3 +21,45 @@ py_test(
         requirement("numpy"),
     ],
 )
+
+py_library(
+    name = "multi_objective_optimizer",
+    srcs = ["multi_objective_optimizer.py"],
+    deps = [
+        ":problem",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "nsga2_multi_objective_optimizer",
+    srcs = ["nsga2_multi_objective_optimizer.py"],
+    deps = [
+        ":multi_objective_optimizer",
+        ":problem",
+        requirement("numpy"),
+        requirement("pymoo"),
+    ],
+)
+
+py_binary(
+    name = "nsga2_multi_objective_optimizer_example_main",
+    srcs = ["nsga2_multi_objective_optimizer_example_main.py"],
+    deps = [
+        ":nsga2_multi_objective_optimizer",
+        ":problem",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
+    name = "problem",
+    srcs = ["problem.py"],
+    deps = [
+        requirement("numpy"),
+        requirement("pymoo"),
+    ],
+)
