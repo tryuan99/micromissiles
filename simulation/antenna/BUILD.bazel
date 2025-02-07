@@ -138,14 +138,14 @@ py_binary(
 py_library(
     name = "antenna_factory",
     srcs = ["antenna_factory.py"],
-    data = ["//simulation/antenna/data:radiation_pattern_data"],
+    data = ["//simulation/antenna/data:antenna_radiation_pattern_data"],
     deps = [
         ":antenna",
+        ":antenna_radiation_pattern",
         ":dipole_antenna",
         ":horn_antenna",
         ":isotropic_antenna",
         ":patch_antenna",
-        ":radiation_pattern",
         "//simulation/antenna/proto:antenna_config_py_proto",
     ],
 )
@@ -153,16 +153,46 @@ py_library(
 py_test(
     name = "antenna_factory_test",
     srcs = ["antenna_factory_test.py"],
+    data = ["//simulation/antenna/data:antenna_radiation_pattern_data"],
     deps = [
         ":antenna_factory",
+        ":antenna_radiation_pattern",
         ":dipole_antenna",
         ":horn_antenna",
         ":isotropic_antenna",
         ":patch_antenna",
-        ":radiation_pattern",
         "//simulation/antenna/proto:antenna_config_py_proto",
         requirement("absl-py"),
         requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "antenna_radiation_pattern",
+    srcs = ["antenna_radiation_pattern.py"],
+    deps = [
+        ":antenna",
+        "//utils:constants",
+        "//utils:coordinates",
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("scipy"),
+    ],
+)
+
+py_binary(
+    name = "antenna_radiation_pattern_main",
+    srcs = ["antenna_radiation_pattern_main.py"],
+    data = ["//simulation/antenna/data:antenna_radiation_pattern_data"],
+    deps = [
+        ":antenna_radiation_pattern",
+        "//utils:constants",
+        "//utils:coordinates",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
     ],
 )
 
@@ -257,34 +287,5 @@ py_binary(
     deps = [
         requirement("absl-py"),
         requirement("numpy"),
-    ],
-)
-
-py_library(
-    name = "radiation_pattern",
-    srcs = ["radiation_pattern.py"],
-    deps = [
-        ":antenna",
-        "//utils:constants",
-        "//utils:coordinates",
-        requirement("numpy"),
-        requirement("pandas"),
-        requirement("scipy"),
-    ],
-)
-
-py_binary(
-    name = "radiation_pattern_main",
-    srcs = ["radiation_pattern_main.py"],
-    data = ["//simulation/antenna/data:radiation_pattern_data"],
-    deps = [
-        ":radiation_pattern",
-        "//utils:constants",
-        "//utils:coordinates",
-        "//utils/visualization:color_maps",
-        requirement("absl-py"),
-        requirement("matplotlib"),
-        requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )

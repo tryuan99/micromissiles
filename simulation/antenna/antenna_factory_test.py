@@ -2,12 +2,13 @@ import numpy as np
 from absl.testing import absltest
 
 from simulation.antenna.antenna_factory import AntennaFactory
+from simulation.antenna.antenna_radiation_pattern import \
+    AntennaRadiationPattern
 from simulation.antenna.dipole_antenna import DipoleAntenna
 from simulation.antenna.horn_antenna import HornAntenna
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
 from simulation.antenna.patch_antenna import PatchAntenna
 from simulation.antenna.proto.antenna_config_pb2 import AntennaConfig
-from simulation.antenna.radiation_pattern import RadiationPattern
 
 
 class AntennaFactoryTestCase(absltest.TestCase):
@@ -47,7 +48,7 @@ class AntennaFactoryTestCase(absltest.TestCase):
             "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
         )
         antenna = AntennaFactory.create_antenna(antenna_config)
-        self.assertIsInstance(antenna, RadiationPattern)
+        self.assertIsInstance(antenna, AntennaRadiationPattern)
 
 
 if __name__ == "__main__":

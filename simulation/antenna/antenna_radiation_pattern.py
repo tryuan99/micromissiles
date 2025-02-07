@@ -1,4 +1,4 @@
-"""The radiation pattern class interpolates the radiation pattern of an
+"""The antenna radiation pattern class interpolates the radiation pattern of an
 antenna, including the simulated antenna radiation pattern from HFSS.
 """
 
@@ -11,8 +11,8 @@ from utils import constants
 from utils.coordinates import SphericalCoordinates
 
 
-class RadiationPattern(Antenna):
-    """Radiation pattern.
+class AntennaRadiationPattern(Antenna):
+    """Antenna radiation pattern.
 
     The antenna lies in the x-y plane, and its radiation propagates in the +z
     direction. The horizontal axis is parallel to the x-axis, and the vertical

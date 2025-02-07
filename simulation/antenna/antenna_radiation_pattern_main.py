@@ -7,7 +7,8 @@ import scienceplots
 from absl import app, flags
 from matplotlib import cm
 
-from simulation.antenna.radiation_pattern import RadiationPattern
+from simulation.antenna.antenna_radiation_pattern import \
+    AntennaRadiationPattern
 from utils import constants
 from utils.coordinates import SphericalCoordinates
 from utils.visualization.color_maps import COLOR_MAPS
@@ -16,8 +17,8 @@ FLAGS = flags.FLAGS
 
 
 def plot_radiation_pattern_3d_scatter(
-        radiation_pattern: RadiationPattern) -> None:
-    """Plots the 3D radiation pattern as a scatter plot.
+        radiation_pattern: AntennaRadiationPattern) -> None:
+    """Plots the 3D antenna radiation pattern as a scatter plot.
 
     Args:
         radiation_pattern: Radiation pattern.
@@ -61,8 +62,9 @@ def plot_radiation_pattern_3d_scatter(
     plt.show()
 
 
-def plot_radiation_pattern_3d(radiation_pattern: RadiationPattern) -> None:
-    """Plots the interpolated 3D radiation pattern.
+def plot_radiation_pattern_3d(
+        radiation_pattern: AntennaRadiationPattern) -> None:
+    """Plots the interpolated 3D antenna radiation pattern.
 
     Args:
         radiation_pattern: Radiation pattern.
@@ -120,8 +122,9 @@ def plot_radiation_pattern_3d(radiation_pattern: RadiationPattern) -> None:
     plt.show()
 
 
-def plot_radiation_pattern_2d(radiation_pattern: RadiationPattern) -> None:
-    """Plots the interpolated 2D radiation pattern along zero elevation and
+def plot_radiation_pattern_2d(
+        radiation_pattern: AntennaRadiationPattern) -> None:
+    """Plots the interpolated 2D antenna radiation pattern along zero elevation and
     along zero azimuth.
 
     Args:
@@ -155,7 +158,7 @@ def plot_radiation_pattern_2d(radiation_pattern: RadiationPattern) -> None:
 def main(argv):
     assert len(argv) == 1, argv
 
-    radiation_pattern = RadiationPattern(FLAGS.data)
+    radiation_pattern = AntennaRadiationPattern(FLAGS.data)
     plot_radiation_pattern_3d_scatter(radiation_pattern)
     plot_radiation_pattern_3d(radiation_pattern)
     plot_radiation_pattern_2d(radiation_pattern)

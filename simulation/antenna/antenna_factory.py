@@ -1,12 +1,13 @@
 """The antenna factory class instantiates various antennas."""
 
 from simulation.antenna.antenna import Antenna
+from simulation.antenna.antenna_radiation_pattern import \
+    AntennaRadiationPattern
 from simulation.antenna.dipole_antenna import DipoleAntenna
 from simulation.antenna.horn_antenna import HornAntenna
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
 from simulation.antenna.patch_antenna import PatchAntenna
 from simulation.antenna.proto.antenna_config_pb2 import AntennaConfig
-from simulation.antenna.radiation_pattern import RadiationPattern
 
 
 class AntennaFactory:
@@ -42,7 +43,7 @@ class AntennaFactory:
                     length=antenna_config.patch.length,
                 )
             case "radiation_pattern":
-                return RadiationPattern(
+                return AntennaRadiationPattern(
                     data_csv=antenna_config.radiation_pattern.data,)
             case _:
                 return IsotropicAntenna()
