@@ -84,7 +84,7 @@ class AntennaRadiationPattern(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         # Transform the coordinate systems.
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(

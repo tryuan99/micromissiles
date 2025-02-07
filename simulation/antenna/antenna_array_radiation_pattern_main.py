@@ -121,7 +121,7 @@ def plot_antenna_array_radiation_pattern_3d(
         azimuth_mesh,
         elevation_mesh,
     )
-    radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     r = radiation_pattern_db - np.min(radiation_pattern_db)
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
         range=r,
@@ -180,7 +180,7 @@ def plot_antenna_array_radiation_pattern_2d(
         azimuth,
         beam_steer.elevation,
     )
-    radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
@@ -202,7 +202,7 @@ def plot_antenna_array_radiation_pattern_2d(
         beam_steer.azimuth,
         elevation,
     )
-    radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
@@ -239,7 +239,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
         azimuth_mesh,
         elevation_mesh,
     )
-    radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     max_radius = np.max(radiation_pattern_db) - np.min(radiation_pattern_db)
 
     # Generate the face colors.
@@ -268,7 +268,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             azimuth_mesh,
             elevation_mesh,
         )
-        radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+        radiation_pattern_db = constants.power2db(radiation_pattern + 1)
         r = radiation_pattern_db - np.min(radiation_pattern_db)
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
             range=r,
@@ -315,7 +315,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
         azimuth_mesh,
         elevation_mesh,
     )
-    radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     max_radius = np.max(radiation_pattern_db) - np.min(radiation_pattern_db)
 
     # Generate the face colors.
@@ -344,7 +344,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             azimuth_mesh,
             elevation_mesh,
         )
-        radiation_pattern_db = constants.power2db(np.abs(radiation_pattern) + 1)
+        radiation_pattern_db = constants.power2db(radiation_pattern + 1)
         r = radiation_pattern_db - np.min(radiation_pattern_db)
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
             range=r,
@@ -412,7 +412,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             azimuth=azimuth,
             elevation=0,
         )
-        line.set_data(azimuth, constants.power2db(np.abs(radiation_pattern)))
+        line.set_data(azimuth, constants.power2db(radiation_pattern))
         return line
 
     animator.add_artist(line, update_line)
@@ -423,7 +423,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         azimuth=azimuth,
         elevation=0,
     )
-    ylim = (-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5)
+    ylim = (-20, constants.power2db(np.max(radiation_pattern)) + 5)
     azimuth_line = Line2D(
         np.zeros(2),
         ylim,
@@ -481,7 +481,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             azimuth=0,
             elevation=elevation,
         )
-        line.set_data(elevation, constants.power2db(np.abs(radiation_pattern)))
+        line.set_data(elevation, constants.power2db(radiation_pattern))
         return line
 
     animator.add_artist(line, update_line)
@@ -492,7 +492,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         azimuth=0,
         elevation=elevation,
     )
-    ylim = (-20, np.max(constants.power2db(np.abs(radiation_pattern))) + 5)
+    ylim = (-20, constants.power2db(np.max(radiation_pattern)) + 5)
     elevation_line = Line2D(
         np.zeros(2),
         ylim,

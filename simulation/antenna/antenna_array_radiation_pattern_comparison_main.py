@@ -109,8 +109,7 @@ def plot_antenna_array_radiation_pattern_2d(
             azimuth,
             beam_steer.elevation,
         )
-        radiation_pattern_db = (
-            constants.power2db(np.abs(radiation_pattern) + 1))
+        radiation_pattern_db = constants.power2db(radiation_pattern + 1)
         ax.plot(azimuth, radiation_pattern_db, label=label)
     ax.axvline(
         beam_steer.azimuth,
@@ -134,8 +133,7 @@ def plot_antenna_array_radiation_pattern_2d(
             beam_steer.azimuth,
             elevation,
         )
-        radiation_pattern_db = (
-            constants.power2db(np.abs(radiation_pattern) + 1))
+        radiation_pattern_db = constants.power2db(radiation_pattern + 1)
         ax.plot(elevation, radiation_pattern_db, label=label)
     ax.axvline(
         beam_steer.elevation,
@@ -193,7 +191,7 @@ def animate_antenna_array_radiation_pattern_2d(
             )
             line.set_data(
                 azimuth,
-                constants.power2db(np.abs(radiation_pattern)),
+                constants.power2db(radiation_pattern),
             )
             return line
 
@@ -209,7 +207,7 @@ def animate_antenna_array_radiation_pattern_2d(
             azimuth=azimuth,
             elevation=0,
         )
-        max_gain = max(np.max(np.abs(radiation_pattern)), max_gain)
+        max_gain = max(np.max(radiation_pattern), max_gain)
 
     # Add a line to mark the current azimuth.
     ylim = (-20, constants.power2db(max_gain) + 5)
@@ -285,7 +283,7 @@ def animate_antenna_array_radiation_pattern_2d(
             )
             line.set_data(
                 elevation,
-                constants.power2db(np.abs(radiation_pattern)),
+                constants.power2db(radiation_pattern),
             )
             return line
 
@@ -301,7 +299,7 @@ def animate_antenna_array_radiation_pattern_2d(
             azimuth=0,
             elevation=elevation,
         )
-        max_gain = max(np.max(np.abs(radiation_pattern)), max_gain)
+        max_gain = max(np.max(radiation_pattern), max_gain)
 
     # Add a line to mark the current elevation.
     ylim = (-20, constants.power2db(max_gain) + 5)

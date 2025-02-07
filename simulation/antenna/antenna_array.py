@@ -305,19 +305,20 @@ class AntennaArray:
                 azimuth=azimuth,
                 elevation=elevation,
             ))
-        return np.sum(
-            [
-                np.sqrt(element.calculate_pattern(azimuth, elevation)) *
-                np.exp(-1j * 2 * np.pi *
-                       np.dot(element.coordinates(), direction)) *
-                np.exp(1j * 2 * np.pi * np.tensordot(
-                    pattern_directions,
-                    element.coordinates(),
-                    axes=((0), (0)),
-                )) for element in self.elements
-            ],
-            axis=0,
-        )**2
+        return np.abs(
+            np.sum(
+                [
+                    np.sqrt(element.calculate_pattern(azimuth, elevation)) *
+                    np.exp(-1j * 2 * np.pi *
+                           np.dot(element.coordinates(), direction)) *
+                    np.exp(1j * 2 * np.pi * np.tensordot(
+                        pattern_directions,
+                        element.coordinates(),
+                        axes=((0), (0)),
+                    )) for element in self.elements
+                ],
+                axis=0,
+            ))**2
 
     def get_spatial_samples(
         self,

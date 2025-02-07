@@ -38,7 +38,7 @@ def sweep_azimuth_spectrum(spectrum: AntennaArray1DSpectrum) -> None:
         AntennaArrayArrival(azimuth=0), azimuth)
     ax.set_xlabel("Azimuth in rad")
     ax.set_ylabel("Magnitude in dB")
-    ax.set_ylim(-20, np.max(constants.mag2db(np.abs(azimuth_spectrum))) + 5)
+    ax.set_ylim(-20, constants.mag2db(np.max(np.abs(azimuth_spectrum))) + 5)
     ax.set_title("Azimuth spectrum")
 
     def update_animation(frame: float) -> None:
@@ -84,7 +84,7 @@ def sweep_azimuth_spectrum_resolution(
         AntennaArrayArrival(azimuth=0, amplitude=2), azimuth)
     ax.set_xlabel("Azimuth in rad")
     ax.set_ylabel("Magnitude in dB")
-    ax.set_ylim(-20, np.max(constants.mag2db(np.abs(azimuth_spectrum))) + 5)
+    ax.set_ylim(-20, constants.mag2db(np.max(np.abs(azimuth_spectrum))) + 5)
     ax.set_title("Azimuth spectrum")
 
     def update_animation(frame: float) -> None:
