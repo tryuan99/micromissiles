@@ -116,7 +116,7 @@ class AntennaArrayElement:
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         # Transform the direction vectors from spherical coordinates to
         # Cartesian coordinates.

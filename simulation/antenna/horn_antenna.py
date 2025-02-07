@@ -55,7 +55,7 @@ class HornAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         # Transform the coordinate systems.
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
@@ -93,7 +93,7 @@ class HornAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         # Define the Fresnel integrals.
         S = lambda x: scipy.special.fresnel(x)[0]
@@ -131,4 +131,4 @@ class HornAntenna(Antenna):
                      (np.cos(azimuth) * (np.cos(elevation) + 1) * I1 * I2))
         E_elevation = (1j * k * np.exp(-1j * k) / (4 * np.pi) *
                        (np.sin(azimuth) * (np.cos(elevation) + 1) * I1 * I2))
-        return np.sqrt(np.abs(E_azimuth)**2 + np.abs(E_elevation)**2)
+        return np.abs(E_azimuth)**2 + np.abs(E_elevation)**2

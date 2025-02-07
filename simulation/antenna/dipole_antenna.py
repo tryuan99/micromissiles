@@ -32,7 +32,7 @@ class DipoleAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         # Transform the coordinate systems.
         azimuth_pattern = -azimuth
@@ -59,11 +59,11 @@ class DipoleAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         k = 2 * np.pi
         E = (1j * 120 * np.pi * np.exp(-1j * k) / (2 * np.pi) *
              (np.cos(1 / 2 * k * self.length * np.cos(elevation)) -
               np.cos(1 / 2 * k * self.length)) / np.sin(elevation))
         E_shape = np.broadcast_shapes(np.shape(azimuth), np.shape(elevation))
-        return np.broadcast_to(np.abs(np.nan_to_num(E)), E_shape)
+        return np.broadcast_to(np.abs(np.nan_to_num(E)), E_shape)**2

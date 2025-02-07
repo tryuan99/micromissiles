@@ -45,7 +45,7 @@ def plot_radiation_pattern_3d(
     pattern = horn_antenna.calculate_pattern(azimuth_mesh, elevation_mesh)
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = constants.mag2db(pattern + 1)
+    r = constants.power2db(pattern + 1)
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
         range=r,
         azimuth=azimuth_mesh,
@@ -109,7 +109,7 @@ def plot_radiation_pattern_2d(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(azimuth, constants.mag2db(pattern + 1))
+    ax.plot(azimuth, constants.power2db(pattern + 1))
     ax.set_xlabel("Azimuth")
     plt.show()
 
@@ -121,7 +121,7 @@ def plot_radiation_pattern_2d(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(elevation, constants.mag2db(pattern + 1))
+    ax.plot(elevation, constants.power2db(pattern + 1))
     ax.set_xlabel("Elevation")
     plt.show()
 

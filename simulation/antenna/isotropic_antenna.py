@@ -20,7 +20,7 @@ class IsotropicAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         shape = np.broadcast_shapes(np.shape(azimuth), np.shape(elevation))
         return np.ones(shape)

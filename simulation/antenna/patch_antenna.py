@@ -34,7 +34,7 @@ class PatchAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         # Transform the coordinate systems.
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
@@ -70,11 +70,11 @@ class PatchAntenna(Antenna):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
         projected_sinc = np.sinc(
             self.width * np.sin(azimuth) * np.sin(elevation)) * np.cos(
                 np.pi * self.length * np.cos(azimuth) * np.sin(elevation))
         E_azimuth = -projected_sinc * np.sin(azimuth) * np.cos(elevation)
         E_elevation = projected_sinc * np.cos(azimuth)
-        return np.sqrt(np.abs(E_azimuth)**2 + np.abs(E_elevation)**2)
+        return np.abs(E_azimuth)**2 + np.abs(E_elevation)**2

@@ -21,5 +21,5 @@ class Antenna(ABC):
             elevation: Elevation in radians.
 
         Returns:
-            The magnitude of the radiation pattern.
+            The power magnitude of the radiation pattern.
         """
