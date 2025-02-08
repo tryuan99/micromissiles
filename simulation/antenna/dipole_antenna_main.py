@@ -30,10 +30,13 @@ def plot_radiation_pattern_3d(length: float) -> None:
     )
 
     dipole_antenna = DipoleAntenna(length)
-    pattern = dipole_antenna.calculate_pattern(azimuth_mesh, elevation_mesh)
+    radiation_pattern = dipole_antenna.calculate_radiation_pattern(
+        azimuth_mesh,
+        elevation_mesh,
+    )
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = constants.power2db(pattern + 1)
+    r = radiation_pattern.db()
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
         range=r,
         azimuth=azimuth_mesh,
@@ -80,25 +83,31 @@ def plot_radiation_pattern_2d(length: float) -> None:
 
     # Plot the radiation pattern along zero elevation.
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
-    pattern = dipole_antenna.calculate_pattern(azimuth=azimuth, elevation=0)
+    radiation_pattern = dipole_antenna.calculate_radiation_pattern(
+        azimuth=azimuth,
+        elevation=0,
+    )
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(azimuth, constants.power2db(pattern + 1))
+    ax.plot(azimuth, radiation_pattern.db())
     ax.set_xlabel("Azimuth")
     plt.show()
 
     # Plot the radiation pattern along zero azimuth.
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    pattern = dipole_antenna.calculate_pattern(azimuth=0, elevation=elevation)
+    radiation_pattern = dipole_antenna.calculate_radiation_pattern(
+        azimuth=0,
+        elevation=elevation,
+    )
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(elevation, constants.power2db(pattern + 1))
+    ax.plot(elevation, radiation_pattern.db())
     ax.set_xlabel("Elevation")
     plt.show()
 

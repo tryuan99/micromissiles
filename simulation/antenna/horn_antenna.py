@@ -4,6 +4,7 @@ import numpy as np
 import scipy.special
 
 from simulation.antenna.antenna import Antenna
+from simulation.antenna.radiation_pattern import RadiationPattern
 from utils.coordinates import SphericalCoordinates
 
 
@@ -43,11 +44,11 @@ class HornAntenna(Antenna):
         self.rho1 = rho1
         self.rho2 = rho2
 
-    def calculate_pattern(
+    def calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
-    ) -> float | np.ndarray:
+    ) -> RadiationPattern:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -70,9 +71,17 @@ class HornAntenna(Antenna):
         elif y < 0:
             azimuth_pattern *= -1
         elevation_pattern = np.arccos(z)
-        return self._calculate_pattern(azimuth_pattern, elevation_pattern)
+        radiation_pattern = self._calculate_radiation_pattern(
+            azimuth_pattern,
+            elevation_pattern,
+        )
+        return RadiationPattern(
+            radiation_pattern,
+            azimuth_pattern,
+            elevation_pattern,
+        )
 
-    def _calculate_pattern(
+    def _calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,

@@ -4,16 +4,18 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from simulation.antenna.radiation_pattern import RadiationPattern
+
 
 class Antenna(ABC):
     """Interface for an antenna."""
 
     @abstractmethod
-    def calculate_pattern(
+    def calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
-    ) -> float | np.ndarray:
+    ) -> RadiationPattern:
         """Calculates the radiation pattern of the antenna.
 
         Args:

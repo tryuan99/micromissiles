@@ -5,7 +5,10 @@ package(default_visibility = ["//visibility:public"])
 py_library(
     name = "antenna",
     srcs = ["antenna.py"],
-    deps = [requirement("numpy")],
+    deps = [
+        ":radiation_pattern",
+        requirement("numpy"),
+    ],
 )
 
 py_binary(
@@ -30,6 +33,7 @@ py_library(
         ":antenna",
         ":antenna_factory",
         ":isotropic_antenna",
+        ":radiation_pattern",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils:coordinates",
         "//utils:quaternion",
@@ -172,6 +176,7 @@ py_library(
     srcs = ["antenna_radiation_pattern.py"],
     deps = [
         ":antenna",
+        ":radiation_pattern",
         "//utils:constants",
         "//utils:coordinates",
         requirement("numpy"),
@@ -201,6 +206,7 @@ py_library(
     srcs = ["dipole_antenna.py"],
     deps = [
         ":antenna",
+        ":radiation_pattern",
         requirement("numpy"),
         requirement("scipy"),
     ],
@@ -226,6 +232,7 @@ py_library(
     srcs = ["horn_antenna.py"],
     deps = [
         ":antenna",
+        ":radiation_pattern",
         "//utils:coordinates",
         requirement("numpy"),
         requirement("scipy"),
@@ -252,6 +259,7 @@ py_library(
     srcs = ["isotropic_antenna.py"],
     deps = [
         ":antenna",
+        ":radiation_pattern",
         requirement("numpy"),
     ],
 )
@@ -261,6 +269,7 @@ py_library(
     srcs = ["patch_antenna.py"],
     deps = [
         ":antenna",
+        ":radiation_pattern",
         "//utils:coordinates",
         requirement("numpy"),
     ],
@@ -285,6 +294,25 @@ py_binary(
     name = "patch_antenna_design_main",
     srcs = ["patch_antenna_design_main.py"],
     deps = [
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "radiation_pattern",
+    srcs = ["radiation_pattern.py"],
+    deps = [
+        "//utils:constants",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "radiation_pattern_test",
+    srcs = ["radiation_pattern_test.py"],
+    deps = [
+        ":radiation_pattern",
         requirement("absl-py"),
         requirement("numpy"),
     ],

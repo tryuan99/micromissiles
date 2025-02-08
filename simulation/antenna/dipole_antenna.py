@@ -3,6 +3,7 @@
 import numpy as np
 
 from simulation.antenna.antenna import Antenna
+from simulation.antenna.radiation_pattern import RadiationPattern
 
 
 class DipoleAntenna(Antenna):
@@ -20,11 +21,11 @@ class DipoleAntenna(Antenna):
         super().__init__()
         self.length = length
 
-    def calculate_pattern(
+    def calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
-    ) -> float | np.ndarray:
+    ) -> RadiationPattern:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -37,9 +38,17 @@ class DipoleAntenna(Antenna):
         # Transform the coordinate systems.
         azimuth_pattern = -azimuth
         elevation_pattern = np.pi / 2 - elevation
-        return self._calculate_pattern(azimuth_pattern, elevation_pattern)
+        radiation_pattern = self._calculate_radiation_pattern(
+            azimuth_pattern,
+            elevation_pattern,
+        )
+        return RadiationPattern(
+            radiation_pattern,
+            azimuth_pattern,
+            elevation_pattern,
+        )
 
-    def _calculate_pattern(
+    def _calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,

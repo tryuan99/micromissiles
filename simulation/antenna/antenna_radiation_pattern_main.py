@@ -77,11 +77,13 @@ def plot_radiation_pattern_3d(
         indexing="ij",
     )
 
-    gain = radiation_pattern.calculate_pattern(azimuth_mesh, elevation_mesh)
-    gain_db = constants.power2db(gain)
+    gain = radiation_pattern.calculate_radiation_pattern(
+        azimuth_mesh,
+        elevation_mesh,
+    )
 
     # Convert from spherical coordinates to Cartesian coordinates.
-    r = gain_db - np.min(gain_db)
+    r = gain.db() - gain.min_db()
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
         range=r,
         azimuth=azimuth_mesh,
@@ -90,8 +92,8 @@ def plot_radiation_pattern_3d(
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
-        vmin=np.min(gain_db),
-        vmax=np.max(gain_db),
+        vmin=gain.min_db(),
+        vmax=gain.max_db(),
     )
     m = cm.ScalarMappable(
         cmap=COLOR_MAPS["parula"],
@@ -109,7 +111,7 @@ def plot_radiation_pattern_3d(
         x,
         y,
         z,
-        facecolors=COLOR_MAPS["parula"](norm(gain_db)),
+        facecolors=COLOR_MAPS["parula"](norm(gain.db())),
         shade=False,
         antialiased=False,
     )
@@ -132,25 +134,31 @@ def plot_radiation_pattern_2d(
     """
     # Plot the radiation pattern along zero elevation.
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
-    gain = radiation_pattern.calculate_pattern(azimuth=azimuth, elevation=0)
+    gain = radiation_pattern.calculate_radiation_pattern(
+        azimuth=azimuth,
+        elevation=0,
+    )
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(azimuth, constants.power2db(gain + 1))
+    ax.plot(azimuth, gain.db())
     ax.set_xlabel("Azimuth")
     plt.show()
 
     # Plot the radiation pattern along zero azimuth.
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    gain = radiation_pattern.calculate_pattern(azimuth=0, elevation=elevation)
+    gain = radiation_pattern.calculate_radiation_pattern(
+        azimuth=0,
+        elevation=elevation,
+    )
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(elevation, constants.power2db(gain + 1))
+    ax.plot(elevation, gain.db())
     ax.set_xlabel("Elevation")
     plt.show()
 

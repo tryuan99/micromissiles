@@ -14,6 +14,7 @@ from simulation.antenna.antenna_factory import AntennaFactory
 from simulation.antenna.isotropic_antenna import IsotropicAntenna
 from simulation.antenna.proto.antenna_array_config_pb2 import (
     AntennaArrayConfig, AntennaArrayElementConfig)
+from simulation.antenna.radiation_pattern import RadiationPattern
 from utils.coordinates import CartesianCoordinates, SphericalCoordinates
 from utils.quaternion import RotationQuaternion
 
@@ -102,7 +103,7 @@ class AntennaArrayElement:
         return (self._transform_global_to_antenna_coordinates(
             np.array([-1, 0, 0])))
 
-    def calculate_pattern(
+    def calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
@@ -137,7 +138,7 @@ class AntennaArrayElement:
                 y=transformed[1],
                 z=transformed[2],
             ))
-        return self.antenna.calculate_pattern(
+        return self.antenna.calculate_radiation_pattern(
             transformed_azimuth,
             transformed_elevation,
         )
@@ -286,7 +287,7 @@ class AntennaArray:
         beam_steer: AntennaArrayBeamSteer,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
-    ) -> np.ndarray:
+    ) -> RadiationPattern:
         """Calculates the radiation pattern of the antenna array at the given
         azimuths and elevations.
 
@@ -299,26 +300,28 @@ class AntennaArray:
             The radiation pattern of the antenna array.
         """
         direction = beam_steer.direction()
-        pattern_directions = np.array(
+        radiation_pattern_directions = np.array(
             SphericalCoordinates.transform_to_cartesian_arrays(
                 range=1,
                 azimuth=azimuth,
                 elevation=elevation,
             ))
-        return np.abs(
+        radiation_pattern = np.abs(
             np.sum(
                 [
-                    np.sqrt(element.calculate_pattern(azimuth, elevation)) *
-                    np.exp(-1j * 2 * np.pi *
-                           np.dot(element.coordinates(), direction)) *
+                    np.sqrt(
+                        element.calculate_radiation_pattern(azimuth, elevation))
+                    * np.exp(-1j * 2 * np.pi *
+                             np.dot(element.coordinates(), direction)) *
                     np.exp(1j * 2 * np.pi * np.tensordot(
-                        pattern_directions,
+                        radiation_pattern_directions,
                         element.coordinates(),
                         axes=((0), (0)),
                     )) for element in self.elements
                 ],
                 axis=0,
             ))**2
+        return RadiationPattern(radiation_pattern, azimuth, elevation)
 
     def get_spatial_samples(
         self,
@@ -365,10 +368,10 @@ class AntennaArray:
         direction = arrival.direction()
         return amplitude * arrival.amplitude * np.array([
             np.sqrt(
-                element.calculate_pattern(
+                element.calculate_radiation_pattern(
                     arrival.azimuth,
                     arrival.elevation,
-                )) *
+                ).radiation_pattern) *
             np.exp(-1j * (2 * np.pi * np.dot(element.coordinates(), direction) +
                           arrival.offset)) for element in self.elements
         ])

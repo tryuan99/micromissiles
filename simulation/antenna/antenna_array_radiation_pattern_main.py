@@ -121,8 +121,7 @@ def plot_antenna_array_radiation_pattern_3d(
         azimuth_mesh,
         elevation_mesh,
     )
-    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
-    r = radiation_pattern_db - np.min(radiation_pattern_db)
+    r = radiation_pattern.db() - radiation_pattern.min_db()
     x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
         range=r,
         azimuth=azimuth_mesh,
@@ -131,8 +130,8 @@ def plot_antenna_array_radiation_pattern_3d(
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
-        vmin=np.min(radiation_pattern_db),
-        vmax=np.max(radiation_pattern_db),
+        vmin=radiation_pattern.min_db(),
+        vmax=radiation_pattern.max_db(),
     )
     m = cm.ScalarMappable(
         cmap=COLOR_MAPS["parula"],
@@ -150,7 +149,7 @@ def plot_antenna_array_radiation_pattern_3d(
         x,
         y,
         z,
-        facecolors=COLOR_MAPS["parula"](norm(radiation_pattern_db)),
+        facecolors=COLOR_MAPS["parula"](norm(radiation_pattern.db())),
         shade=False,
         antialiased=False,
     )
@@ -180,13 +179,12 @@ def plot_antenna_array_radiation_pattern_2d(
         azimuth,
         beam_steer.elevation,
     )
-    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(azimuth, radiation_pattern_db)
+    ax.plot(azimuth, radiation_pattern.db())
     ax.axvline(
         beam_steer.elevation,
         color="red",
@@ -202,13 +200,12 @@ def plot_antenna_array_radiation_pattern_2d(
         beam_steer.azimuth,
         elevation,
     )
-    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
     )
-    ax.plot(elevation, radiation_pattern_db)
+    ax.plot(elevation, radiation_pattern.db())
     ax.axvline(
         beam_steer.azimuth,
         color="red",
@@ -239,13 +236,12 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
         azimuth_mesh,
         elevation_mesh,
     )
-    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
-    max_radius = np.max(radiation_pattern_db) - np.min(radiation_pattern_db)
+    max_radius = radiation_pattern.max_db() - radiation_pattern.min_db()
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
-        vmin=np.min(radiation_pattern_db),
-        vmax=np.max(radiation_pattern_db),
+        vmin=radiation_pattern.min_db(),
+        vmax=radiation_pattern.max_db(),
     )
     m = cm.ScalarMappable(
         cmap=COLOR_MAPS["parula"],
@@ -268,8 +264,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             azimuth_mesh,
             elevation_mesh,
         )
-        radiation_pattern_db = constants.power2db(radiation_pattern + 1)
-        r = radiation_pattern_db - np.min(radiation_pattern_db)
+        r = radiation_pattern.db() - radiation_pattern.min_db()
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
             range=r,
             azimuth=azimuth_mesh,
@@ -281,7 +276,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             x,
             y,
             z,
-            facecolors=COLOR_MAPS["parula"](norm(radiation_pattern_db)),
+            facecolors=COLOR_MAPS["parula"](norm(radiation_pattern.db())),
             shade=False,
             antialiased=False,
         )
@@ -315,13 +310,12 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
         azimuth_mesh,
         elevation_mesh,
     )
-    radiation_pattern_db = constants.power2db(radiation_pattern + 1)
-    max_radius = np.max(radiation_pattern_db) - np.min(radiation_pattern_db)
+    max_radius = radiation_pattern.max_db() - radiation_pattern.min_db()
 
     # Generate the face colors.
     norm = matplotlib.colors.Normalize(
-        vmin=np.min(radiation_pattern_db),
-        vmax=np.max(radiation_pattern_db),
+        vmin=radiation_pattern.min_db(),
+        vmax=radiation_pattern.max_db(),
     )
     m = cm.ScalarMappable(
         cmap=COLOR_MAPS["parula"],
@@ -344,8 +338,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             azimuth_mesh,
             elevation_mesh,
         )
-        radiation_pattern_db = constants.power2db(radiation_pattern + 1)
-        r = radiation_pattern_db - np.min(radiation_pattern_db)
+        r = radiation_pattern.db() - radiation_pattern.min_db()
         x, y, z = SphericalCoordinates.transform_to_cartesian_arrays(
             range=r,
             azimuth=azimuth_mesh,
@@ -357,7 +350,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             x,
             y,
             z,
-            facecolors=COLOR_MAPS["parula"](norm(radiation_pattern_db)),
+            facecolors=COLOR_MAPS["parula"](norm(radiation_pattern.db())),
             shade=False,
             antialiased=False,
         )
@@ -412,7 +405,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             azimuth=azimuth,
             elevation=0,
         )
-        line.set_data(azimuth, constants.power2db(radiation_pattern))
+        line.set_data(azimuth, radiation_pattern.db(log_plus_one=False))
         return line
 
     animator.add_artist(line, update_line)
@@ -423,7 +416,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         azimuth=azimuth,
         elevation=0,
     )
-    ylim = (-20, constants.power2db(np.max(radiation_pattern)) + 5)
+    ylim = (-20, radiation_pattern.max_db() + 5)
     azimuth_line = Line2D(
         np.zeros(2),
         ylim,
@@ -481,7 +474,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             azimuth=0,
             elevation=elevation,
         )
-        line.set_data(elevation, constants.power2db(radiation_pattern))
+        line.set_data(elevation, radiation_pattern.db(log_plus_one=False))
         return line
 
     animator.add_artist(line, update_line)
@@ -492,7 +485,7 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
         azimuth=0,
         elevation=elevation,
     )
-    ylim = (-20, constants.power2db(np.max(radiation_pattern)) + 5)
+    ylim = (-20, radiation_pattern.max_db() + 5)
     elevation_line = Line2D(
         np.zeros(2),
         ylim,

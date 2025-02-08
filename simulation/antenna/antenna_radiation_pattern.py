@@ -7,6 +7,7 @@ import pandas as pd
 import scipy.interpolate
 
 from simulation.antenna.antenna import Antenna
+from simulation.antenna.radiation_pattern import RadiationPattern
 from utils import constants
 from utils.coordinates import SphericalCoordinates
 
@@ -72,11 +73,11 @@ class AntennaRadiationPattern(Antenna):
         z = np.cos(constants.deg2rad(self.df[self.theta_column]))
         return x, y, z
 
-    def calculate_pattern(
+    def calculate_radiation_pattern(
         self,
         azimuth: float | np.ndarray,
         elevation: float | np.ndarray,
-    ) -> float | np.ndarray:
+    ) -> RadiationPattern:
         """Calculates the radiation pattern of the antenna.
 
         Args:
@@ -99,10 +100,15 @@ class AntennaRadiationPattern(Antenna):
         elif y < 0:
             azimuth_pattern *= -1
         elevation_pattern = np.arccos(z)
-        return self.interpolator(
+        radiation_pattern = self.interpolator(
             elevation_pattern,
             azimuth_pattern,
             grid=False,
+        )
+        return RadiationPattern(
+            radiation_pattern,
+            azimuth_pattern,
+            elevation_pattern,
         )
 
     def _interpolate_pattern(
