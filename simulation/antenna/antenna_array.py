@@ -310,9 +310,10 @@ class AntennaArray:
             np.sum(
                 [
                     np.sqrt(
-                        element.calculate_radiation_pattern(azimuth, elevation))
-                    * np.exp(-1j * 2 * np.pi *
-                             np.dot(element.coordinates(), direction)) *
+                        element.calculate_radiation_pattern(
+                            azimuth, elevation).radiation_pattern) *
+                    np.exp(-1j * 2 * np.pi *
+                           np.dot(element.coordinates(), direction)) *
                     np.exp(1j * 2 * np.pi * np.tensordot(
                         radiation_pattern_directions,
                         element.coordinates(),

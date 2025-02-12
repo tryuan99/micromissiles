@@ -67,6 +67,114 @@ class RadiationPatternTestCase(absltest.TestCase):
             constants.power2db(2 + 1),
         )
 
+    def test_main_lobe_width_1d(self):
+        power_magnitude = np.array([1, 2, 4, 5, 6, 7, 8, 7, 5, 3, 1])
+        azimuth = np.arange(len(power_magnitude))
+        radiation_pattern = RadiationPattern(power_magnitude, azimuth, 1)
+        self.assertEqual(
+            radiation_pattern.main_lobe_width(np.argmax(power_magnitude)),
+            7,
+        )
+
+    def test_main_lobe_width_1d_wraparound(self):
+        power_magnitude = np.array([7, 5, 3, 1, 1, 2, 4, 5, 6, 7, 8])
+        azimuth = np.arange(len(power_magnitude))
+        radiation_pattern = RadiationPattern(power_magnitude, azimuth, 1)
+        self.assertEqual(
+            radiation_pattern.main_lobe_width(np.argmax(power_magnitude)),
+            7,
+        )
+
+    def test_main_lobe_width_1d_flat(self):
+        power_magnitude = np.ones(8)
+        azimuth = np.arange(len(power_magnitude))
+        radiation_pattern = RadiationPattern(power_magnitude, azimuth, 1)
+        self.assertEqual(
+            radiation_pattern.main_lobe_width(np.argmax(power_magnitude)),
+            8,
+        )
+
+    def test_main_lobe_width_2d(self):
+        power_magnitude = np.array([
+            [1, 1, 1, 1],
+            [1, 1, 4, 1],
+            [1, 1, 6, 1],
+            [1, 1, 7, 1],
+            [1, 4, 8, 3],
+            [1, 1, 2, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+        ])
+        azimuth, elevation = np.meshgrid(
+            np.arange(power_magnitude.shape[0]),
+            np.arange(power_magnitude.shape[1]),
+            indexing="ij",
+        )
+        radiation_pattern = RadiationPattern(
+            power_magnitude,
+            azimuth,
+            elevation,
+        )
+        np.testing.assert_array_equal(
+            radiation_pattern.main_lobe_width(
+                np.unravel_index(
+                    np.argmax(power_magnitude),
+                    power_magnitude.shape,
+                )),
+            np.array([4, 2]),
+        )
+
+    def test_main_lobe_width_2d_wraparound(self):
+        power_magnitude = np.array([
+            [1, 1, 1, 2],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 4],
+            [1, 1, 1, 6],
+            [1, 1, 1, 7],
+            [3, 1, 4, 8],
+        ])
+        azimuth, elevation = np.meshgrid(
+            np.arange(power_magnitude.shape[0]),
+            np.arange(power_magnitude.shape[1]),
+            indexing="ij",
+        )
+        radiation_pattern = RadiationPattern(
+            power_magnitude,
+            azimuth,
+            elevation,
+        )
+        np.testing.assert_array_equal(
+            radiation_pattern.main_lobe_width(
+                np.unravel_index(
+                    np.argmax(power_magnitude),
+                    power_magnitude.shape,
+                )),
+            np.array([4, 2]),
+        )
+
+    def test_main_lobe_width_2d_flat(self):
+        power_magnitude = np.ones((8, 4))
+        azimuth, elevation = np.meshgrid(
+            np.arange(power_magnitude.shape[0]),
+            np.arange(power_magnitude.shape[1]),
+            indexing="ij",
+        )
+        radiation_pattern = RadiationPattern(
+            power_magnitude,
+            azimuth,
+            elevation,
+        )
+        np.testing.assert_array_equal(
+            radiation_pattern.main_lobe_width(
+                np.unravel_index(
+                    np.argmax(power_magnitude),
+                    power_magnitude.shape,
+                )),
+            np.array([8, 4]),
+        )
+
 
 if __name__ == "__main__":
     absltest.main()
