@@ -175,6 +175,75 @@ class RadiationPatternTestCase(absltest.TestCase):
             np.array([8, 4]),
         )
 
+    def test_sidelobe_level_1d(self):
+        power_magnitude = np.array([1, 4, 3, 5, 6, 7, 8, 7, 5, 3, 1])
+        azimuth = np.arange(len(power_magnitude))
+        radiation_pattern = RadiationPattern(power_magnitude, azimuth, 1)
+        self.assertEqual(
+            radiation_pattern.sidelobe_level(np.argmax(power_magnitude)),
+            constants.power2db(8 / 4),
+        )
+
+    def test_sidelobe_level_2d(self):
+        power_magnitude = np.array([
+            [1, 1, 1, 1],
+            [1, 1, 4, 1],
+            [1, 6, 5, 1],
+            [1, 1, 4, 1],
+            [1, 4, 8, 3],
+            [1, 1, 2, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+        ])
+        azimuth, elevation = np.meshgrid(
+            np.arange(power_magnitude.shape[0]),
+            np.arange(power_magnitude.shape[1]),
+            indexing="ij",
+        )
+        radiation_pattern = RadiationPattern(
+            power_magnitude,
+            azimuth,
+            elevation,
+        )
+        np.testing.assert_array_equal(
+            radiation_pattern.sidelobe_level(
+                np.unravel_index(
+                    np.argmax(power_magnitude),
+                    power_magnitude.shape,
+                )),
+            constants.power2db(8 / 6),
+        )
+
+    def test_sidelobe_level_2d_negative(self):
+        power_magnitude = np.array([
+            [1, 1, 1, 2],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 10, 1, 1],
+            [1, 1, 1, 4],
+            [1, 1, 1, 6],
+            [1, 1, 1, 7],
+            [3, 1, 4, 8],
+        ])
+        azimuth, elevation = np.meshgrid(
+            np.arange(power_magnitude.shape[0]),
+            np.arange(power_magnitude.shape[1]),
+            indexing="ij",
+        )
+        radiation_pattern = RadiationPattern(
+            power_magnitude,
+            azimuth,
+            elevation,
+        )
+        np.testing.assert_array_equal(
+            radiation_pattern.sidelobe_level(
+                np.unravel_index(
+                    np.argmax(power_magnitude == 8),
+                    power_magnitude.shape,
+                )),
+            constants.power2db(8 / 10),
+        )
+
 
 if __name__ == "__main__":
     absltest.main()

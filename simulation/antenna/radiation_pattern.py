@@ -2,6 +2,8 @@
 antenna array.
 """
 
+import itertools
+
 import numpy as np
 
 from utils import constants
@@ -117,8 +119,8 @@ class RadiationPattern:
             main_lobe_widths[axis_index] = main_lobe_width
         return np.squeeze(main_lobe_widths)
 
+    @staticmethod
     def _main_lobe_width(
-        self,
         data: np.ndarray,
         peak_index: int,
         axis: np.ndarray,
@@ -151,9 +153,73 @@ class RadiationPattern:
 
         # Find the points at half maximum of the main lobe.
         for i in range(1, len(threshold_indices)):
-            if (threshold_indices[i - 1] <= peak_index_extended and
-                    threshold_indices[i] >= peak_index_extended):
+            if ((threshold_indices[i - 1] <= peak_index_extended) and
+                (threshold_indices[i] >= peak_index_extended)):
                 difference = (axis[threshold_indices[i] % len(data)] -
                               axis[threshold_indices[i - 1] % len(data)])
                 return difference % axis_range
         return axis_range
+
+    def sidelobe_level(
+        self,
+        peak_index: int | list[int] | np.ndarray,
+        axis: int = -1,
+    ) -> float:
+        """Calculates the sidelobe level in dB along the given axes.
+
+        This function assumes that the radiation pattern wraps around.
+
+        Args:
+            peak_index: Peak index.
+            axis: Axes along which to find the sidelobe level. If -1, consider
+              all axes.
+
+        Returns:
+            The sidelobe level in dB relative to the main lobe.
+        """
+        if axis < 0:
+            data = self.radiation_pattern
+        else:
+            slice_index = (*peak_index[:axis], slice(None),
+                           *peak_index[axis + 1:])
+            data = self.radiation_pattern[slice_index]
+        peak_value = data[peak_index]
+        local_maximum_indices = self._find_local_maxima(data)
+        local_maximum_values = self.radiation_pattern[*local_maximum_indices.T]
+
+        # Sort the local maximum values in descending order.
+        sorted_order = np.argsort(local_maximum_values)[::-1]
+        sorted_local_maximum_indices = local_maximum_indices[sorted_order]
+
+        # Return the highest sidelobe level that is not the main lobe peak.
+        for local_maximum_index in sorted_local_maximum_indices:
+            if np.all(local_maximum_index != peak_index):
+                sidelobe_value = data[*local_maximum_index]
+                return constants.power2db(peak_value / sidelobe_value)
+
+        # If there are no sidelobes, the sidelobe level is infinite.
+        return np.inf
+
+    @staticmethod
+    def _find_local_maxima(data: np.ndarray) -> np.ndarray:
+        """Finds the local maxima in the radiation pattern.
+
+        The radiation pattern is assumed to be no more than 2-dimensional.
+
+        Args:
+            data: Data for which to find the local maxima.
+
+        Returns:
+            An array containing the indices corresponding to the local maxima.
+        """
+        local_maxima = np.full(data.shape, True)
+
+        # Shift the data to check for local maxima.
+        shifts = itertools.product([-1, 0, 1], repeat=data.ndim)
+        for shift in shifts:
+            shifted_data = np.roll(data, shift, axis=np.arange(data.ndim))
+            larger_than_shifted = data >= shifted_data
+            local_maxima &= larger_than_shifted
+
+        # Return the indices of the local maxima.
+        return np.argwhere(local_maxima)
