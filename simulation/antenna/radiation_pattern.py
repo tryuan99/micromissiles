@@ -82,68 +82,59 @@ class RadiationPattern:
             return constants.power2db(self.min() + 1)
         return constants.power2db(self.min() + 1)
 
-    def main_lobe_width(
+    def main_lobe_boundaries(
         self,
         peak_index: int | list[int] | np.ndarray,
-        axis: int = -1,
-    ) -> float | np.ndarray:
-        """Finds the main lobe width along the given axes according to the
-        corresponding azimuth or elevation axis.
+        axis: int = None,
+    ) -> np.ndarray:
+        """Finds the indices of the main lobe boundaries along the given axes.
 
         This function assumes that the radiation pattern wraps around.
 
         Args:
             peak_index: Peak index.
-            axis: Axes along which to find the main lobe width. If -1, find the
-              main lobe width along all axes.
+            axis: Axes along which to find the main lobe. If None, find the
+              main lobe along all axes.
 
         Returns:
-            The main lobe width along the given axes.
+            The indices of the main lobe boundaries along the given axes.
         """
-        if np.isscalar(peak_index):
-            peak_index = [peak_index]
+        peak_index = (np.array([peak_index])
+                      if np.isscalar(peak_index) else np.array(peak_index))
+        axis_indices = (np.arange(self.radiation_pattern.ndim)
+                        if axis is None else np.array([axis]))
 
-        num_dimensions = self.radiation_pattern.ndim
-        axis_indices = np.arange(num_dimensions) if axis < 0 else [axis]
-        axes = (self.azimuth, self.elevation)
-
-        main_lobe_widths = np.zeros(len(axis_indices))
+        # Find the main lobe boundaries for each axis.
+        main_lobe_boundaries = np.zeros((len(axis_indices), 2), dtype=np.int64)
         for axis_index, axis in enumerate(axis_indices):
-            slice_index = (*peak_index[:axis_index], slice(None),
-                           *peak_index[axis_index + 1:])
-            main_lobe_width = self._main_lobe_width(
-                self.radiation_pattern[slice_index],
+            main_lobe_axis_boundaries = self._main_lobe_boundaries(
+                self._slice_data(self.radiation_pattern, peak_index,
+                                 axis_index),
                 peak_index[axis_index],
-                axes[axis][slice_index],
             )
-            main_lobe_widths[axis_index] = main_lobe_width
-        return np.squeeze(main_lobe_widths)
+            main_lobe_boundaries[axis_index] = main_lobe_axis_boundaries
+        return main_lobe_boundaries
 
     @staticmethod
-    def _main_lobe_width(
+    def _main_lobe_boundaries(
         data: np.ndarray,
         peak_index: int,
-        axis: np.ndarray,
-    ) -> float:
-        """Finds the main lobe width along the one-dimensional data array.
+    ) -> np.ndarray:
+        """Finds the indices of the main lobe boundaries along the one-
+        dimensional data array.
 
         Args:
-            data: Data along which to find the main lobe width.
+            data: Data along which to find the main lobe.
             peak_index: Peak index.
-            axis: Axis values.
 
         Returns:
-            The main lobe width along the given axis.
+            The indices of the main lobe boundaries.
         """
         peak_value = data[peak_index]
 
         # The main lobe width is defined as the full width at half maximum.
         threshold = peak_value / 2
-        below_threshold = data < threshold
-
-        # Find the range of the axis.
-        # The axis values are assumed to be equally spaced.
-        axis_range = len(axis) * np.diff(axis)[0]
+        below_threshold = data <= threshold
 
         # Extend the data because to handle wraparounds.
         peak_index_extended = peak_index + len(data)
@@ -155,15 +146,64 @@ class RadiationPattern:
         for i in range(1, len(threshold_indices)):
             if ((threshold_indices[i - 1] <= peak_index_extended) and
                 (threshold_indices[i] >= peak_index_extended)):
-                difference = (axis[threshold_indices[i] % len(data)] -
-                              axis[threshold_indices[i - 1] % len(data)])
-                return difference % axis_range
-        return axis_range
+                return np.array([
+                    threshold_indices[i - 1] % len(data),
+                    threshold_indices[i] % len(data),
+                ])
+
+        # If the half maximum was not found, signify that the main lobe
+        # occupies the entire axis.
+        return np.zeros(2)
+
+    def main_lobe_width(
+        self,
+        peak_index: int | list[int] | np.ndarray,
+        axis: int = None,
+    ) -> float | np.ndarray:
+        """Finds the main lobe width along the given axes in the units of the
+        axis.
+
+        This function assumes that the radiation pattern wraps around.
+
+        Args:
+            peak_index: Peak index.
+            axis: Axes along which to find the main lobe width. If None, find
+              the main lobe width along all axes.
+
+        Returns:
+            The main lobe width along the given axes in the units of the axis.
+        """
+        peak_index = (np.array([peak_index])
+                      if np.isscalar(peak_index) else np.array(peak_index))
+        main_lobe_boundaries = self.main_lobe_boundaries(peak_index, axis)
+        axes = (self.azimuth, self.elevation)
+
+        # Find the main lobe width for each axis.
+        main_lobe_widths = np.zeros(len(main_lobe_boundaries))
+        for axis_index in range(len(main_lobe_boundaries)):
+            # Slice along the corresponding axis.
+            axis = self._slice_data(axes[axis_index], peak_index, axis_index)
+
+            # Find the range of the axis. The axis values are assumed to be
+            # equally spaced.
+            axis_range = len(axis) * np.diff(axis)[0]
+
+            # Find the main lobe width in the units of the axis.
+            axis_values = axis[main_lobe_boundaries[axis_index]]
+            difference = np.diff(axis_values)[0]
+
+            # If the main lobe has a width of 0, the main lobe actually spans
+            # the entire axis.
+            if difference != 0:
+                main_lobe_widths[axis_index] = difference % axis_range
+            else:
+                main_lobe_widths[axis_index] = axis_range
+        return np.squeeze(main_lobe_widths)
 
     def sidelobe_level(
         self,
         peak_index: int | list[int] | np.ndarray,
-        axis: int = -1,
+        axis: int = None,
     ) -> float:
         """Calculates the sidelobe level in dB along the given axes.
 
@@ -171,37 +211,57 @@ class RadiationPattern:
 
         Args:
             peak_index: Peak index.
-            axis: Axes along which to find the sidelobe level. If -1, consider
-              all axes.
+            axis: Axes along which to find the sidelobe level. If None,
+              consider all axes.
 
         Returns:
             The sidelobe level in dB relative to the main lobe.
         """
-        if axis < 0:
-            data = self.radiation_pattern
-        else:
-            slice_index = (*peak_index[:axis], slice(None),
-                           *peak_index[axis + 1:])
-            data = self.radiation_pattern[slice_index]
+        data = self._slice_data(self.radiation_pattern, peak_index, axis)
         peak_value = data[peak_index]
+
+        # Find the local maxima and the corresponding values.
         local_maximum_indices = self._find_local_maxima(data)
-        local_maximum_values = self.radiation_pattern[*local_maximum_indices.T]
+        local_maximum_values = self.radiation_pattern[local_maximum_indices]
+        local_maximum_indices = np.array(local_maximum_indices).T
+
+        # Find the main lobe boundaries.
+        # The main lobe boundary indices may wrap around.
+        main_lobe_boundaries = self.main_lobe_boundaries(peak_index, axis)
+        main_lobe_lower_boundaries = main_lobe_boundaries[:, 0]
+        main_lobe_upper_boundaries = main_lobe_boundaries[:, 1]
+        wrapped_around_boundaries = (main_lobe_lower_boundaries
+                                     > main_lobe_upper_boundaries)
 
         # Sort the local maximum values in descending order.
-        sorted_order = np.argsort(local_maximum_values)[::-1]
-        sorted_local_maximum_indices = local_maximum_indices[sorted_order]
+        sorted_maximum_values_indices = np.argsort(local_maximum_values)[::-1]
 
-        # Return the highest sidelobe level that is not the main lobe peak.
-        for local_maximum_index in sorted_local_maximum_indices:
-            if np.all(local_maximum_index != peak_index):
-                sidelobe_value = data[*local_maximum_index]
+        # Return the highest sidelobe level that is not in the main lobe.
+        for maximum_value_index in sorted_maximum_values_indices:
+            # Check whether the local maximum lies outside of the main lobe.
+            local_maximum_index = local_maximum_indices[maximum_value_index]
+            less_than_lower_boundaries = (local_maximum_index
+                                          <= main_lobe_lower_boundaries)
+            greater_than_upper_boundaries = (local_maximum_index
+                                             > main_lobe_upper_boundaries)
+            # If the main lobe boundary does not wrap around, check that the
+            # local maximum is less than the lower boundary or greater than the
+            # upper boundary. If the main lobe boundary wraps around, check
+            # that the local maximum is less than the lower boundary and
+            # greater than the upper boundary.
+            if np.all(
+                ((less_than_lower_boundaries | greater_than_upper_boundaries) &
+                 ~wrapped_around_boundaries) |
+                ((less_than_lower_boundaries & greater_than_upper_boundaries) &
+                 wrapped_around_boundaries)):
+                sidelobe_value = local_maximum_values[maximum_value_index]
                 return constants.power2db(peak_value / sidelobe_value)
 
         # If there are no sidelobes, the sidelobe level is infinite.
         return np.inf
 
     @staticmethod
-    def _find_local_maxima(data: np.ndarray) -> np.ndarray:
+    def _find_local_maxima(data: np.ndarray) -> tuple[np.ndarray]:
         """Finds the local maxima in the radiation pattern.
 
         The radiation pattern is assumed to be no more than 2-dimensional.
@@ -214,12 +274,39 @@ class RadiationPattern:
         """
         local_maxima = np.full(data.shape, True)
 
-        # Shift the data to check for local maxima.
+        # Shift the data to check each element against its neighbors, including
+        # diagonal neighbors.
         shifts = itertools.product([-1, 0, 1], repeat=data.ndim)
         for shift in shifts:
             shifted_data = np.roll(data, shift, axis=np.arange(data.ndim))
             larger_than_shifted = data >= shifted_data
+            # A local maximum must be larger than any of its neighbors,
+            # including diagonal neighbors.
             local_maxima &= larger_than_shifted
 
         # Return the indices of the local maxima.
-        return np.argwhere(local_maxima)
+        return np.nonzero(local_maxima)
+
+    @staticmethod
+    def _slice_data(data: np.ndarray,
+                    index: int | list[int] | np.ndarray,
+                    axis: int = None) -> np.ndarray:
+        """Slices the data along the given axis at the given index.
+
+        Args:
+            data: Data to slice.
+            index: Index into the data.
+            axis: Axis to slice.
+
+        Returns:
+            The slice along the given axis at the given index.
+        """
+        if axis is None:
+            return data
+        # Preserve the index for the axes along which is not being sliced.
+        slice_index = (
+            *index[:axis],
+            slice(None),
+            *index[axis + 1:],
+        )
+        return data[slice_index]
