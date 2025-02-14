@@ -20,7 +20,7 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         array: Antenna array.
     """
     # Plot the antenna array elements.
-    plt.style.use(["science", "grid"])
+    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -32,11 +32,57 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         element_coordinates[:, 1],
         element_coordinates[:, 2],
         s=120,
+        c=f"C0",
         marker="^",
+        alpha=0.4,
+    )
+    element_boresights = np.array(
+        [element.boresight() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        element_boresights[:, 0],
+        element_boresights[:, 1],
+        element_boresights[:, 2],
+        length=0.1,
+        normalize=True,
+        color="C0",
+    )
+    element_rights = np.array([element.right() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        element_rights[:, 0],
+        element_rights[:, 1],
+        element_rights[:, 2],
+        length=0.1,
+        normalize=True,
+        color="C1",
+    )
+    element_verticals = np.array(
+        [element.vertical() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 1],
+        element_coordinates[:, 2],
+        element_verticals[:, 0],
+        element_verticals[:, 1],
+        element_verticals[:, 2],
+        length=0.1,
+        normalize=True,
+        color="C2",
     )
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
     ax.set_zlabel(r"$z$")
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+    zmin, zmax = ax.get_zlim()
+    ax.set_xlim(min(xmin, -0.1), xmax)
+    ax.set_ylim(ymin, max(ymax, 0.1))
+    ax.set_zlim(zmin, max(zmax, 0.1))
     ax.view_init(30, -45, vertical_axis="y")
     plt.show()
 
@@ -54,8 +100,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string("config",
-                        "simulation/antenna/configs/ula_4_isotropic.pbtxt",
-                        "Antenna array configuration.")
+    flags.DEFINE_string(
+        "config", "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+        "Antenna array configuration.")
 
     app.run(main)

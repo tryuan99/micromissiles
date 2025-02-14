@@ -68,13 +68,28 @@ py_test(
 )
 
 py_binary(
+    name = "antenna_array_characterization_main",
+    srcs = ["antenna_array_characterization_main.py"],
+    data = ["//simulation/antenna/configs"],
+    deps = [
+        ":antenna_array",
+        "//simulation/antenna/proto:antenna_array_config_py_proto",
+        "//utils/visualization:color_maps",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+        requirement("protobuf"),
+    ],
+)
+
+py_binary(
     name = "antenna_array_radiation_pattern_main",
     srcs = ["antenna_array_radiation_pattern_main.py"],
     data = ["//simulation/antenna/configs"],
     deps = [
         ":antenna_array",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
-        "//utils:constants",
         "//utils:coordinates",
         "//utils/visualization:animator",
         "//utils/visualization:color_maps",

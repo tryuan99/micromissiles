@@ -13,7 +13,6 @@ from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer)
 from simulation.antenna.proto.antenna_array_config_pb2 import \
     AntennaArrayConfig
-from utils import constants
 from utils.coordinates import SphericalCoordinates
 from utils.visualization.animator import Animator2D, Animator3D
 from utils.visualization.color_maps import COLOR_MAPS
@@ -22,80 +21,6 @@ FLAGS = flags.FLAGS
 
 # Animation interval in milliseconds.
 ANIMATION_INTERVAL = 20  # milliseconds
-
-
-def plot_antenna_array_elements(array: AntennaArray) -> None:
-    """Plots the antenna array elements.
-
-    Args:
-        array: Antenna array.
-    """
-    # Plot the antenna array elements.
-    plt.style.use("science")
-    fig, ax = plt.subplots(
-        figsize=(12, 6),
-        subplot_kw={"projection": "3d"},
-    )
-    element_coordinates = np.array(
-        [element.coordinates() for element in array.elements])
-    ax.scatter(
-        element_coordinates[:, 0],
-        element_coordinates[:, 1],
-        element_coordinates[:, 2],
-        s=120,
-        c=f"C0",
-        marker="^",
-        alpha=0.4,
-    )
-    element_boresights = np.array(
-        [element.boresight() for element in array.elements])
-    ax.quiver(
-        element_coordinates[:, 0],
-        element_coordinates[:, 1],
-        element_coordinates[:, 2],
-        element_boresights[:, 0],
-        element_boresights[:, 1],
-        element_boresights[:, 2],
-        length=0.1,
-        normalize=True,
-        color="C0",
-    )
-    element_rights = np.array([element.right() for element in array.elements])
-    ax.quiver(
-        element_coordinates[:, 0],
-        element_coordinates[:, 1],
-        element_coordinates[:, 2],
-        element_rights[:, 0],
-        element_rights[:, 1],
-        element_rights[:, 2],
-        length=0.1,
-        normalize=True,
-        color="C1",
-    )
-    element_verticals = np.array(
-        [element.vertical() for element in array.elements])
-    ax.quiver(
-        element_coordinates[:, 0],
-        element_coordinates[:, 1],
-        element_coordinates[:, 2],
-        element_verticals[:, 0],
-        element_verticals[:, 1],
-        element_verticals[:, 2],
-        length=0.1,
-        normalize=True,
-        color="C2",
-    )
-    ax.set_xlabel(r"$x$")
-    ax.set_ylabel(r"$y$")
-    ax.set_zlabel(r"$z$")
-    xmin, xmax = ax.get_xlim()
-    ymin, ymax = ax.get_ylim()
-    zmin, zmax = ax.get_zlim()
-    ax.set_xlim(min(xmin, -0.1), xmax)
-    ax.set_ylim(ymin, max(ymax, 0.1))
-    ax.set_zlim(zmin, max(zmax, 0.1))
-    ax.view_init(30, -45, vertical_axis="y")
-    plt.show()
 
 
 def plot_antenna_array_radiation_pattern_3d(
@@ -215,11 +140,15 @@ def plot_antenna_array_radiation_pattern_2d(
     plt.show()
 
 
-def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
+def animate_antenna_array_radiation_pattern_3d(
+    array: AntennaArray,
+    beam_steer: AntennaArrayBeamSteer,
+) -> None:
     """Animates the 3D radiation pattern of an antenna array.
 
     Args:
         array: Antenna array.
+        beam_steer: Antenna beem steering direction.
     """
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
@@ -232,7 +161,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
     # Sweep the azimuth.
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     radiation_pattern = array.calculate_radiation_pattern(
-        AntennaArrayBeamSteer(azimuth=0, elevation=0),
+        AntennaArrayBeamSteer(azimuth=0, elevation=beam_steer.elevation),
         azimuth_mesh,
         elevation_mesh,
     )
@@ -260,7 +189,10 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             frame: Azimuth to plot.
         """
         radiation_pattern = array.calculate_radiation_pattern(
-            AntennaArrayBeamSteer(azimuth=frame, elevation=0),
+            AntennaArrayBeamSteer(
+                azimuth=frame,
+                elevation=beam_steer.elevation,
+            ),
             azimuth_mesh,
             elevation_mesh,
         )
@@ -306,7 +238,7 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
     # Sweep the elevation.
     elevation_sweep = np.linspace(np.pi / 2, -np.pi / 2, 180, endpoint=False)
     radiation_pattern = array.calculate_radiation_pattern(
-        AntennaArrayBeamSteer(azimuth=0, elevation=0),
+        AntennaArrayBeamSteer(azimuth=beam_steer.azimuth, elevation=0),
         azimuth_mesh,
         elevation_mesh,
     )
@@ -334,7 +266,10 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
             frame: Elevation to plot.
         """
         radiation_pattern = array.calculate_radiation_pattern(
-            AntennaArrayBeamSteer(azimuth=0, elevation=frame),
+            AntennaArrayBeamSteer(
+                azimuth=beam_steer.azimuth,
+                elevation=frame,
+            ),
             azimuth_mesh,
             elevation_mesh,
         )
@@ -378,12 +313,16 @@ def animate_antenna_array_radiation_pattern_3d(array: AntennaArray) -> None:
     animator.show()
 
 
-def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
+def animate_antenna_array_radiation_pattern_2d(
+    array: AntennaArray,
+    beam_steer: AntennaArrayBeamSteer,
+) -> None:
     """Animates the 2D radiation pattern of an antenna array along zero azimuth
     and zero elevation.
 
     Args:
         array: Antenna array.
+        beam_steer: Antenna beem steering direction.
     """
     # Sweep the azimuth.
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
@@ -401,9 +340,12 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             frame: Azimuth to plot.
         """
         radiation_pattern = array.calculate_radiation_pattern(
-            AntennaArrayBeamSteer(azimuth=frame, elevation=0),
+            AntennaArrayBeamSteer(
+                azimuth=frame,
+                elevation=beam_steer.elevation,
+            ),
             azimuth=azimuth,
-            elevation=0,
+            elevation=beam_steer.elevation,
         )
         line.set_data(azimuth, radiation_pattern.db(log_plus_one=False))
         return line
@@ -412,9 +354,9 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
 
     # Add a line to mark the current azimuth.
     radiation_pattern = array.calculate_radiation_pattern(
-        AntennaArrayBeamSteer(azimuth=0, elevation=0),
+        AntennaArrayBeamSteer(azimuth=0, elevation=beam_steer.elevation),
         azimuth=azimuth,
-        elevation=0,
+        elevation=beam_steer.elevation,
     )
     ylim = (-20, radiation_pattern.max_db() + 5)
     azimuth_line = Line2D(
@@ -470,8 +412,11 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
             frame: Elevation to plot.
         """
         radiation_pattern = array.calculate_radiation_pattern(
-            AntennaArrayBeamSteer(azimuth=0, elevation=frame),
-            azimuth=0,
+            AntennaArrayBeamSteer(
+                azimuth=beam_steer.azimuth,
+                elevation=frame,
+            ),
+            azimuth=beam_steer.azimuth,
             elevation=elevation,
         )
         line.set_data(elevation, radiation_pattern.db(log_plus_one=False))
@@ -481,8 +426,8 @@ def animate_antenna_array_radiation_pattern_2d(array: AntennaArray) -> None:
 
     # Add a line to mark the current elevation.
     radiation_pattern = array.calculate_radiation_pattern(
-        AntennaArrayBeamSteer(azimuth=0, elevation=0),
-        azimuth=0,
+        AntennaArrayBeamSteer(azimuth=beam_steer.azimuth, elevation=0),
+        azimuth=beam_steer.azimuth,
         elevation=elevation,
     )
     ylim = (-20, radiation_pattern.max_db() + 5)
@@ -537,11 +482,11 @@ def main(argv):
         azimuth=FLAGS.azimuth,
         elevation=FLAGS.elevation,
     )
-    plot_antenna_array_elements(array)
+
     plot_antenna_array_radiation_pattern_3d(array, beam_steer)
     plot_antenna_array_radiation_pattern_2d(array, beam_steer)
-    animate_antenna_array_radiation_pattern_3d(array)
-    animate_antenna_array_radiation_pattern_2d(array)
+    animate_antenna_array_radiation_pattern_3d(array, beam_steer)
+    animate_antenna_array_radiation_pattern_2d(array, beam_steer)
 
 
 if __name__ == "__main__":

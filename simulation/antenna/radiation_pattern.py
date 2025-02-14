@@ -217,8 +217,10 @@ class RadiationPattern:
         Returns:
             The sidelobe level in dB relative to the main lobe.
         """
+        peak_index = (np.array([peak_index])
+                      if np.isscalar(peak_index) else np.array(peak_index))
         data = self._slice_data(self.radiation_pattern, peak_index, axis)
-        peak_value = data[peak_index]
+        peak_value = data[tuple(peak_index)]
 
         # Find the local maxima and the corresponding values.
         local_maximum_indices = self._find_local_maxima(data)
