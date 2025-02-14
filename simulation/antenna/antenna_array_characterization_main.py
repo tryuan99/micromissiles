@@ -26,18 +26,18 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
     """
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
-    azimuth_main_lobe_widths = np.zeros(
-        (len(azimuth_sweep), len(elevation_sweep)))
-    elevation_main_lobe_widths = np.zeros(
-        (len(azimuth_sweep), len(elevation_sweep)))
-
-    azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
-    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    azimuth_values = np.linspace(-np.pi, np.pi, 720, endpoint=False)
+    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
     azimuth_mesh, elevation_mesh = np.meshgrid(
         azimuth_values,
         elevation_values,
         indexing="ij",
     )
+
+    azimuth_main_lobe_widths = np.zeros(
+        (len(azimuth_sweep), len(elevation_sweep)))
+    elevation_main_lobe_widths = np.zeros(
+        (len(azimuth_sweep), len(elevation_sweep)))
     for azimuth_index, azimuth in enumerate(azimuth_sweep):
         for elevation_index, elevation in enumerate(elevation_sweep):
             beam_steer = AntennaArrayBeamSteer(azimuth, elevation)
@@ -59,7 +59,7 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
                 elevation_main_lobe_widths[azimuth_index, elevation_index],
             ) = main_lobe_widths
 
-    # Plot the main lobe width along the azimuth axis.
+    # Plot the main lobe width along the azimuth axis as a 3D surface.
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
@@ -78,7 +78,25 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
     plt.colorbar(surf)
     plt.show()
 
-    # Plot the main lobe width along the elevation axis.
+    # Plot the main lobe width along the azimuth axis as a heatmap.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    image = ax.imshow(
+        azimuth_main_lobe_widths,
+        cmap=COLOR_MAPS["parula"],
+        origin="lower",
+        extent=(
+            np.min(azimuth_sweep) - 0.5,
+            np.max(azimuth_sweep) - 0.5,
+            np.min(elevation_sweep) - 0.5,
+            np.max(elevation_sweep) - 0.5,
+        ),
+    )
+    ax.set_xlabel("Azimuth [rad]")
+    ax.set_ylabel("Elevation [rad]")
+    plt.colorbar(image, label="Azimuth main lobe width [rad]")
+    plt.show()
+
+    # Plot the main lobe width along the elevation axis as a 3D surface.
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
@@ -97,6 +115,24 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
     plt.colorbar(surf)
     plt.show()
 
+    # Plot the main lobe width along the elevation axis as a heatmap.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    image = ax.imshow(
+        elevation_main_lobe_widths,
+        cmap=COLOR_MAPS["parula"],
+        origin="lower",
+        extent=(
+            np.min(azimuth_sweep) - 0.5,
+            np.max(azimuth_sweep) - 0.5,
+            np.min(elevation_sweep) - 0.5,
+            np.max(elevation_sweep) - 0.5,
+        ),
+    )
+    ax.set_xlabel("Azimuth [rad]")
+    ax.set_ylabel("Elevation [rad]")
+    plt.colorbar(image, label="Elevation main lobe width [rad]")
+    plt.show()
+
 
 def plot_antenna_array_main_lobe_width_2d(
     array: AntennaArray,
@@ -111,9 +147,9 @@ def plot_antenna_array_main_lobe_width_2d(
     """
     # Plot the main lobe width over azimuth.
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    azimuth_main_lobe_widths = np.zeros(azimuth_sweep.shape)
-
     azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+
+    azimuth_main_lobe_widths = np.zeros(azimuth_sweep.shape)
     for azimuth_index, azimuth in enumerate(azimuth_sweep):
         azimuth_beam_steer = AntennaArrayBeamSteer(
             azimuth,
@@ -137,9 +173,9 @@ def plot_antenna_array_main_lobe_width_2d(
 
     # Plot the main lobe width over elevation.
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    elevation_main_lobe_widths = np.zeros(elevation_sweep.shape)
-
     elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+
+    elevation_main_lobe_widths = np.zeros(elevation_sweep.shape)
     for elevation_index, elevation in enumerate(elevation_sweep):
         elevation_beam_steer = AntennaArrayBeamSteer(
             beam_steer.azimuth,
@@ -171,15 +207,15 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
     """
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
-    sidelobe_levels = np.zeros((len(azimuth_sweep), len(elevation_sweep)))
-
-    azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
-    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    azimuth_values = np.linspace(-np.pi, np.pi, 720, endpoint=False)
+    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
     azimuth_mesh, elevation_mesh = np.meshgrid(
         azimuth_values,
         elevation_values,
         indexing="ij",
     )
+
+    sidelobe_levels = np.zeros((len(azimuth_sweep), len(elevation_sweep)))
     for azimuth_index, azimuth in enumerate(azimuth_sweep):
         for elevation_index, elevation in enumerate(elevation_sweep):
             beam_steer = AntennaArrayBeamSteer(azimuth, elevation)
@@ -198,7 +234,7 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
                 ]))
             sidelobe_levels[azimuth_index, elevation_index] = sidelobe_level
 
-    # Plot the sidelobe levels.
+    # Plot the sidelobe level as a 3D surface.
     plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
@@ -217,6 +253,24 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
     plt.colorbar(surf)
     plt.show()
 
+    # Plot the sidelobe level as a heatmap.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    image = ax.imshow(
+        sidelobe_levels,
+        cmap=COLOR_MAPS["parula"],
+        origin="lower",
+        extent=(
+            np.min(azimuth_sweep) - 0.5,
+            np.max(azimuth_sweep) - 0.5,
+            np.min(elevation_sweep) - 0.5,
+            np.max(elevation_sweep) - 0.5,
+        ),
+    )
+    ax.set_xlabel("Azimuth [rad]")
+    ax.set_ylabel("Elevation [rad]")
+    plt.colorbar(image, label="Sidelobe level [dB]")
+    plt.show()
+
 
 def plot_antenna_array_sidelobe_level_2d(
     array: AntennaArray,
@@ -231,9 +285,9 @@ def plot_antenna_array_sidelobe_level_2d(
     """
     # Plot the sidelobe level over azimuth.
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    azimuth_sidelobe_levels = np.zeros(azimuth_sweep.shape)
-
     azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+
+    azimuth_sidelobe_levels = np.zeros(azimuth_sweep.shape)
     for azimuth_index, azimuth in enumerate(azimuth_sweep):
         azimuth_beam_steer = AntennaArrayBeamSteer(
             azimuth,
@@ -257,9 +311,9 @@ def plot_antenna_array_sidelobe_level_2d(
 
     # Plot the sidelobe level over elevation.
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    elevation_sidelobe_levels = np.zeros(elevation_sweep.shape)
-
     elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+
+    elevation_sidelobe_levels = np.zeros(elevation_sweep.shape)
     for elevation_index, elevation in enumerate(elevation_sweep):
         elevation_beam_steer = AntennaArrayBeamSteer(
             beam_steer.azimuth,

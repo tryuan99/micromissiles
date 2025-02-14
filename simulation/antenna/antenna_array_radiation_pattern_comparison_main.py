@@ -340,6 +340,148 @@ def animate_antenna_array_radiation_pattern_2d(
     animator.show()
 
 
+def plot_antenna_array_main_lobe_width_2d(
+    arrays: list[AntennaArray],
+    labels: list[str],
+    beam_steer: AntennaArrayBeamSteer,
+) -> None:
+    """Plots the main lobe width of the antenna arrays along the desired
+    azimuth and elevation.
+
+    Args:
+        arrays: Antenna arrays.
+        labels: Antenna array labels.
+        beam_steer: Antenna beam steering direction.
+    """
+    # Plot the main lobe width over azimuth.
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+
+    plt.style.use(["science", "grid"])
+    fig, ax = plt.subplots(figsize=(12, 6))
+    for array, label in zip(arrays, labels):
+        azimuth_main_lobe_widths = np.zeros(azimuth_sweep.shape)
+        for azimuth_index, azimuth in enumerate(azimuth_sweep):
+            azimuth_beam_steer = AntennaArrayBeamSteer(
+                azimuth,
+                beam_steer.elevation,
+            )
+            radiation_pattern = array.calculate_radiation_pattern(
+                azimuth_beam_steer,
+                azimuth_values,
+                azimuth_beam_steer.elevation,
+            )
+            azimuth_peak_index = np.argmin(np.abs(azimuth_values - azimuth))
+            main_lobe_width = (
+                radiation_pattern.main_lobe_width(azimuth_peak_index))
+            azimuth_main_lobe_widths[azimuth_index] = main_lobe_width
+        ax.plot(azimuth_sweep, azimuth_main_lobe_widths, label=label)
+    ax.set_xlabel("Azimuth [rad]")
+    ax.set_ylabel("Azimuth main lobe width [rad]")
+    ax.legend()
+    plt.show()
+
+    # Plot the main lobe width over elevation.
+    elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+
+    plt.style.use(["science", "grid"])
+    fig, ax = plt.subplots(figsize=(12, 6))
+    for array, label in zip(arrays, labels):
+        elevation_main_lobe_widths = np.zeros(elevation_sweep.shape)
+        for elevation_index, elevation in enumerate(elevation_sweep):
+            elevation_beam_steer = AntennaArrayBeamSteer(
+                beam_steer.azimuth,
+                elevation,
+            )
+            radiation_pattern = array.calculate_radiation_pattern(
+                elevation_beam_steer,
+                elevation_beam_steer.azimuth,
+                elevation_values,
+            )
+            elevation_peak_index = np.argmin(
+                np.abs(elevation_values - elevation))
+            main_lobe_width = (
+                radiation_pattern.main_lobe_width(elevation_peak_index))
+            elevation_main_lobe_widths[elevation_index] = main_lobe_width
+        ax.plot(elevation_sweep, elevation_main_lobe_widths, label=label)
+    ax.set_xlabel("Elevation [rad]")
+    ax.set_ylabel("Elevation main lobe width [rad]")
+    ax.legend()
+    plt.show()
+
+
+def plot_antenna_array_sidelobe_level_2d(
+    arrays: list[AntennaArray],
+    labels: list[str],
+    beam_steer: AntennaArrayBeamSteer,
+) -> None:
+    """Plots the sidelobe level of the antenna arrays along the desired
+    azimuth and elevation.
+
+    Args:
+        arrays: Antenna arrays.
+        labels: Antenna array labels.
+        beam_steer: Antenna beam steering direction.
+    """
+    # Plot the sidelobe level over azimuth.
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+
+    plt.style.use(["science", "grid"])
+    fig, ax = plt.subplots(figsize=(12, 6))
+    for array, label in zip(arrays, labels):
+        azimuth_sidelobe_levels = np.zeros(azimuth_sweep.shape)
+        for azimuth_index, azimuth in enumerate(azimuth_sweep):
+            azimuth_beam_steer = AntennaArrayBeamSteer(
+                azimuth,
+                beam_steer.elevation,
+            )
+            radiation_pattern = array.calculate_radiation_pattern(
+                azimuth_beam_steer,
+                azimuth_values,
+                azimuth_beam_steer.elevation,
+            )
+            azimuth_peak_index = np.argmin(np.abs(azimuth_values - azimuth))
+            sidelobe_level = (
+                radiation_pattern.sidelobe_level(azimuth_peak_index))
+            azimuth_sidelobe_levels[azimuth_index] = sidelobe_level
+        ax.plot(azimuth_sweep, azimuth_sidelobe_levels, label=label)
+    ax.set_xlabel("Azimuth [rad]")
+    ax.set_ylabel("Sidelobe level [dB]")
+    ax.legend()
+    plt.show()
+
+    # Plot the sidelobe level over elevation.
+    elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+
+    plt.style.use(["science", "grid"])
+    fig, ax = plt.subplots(figsize=(12, 6))
+    for array, label in zip(arrays, labels):
+        elevation_sidelobe_levels = np.zeros(elevation_sweep.shape)
+        for elevation_index, elevation in enumerate(elevation_sweep):
+            elevation_beam_steer = AntennaArrayBeamSteer(
+                beam_steer.azimuth,
+                elevation,
+            )
+            radiation_pattern = array.calculate_radiation_pattern(
+                elevation_beam_steer,
+                elevation_beam_steer.azimuth,
+                elevation_values,
+            )
+            elevation_peak_index = np.argmin(
+                np.abs(elevation_values - elevation))
+            sidelobe_level = (
+                radiation_pattern.sidelobe_level(elevation_peak_index))
+            elevation_sidelobe_levels[elevation_index] = sidelobe_level
+        ax.plot(elevation_sweep, elevation_sidelobe_levels, label=label)
+    ax.set_xlabel("Elevation [rad]")
+    ax.set_ylabel("Sidelobe level [dB]")
+    ax.legend()
+    plt.show()
+
+
 def main(argv):
     assert len(argv) == 1, argv
 
@@ -358,6 +500,8 @@ def main(argv):
     plot_antenna_array_elements(arrays, FLAGS.labels)
     plot_antenna_array_radiation_pattern_2d(arrays, FLAGS.labels, beam_steer)
     animate_antenna_array_radiation_pattern_2d(arrays, FLAGS.labels)
+    plot_antenna_array_main_lobe_width_2d(arrays, FLAGS.labels, beam_steer)
+    plot_antenna_array_sidelobe_level_2d(arrays, FLAGS.labels, beam_steer)
 
 
 if __name__ == "__main__":
