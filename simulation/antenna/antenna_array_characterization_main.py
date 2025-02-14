@@ -24,7 +24,7 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
     Args:
         array: Antenna array.
     """
-    azimuth_sweep = np.linspace(-np.pi, np.pi, 36, endpoint=False)
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     azimuth_main_lobe_widths = np.zeros(
         (len(azimuth_sweep), len(elevation_sweep)))
@@ -110,7 +110,7 @@ def plot_antenna_array_main_lobe_width_2d(
         beam_steer: Antenna beam steering direction.
     """
     # Plot the main lobe width over azimuth.
-    azimuth_sweep = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth_main_lobe_widths = np.zeros(azimuth_sweep.shape)
 
     azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
@@ -169,7 +169,7 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
     Args:
         array: Antenna array.
     """
-    azimuth_sweep = np.linspace(-np.pi, np.pi, 36, endpoint=False)
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     sidelobe_levels = np.zeros((len(azimuth_sweep), len(elevation_sweep)))
 
@@ -230,7 +230,7 @@ def plot_antenna_array_sidelobe_level_2d(
         beam_steer: Antenna beam steering direction.
     """
     # Plot the sidelobe level over azimuth.
-    azimuth_sweep = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+    azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth_sidelobe_levels = np.zeros(azimuth_sweep.shape)
 
     azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)

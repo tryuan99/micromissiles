@@ -156,7 +156,7 @@ def animate_antenna_array_radiation_pattern_2d(
     """
     # Sweep the azimuth.
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
 
     # Configure and run the animation.
     animator = Animator2D()
@@ -354,6 +354,7 @@ def main(argv):
         azimuth=FLAGS.azimuth,
         elevation=FLAGS.elevation,
     )
+
     plot_antenna_array_elements(arrays, FLAGS.labels)
     plot_antenna_array_radiation_pattern_2d(arrays, FLAGS.labels, beam_steer)
     animate_antenna_array_radiation_pattern_2d(arrays, FLAGS.labels)
