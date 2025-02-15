@@ -51,8 +51,8 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
         requirement("protobuf"),
+        requirement("SciencePlots"),
     ],
 )
 
@@ -78,8 +78,8 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
         requirement("protobuf"),
+        requirement("SciencePlots"),
     ],
 )
 
@@ -96,8 +96,8 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
         requirement("protobuf"),
+        requirement("SciencePlots"),
     ],
 )
 
@@ -113,8 +113,20 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
         requirement("protobuf"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_library(
+    name = "antenna_array_optimization",
+    srcs = ["antenna_array_optimization.py"],
+    deps = [
+        ":antenna_array",
+        "//simulation/antenna/proto:antenna_array_config_py_proto",
+        "//simulation/antenna/proto:geometry_py_proto",
+        "//utils/optimization:problem",
+        requirement("numpy"),
     ],
 )
 
@@ -149,8 +161,8 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
         requirement("protobuf"),
+        requirement("SciencePlots"),
     ],
 )
 
