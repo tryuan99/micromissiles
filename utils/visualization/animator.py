@@ -47,7 +47,7 @@ class Animator(ABC):
         update_title: Callback function to update the title.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.ax: axes.Axes = None
         self.frames: Iterable = None
         self.interval = 200
@@ -85,9 +85,11 @@ class Animator(ABC):
         self.frames = frames
         self.interval = interval
 
-    def set_title(self,
-                  title: str,
-                  update_title: Callable[[Any], None] = None) -> None:
+    def set_title(
+        self,
+        title: str,
+        update_title: Callable[[Any], None] = None,
+    ) -> None:
         """Sets the title of the plot.
 
         Args:
@@ -97,14 +99,20 @@ class Animator(ABC):
         self.ax.set_title(title)
         self.update_title = update_title
 
-    def show(self) -> None:
-        """Shows the plot."""
+    def show(self, repeat: bool = True) -> None:
+        """Shows the plot.
+
+        Args:
+            repeat: If true, repeats the animation after the sequence of frames
+              is completed.
+        """
         # Start the animation.
         anim = animation.FuncAnimation(
             self.fig,
             self._update_animation,
             frames=self.frames,
             interval=self.interval,
+            repeat=repeat,
         )
         # Add a legend.
         artists_with_labels = [
@@ -126,7 +134,8 @@ class Animator(ABC):
         for artist in self.artists:
             if artist.has_update():
                 artist.artist = artist.update_artist(artist.artist, frame)
-        self.ax.set_title(self.update_title(frame))
+        if self.update_title is not None:
+            self.ax.set_title(self.update_title(frame))
 
 
 class Animator2D(Animator):
