@@ -11,7 +11,7 @@ SIMULATOR_MAIN = "simulation/swarm/simulator_main"
 SIMULATOR_MAIN_PREFIX = "bazel-bin/simulation/swarm/simulator_main.runfiles/micromissiles/"
 SIMULATOR_MAIN_ARGS = [
     "--simulator_config simulation/swarm/configs/simulator/single_interceptor.pbtxt",
-    "--t_end 20",
+    "--t_end 30",
     "--noanimate",
 ]
 
@@ -32,8 +32,8 @@ def simulate_trajectories(launch_angle_start: float, launch_angle_end: float,
         output_csv: Output csv.
     """
     with open(output_csv, "w") as csv_file:
-        for launch_angle in np.arange(launch_angle_start, launch_angle_end + 5,
-                                      5):
+        for launch_angle in np.arange(launch_angle_start, launch_angle_end + 2,
+                                      2):
             for dispense_time in np.arange(dispense_time_start,
                                            dispense_time_end + 0.5, 0.5):
                 for light_time in np.arange(light_time_start,
@@ -66,13 +66,13 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_float("launch_angle_start", 5,
+    flags.DEFINE_float("launch_angle_start", 2,
                        "Launch angle range start in degrees.")
-    flags.DEFINE_float("launch_angle_end", 85,
+    flags.DEFINE_float("launch_angle_end", 88,
                        "Launch angle range start in degrees.")
     flags.DEFINE_float("dispense_time_start", 0,
                        "Dispense time range start in seconds.")
-    flags.DEFINE_float("dispense_time_end", 10,
+    flags.DEFINE_float("dispense_time_end", 20,
                        "Dispense time range end in seconds.")
     flags.DEFINE_float("light_time_start", 0,
                        "Light time range start in seconds.")

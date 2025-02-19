@@ -8,7 +8,6 @@
 #include "base/logging.h"
 #include "simulation/swarm/assignment/distance_assignment.h"
 #include "simulation/swarm/interceptor/interceptor_factory.h"
-#include "simulation/swarm/plotter/plotter_factory.h"
 #include "simulation/swarm/proto/simulator_config.pb.h"
 #include "simulation/swarm/threat/threat_factory.h"
 #include "utils/thread_pool.h"
@@ -124,9 +123,6 @@ void Simulator::Run(const double t_end) {
 // Plot the agent trajectories over time.
 void Simulator::Plot(const bool animate,
                      const std::string& animation_file) const {
-  plotter::PlotterFactory plotter_factory;
-  const auto plotter = plotter_factory.CreatePlotter(animate);
-  plotter->Plot(t_step_, interceptors_, threats_);
 }
 
 }  // namespace swarm::simulator

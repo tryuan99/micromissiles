@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "simulation/swarm/controller/agent_controller.h"
-#include "simulation/swarm/controller/mpc_controller.h"
 #include "simulation/swarm/controller/pn_controller.h"
 #include "simulation/swarm/proto/sensor.pb.h"
 #include "simulation/swarm/sensor/ideal_sensor.h"
@@ -22,7 +21,7 @@ std::unique_ptr<controller::AgentController> Micromissile::GetController()
           .proportional_navigation_range_threshold()) {
     return std::make_unique<controller::PnController>(*this);
   }
-  return std::make_unique<controller::MpcController>(*this);
+  return std::make_unique<controller::PnController>(*this);
 }
 
 }  // namespace swarm::interceptor
