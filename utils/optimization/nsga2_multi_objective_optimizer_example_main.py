@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
-from absl import app, flags
+from absl import app, flags, logging
 
 from utils.optimization.nsga2_multi_objective_optimizer import \
     Nsga2MultiObjectiveOptimizer
@@ -59,6 +59,10 @@ def main(argv):
         FLAGS.seed,
     )
     optimizer.run()
+
+    # Log the optimal values and objective values.
+    logging.info("Optimal values: %s", optimizer.optimal_values)
+    logging.info("Objective values: %s", optimizer.objective_values)
 
     # Plot the Pareto front.
     plt.style.use(["science", "grid"])

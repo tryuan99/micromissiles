@@ -70,15 +70,15 @@ class AntennaArrayOptimizationProblem(Problem):
         # Set the position and orientation for each antenna array element.
         for i in range(self.num_antenna_elements()):
             antenna_array_config.antenna_array_element_configs[
-                i].position = positions[i]
+                i].position.CopyFrom(positions[i])
             antenna_array_config.antenna_array_element_configs[
-                i].orientation = orientations[i]
+                i].orientation.CopyFrom(orientations[i])
 
         # Evaluate the maximum main lobe width and the highest sidelobe level.
         antenna_array = AntennaArray.create(antenna_array_config)
         max_main_lobe_width = self._evaluate_max_main_lobe_width(antenna_array)
-        highest_sidelobe_level = self._evaluate_highest_sidelobe_level(
-            antenna_array)
+        highest_sidelobe_level = (
+            self._evaluate_highest_sidelobe_level(antenna_array))
         return [max_main_lobe_width, highest_sidelobe_level]
 
     @abstractmethod
@@ -215,10 +215,10 @@ class AntennaArray1DApertureOptimizationProblem(
     The design variables are ordered as follows:
      - x-coordinate of antenna array element 0
      - z-coordinate of antenna array element 0
-     - theta rotation aroudn the y-axis of antenna array element 0
+     - theta rotation around the y-axis of antenna array element 0
      - x-coordinate of antenna array element 1
      - z-coordinate of antenna array element 1
-     - theta rotation aroudn the y-axis of antenna array element 1
+     - theta rotation around the y-axis of antenna array element 1
      - ...
 
     Attributes:
@@ -254,13 +254,13 @@ class AntennaArray1DApertureOptimizationProblem(
 
     def lower_bound(self) -> np.ndarray:
         """Returns the lower bound on the design variables."""
-        lower_bound = np.array([self.x_min, self.z_min, -np.pi])
-        return np.tile(lower_bound, self.num_antenna_elements)
+        lower_bound = np.array([self.x_min, self.z_min, -np.pi / 2])
+        return np.tile(lower_bound, self.num_antenna_elements())
 
     def upper_bound(self) -> np.ndarray:
         """Returns the upper bound on the design variables."""
-        upper_bound = np.array([self.x_max, self.z_max, -np.pi])
-        return np.tile(upper_bound, self.num_antenna_elements)
+        upper_bound = np.array([self.x_max, self.z_max, np.pi / 2])
+        return np.tile(upper_bound, self.num_antenna_elements())
 
     def _evaluate_positions(self, x: np.ndarray) -> list[CartesianCoordinates]:
         """Evaluates the positions of the antenna array elements.
@@ -276,9 +276,9 @@ class AntennaArray1DApertureOptimizationProblem(
 
         # Set the position of each antenna array element.
         positions = [
-            CartesianCoordinates() for _ in range(self.num_antenna_elements)
+            CartesianCoordinates() for _ in range(self.num_antenna_elements())
         ]
-        for i in range(self.num_antenna_elements):
+        for i in range(self.num_antenna_elements()):
             positions[i].x = x_coordinates[i]
             positions[i].z = z_coordinates[i]
         return positions
@@ -295,8 +295,10 @@ class AntennaArray1DApertureOptimizationProblem(
         thetas = x[2::self.num_variables_per_element()]
 
         # Set the orientation of each antenna array element.
-        orientations = [Quaternion() for _ in range(self.num_antenna_elements)]
-        for i in range(self.num_antenna_elements):
+        orientations = [
+            Quaternion() for _ in range(self.num_antenna_elements())
+        ]
+        for i in range(self.num_antenna_elements()):
             orientations[i].theta = thetas[i]
             orientations[i].y = 1
         return orientations
@@ -309,9 +311,9 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
 
     The design variables are ordered as follows:
      - x-coordinate of antenna array element 0
-     - theta rotation aroudn the y-axis of antenna array element 0
+     - theta rotation around the y-axis of antenna array element 0
      - x-coordinate of antenna array element 1
-     - theta rotation aroudn the y-axis of antenna array element 1
+     - theta rotation around the y-axis of antenna array element 1
      - ...
 
     Attributes:
@@ -344,13 +346,13 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
 
     def lower_bound(self) -> np.ndarray:
         """Returns the lower bound on the design variables."""
-        lower_bound = np.array([self.x_min, -np.pi])
-        return np.tile(lower_bound, self.num_antenna_elements)
+        lower_bound = np.array([self.x_min, -np.pi / 2])
+        return np.tile(lower_bound, self.num_antenna_elements())
 
     def upper_bound(self) -> np.ndarray:
         """Returns the upper bound on the design variables."""
-        upper_bound = np.array([self.x_min, -np.pi])
-        return np.tile(upper_bound, self.num_antenna_elements)
+        upper_bound = np.array([self.x_max, np.pi / 2])
+        return np.tile(upper_bound, self.num_antenna_elements())
 
     def _evaluate_positions(self, x: np.ndarray) -> list[CartesianCoordinates]:
         """Evaluates the positions of the antenna array elements.
@@ -366,9 +368,9 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
 
         # Set the position of each antenna array element.
         positions = [
-            CartesianCoordinates() for _ in range(self.num_antenna_elements)
+            CartesianCoordinates() for _ in range(self.num_antenna_elements())
         ]
-        for i in range(self.num_antenna_elements):
+        for i in range(self.num_antenna_elements()):
             positions[i].x = x_coordinates[i]
             positions[i].z = z_coordinates[i]
         return positions
@@ -385,8 +387,10 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
         thetas = x[1::self.num_variables_per_element()]
 
         # Set the orientation of each antenna array element.
-        orientations = [Quaternion() for _ in range(self.num_antenna_elements)]
-        for i in range(self.num_antenna_elements):
+        orientations = [
+            Quaternion() for _ in range(self.num_antenna_elements())
+        ]
+        for i in range(self.num_antenna_elements()):
             orientations[i].theta = thetas[i]
             orientations[i].y = 1
         return orientations
