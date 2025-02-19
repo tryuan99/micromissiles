@@ -491,8 +491,10 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "config", "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
-        "Antenna array configuration.")
+        "config",
+        "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+        "Antenna array configuration.",
+    )
     flags.DEFINE_float("azimuth", 0, "Azimuth in radians.")
     flags.DEFINE_float("elevation", 0, "Elevation in radians.")
 

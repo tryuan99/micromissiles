@@ -101,7 +101,9 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "config", "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
-        "Antenna array configuration.")
+        "config",
+        "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+        "Antenna array configuration.",
+    )
 
     app.run(main)

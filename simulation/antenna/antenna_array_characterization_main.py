@@ -26,8 +26,8 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
     """
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
-    azimuth_values = np.linspace(-np.pi, np.pi, 720, endpoint=False)
-    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+    elevation_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
     azimuth_mesh, elevation_mesh = np.meshgrid(
         azimuth_values,
         elevation_values,
@@ -85,10 +85,10 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
         cmap=COLOR_MAPS["parula"],
         origin="lower",
         extent=(
-            np.min(azimuth_sweep) - 0.5,
-            np.max(azimuth_sweep) - 0.5,
-            np.min(elevation_sweep) - 0.5,
-            np.max(elevation_sweep) - 0.5,
+            np.min(azimuth_sweep) - np.diff(azimuth_sweep)[0] / 2,
+            np.max(azimuth_sweep) - np.diff(azimuth_sweep)[0] / 2,
+            np.min(elevation_sweep) - np.diff(elevation_sweep)[0] / 2,
+            np.max(elevation_sweep) - np.diff(elevation_sweep)[0] / 2,
         ),
     )
     ax.set_xlabel("Azimuth [rad]")
@@ -173,7 +173,7 @@ def plot_antenna_array_main_lobe_width_2d(
 
     # Plot the main lobe width over elevation.
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    elevation_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
 
     elevation_main_lobe_widths = np.zeros(elevation_sweep.shape)
     for elevation_index, elevation in enumerate(elevation_sweep):
@@ -207,8 +207,8 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
     """
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 18, endpoint=False)
-    azimuth_values = np.linspace(-np.pi, np.pi, 720, endpoint=False)
-    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
+    azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth_mesh, elevation_mesh = np.meshgrid(
         azimuth_values,
         elevation_values,
@@ -260,10 +260,10 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
         cmap=COLOR_MAPS["parula"],
         origin="lower",
         extent=(
-            np.min(azimuth_sweep) - 0.5,
-            np.max(azimuth_sweep) - 0.5,
-            np.min(elevation_sweep) - 0.5,
-            np.max(elevation_sweep) - 0.5,
+            np.min(azimuth_sweep) - np.diff(azimuth_sweep)[0] / 2,
+            np.max(azimuth_sweep) - np.diff(azimuth_sweep)[0] / 2,
+            np.min(elevation_sweep) - np.diff(elevation_sweep)[0] / 2,
+            np.max(elevation_sweep) - np.diff(elevation_sweep)[0] / 2,
         ),
     )
     ax.set_xlabel("Azimuth [rad]")
@@ -357,8 +357,10 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "config", "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
-        "Antenna array configuration.")
+        "config",
+        "simulation/antenna/configs/ula_4_rotated_outer_recessed_patch_antenna_24ghz.pbtxt",
+        "Antenna array configuration.",
+    )
     flags.DEFINE_float("azimuth", 0, "Azimuth in radians.")
     flags.DEFINE_float("elevation", 0, "Elevation in radians.")
 

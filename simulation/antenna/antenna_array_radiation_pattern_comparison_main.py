@@ -447,6 +447,8 @@ def plot_antenna_array_sidelobe_level_2d(
                 radiation_pattern.sidelobe_level(azimuth_peak_index))
             azimuth_sidelobe_levels[azimuth_index] = sidelobe_level
         ax.plot(azimuth_sweep, azimuth_sidelobe_levels, label=label)
+    # Plot the 3 dB threshold.
+    ax.axhline(3, color="red", linestyle="--", label="3 dB threshold")
     ax.set_xlabel("Azimuth [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()
@@ -454,7 +456,7 @@ def plot_antenna_array_sidelobe_level_2d(
 
     # Plot the sidelobe level over elevation.
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-    elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+    elevation_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
 
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -476,6 +478,8 @@ def plot_antenna_array_sidelobe_level_2d(
                 radiation_pattern.sidelobe_level(elevation_peak_index))
             elevation_sidelobe_levels[elevation_index] = sidelobe_level
         ax.plot(elevation_sweep, elevation_sidelobe_levels, label=label)
+    # Plot the 3 dB threshold.
+    ax.axhline(3, color="red", linestyle="--", label="3 dB threshold")
     ax.set_xlabel("Elevation [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()
@@ -505,17 +509,24 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_multi_string("configs", [
-        "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
-        "simulation/antenna/configs/ula_4_rotated_outer_patch_antenna_24ghz.pbtxt",
-        "simulation/antenna/configs/ula_4_rotated_outer_recessed_patch_antenna_24ghz.pbtxt",
-    ], "Antenna array configurations.")
-    flags.DEFINE_multi_string("labels", [
-        "4-element ULA",
-        "4-element ULA with rotated outer elements",
-        "4-element ULA with rotated and recessed outer elements",
-        "4-element ULA with rotated and recessed elements",
-    ], "Antenna array labels.")
+    flags.DEFINE_multi_string(
+        "configs",
+        [
+            "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+            "simulation/antenna/configs/ula_4_rotated_outer_patch_antenna_24ghz.pbtxt",
+            "simulation/antenna/configs/ula_4_rotated_outer_recessed_patch_antenna_24ghz.pbtxt",
+        ],
+        "Antenna array configurations.",
+    )
+    flags.DEFINE_multi_string(
+        "labels",
+        [
+            "4-element ULA",
+            "4-element ULA with rotated outer elements",
+            "4-element array with rotated and recessed elements",
+        ],
+        "Antenna array labels.",
+    )
     flags.DEFINE_float("azimuth", 0, "Azimuth in radians.")
     flags.DEFINE_float("elevation", 0, "Elevation in radians.")
 

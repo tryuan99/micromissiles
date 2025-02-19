@@ -125,8 +125,10 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "config", "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
-        "Antenna array configuration.")
+        "config",
+        "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+        "Antenna array configuration.",
+    )
     flags.DEFINE_float("x_min", -5, "Minimum x-coordinate in lambda.")
     flags.DEFINE_float("x_max", 5, "Maximum x-coordinate in lambda.")
     flags.DEFINE_float("parabola_scale", 0.5, "Parabola scaling factor.")
