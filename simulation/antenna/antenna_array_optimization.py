@@ -51,6 +51,10 @@ class AntennaArrayOptimizationProblem(Problem):
         # The two objectives are the main lobe width and the sidelobe level.
         return 2
 
+    def num_inequality_constraints(self) -> int:
+        """Returns the number of inequality constraints."""
+        return 1
+
     def evaluate_objectives(self, x: np.ndarray) -> list[float]:
         """Evaluates the objective(s) on the given design variable values.
 
@@ -59,6 +63,42 @@ class AntennaArrayOptimizationProblem(Problem):
 
         Returns:
             The objective(s) evaluated on the given design variable values.
+        """
+        # Evaluate the maximum main lobe width and the highest sidelobe level.
+        antenna_array = self._create_antenna_array(x)
+        max_main_lobe_width = self._evaluate_max_main_lobe_width(antenna_array)
+        highest_sidelobe_level = (
+            self._evaluate_highest_sidelobe_level(antenna_array))
+        # Negate the highest sidelobe level because we want to minimize the
+        # highest sidelobe level.
+        return [max_main_lobe_width, -highest_sidelobe_level]
+
+    def evaluate_inequality_constraints(self, x: np.ndarray) -> float:
+        """Evaluates the inequality constraint(s) on the given design variable
+        values.
+
+        Args:
+            x: Design variable values.
+
+        Returns:
+            The inequality constraint(s) evaluated on the given design variable
+            values.
+        """
+        antenna_array = self._create_antenna_array(x)
+        highest_sidelobe_level = (
+            self._evaluate_highest_sidelobe_level(antenna_array))
+        # Negate the highest sidelobe level because we want to the highest
+        # sidelobe level to be non-negative.
+        return -highest_sidelobe_level
+
+    def _create_antenna_array(self, x: np.ndarray) -> AntennaArray:
+        """Creates the antenna array from the design variable values.
+
+        Args:
+            x: Design variable values.
+
+        Returns:
+            The antenna array associated with the design variable values.
         """
         positions = self._evaluate_positions(x)
         orientations = self._evaluate_orientations(x)
@@ -74,12 +114,8 @@ class AntennaArrayOptimizationProblem(Problem):
             antenna_array_config.antenna_array_element_configs[
                 i].orientation.CopyFrom(orientations[i])
 
-        # Evaluate the maximum main lobe width and the highest sidelobe level.
         antenna_array = AntennaArray.create(antenna_array_config)
-        max_main_lobe_width = self._evaluate_max_main_lobe_width(antenna_array)
-        highest_sidelobe_level = (
-            self._evaluate_highest_sidelobe_level(antenna_array))
-        return [max_main_lobe_width, highest_sidelobe_level]
+        return antenna_array
 
     @abstractmethod
     def _evaluate_positions(self, x: np.ndarray) -> list[CartesianCoordinates]:

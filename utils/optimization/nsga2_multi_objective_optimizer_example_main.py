@@ -25,7 +25,9 @@ class Zdt1Problem(Problem):
         return 2
 
     def evaluate_objectives(
-            self, x: float | np.ndarray) -> float | list[float] | np.ndarray:
+        self,
+        x: float | np.ndarray,
+    ) -> float | list[float] | np.ndarray:
         """Evaluates the objective(s) on the given design variable values.
 
         Args:

@@ -24,7 +24,9 @@ class Problem(ABC):
 
     @abstractmethod
     def evaluate_objectives(
-            self, x: float | np.ndarray) -> float | list[float] | np.ndarray:
+        self,
+        x: float | np.ndarray,
+    ) -> float | list[float] | np.ndarray:
         """Evaluates the objective(s) on the given design variable values.
 
         Args:
@@ -35,7 +37,9 @@ class Problem(ABC):
         """
 
     def evaluate_inequality_constraints(
-            self, x: float | np.ndarray) -> float | list[float] | np.ndarray:
+        self,
+        x: float | np.ndarray,
+    ) -> float | list[float] | np.ndarray:
         """Evaluates the inequality constraint(s) on the given design variable
         values.
 
