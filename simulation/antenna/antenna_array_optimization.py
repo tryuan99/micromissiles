@@ -31,6 +31,18 @@ class Line(ABC):
             The y-coordinates corresponding to the given x-coordinates.
         """
 
+    @abstractmethod
+    def evaluate_normal(self, x: float | np.ndarray) -> float | np.ndarray:
+        """Evaluates the slope of the normal line at each of the given
+        x-coordinates.
+
+        Args:
+            x: x-coordinates.
+
+        Returns:
+            The slopes of the normal line at each of the given x-coordinates.
+        """
+
 
 class AntennaArrayOptimizationProblem(Problem):
     """Antenna array optimization problem.
@@ -347,9 +359,7 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
 
     The design variables are ordered as follows:
      - x-coordinate of antenna array element 0
-     - theta rotation around the y-axis of antenna array element 0
      - x-coordinate of antenna array element 1
-     - theta rotation around the y-axis of antenna array element 1
      - ...
 
     Attributes:
@@ -372,7 +382,7 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
 
     def num_variables_per_element(self) -> int:
         """Returns the number of design variables per antenna array element."""
-        return 2
+        return 1
 
     def num_variables(self) -> int:
         """Returns the number of design variables."""
@@ -382,12 +392,12 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
 
     def lower_bound(self) -> np.ndarray:
         """Returns the lower bound on the design variables."""
-        lower_bound = np.array([self.x_min, -np.pi / 2])
+        lower_bound = np.array([self.x_min])
         return np.tile(lower_bound, self.num_antenna_elements())
 
     def upper_bound(self) -> np.ndarray:
         """Returns the upper bound on the design variables."""
-        upper_bound = np.array([self.x_max, np.pi / 2])
+        upper_bound = np.array([self.x_max])
         return np.tile(upper_bound, self.num_antenna_elements())
 
     def _evaluate_positions(self, x: np.ndarray) -> list[CartesianCoordinates]:
@@ -399,7 +409,7 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
         Returns:
             The positions of the antenna array elements.
         """
-        x_coordinates = x[::self.num_variables_per_element()]
+        x_coordinates = x
         z_coordinates = self.line.evaluate(x_coordinates)
 
         # Set the position of each antenna array element.
@@ -420,7 +430,14 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
         Returns:
             The orientations of the antenna array elements.
         """
-        thetas = x[1::self.num_variables_per_element()]
+        normal_slopes = self.line.evaluate_normal(x)
+        angles_to_right = np.arctan(normal_slopes)
+        positive_angle_mask = angles_to_right >= 0
+        thetas = np.zeros(angles_to_right.shape)
+        thetas[positive_angle_mask] = (np.pi / 2 -
+                                       angles_to_right[positive_angle_mask])
+        thetas[~positive_angle_mask] = (-np.pi / 2 -
+                                        angles_to_right[~positive_angle_mask])
 
         # Set the orientation of each antenna array element.
         orientations = [

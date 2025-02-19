@@ -40,6 +40,19 @@ class Parabola(Line):
         """
         return -self.scale * x**2
 
+    def evaluate_normal(self, x: float | np.ndarray) -> float | np.ndarray:
+        """Evaluates the slope of the normal line at each of the given
+        x-coordinates.
+
+        Args:
+            x: x-coordinates.
+
+        Returns:
+            The slopes of the normal line at each of the given x-coordinates.
+        """
+        slope = -2 * self.scale * x
+        return -1 / slope
+
 
 def optimize_antenna_array_along_parabola(
     antenna_array_config: AntennaArrayConfig,
