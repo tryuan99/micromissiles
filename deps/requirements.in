@@ -1,5 +1,6 @@
 absl-py==2.1.0
 cvxpy==1.6.0
+jmetalpy==1.6.0
 joblib==1.4.2
 k-means-constrained==0.7.5
 matplotlib==3.10.0

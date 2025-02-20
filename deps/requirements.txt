@@ -144,6 +144,10 @@ immutabledict==4.2.1 \
     --hash=sha256:c56a26ced38c236f79e74af3ccce53772827cef5c3bce7cab33ff2060f756373 \
     --hash=sha256:d91017248981c72eb66c8ff9834e99c2f53562346f23e7f51e7a5ebcf66a3bcc
     # via ortools
+jmetalpy==1.6.0 \
+    --hash=sha256:8bacd044d238f567be9466a1c8e026e059cd1ca5fd91b027398954187db083b3 \
+    --hash=sha256:8f424fc201962e3eb7465f09ee95ce458c5d384c9031f20df91cdaad4dfebecb
+    # via -r deps/requirements.in
 joblib==1.4.2 \
     --hash=sha256:06d478d5674cbc267e7496a410ee875abd68e4340feff4490bcb7afb88060ae6 \
     --hash=sha256:2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e
@@ -272,6 +276,7 @@ matplotlib==3.10.0 \
     --hash=sha256:fd44fc75522f58612ec4a33958a7e5552562b7705b42ef1b4f8c0818e304a363
     # via
     #   -r deps/requirements.in
+    #   jmetalpy
     #   pymoo
     #   scienceplots
 numpy==2.2.0 \
@@ -337,16 +342,19 @@ numpy==2.2.0 \
     #   cma
     #   contourpy
     #   cvxpy
+    #   jmetalpy
     #   k-means-constrained
     #   matplotlib
     #   ortools
     #   osqp
     #   pandas
+    #   patsy
     #   pymoo
     #   qdldl
     #   scikit-learn
     #   scipy
     #   scs
+    #   statsmodels
 ortools==9.11.4210 \
     --hash=sha256:03ecd32e5d760d48e59832ef6bf724f8cac95e4e40db72a7fb912abf7adcf931 \
     --hash=sha256:079bea08c6341dcfe3fb9586eb6edec6ae80f4ed16ed366fd7a46ef4b5709009 \
@@ -407,6 +415,7 @@ packaging==21.3 \
     # via
     #   matplotlib
     #   plotly
+    #   statsmodels
 pandas==2.2.3 \
     --hash=sha256:062309c1b9ea12a50e8ce661145c6aab431b1e99530d3cd60640e255778bd43a \
     --hash=sha256:15c0e1e02e93116177d29ff83e8b1619c93ddc9c49083f237d4312337a61165d \
@@ -452,7 +461,13 @@ pandas==2.2.3 \
     --hash=sha256:fffb8ae78d8af97f849404f21411c95062db1496aeb3e56f146f0355c9989319
     # via
     #   -r deps/requirements.in
+    #   jmetalpy
     #   ortools
+    #   statsmodels
+patsy==1.0.1 \
+    --hash=sha256:751fb38f9e97e62312e921a1954b81e1bb2bcda4f5eeabaf94db251ee791509c \
+    --hash=sha256:e786a9391eec818c054e359b737bbce692f051aee4c661f4141cc88fb459c0c4
+    # via statsmodels
 pillow==9.3.0 \
     --hash=sha256:03150abd92771742d4a8cd6f2fa6246d847dcd2e332a18d0c15cc75bf6703040 \
     --hash=sha256:073adb2ae23431d3b9bcbcff3fe698b62ed47211d0716b067385538a1b0f28b8 \
@@ -519,7 +534,9 @@ pillow==9.3.0 \
 plotly==5.24.1 \
     --hash=sha256:dbc8ac8339d248a4bcc36e08a5659bacfe1b079390b8953533f4eb22169b4bae \
     --hash=sha256:f67073a1e637eb0dc3e46324d9d51e2fe76e9727c892dde64ddf1e1b51f29089
-    # via -r deps/requirements.in
+    # via
+    #   -r deps/requirements.in
+    #   jmetalpy
 protobuf==5.26.1 \
     --hash=sha256:38aa5f535721d5bb99861166c445c4105c4e285c765fbb2ac10f116e32dcd46d \
     --hash=sha256:3c388ea6ddfe735f8cf69e3f7dc7611e73107b60bdfcf5d0f024c3ccd3794e23 \
@@ -666,12 +683,14 @@ scipy==1.14.1 \
     #   -r deps/requirements.in
     #   clarabel
     #   cvxpy
+    #   jmetalpy
     #   k-means-constrained
     #   osqp
     #   pymoo
     #   qdldl
     #   scikit-learn
     #   scs
+    #   statsmodels
 scs==3.2.4.post2 \
     --hash=sha256:15c694588c62fc1e5c2aee7e4a372f1e56bc4de9ffd20b31cc1ad596ee85323c \
     --hash=sha256:28fc230a32f35762562034d16c50ee8fc5f6486c7535ad0befedc312fe443284 \
@@ -703,6 +722,38 @@ six==1.16.0 \
     # via
     #   k-means-constrained
     #   python-dateutil
+statsmodels==0.14.4 \
+    --hash=sha256:1322286a7bfdde2790bf72d29698a1b76c20b8423a55bdcd0d457969d0041f72 \
+    --hash=sha256:17672b30c6b98afe2b095591e32d1d66d4372f2651428e433f16a3667f19eabb \
+    --hash=sha256:2a337b731aa365d09bb0eab6da81446c04fde6c31976b1d8e3d3a911f0f1e07b \
+    --hash=sha256:3bb2e580d382545a65f298589809af29daeb15f9da2eb252af8f79693e618abc \
+    --hash=sha256:46ac7ddefac0c9b7b607eed1d47d11e26fe92a1bc1f4d9af48aeed4e21e87981 \
+    --hash=sha256:4793b01b7a5f5424f5a1dbcefc614c83c7608aa2b035f087538253007c339d5d \
+    --hash=sha256:4bbb150620b53133d6cd1c5d14c28a4f85701e6c781d9b689b53681effaa655f \
+    --hash=sha256:5221dba7424cf4f2561b22e9081de85f5bb871228581124a0d1b572708545199 \
+    --hash=sha256:5d69e0f39060dc72c067f9bb6e8033b6dccdb0bae101d76a7ef0bcc94e898b67 \
+    --hash=sha256:5ed7e118e6e3e02d6723a079b8c97eaadeed943fa1f7f619f7148dfc7862670f \
+    --hash=sha256:631bb52159117c5da42ba94bd94859276b68cab25dc4cac86475bc24671143bc \
+    --hash=sha256:6e9ddefba1d4e1107c1f20f601b0581421ea3ad9fd75ce3c2ba6a76b6dc4682c \
+    --hash=sha256:6f43da7957e00190104c5dd0f661bfc6dfc68b87313e3f9c4dbd5e7d222e0aeb \
+    --hash=sha256:7a62f1fc9086e4b7ee789a6f66b3c0fc82dd8de1edda1522d30901a0aa45e42b \
+    --hash=sha256:7f7917a51766b4e074da283c507a25048ad29a18e527207883d73535e0dc6184 \
+    --hash=sha256:81030108d27aecc7995cac05aa280cf8c6025f6a6119894eef648997936c2dd0 \
+    --hash=sha256:8286f69a5e1d0e0b366ffed5691140c83d3efc75da6dbf34a3d06e88abfaaab6 \
+    --hash=sha256:91341cbde9e8bea5fb419a76e09114e221567d03f34ca26e6d67ae2c27d8fe3c \
+    --hash=sha256:9729642884147ee9db67b5a06a355890663d21f76ed608a56ac2ad98b94d201a \
+    --hash=sha256:a6087ecb0714f7c59eb24c22781491e6f1cfffb660b4740e167625ca4f052056 \
+    --hash=sha256:aa74aaa26eaa5012b0a01deeaa8a777595d0835d3d6c7175f2ac65435a7324d2 \
+    --hash=sha256:ab5e6312213b8cfb9dca93dd46a0f4dccb856541f91d3306227c3d92f7659245 \
+    --hash=sha256:b5a24f5d2c22852d807d2b42daf3a61740820b28d8381daaf59dcb7055bf1a79 \
+    --hash=sha256:bb695c2025d122a101c2aca66d2b78813c321b60d3a7c86bb8ec4467bb53b0f9 \
+    --hash=sha256:d330da34f59f1653c5193f9fe3a3a258977c880746db7f155fc33713ea858db5 \
+    --hash=sha256:d9c8fa28dfd75753d9cf62769ba1fecd7e73a0be187f35cc6f54076f98aa3f3f \
+    --hash=sha256:df4f7864606fa843d7e7c0e6af288f034a2160dba14e6ccc09020a3cf67cb092 \
+    --hash=sha256:e31b95ac603415887c9f0d344cb523889cf779bc52d68e27e2d23c358958fec7 \
+    --hash=sha256:e332c2d9b806083d1797231280602340c5c913f90d4caa0213a6a54679ce9331 \
+    --hash=sha256:f5f537f7d000de4a1708c63400755152b862cd4926bb81a86568e347c19c364b
+    # via jmetalpy
 tenacity==9.0.0 \
     --hash=sha256:807f37ca97d62aa361264d497b0e31e92b8027044942bfa756160d908320d73b \
     --hash=sha256:93de0c98785b27fcf659856aa9f54bfbd399e29969b0621bc7f762bd441b4539
@@ -711,6 +762,10 @@ threadpoolctl==3.1.0 \
     --hash=sha256:8b99adda265feb6773280df41eece7b2e6561b772d21ffd52e372f999024907b \
     --hash=sha256:a335baacfaa4400ae1f0d8e3a58d6674d2f8828e3716bb2802c44955ad391380
     # via scikit-learn
+tqdm==4.67.1 \
+    --hash=sha256:26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2 \
+    --hash=sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2
+    # via jmetalpy
 tzdata==2024.1 \
     --hash=sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd \
     --hash=sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252

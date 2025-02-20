@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import pymoo.algorithms.moo.nsga2
 import pymoo.optimize
 import pymoo.problems
-import pymoo.visualization.scatter
 import scienceplots
 from absl import app, logging
 

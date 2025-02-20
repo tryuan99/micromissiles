@@ -21,6 +21,18 @@ cc_binary(
     ],
 )
 
+py_binary(
+    name = "mopso_example_main",
+    srcs = ["mopso_example_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("jmetalpy"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
 cc_binary(
     name = "mpc_example_main",
     srcs = ["mpc_example_main.cc"],
@@ -32,8 +44,8 @@ cc_binary(
 )
 
 py_binary(
-    name = "multi_objective_optimizer_example_main",
-    srcs = ["multi_objective_optimizer_example_main.py"],
+    name = "nsga2_example_main",
+    srcs = ["nsga2_example_main.py"],
     deps = [
         requirement("absl-py"),
         requirement("matplotlib"),
