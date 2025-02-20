@@ -131,7 +131,7 @@ if __name__ == "__main__":
     )
     flags.DEFINE_float("x_min", -5, "Minimum x-coordinate in lambda.")
     flags.DEFINE_float("x_max", 5, "Maximum x-coordinate in lambda.")
-    flags.DEFINE_float("parabola_scale", 0.5, "Parabola scaling factor.")
+    flags.DEFINE_float("parabola_scale", 0.1, "Parabola scaling factor.")
     flags.DEFINE_integer("population_size",
                          100,
                          "Population size.",
