@@ -32,7 +32,7 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         element_coordinates[:, 1],
         element_coordinates[:, 2],
         s=120,
-        c=f"C0",
+        c="C0",
         marker="^",
         alpha=0.4,
     )
@@ -87,6 +87,45 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
     plt.show()
 
 
+def plot_projected_antenna_array_elements(array: AntennaArray) -> None:
+    """Plots the antenna array elements projected onto the x-z plane.
+
+    Args:
+        array: Antenna array.
+    """
+    # Plot the antenna array elements projected onto the x-z plane.
+    plt.style.use("science")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    element_coordinates = np.array(
+        [element.coordinates() for element in array.elements])
+    ax.scatter(
+        element_coordinates[:, 0],
+        element_coordinates[:, 2],
+        s=120,
+        c="C0",
+        marker="^",
+        alpha=0.4,
+    )
+    element_boresights = np.array(
+        [element.boresight() for element in array.elements])
+    ax.quiver(
+        element_coordinates[:, 0],
+        element_coordinates[:, 2],
+        element_boresights[:, 0],
+        element_boresights[:, 2],
+        angles="xy",
+        color="C0",
+        width=0.002,
+    )
+    ax.set_xlabel(r"$x$")
+    ax.set_ylabel(r"$z$")
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+    ax.set_xlim(min(xmin, -0.1), xmax)
+    ax.set_ylim(ymin, max(ymax, 0.1))
+    plt.show()
+
+
 def main(argv):
     assert len(argv) == 1, argv
 
@@ -97,6 +136,7 @@ def main(argv):
     array = AntennaArray.create(antenna_array_config)
 
     plot_antenna_array_elements(array)
+    plot_projected_antenna_array_elements(array)
 
 
 if __name__ == "__main__":

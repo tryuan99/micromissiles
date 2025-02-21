@@ -83,6 +83,53 @@ def plot_antenna_array_elements(
     plt.show()
 
 
+def plot_projected_antenna_array_elements(
+    arrays: list[AntennaArray],
+    labels: list[str],
+) -> None:
+    """Plots the antenna array elements of the arrays projected onto the x-z
+    plane.
+
+    Args:
+        arrays: Antenna arrays.
+        labels: Antenna array labels.
+    """
+    # Plot the antenna array elements projected onto the x-z plane.
+    plt.style.use("science")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    for array_index, (array, label) in enumerate(zip(arrays, labels)):
+        element_coordinates = np.array(
+            [element.coordinates() for element in array.elements])
+        ax.scatter(
+            element_coordinates[:, 0],
+            element_coordinates[:, 2],
+            s=120,
+            c=f"C{array_index}",
+            marker="^",
+            alpha=0.4,
+            label=label,
+        )
+        element_boresights = np.array(
+            [element.boresight() for element in array.elements])
+        ax.quiver(
+            element_coordinates[:, 0],
+            element_coordinates[:, 2],
+            element_boresights[:, 0],
+            element_boresights[:, 2],
+            angles="xy",
+            color=f"C{array_index}",
+            width=0.002,
+        )
+    ax.set_xlabel(r"$x$")
+    ax.set_ylabel(r"$z$")
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+    ax.set_xlim(min(xmin, -0.1), xmax)
+    ax.set_ylim(ymin, max(ymax, 0.1))
+    ax.legend()
+    plt.show()
+
+
 def plot_antenna_array_radiation_pattern_2d(
     arrays: list[AntennaArray],
     labels: list[str],
@@ -502,6 +549,7 @@ def main(argv):
     )
 
     plot_antenna_array_elements(arrays, FLAGS.labels)
+    plot_projected_antenna_array_elements(arrays, FLAGS.labels)
     plot_antenna_array_radiation_pattern_2d(arrays, FLAGS.labels, beam_steer)
     animate_antenna_array_radiation_pattern_2d(arrays, FLAGS.labels)
     plot_antenna_array_main_lobe_width_2d(arrays, FLAGS.labels, beam_steer)
