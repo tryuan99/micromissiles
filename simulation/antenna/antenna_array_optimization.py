@@ -63,10 +63,6 @@ class AntennaArrayOptimizationProblem(Problem):
         # The two objectives are the main lobe width and the sidelobe level.
         return 2
 
-    def num_inequality_constraints(self) -> int:
-        """Returns the number of inequality constraints."""
-        return 1
-
     def evaluate_objectives(self, x: np.ndarray) -> list[float]:
         """Evaluates the objective(s) on the given design variable values.
 
@@ -84,24 +80,6 @@ class AntennaArrayOptimizationProblem(Problem):
         # Negate the highest sidelobe level because we want to minimize the
         # highest sidelobe level.
         return [max_main_lobe_width, -highest_sidelobe_level]
-
-    def evaluate_inequality_constraints(self, x: np.ndarray) -> float:
-        """Evaluates the inequality constraint(s) on the given design variable
-        values.
-
-        Args:
-            x: Design variable values.
-
-        Returns:
-            The inequality constraint(s) evaluated on the given design variable
-            values.
-        """
-        antenna_array = self._create_antenna_array(x)
-        highest_sidelobe_level = (
-            self._evaluate_highest_sidelobe_level(antenna_array))
-        # Negate the highest sidelobe level because we want to the highest
-        # sidelobe level to be non-negative.
-        return -highest_sidelobe_level
 
     def _create_antenna_array(self, x: np.ndarray) -> AntennaArray:
         """Creates the antenna array from the design variable values.
