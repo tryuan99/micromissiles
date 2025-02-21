@@ -41,9 +41,8 @@ class Parabola(Line):
         """
         return -self.scale * x**2
 
-    def evaluate_normal(self, x: float | np.ndarray) -> float | np.ndarray:
-        """Evaluates the slope of the normal line at each of the given
-        x-coordinates.
+    def evaluate_slope(self, x: float | np.ndarray) -> float | np.ndarray:
+        """Evaluates the slope at each of the given x-coordinates.
 
         Args:
             x: x-coordinates.
@@ -51,8 +50,41 @@ class Parabola(Line):
         Returns:
             The slopes of the normal line at each of the given x-coordinates.
         """
-        slope = -2 * self.scale * x
-        return -1 / slope
+        return -2 * self.scale * x
+
+
+class HyperbolicCosine(Line):
+    """Hyperbolic cosine.
+
+    Attributes:
+        scale: Scaling factor of the hyperbolic cosine.
+    """
+
+    def __init__(self, scale: float = 1) -> None:
+        self.scale = scale
+
+    def evaluate(self, x: float | np.ndarray) -> float | np.ndarray:
+        """Evaluates the y-coordinates corresponding to the given
+        x-coordinates.
+
+        Args:
+            x: x-coordinates.
+
+        Returns:
+            The y-coordinates corresponding to the given x-coordinates.
+        """
+        return -np.cosh(self.scale * x) + 1
+
+    def evaluate_slope(self, x: float | np.ndarray) -> float | np.ndarray:
+        """Evaluates the slope at each of the given x-coordinates.
+
+        Args:
+            x: x-coordinates.
+
+        Returns:
+            The slopes of the normal line at each of the given x-coordinates.
+        """
+        return -self.scale * np.sinh(self.scale * x)
 
 
 def optimize_antenna_array_along_parabola(
@@ -119,7 +151,7 @@ def main(argv):
     optimize_antenna_array_along_parabola(
         antenna_array_config,
         FLAGS.max_azimuth,
-        Parabola(FLAGS.parabola_scale),
+        HyperbolicCosine(FLAGS.scale),
         FLAGS.x_min,
         FLAGS.x_max,
         FLAGS.population_size,
@@ -142,7 +174,7 @@ if __name__ == "__main__":
     )
     flags.DEFINE_float("x_min", -5, "Minimum x-coordinate in lambda.")
     flags.DEFINE_float("x_max", 5, "Maximum x-coordinate in lambda.")
-    flags.DEFINE_float("parabola_scale", 0.1, "Parabola scaling factor.")
+    flags.DEFINE_float("scale", 0.5, "Line scaling factor.")
     flags.DEFINE_integer("population_size",
                          100,
                          "Population size.",

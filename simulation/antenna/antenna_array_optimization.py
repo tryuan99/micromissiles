@@ -32,6 +32,16 @@ class Line(ABC):
         """
 
     @abstractmethod
+    def evaluate_slope(self, x: float | np.ndarray) -> float | np.ndarray:
+        """Evaluates the slope at each of the given x-coordinates.
+
+        Args:
+            x: x-coordinates.
+
+        Returns:
+            The slopes of the normal line at each of the given x-coordinates.
+        """
+
     def evaluate_normal(self, x: float | np.ndarray) -> float | np.ndarray:
         """Evaluates the slope of the normal line at each of the given
         x-coordinates.
@@ -42,6 +52,8 @@ class Line(ABC):
         Returns:
             The slopes of the normal line at each of the given x-coordinates.
         """
+        slope = self.evaluate_slope(x)
+        return -1 / slope
 
 
 class AntennaArrayOptimizationProblem(Problem):
