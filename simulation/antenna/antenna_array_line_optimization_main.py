@@ -57,6 +57,7 @@ class Parabola(Line):
 
 def optimize_antenna_array_along_parabola(
     antenna_array_config: AntennaArrayConfig,
+    max_azimuth: float,
     parabola: Line,
     x_min: float,
     x_max: float,
@@ -68,6 +69,7 @@ def optimize_antenna_array_along_parabola(
 
     Args:
         antenna_array_config: Antenna array configuration.
+        max_azimuth: Maximum azimuth in radians for the objectives.
         parabola: Parabola along which the antenna array elements lie.
         x_min: Minimum x-coordinate in lambda.
         x_max: Maximum x-coordinate in lambda.
@@ -77,6 +79,7 @@ def optimize_antenna_array_along_parabola(
     """
     problem = AntennaArray1DLineOptimizationProblem(
         antenna_array_config,
+        max_azimuth,
         parabola,
         x_min,
         x_max,
@@ -115,6 +118,7 @@ def main(argv):
 
     optimize_antenna_array_along_parabola(
         antenna_array_config,
+        FLAGS.max_azimuth,
         Parabola(FLAGS.parabola_scale),
         FLAGS.x_min,
         FLAGS.x_max,
@@ -129,6 +133,12 @@ if __name__ == "__main__":
         "config",
         "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
         "Antenna array configuration.",
+    )
+    flags.DEFINE_float(
+        "max_azimuth",
+        np.pi / 3,
+        "Maximum azimuth in radians for the objectives.",
+        lower_bound=0.0,
     )
     flags.DEFINE_float("x_min", -5, "Minimum x-coordinate in lambda.")
     flags.DEFINE_float("x_max", 5, "Maximum x-coordinate in lambda.")

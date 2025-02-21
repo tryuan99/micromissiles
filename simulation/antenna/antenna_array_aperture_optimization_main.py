@@ -2,6 +2,7 @@
 
 import google.protobuf
 import matplotlib.pyplot as plt
+import numpy as np
 import pymoo.operators.sampling.lhs
 import scienceplots
 from absl import app, flags, logging
@@ -18,6 +19,7 @@ FLAGS = flags.FLAGS
 
 def optimize_antenna_array_within_aperture(
     antenna_array_config: AntennaArrayConfig,
+    max_azimuth: float,
     x_min: float,
     x_max: float,
     z_min: float,
@@ -30,6 +32,7 @@ def optimize_antenna_array_within_aperture(
 
     Args:
         antenna_array_config: Antenna array configuration.
+        max_azimuth: Maximum azimuth in radians for the objectives.
         x_min: Minimum x-coordinate in lambda.
         x_max: Maximum x-coordinate in lambda.
         z_min: Minimum z-coordinate in lambda.
@@ -40,6 +43,7 @@ def optimize_antenna_array_within_aperture(
     """
     problem = AntennaArray1DApertureOptimizationProblem(
         antenna_array_config,
+        max_azimuth,
         x_min,
         x_max,
         z_min,
@@ -51,7 +55,7 @@ def optimize_antenna_array_within_aperture(
         num_generations,
         seed,
     )
-    optimizer.run(sampling=pymoo.operators.sampling.lhs.LKS())
+    optimizer.run(sampling=pymoo.operators.sampling.lhs.LHS())
 
     # Log the optimal values and objective values.
     logging.info("Optimal values: %s", optimizer.optimal_values)
@@ -79,6 +83,7 @@ def main(argv):
 
     optimize_antenna_array_within_aperture(
         antenna_array_config,
+        FLAGS.max_azimuth,
         FLAGS.x_min,
         FLAGS.x_max,
         FLAGS.z_min,
@@ -94,6 +99,12 @@ if __name__ == "__main__":
         "config",
         "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
         "Antenna array configuration.",
+    )
+    flags.DEFINE_float(
+        "max_azimuth",
+        np.pi / 3,
+        "Maximum azimuth in radians for the objectives.",
+        lower_bound=0.0,
     )
     flags.DEFINE_float("x_min", -5, "Minimum x-coordinate in lambda.")
     flags.DEFINE_float("x_max", 5, "Maximum x-coordinate in lambda.")

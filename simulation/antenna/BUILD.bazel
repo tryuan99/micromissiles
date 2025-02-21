@@ -140,6 +140,7 @@ py_binary(
         "//utils/optimization:nsga2_multi_objective_optimizer",
         requirement("absl-py"),
         requirement("matplotlib"),
+        requirement("numpy"),
         requirement("protobuf"),
         requirement("pymoo"),
         requirement("SciencePlots"),

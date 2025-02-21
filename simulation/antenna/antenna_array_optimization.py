@@ -159,10 +159,20 @@ class AntennaArrayOptimizationProblem(Problem):
 
 
 class AntennaArray1DOptimizationProblem(AntennaArrayOptimizationProblem):
-    """Antenna array 1D optimization problem."""
+    """Antenna array 1D optimization problem.
 
-    def __init__(self, antenna_array_config: AntennaArrayConfig) -> None:
+    Attributes:
+        max_azimuth: Maximum azimuth in radians for which to evaluate the
+          objectives.
+    """
+
+    def __init__(
+        self,
+        antenna_array_config: AntennaArrayConfig,
+        max_azimuth: float,
+    ) -> None:
         super().__init__(antenna_array_config)
+        self.max_azimuth = max_azimuth
 
     def _evaluate_max_main_lobe_width(
         self,
@@ -177,7 +187,12 @@ class AntennaArray1DOptimizationProblem(AntennaArrayOptimizationProblem):
             The maximum main lobe width.
         """
         # For antenna arrays lying on a horizontal plane, fix the elevation at 0.
-        azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
+        azimuth_sweep = np.linspace(
+            -self.max_azimuth,
+            self.max_azimuth,
+            180,
+            endpoint=False,
+        )
         azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
 
         main_lobe_widths = np.zeros(azimuth_sweep.shape)
@@ -210,8 +225,18 @@ class AntennaArray1DOptimizationProblem(AntennaArrayOptimizationProblem):
             The highest sidelobe level.
         """
         # For antenna arrays lying on a horizontal plane, fix the elevation at 0.
-        azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
-        azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
+        azimuth_sweep = np.linspace(
+            -self.max_azimuth,
+            self.max_azimuth,
+            180,
+            endpoint=False,
+        )
+        azimuth_values = np.linspace(
+            -self.max_azimuth,
+            self.max_azimuth,
+            360,
+            endpoint=False,
+        )
 
         sidelobe_levels = np.zeros(azimuth_sweep.shape)
         for azimuth_index, azimuth in enumerate(azimuth_sweep):
@@ -257,12 +282,13 @@ class AntennaArray1DApertureOptimizationProblem(
     def __init__(
         self,
         antenna_array_config: AntennaArrayConfig,
+        max_azimuth: float,
         x_min: float,
         x_max: float,
         z_min: float,
         z_max: float,
     ) -> None:
-        super().__init__(antenna_array_config)
+        super().__init__(antenna_array_config, max_azimuth)
         self.x_min = x_min
         self.x_max = x_max
         self.z_min = z_min
@@ -349,11 +375,12 @@ class AntennaArray1DLineOptimizationProblem(AntennaArray1DOptimizationProblem):
     def __init__(
         self,
         antenna_array_config: AntennaArrayConfig,
+        max_azimuth: float,
         line: Line,
         x_min: float,
         x_max: float,
     ) -> None:
-        super().__init__(antenna_array_config)
+        super().__init__(antenna_array_config, max_azimuth)
         self.line = line
         self.x_min = x_min
         self.x_max = x_max
