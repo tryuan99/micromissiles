@@ -66,10 +66,10 @@ def optimize_antenna_array_within_aperture(
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(
         optimizer.objective_values[:, 0],
-        optimizer.objective_values[:, 1],
+        -optimizer.objective_values[:, 1],
     )
-    ax.set_xlabel(r"$f_1$")
-    ax.set_ylabel(r"$f_2$")
+    ax.set_xlabel("Main lobe width [rad]")
+    ax.set_ylabel("Sidelobe level [dB]")
     plt.show()
 
 
