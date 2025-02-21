@@ -29,10 +29,18 @@ class Nsga2MultiObjectiveOptimizer(MultiObjectiveOptimizer):
         self.num_generations = num_generations
         self.seed = seed
 
-    def run(self) -> None:
-        """Solves the optimization problem."""
+    def run(self, *args, **kwargs) -> None:
+        """Solves the optimization problem.
+
+        Args:
+            args: Additional arguments.
+            kwargs: Additional keyword arguments.
+        """
         algorithm = pymoo.algorithms.moo.nsga2.NSGA2(
-            pop_size=self.population_size)
+            pop_size=self.population_size,
+            *args,
+            **kwargs,
+        )
         result = pymoo.optimize.minimize(
             ProblemWrapper(self.problem),
             algorithm,

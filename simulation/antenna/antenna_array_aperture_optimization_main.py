@@ -2,6 +2,7 @@
 
 import google.protobuf
 import matplotlib.pyplot as plt
+import pymoo.operators.sampling.lhs
 import scienceplots
 from absl import app, flags, logging
 
@@ -50,7 +51,7 @@ def optimize_antenna_array_within_aperture(
         num_generations,
         seed,
     )
-    optimizer.run()
+    optimizer.run(sampling=pymoo.operators.sampling.lhs.LKS())
 
     # Log the optimal values and objective values.
     logging.info("Optimal values: %s", optimizer.optimal_values)

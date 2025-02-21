@@ -141,6 +141,7 @@ py_binary(
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("protobuf"),
+        requirement("pymoo"),
         requirement("SciencePlots"),
     ],
 )
@@ -157,6 +158,7 @@ py_binary(
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
+        requirement("pymoo"),
         requirement("SciencePlots"),
     ],
 )
