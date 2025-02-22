@@ -95,8 +95,14 @@ def plot_projected_antenna_array_elements(
         labels: Antenna array labels.
     """
     # Plot the antenna array elements projected onto the x-z plane.
-    plt.style.use("science")
-    fig, ax = plt.subplots(figsize=(12, 6))
+    plt.style.use(["science", "grid"])
+    fig, ax = plt.subplots(
+        figsize=(12, 6),
+        subplot_kw={
+            "aspect": "equal",
+            "adjustable": "datalim",
+        },
+    )
     for array_index, (array, label) in enumerate(zip(arrays, labels)):
         element_coordinates = np.array(
             [element.coordinates() for element in array.elements])
@@ -122,10 +128,8 @@ def plot_projected_antenna_array_elements(
         )
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$z$")
-    xmin, xmax = ax.get_xlim()
     ymin, ymax = ax.get_ylim()
-    ax.set_xlim(min(xmin, -0.1), xmax)
-    ax.set_ylim(ymin, max(ymax, 0.1))
+    ax.set_ylim([ymin - 0.1, ymax + 0.2])
     ax.legend()
     plt.show()
 
