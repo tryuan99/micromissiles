@@ -289,7 +289,7 @@ class RadiationPatternTestCase(absltest.TestCase):
         radiation_pattern = RadiationPattern(power_magnitude, azimuth, 1)
         self.assertEqual(
             radiation_pattern.sidelobe_level(np.argmax(power_magnitude)),
-            constants.power2db(8 / 4),
+            constants.power2db(4 / 8),
         )
 
     def test_sidelobe_level_2d(self):
@@ -319,7 +319,7 @@ class RadiationPatternTestCase(absltest.TestCase):
                     np.argmax(power_magnitude),
                     power_magnitude.shape,
                 )),
-            constants.power2db(8 / 6),
+            constants.power2db(6 / 8),
         )
 
     def test_sidelobe_level_2d_negative(self):
@@ -349,7 +349,7 @@ class RadiationPatternTestCase(absltest.TestCase):
                     np.argmax(power_magnitude == 8),
                     power_magnitude.shape,
                 )),
-            constants.power2db(8 / 10),
+            constants.power2db(10 / 8),
         )
 
 
