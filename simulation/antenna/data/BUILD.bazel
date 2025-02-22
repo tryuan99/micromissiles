@@ -4,3 +4,8 @@ filegroup(
     name = "antenna_radiation_pattern_data",
     srcs = glob(["radiation_pattern_*.csv"]),
 )
+
+filegroup(
+    name = "antenna_array_optimal_front_data",
+    srcs = glob(["antenna_array_optimal_front_*.csv"]),
+)

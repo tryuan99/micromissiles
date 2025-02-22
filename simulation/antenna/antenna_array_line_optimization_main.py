@@ -128,6 +128,21 @@ def optimize_antenna_array_along_parabola(
     logging.info("Optimal values: %s", optimizer.optimal_values)
     logging.info("Objective values: %s", optimizer.objective_values)
 
+    # Output the optimal values and objective values in a CSV format.
+    sorted_order = np.argsort(optimizer.objective_values[:, 0])
+    for values_index in sorted_order:
+        logging.info(
+            "%s,%s",
+            ",".join([
+                str(objective_value) for objective_value in
+                optimizer.objective_values[values_index] * np.array([1, -1])
+            ]),
+            ",".join([
+                str(optimal_value)
+                for optimal_value in optimizer.optimal_values[values_index]
+            ]),
+        )
+
     # Plot the Pareto front.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))

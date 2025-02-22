@@ -99,12 +99,13 @@ class Animator(ABC):
         self.ax.set_title(title)
         self.update_title = update_title
 
-    def show(self, repeat: bool = True) -> None:
+    def show(self, repeat: bool = True, save_file: str = None) -> None:
         """Shows the plot.
 
         Args:
             repeat: If true, repeats the animation after the sequence of frames
               is completed.
+            save_file: If not None, save the animation to the file.
         """
         # Start the animation.
         anim = animation.FuncAnimation(
@@ -123,6 +124,8 @@ class Animator(ABC):
                 [artist.artist for artist in artists_with_labels],
                 [artist.label for artist in artists_with_labels],
             )
+        if save_file is not None:
+            anim.save(save_file)
         plt.show()
 
     def _update_animation(self, frame: Any) -> None:
