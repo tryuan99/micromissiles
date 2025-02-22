@@ -494,8 +494,8 @@ def plot_antenna_array_sidelobe_level_2d(
                 radiation_pattern.sidelobe_level(azimuth_peak_index))
             azimuth_sidelobe_levels[azimuth_index] = sidelobe_level
         ax.plot(azimuth_sweep, azimuth_sidelobe_levels, label=label)
-    # Plot the 3 dB threshold.
-    ax.axhline(3, color="red", linestyle="--", label="3 dB threshold")
+    # Plot the -3 dB threshold.
+    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
     ax.set_xlabel("Azimuth [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()
@@ -525,8 +525,8 @@ def plot_antenna_array_sidelobe_level_2d(
                 radiation_pattern.sidelobe_level(elevation_peak_index))
             elevation_sidelobe_levels[elevation_index] = sidelobe_level
         ax.plot(elevation_sweep, elevation_sidelobe_levels, label=label)
-    # Plot the 3 dB threshold.
-    ax.axhline(3, color="red", linestyle="--", label="3 dB threshold")
+    # Plot the -3 dB threshold.
+    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
     ax.set_xlabel("Elevation [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()

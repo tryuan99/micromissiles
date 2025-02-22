@@ -134,8 +134,8 @@ def optimize_antenna_array_along_parabola(
         logging.info(
             "%s,%s",
             ",".join([
-                str(objective_value) for objective_value in
-                optimizer.objective_values[values_index] * np.array([1, -1])
+                str(objective_value)
+                for objective_value in optimizer.objective_values[values_index]
             ]),
             ",".join([
                 str(optimal_value)
@@ -148,10 +148,13 @@ def optimize_antenna_array_along_parabola(
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(
         optimizer.objective_values[:, 0],
-        -optimizer.objective_values[:, 1],
+        optimizer.objective_values[:, 1],
     )
+    # Plot the -3 dB threshold.
+    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
     ax.set_xlabel("Main lobe width [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
+    ax.legend()
     plt.show()
 
 

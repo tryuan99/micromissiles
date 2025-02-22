@@ -8,10 +8,10 @@ import numpy as np
 
 from utils import constants
 
-# If there are no sidelobes, the sidelobe level is infinite. However, returning
-# infinity causes problems with the multi-objective optimizer, so return a
-# large sidelobe level instead.
-SIDELOBE_LEVEL_INFINITE = 100  # dB
+# If there are no sidelobes, the sidelobe level is minus infinity. However,
+# returning infinity causes problems with the multi-objective optimizer, so
+# return a large negative sidelobe level instead.
+SIDELOBE_LEVEL_MINUS_INFINITY = -100  # dB
 
 
 class RadiationPattern:
@@ -262,10 +262,10 @@ class RadiationPattern:
                 ((less_than_lower_boundaries & greater_than_upper_boundaries) &
                  wrapped_around_boundaries)):
                 sidelobe_value = local_maximum_values[maximum_value_index]
-                return constants.power2db(peak_value / sidelobe_value)
+                return constants.power2db(sidelobe_value / peak_value)
 
-        # If there are no sidelobes, the sidelobe level is infinite.
-        return SIDELOBE_LEVEL_INFINITE
+        # If there are no sidelobes, the sidelobe level is minus infinity.
+        return SIDELOBE_LEVEL_MINUS_INFINITY
 
     @staticmethod
     def _find_local_maxima(data: np.ndarray) -> tuple[np.ndarray]:

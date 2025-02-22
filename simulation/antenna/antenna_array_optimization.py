@@ -89,9 +89,7 @@ class AntennaArrayOptimizationProblem(Problem):
         max_main_lobe_width = self._evaluate_max_main_lobe_width(antenna_array)
         highest_sidelobe_level = (
             self._evaluate_highest_sidelobe_level(antenna_array))
-        # Negate the highest sidelobe level because we want to minimize the
-        # highest sidelobe level.
-        return [max_main_lobe_width, -highest_sidelobe_level]
+        return [max_main_lobe_width, highest_sidelobe_level]
 
     def _create_antenna_array(self, x: np.ndarray) -> AntennaArray:
         """Creates the antenna array from the design variable values.
@@ -265,7 +263,7 @@ class AntennaArray1DOptimizationProblem(AntennaArrayOptimizationProblem):
             sidelobe_level = (
                 radiation_pattern.sidelobe_level(azimuth_peak_index))
             sidelobe_levels[azimuth_index] = sidelobe_level
-        return np.min(sidelobe_levels)
+        return np.max(sidelobe_levels)
 
 
 class AntennaArray1DApertureOptimizationProblem(

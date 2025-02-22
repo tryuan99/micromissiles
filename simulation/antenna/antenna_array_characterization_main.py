@@ -305,8 +305,11 @@ def plot_antenna_array_sidelobe_level_2d(
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(azimuth_sweep, azimuth_sidelobe_levels)
+    # Plot the -3 dB threshold.
+    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
     ax.set_xlabel("Azimuth [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
+    ax.legend()
     plt.show()
 
     # Plot the sidelobe level over elevation.
@@ -331,8 +334,11 @@ def plot_antenna_array_sidelobe_level_2d(
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(elevation_sweep, elevation_sidelobe_levels)
+    # Plot the -3 dB threshold.
+    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
     ax.set_xlabel("Elevation [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
+    ax.legend()
     plt.show()
 
 

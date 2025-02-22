@@ -27,7 +27,8 @@ def plot_pareto_optimal_front(df: pd.DataFrame) -> None:
         marker="^",
         label="Pareto-optimal front",
     )
-    ax.axhline(3, color="red", linestyle="--", label="3 dB threshold")
+    # Plot the -3 dB threshold.
+    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
     ax.set_xlabel("Main lobe width [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()
