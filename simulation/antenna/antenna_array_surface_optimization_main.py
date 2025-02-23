@@ -174,7 +174,7 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string(
         "config",
-        "simulation/antenna/configs/ula_16_patch_antenna_24ghz.pbtxt",
+        "simulation/antenna/configs/ula_8_patch_antenna_24ghz.pbtxt",
         "Antenna array configuration.",
     )
     flags.DEFINE_float(

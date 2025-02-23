@@ -558,15 +558,13 @@ class AntennaArray2DOptimizationProblem(AntennaArrayOptimizationProblem):
         azimuth_sweep = np.linspace(
             -self.max_azimuth,
             self.max_azimuth,
-            18,
-            endpoint=False,
+            5,
         )
         azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
         elevation_sweep = np.linspace(
             -self.max_elevation,
             self.max_elevation,
-            18,
-            endpoint=False,
+            5,
         )
         elevation_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
         azimuth_mesh, elevation_mesh = np.meshgrid(
@@ -613,8 +611,7 @@ class AntennaArray2DOptimizationProblem(AntennaArrayOptimizationProblem):
         azimuth_sweep = np.linspace(
             -self.max_azimuth,
             self.max_azimuth,
-            18,
-            endpoint=False,
+            5,
         )
         azimuth_values = np.linspace(
             -self.max_azimuth,
@@ -625,8 +622,7 @@ class AntennaArray2DOptimizationProblem(AntennaArrayOptimizationProblem):
         elevation_sweep = np.linspace(
             -self.max_elevation,
             self.max_elevation,
-            18,
-            endpoint=False,
+            5,
         )
         elevation_values = np.linspace(
             -self.max_elevation,
