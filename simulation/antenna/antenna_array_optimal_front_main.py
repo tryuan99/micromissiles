@@ -46,7 +46,7 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string(
         "data",
-        "simulation/antenna/data/antenna_array_optimal_front_cosh_4.csv",
+        "simulation/antenna/data/antenna_array_optimal_front_1d_cosh_4.csv",
         "Antenna array Pareto-optimal front data.",
     )
 
