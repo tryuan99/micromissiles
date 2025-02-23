@@ -176,6 +176,23 @@ py_binary(
     ],
 )
 
+py_binary(
+    name = "antenna_array_surface_optimization_main",
+    srcs = ["antenna_array_surface_optimization_main.py"],
+    data = ["//simulation/antenna/configs"],
+    deps = [
+        ":antenna_array_optimization",
+        "//simulation/antenna/proto:antenna_array_config_py_proto",
+        "//utils/optimization:nsga2_multi_objective_optimizer",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("protobuf"),
+        requirement("pymoo"),
+        requirement("SciencePlots"),
+    ],
+)
+
 py_library(
     name = "antenna_array_spectrum",
     srcs = ["antenna_array_spectrum.py"],

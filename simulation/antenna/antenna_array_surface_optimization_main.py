@@ -1,5 +1,5 @@
-"""Optimizes the antenna array, such that the antenna array elements lie along
-a given line.
+"""Optimizes the antenna array, such that the antenna array elements lie on the
+given surface.
 """
 
 import google.protobuf
@@ -10,7 +10,7 @@ import scienceplots
 from absl import app, flags, logging
 
 from simulation.antenna.antenna_array_optimization import (
-    AntennaArray1DLineOptimizationProblem, Line)
+    AntennaArray2DSurfaceOptimizationProblem, Surface)
 from simulation.antenna.proto.antenna_array_config_pb2 import \
     AntennaArrayConfig
 from utils.optimization.nsga2_multi_objective_optimizer import \
@@ -19,102 +19,92 @@ from utils.optimization.nsga2_multi_objective_optimizer import \
 FLAGS = flags.FLAGS
 
 
-class Parabola(Line):
-    """Parabola.
+class RotatedHyperbolicCosine(Surface):
+    """Rotated hyperbolic cosine.
 
     Attributes:
-        scale: Scaling factor of the parabola.
+        scale: Scaling factor of the surface.
     """
 
     def __init__(self, scale: float = 1) -> None:
         self.scale = scale
 
-    def evaluate(self, x: float | np.ndarray) -> float | np.ndarray:
+    def evaluate(
+        self,
+        x: float | np.ndarray,
+        y: float | np.ndarray,
+    ) -> float | np.ndarray:
         """Evaluates the y-coordinates corresponding to the given
-        x-coordinates.
+        x-coordinates and y-coordinates.
 
         Args:
             x: x-coordinates.
+            y: y-coordinates.
 
         Returns:
-            The y-coordinates corresponding to the given x-coordinates.
+            The z-coordinates corresponding to the given x-coordinates.
         """
-        return -self.scale * x**2
+        return -np.cosh(self.scale * np.sqrt(x**2 + y**2)) + 1
 
-    def evaluate_slope(self, x: float | np.ndarray) -> float | np.ndarray:
-        """Evaluates the slope at each of the given x-coordinates.
+    def evaluate_gradient(
+        self,
+        x: float | np.ndarray,
+        y: float | np.ndarray,
+    ) -> np.ndarray:
+        """Evaluates the gradient at each of the given x-coordinates and
+        y-coordinates.
 
         Args:
             x: x-coordinates.
+            y: y-coordinates.
 
         Returns:
-            The slopes of the normal line at each of the given x-coordinates.
+            The gradients at each of the given x-coordinates and y-coordinates.
         """
-        return -2 * self.scale * x
+        shape = np.broadcast_shapes(np.shape(x), np.shape(y))
+        gradient = np.zeros((3, *shape))
+        r = np.sqrt(x**2 + y**2)
+        gradient[0] = self.scale * x * np.sinh(self.scale * r) / r
+        gradient[1] = self.scale * y * np.sinh(self.scale * r) / r
+        gradient[2] = 1
+        return gradient
 
 
-class HyperbolicCosine(Line):
-    """Hyperbolic cosine.
-
-    Attributes:
-        scale: Scaling factor of the hyperbolic cosine.
-    """
-
-    def __init__(self, scale: float = 1) -> None:
-        self.scale = scale
-
-    def evaluate(self, x: float | np.ndarray) -> float | np.ndarray:
-        """Evaluates the y-coordinates corresponding to the given
-        x-coordinates.
-
-        Args:
-            x: x-coordinates.
-
-        Returns:
-            The y-coordinates corresponding to the given x-coordinates.
-        """
-        return -np.cosh(self.scale * x) + 1
-
-    def evaluate_slope(self, x: float | np.ndarray) -> float | np.ndarray:
-        """Evaluates the slope at each of the given x-coordinates.
-
-        Args:
-            x: x-coordinates.
-
-        Returns:
-            The slopes of the normal line at each of the given x-coordinates.
-        """
-        return -self.scale * np.sinh(self.scale * x)
-
-
-def optimize_antenna_array_along_line(
+def optimize_antenna_array_over_surface(
     antenna_array_config: AntennaArrayConfig,
     max_azimuth: float,
-    line: Line,
+    max_elevation: float,
+    surface: Surface,
     x_min: float,
     x_max: float,
+    y_min: float,
+    y_max: float,
     population_size: int,
     num_generations: int,
     seed: float = None,
 ) -> None:
-    """Optimizes the antenna array along the given line.
+    """Optimizes the antenna array over the given surface.
 
     Args:
         antenna_array_config: Antenna array configuration.
         max_azimuth: Maximum azimuth in radians for the objectives.
-        line: Line along which the antenna array elements lie.
+        max_elevation: Maximum elevation in radians for the objectives.
+        Surface: Surface on which the antenna array elements lie.
         x_min: Minimum x-coordinate in lambda.
         x_max: Maximum x-coordinate in lambda.
         population_size: Population size.
         num_generations: Number of generations.
         seed: Random seed.
     """
-    problem = AntennaArray1DLineOptimizationProblem(
+    problem = AntennaArray2DSurfaceOptimizationProblem(
         antenna_array_config,
         max_azimuth,
-        line,
+        max_elevation,
+        surface,
         x_min,
         x_max,
+        y_min,
+        y_max,
     )
     optimizer = Nsga2MultiObjectiveOptimizer(
         problem,
@@ -166,12 +156,15 @@ def main(argv):
         antenna_array_config = google.protobuf.text_format.Parse(
             antenna_array_config_file.read(), AntennaArrayConfig())
 
-    optimize_antenna_array_along_line(
+    optimize_antenna_array_over_surface(
         antenna_array_config,
         FLAGS.max_azimuth,
-        HyperbolicCosine(FLAGS.scale),
+        FLAGS.max_elevation,
+        RotatedHyperbolicCosine(FLAGS.scale),
         FLAGS.x_min,
         FLAGS.x_max,
+        FLAGS.y_min,
+        FLAGS.y_max,
         FLAGS.population_size,
         FLAGS.num_generations,
         FLAGS.seed,
@@ -181,7 +174,7 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string(
         "config",
-        "simulation/antenna/configs/ula_4_patch_antenna_24ghz.pbtxt",
+        "simulation/antenna/configs/ula_16_patch_antenna_24ghz.pbtxt",
         "Antenna array configuration.",
     )
     flags.DEFINE_float(
@@ -190,8 +183,16 @@ if __name__ == "__main__":
         "Maximum azimuth in radians for the objectives.",
         lower_bound=0.0,
     )
+    flags.DEFINE_float(
+        "max_elevation",
+        np.pi / 3,
+        "Maximum elevation in radians for the objectives.",
+        lower_bound=0.0,
+    )
     flags.DEFINE_float("x_min", -5, "Minimum x-coordinate in lambda.")
     flags.DEFINE_float("x_max", 5, "Maximum x-coordinate in lambda.")
+    flags.DEFINE_float("y_min", -5, "Minimum y-coordinate in lambda.")
+    flags.DEFINE_float("y_max", 5, "Maximum y-coordinate in lambda.")
     flags.DEFINE_float("scale", 0.5, "Line scaling factor.")
     flags.DEFINE_integer("population_size",
                          100,

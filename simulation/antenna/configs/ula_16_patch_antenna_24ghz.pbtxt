@@ -1,0 +1,288 @@
+antenna_array_element_configs {
+  position {
+    x: 0
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 0.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 1
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 1.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 2
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 2.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 3
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 3.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 4
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 4.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 5.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 6
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 6.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 7
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
+antenna_array_element_configs {
+  position {
+    x: 7.5
+    y: 0
+    z: 0
+  }
+  orientation {
+    theta: 0
+    x: 0
+    y: 0
+    z: 1
+  }
+  antenna_config {
+    radiation_pattern {
+      data: "simulation/antenna/data/radiation_pattern_patch_antenna_24ghz_20mil_0mm.csv"
+    }
+  }
+}
