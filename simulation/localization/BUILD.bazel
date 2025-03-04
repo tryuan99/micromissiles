@@ -31,3 +31,16 @@ py_test(
         requirement("numpy"),
     ],
 )
+
+py_binary(
+    name = "least_squares_trilaterator_monte_carlo_main",
+    srcs = ["least_squares_trilaterator_monte_carlo_main.py"],
+    deps = [
+        ":least_squares_trilaterator",
+        "//utils:coordinates",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)

@@ -2,6 +2,8 @@
 target position.
 """
 
+import itertools
+
 import numpy as np
 
 from simulation.localization.trilaterator import Trilaterator
@@ -21,19 +23,18 @@ class LeastSquaresTrilaterator(Trilaterator):
         Returns:
             The estimated target position.
         """
-        W = np.zeros((self.num_sensors() - 1, 3))
-        b = np.zeros(self.num_sensors() - 1)
-        reference_position_coordinates = self.positions[0].coordinates()
-        reference_distance = np.linalg.norm(reference_position_coordinates)
-        reference_range = self.ranges[0]
-        for index, (position, range) in enumerate(
-                zip(
-                    self.positions[1:],
-                    self.ranges[1:],
-                )):
-            position_coordinates = position.coordinates()
-            distance = np.linalg.norm(position_coordinates)
-            W[index] = position_coordinates - reference_position_coordinates
-            b[index] = (1 / 2 * (reference_range**2 - range**2 -
-                                 reference_distance**2 + distance**2))
+        W = np.zeros((self.num_sensors() * (self.num_sensors() - 1) // 2, 3))
+        b = np.zeros(self.num_sensors() * (self.num_sensors() - 1) // 2)
+        for index, (i, j) in enumerate(
+                itertools.combinations(range(self.num_sensors()), 2)):
+            position_i = self.positions[i]
+            position_j = self.positions[j]
+            range_i = self.ranges[i]
+            range_j = self.ranges[j]
+            distance_i = np.linalg.norm(position_i.coordinates())
+            distance_j = np.linalg.norm(position_j.coordinates())
+            W[index] = position_j.coordinates() - position_i.coordinates()
+            b[index] = (
+                1 / 2 *
+                (range_i**2 - range_j**2 - distance_i**2 + distance_j**2))
         return np.linalg.lstsq(W, b)[0]
