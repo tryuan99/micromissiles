@@ -1,4 +1,6 @@
-"""Runs a Monte Carlo simulation on the least squares trilaterator."""
+"""Runs a Monte Carlo simulation on the target distance for the least squares
+trilaterator.
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,8 +14,10 @@ from utils.coordinates import CartesianCoordinates
 FLAGS = flags.FLAGS
 
 
-def _generate_sensor_positions(num_measurements: int,
-                               radius: float) -> list[CartesianCoordinates]:
+def _generate_sensor_positions(
+    num_measurements: int,
+    radius: float,
+) -> list[CartesianCoordinates]:
     """Generates equally spaced sensors at a specified radius from the origin
     in the x-y plane.
 
@@ -33,20 +37,20 @@ def _generate_sensor_positions(num_measurements: int,
     ]
 
 
-def simulate_monte_carlo_ranges(
+def simulate_monte_carlo(
     num_trials: int,
     radius: float,
     distance: float,
     standard_deviation: float,
 ) -> None:
-    """Performs a Monte Carlo simulation on the ranges for the least squares
-    trilaterator.
+    """Performs a Monte Carlo simulation on the target distance for the least
+    squares trilaterator.
 
     Args:
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         distance: Distance to the target.
-        standard_deviation: Standard deviation of the target position noise.
+        standard_deviation: Standard deviation of the target distance noise.
     """
     sensor_positions = _generate_sensor_positions(
         num_measurements=4,
@@ -73,22 +77,22 @@ def simulate_monte_carlo_ranges(
                  np.linalg.norm(result_standard_deviations))
 
 
-def simulate_monte_carlo_ranges_over_distance(
+def simulate_monte_carlo_over_distance(
     num_trials: int,
     radius: float,
     min_distance: float,
     max_distance: float,
     standard_deviation: float,
 ) -> None:
-    """Performs a Monte Carlo simulation on the ranges while sweeping the
-    distance to the target for the least squares trilaterator.
+    """Performs a Monte Carlo simulation on the target distance while sweeping
+    the distance to the target for the least squares trilaterator.
 
     Args:
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         min_distance: Minimum target distance.
         max_distance: Maximum target distance.
-        standard_deviation: Standard deviation of the target position noise.
+        standard_deviation: Standard deviation of the target distance noise.
     """
     sensor_positions = _generate_sensor_positions(
         num_measurements=4,
@@ -118,7 +122,7 @@ def simulate_monte_carlo_ranges_over_distance(
         )
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
-    # and the overall standar deviation over target distance.
+    # and the overall standard deviation over the target distance.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(
@@ -152,21 +156,21 @@ def simulate_monte_carlo_ranges_over_distance(
     plt.show()
 
 
-def simulate_monte_carlo_ranges_over_num_measurements(
+def simulate_monte_carlo_over_num_measurements(
     num_trials: int,
     radius: float,
     distance: float,
     standard_deviation: float,
     max_num_measurements: int,
 ) -> None:
-    """Performs a Monte Carlo simulation on the ranges while sweeping the
-    number of measurements for the least squares trilaterator.
+    """Performs a Monte Carlo simulation on the target distance while sweeping
+    the number of measurements for the least squares trilaterator.
 
     Args:
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         distance: Distance to the target.
-        standard_deviation: Standard deviation of the target position noise.
+        standard_deviation: Standard deviation of the target distance noise.
         max_num_measurements: Maximum number of measurements.
     """
     num_measurements = range(4, max_num_measurements + 1)
@@ -197,7 +201,7 @@ def simulate_monte_carlo_ranges_over_num_measurements(
         )
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
-    # and the overall standar deviation over target distance.
+    # and the overall standard deviation over the number of measurements.
     plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(
@@ -234,20 +238,20 @@ def simulate_monte_carlo_ranges_over_num_measurements(
 def main(argv):
     assert len(argv) == 1, argv
 
-    simulate_monte_carlo_ranges(
+    simulate_monte_carlo(
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.distance,
         FLAGS.standard_deviation,
     )
-    simulate_monte_carlo_ranges_over_distance(
+    simulate_monte_carlo_over_distance(
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.min_distance,
         FLAGS.max_distance,
         FLAGS.standard_deviation,
     )
-    simulate_monte_carlo_ranges_over_num_measurements(
+    simulate_monte_carlo_over_num_measurements(
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.distance,

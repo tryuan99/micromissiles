@@ -33,8 +33,21 @@ py_test(
 )
 
 py_binary(
-    name = "least_squares_trilaterator_monte_carlo_main",
-    srcs = ["least_squares_trilaterator_monte_carlo_main.py"],
+    name = "least_squares_trilaterator_monte_carlo_sensor_main",
+    srcs = ["least_squares_trilaterator_monte_carlo_sensor_main.py"],
+    deps = [
+        ":least_squares_trilaterator",
+        "//utils:coordinates",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("SciencePlots"),
+    ],
+)
+
+py_binary(
+    name = "least_squares_trilaterator_monte_carlo_target_main",
+    srcs = ["least_squares_trilaterator_monte_carlo_target_main.py"],
     deps = [
         ":least_squares_trilaterator",
         "//utils:coordinates",
