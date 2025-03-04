@@ -307,7 +307,6 @@ py_binary(
     srcs = ["dipole_antenna_main.py"],
     deps = [
         ":dipole_antenna",
-        "//utils:constants",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
         requirement("absl-py"),
@@ -334,7 +333,6 @@ py_binary(
     srcs = ["horn_antenna_main.py"],
     deps = [
         ":horn_antenna",
-        "//utils:constants",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
         requirement("absl-py"),
@@ -370,7 +368,6 @@ py_binary(
     srcs = ["patch_antenna_main.py"],
     deps = [
         ":patch_antenna",
-        "//utils:constants",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
         requirement("absl-py"),

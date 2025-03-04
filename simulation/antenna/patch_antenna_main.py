@@ -8,7 +8,6 @@ from absl import app, flags
 from matplotlib import cm
 
 from simulation.antenna.patch_antenna import PatchAntenna
-from utils import constants
 from utils.coordinates import SphericalCoordinates
 from utils.visualization.color_maps import COLOR_MAPS
 
