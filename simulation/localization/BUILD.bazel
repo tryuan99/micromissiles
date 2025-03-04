@@ -1,0 +1,33 @@
+load("@pypi//:requirements.bzl", "requirement")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "trilaterator",
+    srcs = ["trilaterator.py"],
+    deps = [
+        "//utils:coordinates",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "least_squares_trilaterator",
+    srcs = ["least_squares_trilaterator.py"],
+    deps = [
+        ":trilaterator",
+        "//utils:coordinates",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "least_squares_trilaterator_test",
+    srcs = ["least_squares_trilaterator_test.py"],
+    deps = [
+        ":least_squares_trilaterator",
+        "//utils:coordinates",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
