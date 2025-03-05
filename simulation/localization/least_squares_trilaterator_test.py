@@ -60,6 +60,19 @@ class LeastSquaresTrilateratorTestCase(absltest.TestCase):
         expected_result = np.array([200, 50, 10000])
         np.testing.assert_allclose(result, expected_result, rtol=1e-5)
 
+    def test_trilaterate_3d_symmetric(self):
+        positions = [
+            CartesianCoordinates(x=-50, y=0, z=0),
+            CartesianCoordinates(x=50, y=0, z=0),
+            CartesianCoordinates(x=0, y=-50, z=0),
+            CartesianCoordinates(x=0, y=50, z=10),
+        ]
+        ranges = np.array([61.644140, 42.426407, 61.644140, 41.231056])
+        trilaterator = LeastSquaresTrilaterator(positions, ranges)
+        result = trilaterator.trilaterate()
+        expected_result = np.array([10, 10, 10])
+        np.testing.assert_allclose(result, expected_result, rtol=1e-5)
+
 
 if __name__ == "__main__":
     absltest.main()
