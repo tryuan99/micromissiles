@@ -4,27 +4,27 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20240116.2",
+    version = "20250127.0",
 )
 bazel_dep(
     name = "eigen",
-    version = "4.0.0-20241125",
+    version = "4.0.0-20241125.bcr.1",
 )
 bazel_dep(
     name = "googletest",
-    version = "1.15.2",
+    version = "1.16.0",
 )
 bazel_dep(
     name = "pico-sdk",
-    version = "2.1.0",
+    version = "2.1.1",
 )
 bazel_dep(
     name = "platforms",
-    version = "0.0.10",
+    version = "0.0.11",
 )
 bazel_dep(
     name = "protobuf",
-    version = "29.1",
+    version = "30.0",
 )
 bazel_dep(
     name = "rules_cc",
@@ -32,7 +32,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_foreign_cc",
-    version = "0.13.0",
+    version = "0.14.0",
 )
 bazel_dep(
     name = "rules_pkg",
@@ -40,7 +40,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_python",
-    version = "1.0.0",
+    version = "1.2.0",
 )
 
 # Pico SDK toolchains.
@@ -70,12 +70,12 @@ http_archive(
 )
 
 # libmpc++ library.
-LIBMPC_VERSION = "0.6.2"
+LIBMPC_VERSION = "0.7.0"
 
 http_archive(
     name = "libmpc",
     build_file = "//third_party/libmpc:libmpc.BUILD",
-    sha256 = "6aab3f029f8fc706987a0b5f34bf0b5f7c0403e1a0961072cd4db47d73ba95e5",
+    sha256 = "b1ab237345d6a39a5314e676af8353c6fb66663630a5cfda23eeb12f6f42614b",
     strip_prefix = "libmpc-{}".format(LIBMPC_VERSION),
     url = "https://github.com/nicolapiccinelli/libmpc/archive/refs/tags/{}.tar.gz".format(LIBMPC_VERSION),
 )
@@ -92,34 +92,34 @@ http_archive(
 )
 
 # OpenCV library.
-OPENCV_VERSION = "4.10.0"
+OPENCV_VERSION = "4.11.0"
 
 http_archive(
     name = "opencv",
     build_file = "//third_party/opencv:opencv.BUILD",
-    sha256 = "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9",
+    sha256 = "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f",
     strip_prefix = "opencv-{}".format(OPENCV_VERSION),
     url = "https://github.com/opencv/opencv/archive/refs/tags/{}.tar.gz".format(OPENCV_VERSION),
 )
 
 # OpenCV modules.
-OPENCV_CONTRIB_VERSION = "4.10.0"
+OPENCV_CONTRIB_VERSION = "4.11.0"
 
 http_archive(
     name = "opencv_contrib",
     build_file = "//third_party/opencv_contrib:opencv_contrib.BUILD",
-    sha256 = "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1",
+    sha256 = "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041",
     strip_prefix = "opencv_contrib-{}".format(OPENCV_CONTRIB_VERSION),
     url = "https://github.com/opencv/opencv_contrib/archive/refs/tags/{}.tar.gz".format(OPENCV_CONTRIB_VERSION),
 )
 
 # OSQP library.
-OSQP_COMMIT_HASH = "e303d106e33c4aefce6964e668b443c99d9da86e"
+OSQP_COMMIT_HASH = "27a2d51fa9aea19e25a3b3f90b7026c5109b5bf5"
 
 http_archive(
     name = "osqp",
     build_file = "//third_party/osqp:osqp.BUILD",
-    sha256 = "3d7b0d48f0f2460d57f41130f117b8ccb40cc1b4d39f0536c5fed83470d5d11d",
+    sha256 = "478ec43bd4e7938cff175c34e3471895c4ad38605d44745f1a3f79e8278ba3bf",
     strip_prefix = "osqp-{}".format(OSQP_COMMIT_HASH),
     url = "https://github.com/osqp/osqp/archive/{}.tar.gz".format(OSQP_COMMIT_HASH),
 )

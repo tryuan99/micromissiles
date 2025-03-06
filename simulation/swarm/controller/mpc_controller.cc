@@ -66,8 +66,8 @@ void MpcController::PlanImpl(const Transformation& relative_transformation) {
              kPredictionHorizon, kControlHorizon, kNumInequalityConstraints,
              kNumEqualityConstraints>
       controller;
-  controller.setLoggerLevel(FLAGS(log_mpc) ? mpc::Logger::log_level::NORMAL
-                                           : mpc::Logger::log_level::ALERT);
+  controller.setLoggerLevel(FLAGS(log_mpc) ? mpc::Logger::LogLevel::NORMAL
+                                           : mpc::Logger::LogLevel::ALERT);
 
   mpc::NLParameters params;
   params.relative_ftol = kTolerance;

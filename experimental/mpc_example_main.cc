@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
              kPredictionHorizon, kControlHorizon, kNumInequalityConstraints,
              kNumEqualityConstraints>
       controller;
-  controller.setLoggerLevel(mpc::Logger::log_level::NORMAL);
+  controller.setLoggerLevel(mpc::Logger::LogLevel::NORMAL);
 
   mpc::NLParameters params;
   params.relative_ftol = kTolerance;
