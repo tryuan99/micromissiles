@@ -13,8 +13,11 @@ from utils.coordinates import CartesianCoordinates
 class LeastSquaresTrilaterator(Trilaterator):
     """Least-squarestTrilaterator interface."""
 
-    def __init__(self, positions: list[CartesianCoordinates],
-                 ranges: np.ndarray | list[float]) -> None:
+    def __init__(
+        self,
+        positions: list[CartesianCoordinates],
+        ranges: np.ndarray | list[float],
+    ) -> None:
         super().__init__(positions, ranges)
 
     def trilaterate(self) -> CartesianCoordinates:

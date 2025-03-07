@@ -39,7 +39,7 @@ def _generate_sensor_positions(
     sensor_coordinates[:, 1] = radius * np.sin(
         2 * np.pi * sensor_indices / num_sensors)
     sensor_coordinates[:, 2] = -sensor_indices / num_sensors * z_offset
-    sensor_coordinates += np.random.normal(
+    noise = np.random.normal(
         scale=standard_deviation,
         size=sensor_coordinates.shape,
     )
@@ -48,7 +48,7 @@ def _generate_sensor_positions(
             x=x,
             y=y,
             z=z,
-        ) for x, y, z in sensor_coordinates
+        ) for x, y, z in sensor_coordinates + noise
     ]
 
 
@@ -69,13 +69,14 @@ def simulate_monte_carlo(
         standard_deviation: Standard deviation of the sensor position noise.
         distance: Distance to the target.
     """
+    num_sensors = 4
     target_position = np.array([0, 0, distance])
     results = np.zeros((num_trials, 3))
     for i in range(num_trials):
         sensor_positions = _generate_sensor_positions(
-            num_sensors=4,
-            radius=radius,
-            z_offset=z_offset,
+            num_sensors,
+            radius,
+            z_offset,
         )
         sensor_coordinates = np.array(
             [position.coordinates() for position in sensor_positions])
@@ -84,10 +85,10 @@ def simulate_monte_carlo(
             axis=1,
         )
         noisy_sensor_positions = _generate_sensor_positions(
-            num_sensors=4,
-            radius=radius,
-            z_offset=z_offset,
-            standard_deviation=standard_deviation,
+            num_sensors,
+            radius,
+            z_offset,
+            standard_deviation,
         )
         trilaterator = LeastSquaresTrilaterator(noisy_sensor_positions, ranges)
         results[i] = trilaterator.trilaterate()
@@ -119,6 +120,7 @@ def simulate_monte_carlo_over_distance(
         min_distance: Minimum target distance.
         max_distance: Maximum target distance.
     """
+    num_sensors = 4
     target_distances = np.arange(min_distance, max_distance + 10, 10)
     target_standard_deviations = np.zeros((len(target_distances), 3))
     for target_distance_index, target_distance in enumerate(target_distances):
@@ -126,9 +128,9 @@ def simulate_monte_carlo_over_distance(
         results = np.zeros((num_trials, 3))
         for i in range(num_trials):
             sensor_positions = _generate_sensor_positions(
-                num_sensors=4,
-                radius=radius,
-                z_offset=z_offset,
+                num_sensors,
+                radius,
+                z_offset,
             )
             sensor_coordinates = np.array(
                 [position.coordinates() for position in sensor_positions])
@@ -137,10 +139,10 @@ def simulate_monte_carlo_over_distance(
                 axis=1,
             )
             noisy_sensor_positions = _generate_sensor_positions(
-                num_sensors=4,
-                radius=radius,
-                z_offset=z_offset,
-                standard_deviation=standard_deviation,
+                num_sensors,
+                radius,
+                z_offset,
+                standard_deviation,
             )
             trilaterator = LeastSquaresTrilaterator(noisy_sensor_positions,
                                                     ranges)
@@ -212,8 +214,8 @@ def simulate_monte_carlo_over_num_sensors(
         for i in range(num_trials):
             sensor_positions = _generate_sensor_positions(
                 num_sensor,
-                radius=radius,
-                z_offset=z_offset,
+                radius,
+                z_offset,
             )
             sensor_coordinates = np.array(
                 [position.coordinates() for position in sensor_positions])
@@ -222,10 +224,10 @@ def simulate_monte_carlo_over_num_sensors(
                 axis=1,
             )
             noisy_sensor_positions = _generate_sensor_positions(
-                num_sensors=4,
-                radius=radius,
-                z_offset=z_offset,
-                standard_deviation=standard_deviation,
+                num_sensors,
+                radius,
+                z_offset,
+                standard_deviation,
             )
             trilaterator = LeastSquaresTrilaterator(noisy_sensor_positions,
                                                     ranges)

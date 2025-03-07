@@ -1,15 +1,7 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 package(default_visibility = ["//visibility:public"])
-
-py_library(
-    name = "trilaterator",
-    srcs = ["trilaterator.py"],
-    deps = [
-        "//utils:coordinates",
-        requirement("numpy"),
-    ],
-)
 
 py_library(
     name = "least_squares_trilaterator",
@@ -55,5 +47,25 @@ py_binary(
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("SciencePlots"),
+    ],
+)
+
+py_library(
+    name = "trilaterator",
+    srcs = ["trilaterator.py"],
+    deps = [
+        "//utils:coordinates",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "trilaterator_test",
+    srcs = ["trilaterator_test.py"],
+    deps = [
+        ":trilaterator",
+        "//utils:coordinates",
+        requirement("absl-py"),
+        requirement("numpy"),
     ],
 )

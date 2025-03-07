@@ -56,26 +56,38 @@ def simulate_monte_carlo(
         distance: Distance to the target.
         standard_deviation: Standard deviation of the target distance noise.
     """
-    sensor_positions = _generate_sensor_positions(
-        num_sensors=4,
-        radius=radius,
-        z_offset=z_offset,
-    )
+    num_sensors = 4
+    sensor_positions = _generate_sensor_positions(num_sensors, radius, z_offset)
     sensor_coordinates = np.array(
         [position.coordinates() for position in sensor_positions])
     target_position = np.array([0, 0, distance])
+    ranges = (np.linalg.norm(
+        target_position - sensor_coordinates,
+        axis=1,
+    ))
+
+    # Trilaterate the target position with range measurement noise.
     results = np.zeros((num_trials, 3))
     for i in range(num_trials):
-        ranges = (np.linalg.norm(
-            target_position - sensor_coordinates,
-            axis=1,
-        ))
-        ranges += np.random.normal(scale=standard_deviation, size=ranges.shape)
-        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        noise = np.random.normal(scale=standard_deviation, size=ranges.shape)
+        trilaterator = LeastSquaresTrilaterator(
+            sensor_positions,
+            ranges + noise,
+        )
         results[i] = trilaterator.trilaterate()
     result_standard_deviations = np.std(results, axis=0)
+
+    # Calculate the Cramér-Rao lower bound.
+    trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+    crlb = trilaterator.cramer_rao_lower_bound(
+        target_position,
+        np.ones(num_sensors) * standard_deviation)
+    crlb_standard_deviations = np.sqrt(np.diag(crlb))
+
     logging.info("Standard deviation for [x, y, z]: %s",
                  result_standard_deviations)
+    logging.info("CRLB standard deviation for [x, y, z]: %s",
+                 crlb_standard_deviations)
     logging.info("Lateral standard deviation: %f",
                  np.linalg.norm(result_standard_deviations[:2]))
     logging.info("Total standard deviation: %f",
@@ -101,33 +113,43 @@ def simulate_monte_carlo_over_distance(
         max_distance: Maximum target distance.
         standard_deviation: Standard deviation of the target distance noise.
     """
-    sensor_positions = _generate_sensor_positions(
-        num_sensors=4,
-        radius=radius,
-        z_offset=z_offset,
-    )
+    num_sensors = 4
+    sensor_positions = _generate_sensor_positions(num_sensors, radius, z_offset)
     sensor_coordinates = np.array(
         [position.coordinates() for position in sensor_positions])
     target_distances = np.arange(min_distance, max_distance + 10, 10)
     target_standard_deviations = np.zeros((len(target_distances), 3))
+    crlb_standard_deviations = np.zeros((len(target_distances), 3))
     for target_distance_index, target_distance in enumerate(target_distances):
         target_position = np.array([0, 0, target_distance])
+        ranges = (np.linalg.norm(
+            target_position - sensor_coordinates,
+            axis=1,
+        ))
+
+        # Trilaterate the target position with range measurement noise.
         results = np.zeros((num_trials, 3))
         for i in range(num_trials):
-            ranges = (np.linalg.norm(
-                target_position - sensor_coordinates,
-                axis=1,
-            ))
-            ranges += np.random.normal(
+            noise = np.random.normal(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+            trilaterator = LeastSquaresTrilaterator(
+                sensor_positions,
+                ranges + noise,
+            )
             results[i] = trilaterator.trilaterate()
         target_standard_deviations[target_distance_index] = np.std(
             results,
             axis=0,
         )
+
+        # Calculate the Cramér-Rao lower bound.
+        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        crlb = trilaterator.cramer_rao_lower_bound(
+            target_position,
+            np.ones(num_sensors) * standard_deviation)
+        crlb_standard_deviations[target_distance_index] = np.sqrt(np.diag(crlb))
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
     # and the overall standard deviation over the target distance.
@@ -136,27 +158,67 @@ def simulate_monte_carlo_over_distance(
     ax.plot(
         target_distances,
         target_standard_deviations[:, 0],
+        color="C0",
         label=r"Standard deviation in $x$",
     )
     ax.plot(
         target_distances,
+        crlb_standard_deviations[:, 0],
+        color="C0",
+        linestyle="--",
+        label=r"CRLB standard deviation in $x$",
+    )
+    ax.plot(
+        target_distances,
         target_standard_deviations[:, 1],
+        color="C1",
         label=r"Standard deviation in $y$",
     )
     ax.plot(
         target_distances,
+        crlb_standard_deviations[:, 1],
+        color="C1",
+        linestyle="--",
+        label=r"CRLB standard deviation in $y$",
+    )
+    ax.plot(
+        target_distances,
         target_standard_deviations[:, 2],
+        color="C2",
         label=r"Standard deviation in $z$",
     )
     ax.plot(
         target_distances,
+        crlb_standard_deviations[:, 2],
+        color="C2",
+        linestyle="--",
+        label=r"CRLB standard deviation in $z$",
+    )
+    ax.plot(
+        target_distances,
         np.linalg.norm(target_standard_deviations[:, :2], axis=1),
+        color="C3",
         label="Lateral standard deviation",
     )
     ax.plot(
         target_distances,
+        np.linalg.norm(crlb_standard_deviations[:, :2], axis=1),
+        color="C3",
+        linestyle="--",
+        label=r"CRLB lateral standard deviation",
+    )
+    ax.plot(
+        target_distances,
         np.linalg.norm(target_standard_deviations, axis=1),
+        color="C4",
         label="Total standard deviation",
+    )
+    ax.plot(
+        target_distances,
+        np.linalg.norm(crlb_standard_deviations, axis=1),
+        color="C4",
+        linestyle="--",
+        label=r"CRLB total standard deviation",
     )
     ax.set_xlabel("Target distance [m]")
     ax.set_ylabel("Standard deviation [m]")
@@ -185,31 +247,44 @@ def simulate_monte_carlo_over_num_sensors(
     """
     num_sensors = range(4, max_num_sensors + 1)
     target_standard_deviations = np.zeros((len(num_sensors), 3))
+    crlb_standard_deviations = np.zeros((len(num_sensors), 3))
     for num_sensor_index, num_sensor in enumerate(num_sensors):
         sensor_positions = _generate_sensor_positions(
             num_sensor,
-            radius=radius,
-            z_offset=z_offset,
+            radius,
+            z_offset,
         )
         sensor_coordinates = np.array(
             [position.coordinates() for position in sensor_positions])
         target_position = np.array([0, 0, distance])
+        ranges = (np.linalg.norm(
+            target_position - sensor_coordinates,
+            axis=1,
+        ))
+
+        # Trilaterate the target position with range measurement noise.
         results = np.zeros((num_trials, 3))
         for i in range(num_trials):
-            ranges = (np.linalg.norm(
-                target_position - sensor_coordinates,
-                axis=1,
-            ))
-            ranges += np.random.normal(
+            noise = np.random.normal(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+            trilaterator = LeastSquaresTrilaterator(
+                sensor_positions,
+                ranges + noise,
+            )
             results[i] = trilaterator.trilaterate()
         target_standard_deviations[num_sensor_index] = np.std(
             results,
             axis=0,
         )
+
+        # Calculate the Cramér-Rao lower bound.
+        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        crlb = trilaterator.cramer_rao_lower_bound(
+            target_position,
+            np.ones(num_sensor) * standard_deviation)
+        crlb_standard_deviations[num_sensor_index] = np.sqrt(np.diag(crlb))
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
     # and the overall standard deviation over the number of sensors.
@@ -218,27 +293,67 @@ def simulate_monte_carlo_over_num_sensors(
     ax.plot(
         num_sensors,
         target_standard_deviations[:, 0],
+        color="C0",
         label=r"Standard deviation in $x$",
     )
     ax.plot(
         num_sensors,
+        crlb_standard_deviations[:, 0],
+        color="C0",
+        linestyle="--",
+        label=r"CRLB standard deviation in $x$",
+    )
+    ax.plot(
+        num_sensors,
         target_standard_deviations[:, 1],
+        color="C1",
         label=r"Standard deviation in $y$",
     )
     ax.plot(
         num_sensors,
+        crlb_standard_deviations[:, 1],
+        color="C1",
+        linestyle="--",
+        label=r"CRLB standard deviation in $y$",
+    )
+    ax.plot(
+        num_sensors,
         target_standard_deviations[:, 2],
+        color="C2",
         label=r"Standard deviation in $z$",
     )
     ax.plot(
         num_sensors,
+        crlb_standard_deviations[:, 2],
+        color="C2",
+        linestyle="--",
+        label=r"CRLB standard deviation in $z$",
+    )
+    ax.plot(
+        num_sensors,
         np.linalg.norm(target_standard_deviations[:, :2], axis=1),
+        color="C3",
         label="Lateral standard deviation",
     )
     ax.plot(
         num_sensors,
+        np.linalg.norm(crlb_standard_deviations[:, :2], axis=1),
+        color="C3",
+        linestyle="--",
+        label=r"CRLB lateral standard deviation",
+    )
+    ax.plot(
+        num_sensors,
         np.linalg.norm(target_standard_deviations, axis=1),
+        color="C4",
         label="Total standard deviation",
+    )
+    ax.plot(
+        num_sensors,
+        np.linalg.norm(crlb_standard_deviations, axis=1),
+        color="C4",
+        linestyle="--",
+        label=r"CRLB total standard deviation",
     )
     ax.set_xlabel("Number of sensors")
     ax.set_ylabel("Standard deviation [m]")
@@ -265,33 +380,47 @@ def simulate_monte_carlo_over_z_offset(
         distance: Distance to the target.
         standard_deviation: Standard deviation of the target distance noise.
     """
+    num_sensors = 4
     z_offsets = np.arange(min_z_offset, max_z_offset + 10, 10)
     target_standard_deviations = np.zeros((len(z_offsets), 3))
+    crlb_standard_deviations = np.zeros((len(z_offsets), 3))
     target_position = np.array([0, 0, distance])
     for z_offset_index, z_offset in enumerate(z_offsets):
         sensor_positions = _generate_sensor_positions(
-            num_sensors=4,
-            radius=radius,
-            z_offset=z_offset,
+            num_sensors,
+            radius,
+            z_offset,
         )
         sensor_coordinates = np.array(
             [position.coordinates() for position in sensor_positions])
+        ranges = (np.linalg.norm(
+            target_position - sensor_coordinates,
+            axis=1,
+        ))
+
+        # Trilaterate the target position with range measurement noise.
         results = np.zeros((num_trials, 3))
         for i in range(num_trials):
-            ranges = (np.linalg.norm(
-                target_position - sensor_coordinates,
-                axis=1,
-            ))
-            ranges += np.random.normal(
+            noise = np.random.normal(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+            trilaterator = LeastSquaresTrilaterator(
+                sensor_positions,
+                ranges + noise,
+            )
             results[i] = trilaterator.trilaterate()
         target_standard_deviations[z_offset_index] = np.std(
             results,
             axis=0,
         )
+
+        # Calculate the Cramér-Rao lower bound.
+        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        crlb = trilaterator.cramer_rao_lower_bound(
+            target_position,
+            np.ones(num_sensors) * standard_deviation)
+        crlb_standard_deviations[z_offset_index] = np.sqrt(np.diag(crlb))
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
     # and the overall standard deviation over the target distance.
@@ -300,27 +429,67 @@ def simulate_monte_carlo_over_z_offset(
     ax.plot(
         z_offsets,
         target_standard_deviations[:, 0],
+        color="C0",
         label=r"Standard deviation in $x$",
     )
     ax.plot(
         z_offsets,
+        crlb_standard_deviations[:, 0],
+        color="C0",
+        linestyle="--",
+        label=r"CRLB standard deviation in $x$",
+    )
+    ax.plot(
+        z_offsets,
         target_standard_deviations[:, 1],
+        color="C1",
         label=r"Standard deviation in $y$",
     )
     ax.plot(
         z_offsets,
+        crlb_standard_deviations[:, 1],
+        color="C1",
+        linestyle="--",
+        label=r"CRLB standard deviation in $y$",
+    )
+    ax.plot(
+        z_offsets,
         target_standard_deviations[:, 2],
+        color="C2",
         label=r"Standard deviation in $z$",
     )
     ax.plot(
         z_offsets,
+        crlb_standard_deviations[:, 2],
+        color="C2",
+        linestyle="--",
+        label=r"CRLB standard deviation in $z$",
+    )
+    ax.plot(
+        z_offsets,
         np.linalg.norm(target_standard_deviations[:, :2], axis=1),
+        color="C3",
         label="Lateral standard deviation",
     )
     ax.plot(
         z_offsets,
+        np.linalg.norm(crlb_standard_deviations[:, :2], axis=1),
+        color="C3",
+        linestyle="--",
+        label=r"CRLB lateral standard deviation",
+    )
+    ax.plot(
+        z_offsets,
         np.linalg.norm(target_standard_deviations, axis=1),
+        color="C4",
         label="Total standard deviation",
+    )
+    ax.plot(
+        z_offsets,
+        np.linalg.norm(crlb_standard_deviations, axis=1),
+        color="C4",
+        linestyle="--",
+        label=r"CRLB total standard deviation",
     )
     ax.set_xlabel(r"$z$-offset [m]")
     ax.set_ylabel("Standard deviation [m]")
@@ -347,33 +516,47 @@ def simulate_monte_carlo_over_radius(
         distance: Distance to the target.
         standard_deviation: Standard deviation of the target distance noise.
     """
+    num_sensors = 4
     radii = np.arange(min_radius, max_radius + 10, 10)
     target_standard_deviations = np.zeros((len(radii), 3))
+    crlb_standard_deviations = np.zeros((len(radii), 3))
     target_position = np.array([0, 0, distance])
     for radius_index, radius in enumerate(radii):
         sensor_positions = _generate_sensor_positions(
-            num_sensors=4,
-            radius=radius,
-            z_offset=z_offset,
+            num_sensors,
+            radius,
+            z_offset,
         )
         sensor_coordinates = np.array(
             [position.coordinates() for position in sensor_positions])
+        ranges = (np.linalg.norm(
+            target_position - sensor_coordinates,
+            axis=1,
+        ))
+
+        # Trilaterate the target position with range measurement noise.
         results = np.zeros((num_trials, 3))
         for i in range(num_trials):
-            ranges = (np.linalg.norm(
-                target_position - sensor_coordinates,
-                axis=1,
-            ))
-            ranges += np.random.normal(
+            noise = np.random.normal(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+            trilaterator = LeastSquaresTrilaterator(
+                sensor_positions,
+                ranges + noise,
+            )
             results[i] = trilaterator.trilaterate()
         target_standard_deviations[radius_index] = np.std(
             results,
             axis=0,
         )
+
+        # Calculate the Cramér-Rao lower bound.
+        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        crlb = trilaterator.cramer_rao_lower_bound(
+            target_position,
+            np.ones(num_sensors) * standard_deviation)
+        crlb_standard_deviations[radius_index] = np.sqrt(np.diag(crlb))
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
     # and the overall standard deviation over the target distance.
@@ -382,27 +565,67 @@ def simulate_monte_carlo_over_radius(
     ax.plot(
         radii,
         target_standard_deviations[:, 0],
+        color="C0",
         label=r"Standard deviation in $x$",
     )
     ax.plot(
         radii,
+        crlb_standard_deviations[:, 0],
+        color="C0",
+        linestyle="--",
+        label=r"CRLB standard deviation in $x$",
+    )
+    ax.plot(
+        radii,
         target_standard_deviations[:, 1],
+        color="C1",
         label=r"Standard deviation in $y$",
     )
     ax.plot(
         radii,
+        crlb_standard_deviations[:, 1],
+        color="C1",
+        linestyle="--",
+        label=r"CRLB standard deviation in $y$",
+    )
+    ax.plot(
+        radii,
         target_standard_deviations[:, 2],
+        color="C2",
         label=r"Standard deviation in $z$",
     )
     ax.plot(
         radii,
+        crlb_standard_deviations[:, 2],
+        color="C2",
+        linestyle="--",
+        label=r"CRLB standard deviation in $z$",
+    )
+    ax.plot(
+        radii,
         np.linalg.norm(target_standard_deviations[:, :2], axis=1),
+        color="C3",
         label="Lateral standard deviation",
     )
     ax.plot(
         radii,
+        np.linalg.norm(crlb_standard_deviations[:, :2], axis=1),
+        color="C3",
+        linestyle="--",
+        label=r"CRLB lateral standard deviation",
+    )
+    ax.plot(
+        radii,
         np.linalg.norm(target_standard_deviations, axis=1),
+        color="C4",
         label="Total standard deviation",
+    )
+    ax.plot(
+        radii,
+        np.linalg.norm(crlb_standard_deviations, axis=1),
+        color="C4",
+        linestyle="--",
+        label=r"CRLB total standard deviation",
     )
     ax.set_xlabel("Radius [m]")
     ax.set_ylabel("Standard deviation [m]")
