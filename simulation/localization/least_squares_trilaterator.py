@@ -11,7 +11,7 @@ from utils.coordinates import CartesianCoordinates
 
 
 class LeastSquaresTrilaterator(Trilaterator):
-    """Least-squarestTrilaterator interface."""
+    """Least-squares trilaterator."""
 
     def __init__(
         self,
