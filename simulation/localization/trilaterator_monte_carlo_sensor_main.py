@@ -37,16 +37,15 @@ def _generate_sensor_positions(
     sensor_coordinates[:, 1] = radius * np.sin(
         2 * np.pi * sensor_indices / num_sensors)
     sensor_coordinates[:, 2] = -sensor_indices / num_sensors * z_offset
-    noise = np.random.normal(
-        scale=standard_deviation,
-        size=sensor_coordinates.shape,
-    )
+    direction = np.random.normal(size=sensor_coordinates.shape)
+    direction /= np.linalg.norm(direction)
+    noise_scaling = np.random.normal(scale=standard_deviation)
     return [
         CartesianCoordinates(
             x=x,
             y=y,
             z=z,
-        ) for x, y, z in sensor_coordinates + noise
+        ) for x, y, z in sensor_coordinates + noise_scaling * direction
     ]
 
 
@@ -235,7 +234,7 @@ def simulate_monte_carlo_over_num_sensors(
                 axis=1,
             )
             noisy_sensor_positions = _generate_sensor_positions(
-                num_sensors,
+                num_sensor,
                 radius,
                 z_offset,
                 standard_deviation,
