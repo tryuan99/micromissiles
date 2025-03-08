@@ -1,14 +1,12 @@
-"""Runs a Monte Carlo simulation on the sensor positions for the least squares
-trilaterator.
-"""
+"""Runs a Monte Carlo simulation on the sensor positions for a trilaterator."""
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
 from absl import app, flags, logging
 
-from simulation.localization.least_squares_trilaterator import \
-    LeastSquaresTrilaterator
+from simulation.localization.trilaterator_factory import (TrilateratorFactory,
+                                                          TrilateratorType)
 from utils.coordinates import CartesianCoordinates
 
 FLAGS = flags.FLAGS
@@ -53,6 +51,7 @@ def _generate_sensor_positions(
 
 
 def simulate_monte_carlo(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     z_offset: float,
@@ -63,6 +62,7 @@ def simulate_monte_carlo(
     squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         z_offset: Sensor z-offset.
@@ -90,7 +90,11 @@ def simulate_monte_carlo(
             z_offset,
             standard_deviation,
         )
-        trilaterator = LeastSquaresTrilaterator(noisy_sensor_positions, ranges)
+        trilaterator = TrilateratorFactory.create_trilaterator(
+            trilaterator_type,
+            noisy_sensor_positions,
+            ranges,
+        )
         results[i] = trilaterator.trilaterate()
     result_standard_deviations = np.std(results, axis=0)
     logging.info("Standard deviation for [x, y, z]: %s",
@@ -102,6 +106,7 @@ def simulate_monte_carlo(
 
 
 def simulate_monte_carlo_over_distance(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     z_offset: float,
@@ -113,6 +118,7 @@ def simulate_monte_carlo_over_distance(
     the distance to the target for the least squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         z_offset: Sensor z-offset.
@@ -144,8 +150,11 @@ def simulate_monte_carlo_over_distance(
                 z_offset,
                 standard_deviation,
             )
-            trilaterator = LeastSquaresTrilaterator(noisy_sensor_positions,
-                                                    ranges)
+            trilaterator = TrilateratorFactory.create_trilaterator(
+                trilaterator_type,
+                noisy_sensor_positions,
+                ranges,
+            )
             results[i] = trilaterator.trilaterate()
         target_standard_deviations[target_distance_index] = np.std(
             results,
@@ -188,6 +197,7 @@ def simulate_monte_carlo_over_distance(
 
 
 def simulate_monte_carlo_over_num_sensors(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     z_offset: float,
@@ -199,6 +209,7 @@ def simulate_monte_carlo_over_num_sensors(
     the number of sensors for the least squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         z_offset: Sensor z-offset.
@@ -229,8 +240,11 @@ def simulate_monte_carlo_over_num_sensors(
                 z_offset,
                 standard_deviation,
             )
-            trilaterator = LeastSquaresTrilaterator(noisy_sensor_positions,
-                                                    ranges)
+            trilaterator = TrilateratorFactory.create_trilaterator(
+                trilaterator_type,
+                noisy_sensor_positions,
+                ranges,
+            )
             results[i] = trilaterator.trilaterate()
         target_standard_deviations[num_sensor_index] = np.std(
             results,
@@ -276,6 +290,7 @@ def main(argv):
     assert len(argv) == 1, argv
 
     simulate_monte_carlo(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.z_offset,
@@ -283,6 +298,7 @@ def main(argv):
         FLAGS.distance,
     )
     simulate_monte_carlo_over_distance(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.z_offset,
@@ -291,6 +307,7 @@ def main(argv):
         FLAGS.max_distance,
     )
     simulate_monte_carlo_over_num_sensors(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.z_offset,
@@ -301,6 +318,12 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    flags.DEFINE_enum(
+        "trilaterator_type",
+        TrilateratorType.NONLINEAR_LEAST_SQUARES,
+        TrilateratorType.values(),
+        "Trilaterator type.",
+    )
     flags.DEFINE_integer("num_trials",
                          100000,
                          "Number of trials.",

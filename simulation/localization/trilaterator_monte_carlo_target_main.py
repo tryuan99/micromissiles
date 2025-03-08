@@ -1,14 +1,12 @@
-"""Runs a Monte Carlo simulation on the target distance for the least squares
-trilaterator.
-"""
+"""Runs a Monte Carlo simulation on the target distance for a trilaterator."""
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scienceplots
 from absl import app, flags, logging
 
-from simulation.localization.least_squares_trilaterator import \
-    LeastSquaresTrilaterator
+from simulation.localization.trilaterator_factory import (TrilateratorFactory,
+                                                          TrilateratorType)
 from utils.coordinates import CartesianCoordinates
 
 FLAGS = flags.FLAGS
@@ -40,6 +38,7 @@ def _generate_sensor_positions(
 
 
 def simulate_monte_carlo(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     z_offset: float,
@@ -50,6 +49,7 @@ def simulate_monte_carlo(
     squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         z_offset: Sensor z-offset.
@@ -70,7 +70,8 @@ def simulate_monte_carlo(
     results = np.zeros((num_trials, 3))
     for i in range(num_trials):
         noise = np.random.normal(scale=standard_deviation, size=ranges.shape)
-        trilaterator = LeastSquaresTrilaterator(
+        trilaterator = TrilateratorFactory.create_trilaterator(
+            trilaterator_type,
             sensor_positions,
             ranges + noise,
         )
@@ -78,7 +79,11 @@ def simulate_monte_carlo(
     result_standard_deviations = np.std(results, axis=0)
 
     # Calculate the Cramér-Rao lower bound.
-    trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+    trilaterator = TrilateratorFactory.create_trilaterator(
+        trilaterator_type,
+        sensor_positions,
+        ranges,
+    )
     crlb = trilaterator.cramer_rao_lower_bound(
         target_position,
         np.ones(num_sensors) * standard_deviation)
@@ -90,11 +95,16 @@ def simulate_monte_carlo(
                  crlb_standard_deviations)
     logging.info("Lateral standard deviation: %f",
                  np.linalg.norm(result_standard_deviations[:2]))
+    logging.info("CRLB lateral standard deviation: %s",
+                 np.linalg.norm(crlb_standard_deviations[:2]))
     logging.info("Total standard deviation: %f",
                  np.linalg.norm(result_standard_deviations))
+    logging.info("CRLB total standard deviation: %s",
+                 np.linalg.norm(crlb_standard_deviations))
 
 
 def simulate_monte_carlo_over_distance(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     z_offset: float,
@@ -106,6 +116,7 @@ def simulate_monte_carlo_over_distance(
     the distance to the target for the least squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         z_offset: Sensor z-offset.
@@ -134,7 +145,8 @@ def simulate_monte_carlo_over_distance(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(
+            trilaterator = TrilateratorFactory.create_trilaterator(
+                trilaterator_type,
                 sensor_positions,
                 ranges + noise,
             )
@@ -145,7 +157,11 @@ def simulate_monte_carlo_over_distance(
         )
 
         # Calculate the Cramér-Rao lower bound.
-        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        trilaterator = TrilateratorFactory.create_trilaterator(
+            trilaterator_type,
+            sensor_positions,
+            ranges,
+        )
         crlb = trilaterator.cramer_rao_lower_bound(
             target_position,
             np.ones(num_sensors) * standard_deviation)
@@ -227,6 +243,7 @@ def simulate_monte_carlo_over_distance(
 
 
 def simulate_monte_carlo_over_num_sensors(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     z_offset: float,
@@ -238,6 +255,7 @@ def simulate_monte_carlo_over_num_sensors(
     the number of sensors for the least squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         z_offset: Sensor z-offset.
@@ -269,7 +287,8 @@ def simulate_monte_carlo_over_num_sensors(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(
+            trilaterator = TrilateratorFactory.create_trilaterator(
+                trilaterator_type,
                 sensor_positions,
                 ranges + noise,
             )
@@ -280,7 +299,11 @@ def simulate_monte_carlo_over_num_sensors(
         )
 
         # Calculate the Cramér-Rao lower bound.
-        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        trilaterator = TrilateratorFactory.create_trilaterator(
+            trilaterator_type,
+            sensor_positions,
+            ranges,
+        )
         crlb = trilaterator.cramer_rao_lower_bound(
             target_position,
             np.ones(num_sensor) * standard_deviation)
@@ -362,6 +385,7 @@ def simulate_monte_carlo_over_num_sensors(
 
 
 def simulate_monte_carlo_over_z_offset(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     radius: float,
     min_z_offset: float,
@@ -373,6 +397,7 @@ def simulate_monte_carlo_over_z_offset(
     the sensor z-offset for the least squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         radius: Sensor radius from the origin.
         min_z_offset: Minimum sensor z-offset.
@@ -405,7 +430,8 @@ def simulate_monte_carlo_over_z_offset(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(
+            trilaterator = TrilateratorFactory.create_trilaterator(
+                trilaterator_type,
                 sensor_positions,
                 ranges + noise,
             )
@@ -416,7 +442,11 @@ def simulate_monte_carlo_over_z_offset(
         )
 
         # Calculate the Cramér-Rao lower bound.
-        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        trilaterator = TrilateratorFactory.create_trilaterator(
+            trilaterator_type,
+            sensor_positions,
+            ranges,
+        )
         crlb = trilaterator.cramer_rao_lower_bound(
             target_position,
             np.ones(num_sensors) * standard_deviation)
@@ -498,6 +528,7 @@ def simulate_monte_carlo_over_z_offset(
 
 
 def simulate_monte_carlo_over_radius(
+    trilaterator_type: TrilateratorType,
     num_trials: int,
     min_radius: float,
     max_radius: float,
@@ -509,6 +540,7 @@ def simulate_monte_carlo_over_radius(
     the sensor radius for the least squares trilaterator.
 
     Args:
+        trilaterator_type: Trilaterator type.
         num_trials: Number of simulations.
         min_radius: Minimum sensor radius from the origin.
         max_radius: Maximum sensor radius from the origin.
@@ -541,7 +573,8 @@ def simulate_monte_carlo_over_radius(
                 scale=standard_deviation,
                 size=ranges.shape,
             )
-            trilaterator = LeastSquaresTrilaterator(
+            trilaterator = TrilateratorFactory.create_trilaterator(
+                trilaterator_type,
                 sensor_positions,
                 ranges + noise,
             )
@@ -552,7 +585,11 @@ def simulate_monte_carlo_over_radius(
         )
 
         # Calculate the Cramér-Rao lower bound.
-        trilaterator = LeastSquaresTrilaterator(sensor_positions, ranges)
+        trilaterator = TrilateratorFactory.create_trilaterator(
+            trilaterator_type,
+            sensor_positions,
+            ranges,
+        )
         crlb = trilaterator.cramer_rao_lower_bound(
             target_position,
             np.ones(num_sensors) * standard_deviation)
@@ -637,6 +674,7 @@ def main(argv):
     assert len(argv) == 1, argv
 
     simulate_monte_carlo(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.z_offset,
@@ -644,6 +682,7 @@ def main(argv):
         FLAGS.standard_deviation,
     )
     simulate_monte_carlo_over_distance(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.z_offset,
@@ -652,6 +691,7 @@ def main(argv):
         FLAGS.standard_deviation,
     )
     simulate_monte_carlo_over_num_sensors(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.z_offset,
@@ -660,6 +700,7 @@ def main(argv):
         FLAGS.max_num_sensors,
     )
     simulate_monte_carlo_over_z_offset(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.radius,
         FLAGS.min_z_offset,
@@ -668,6 +709,7 @@ def main(argv):
         FLAGS.standard_deviation,
     )
     simulate_monte_carlo_over_radius(
+        FLAGS.trilaterator_type,
         FLAGS.num_trials,
         FLAGS.min_radius,
         FLAGS.max_radius,
@@ -678,6 +720,12 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    flags.DEFINE_enum(
+        "trilaterator_type",
+        TrilateratorType.NONLINEAR_LEAST_SQUARES,
+        TrilateratorType.values(),
+        "Trilaterator type.",
+    )
     flags.DEFINE_integer("num_trials",
                          100000,
                          "Number of trials.",

@@ -5,7 +5,8 @@ from simulation.localization.least_squares_trilaterator import \
     LeastSquaresTrilaterator
 from simulation.localization.nonlinear_least_squares_trilaterator import \
     NonlinearLeastSquaresTrilaterator
-from simulation.localization.trilaterator_factory import TrilateratorFactory
+from simulation.localization.trilaterator_factory import (TrilateratorFactory,
+                                                          TrilateratorType)
 from utils.coordinates import CartesianCoordinates
 
 
@@ -16,7 +17,7 @@ class TrilateratorFactoryTestCase(absltest.TestCase):
 
     def test_least_squares_trilaterator(self):
         trilaterator = TrilateratorFactory.create_trilaterator(
-            "least_squares",
+            TrilateratorType.LEAST_SQUARES,
             self.positions,
             self.ranges,
         )
@@ -24,19 +25,11 @@ class TrilateratorFactoryTestCase(absltest.TestCase):
 
     def test_nonlinear_least_squares_trilaterator(self):
         trilaterator = TrilateratorFactory.create_trilaterator(
-            "nonlinear_least_squares",
+            TrilateratorType.NONLINEAR_LEAST_SQUARES,
             self.positions,
             self.ranges,
         )
         self.assertIsInstance(trilaterator, NonlinearLeastSquaresTrilaterator)
-
-    def test_invalid_type(self):
-        with self.assertRaises(ValueError):
-            TrilateratorFactory.create_trilaterator(
-                "invalid",
-                self.positions,
-                self.ranges,
-            )
 
 
 if __name__ == "__main__":
