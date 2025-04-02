@@ -86,7 +86,7 @@ class TrajectoriesViewer:
             c=self.df[self.speed_column],
             cmap=COLOR_MAPS["parula"],
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Submunition dispense time [s]")
         ax.set_zlabel("Altitude [m]")
         ax.set_title("Interceptor trajectories")
@@ -114,7 +114,7 @@ class TrajectoriesViewer:
             c=df_with_submunition_dispense_time[self.speed_column],
             cmap=COLOR_MAPS["parula"],
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title(f"Interceptor trajectories with submunition dispense time "
                      rf"$t={submunition_dispense_time}$")
@@ -139,7 +139,7 @@ class TrajectoriesViewer:
             c=df_at_time[self.speed_column],
             cmap=COLOR_MAPS["parula"],
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title(rf"Reachability at time $t={time}$")
         plt.colorbar(scatter)
@@ -161,7 +161,7 @@ class TrajectoriesViewer:
             color_continuous_scale=COLOR_MAPS_RGB["parula"],
             title=f"Reachability at time t={time}",
             labels={
-                self.px_column: "Position [m]",
+                self.px_column: "Range [m]",
                 self.py_column: "Altitude [m]",
             },
         )
@@ -211,7 +211,7 @@ class TrajectoriesViewer:
             c=df_within_box[self.speed_column],
             cmap=COLOR_MAPS["parula"],
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title(rf"Reachability within ${x_start} \leq x \leq {x_end}$ "
                      rf"and ${y_start} \leq y \leq {y_end}$")
@@ -231,7 +231,7 @@ class TrajectoriesViewer:
             c=df_within_box[self.speed_column],
             cmap=COLOR_MAPS["parula"],
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Submunition dispense time [s]")
         ax.set_zlabel("Altitude [m]")
         ax.set_title(rf"Reachability within ${x_start} \leq x \leq {x_end}$ "
@@ -256,7 +256,7 @@ class TrajectoriesViewer:
             title=(f"Reachability within {x_start} <= x <= {x_end} and "
                    f"{y_start} <= y <= {y_end}"),
             labels={
-                self.px_column: "Position [m]",
+                self.px_column: "Range [m]",
                 self.py_column: "Altitude [m]",
             },
         )
@@ -290,7 +290,7 @@ class TrajectoriesViewer:
                    f"{y_start} <= y <= {y_end}"),
             labels={
                 self.px_column:
-                    "Position [m]",
+                    "Range [m]",
                 self.py_column:
                     "Altitude [m]",
                 self.submunition_dispense_time_column:
@@ -343,7 +343,7 @@ class TrajectoriesViewer:
             c=df_within_box[self.time_column],
             cmap=COLOR_MAPS["parula"].reversed(),
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title(rf"Reachability within ${x_start} \leq x \leq {x_end}$ "
                      rf"and ${y_start} \leq y \leq {y_end}$")
@@ -367,7 +367,7 @@ class TrajectoriesViewer:
             title=(f"Reachability within {x_start} <= x <= {x_end} and "
                    f"{y_start} <= y <= {y_end}"),
             labels={
-                self.px_column: "Position [m]",
+                self.px_column: "Range [m]",
                 self.py_column: "Altitude [m]",
             },
         )
@@ -444,7 +444,7 @@ class TrajectoriesViewer:
             c=df_max_speed[self.time_column],
             cmap=COLOR_MAPS["parula"].reversed(),
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_zlabel("Maximum speed [m/s]")
         ax.set_title("Trajectory points with maximum speed")
@@ -468,7 +468,7 @@ class TrajectoriesViewer:
             color_continuous_scale=COLOR_MAPS_RGB["parula"][::-1],
             title="Trajectory points with maximum speed",
             labels={
-                self.px_column: "Position [m]",
+                self.px_column: "Range [m]",
                 self.py_column: "Altitude [m]",
                 self.speed_column: "Maximum speed [m/s]",
             },
@@ -531,7 +531,7 @@ class TrajectoriesViewer:
             max_speed_interpolated,
             colors="black",
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title("Maximum speed")
         plt.colorbar(image, label="Maximum speed [m/s]")
@@ -546,7 +546,7 @@ class TrajectoriesViewer:
             origin="lower",
             title="Maximum speed",
             labels={
-                "x": "Position [m]",
+                "x": "Range [m]",
                 "y": "Altitude [m]",
                 "color": "Maximum speed [m/s]",
             },
@@ -578,7 +578,7 @@ class TrajectoriesViewer:
             title={"text": "Maximum speed"},
             scene={
                 "xaxis": {
-                    "title": "Position [m]",
+                    "title": "Range [m]",
                 },
                 "yaxis": {
                     "title": "Altitude [m]",
@@ -613,7 +613,7 @@ class TrajectoriesViewer:
             max_speed_carrier_launch_angle_interpolated,
             colors="black",
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title("Launch angle for maximum speed")
         plt.colorbar(image, label="Carrier launch angle [deg]")
@@ -628,7 +628,7 @@ class TrajectoriesViewer:
             origin="lower",
             title="Launch angle for maximum speed",
             labels={
-                "x": "Position [m]",
+                "x": "Range [m]",
                 "y": "Altitude [m]",
                 "color": "Carrier launch angle [deg]",
             },
@@ -660,7 +660,7 @@ class TrajectoriesViewer:
             title={"text": "Launch angle for maximum speed"},
             scene={
                 "xaxis": {
-                    "title": "Position [m]",
+                    "title": "Range [m]",
                 },
                 "yaxis": {
                     "title": "Altitude [m]",
@@ -690,7 +690,7 @@ class TrajectoriesViewer:
             c=df_min_time[self.speed_column],
             cmap=COLOR_MAPS["parula"],
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_zlabel("Minimum time [s]")
         ax.set_title("Trajectory points with minimum time")
@@ -714,7 +714,7 @@ class TrajectoriesViewer:
             color_continuous_scale=COLOR_MAPS_RGB["parula"],
             title="Trajectory points with minimum time",
             labels={
-                self.px_column: "Position [m]",
+                self.px_column: "Range [m]",
                 self.py_column: "Altitude [m]",
                 self.time_column: "Minimum time [s]",
             },
@@ -768,7 +768,7 @@ class TrajectoriesViewer:
             min_time_interpolated,
             colors="black",
         )
-        ax.set_xlabel("Position [m]")
+        ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title("Minimum time")
         plt.colorbar(image, label="Minimum time [s]")
@@ -783,7 +783,7 @@ class TrajectoriesViewer:
             origin="lower",
             title="Minimum time",
             labels={
-                "x": "Position [m]",
+                "x": "Range [m]",
                 "y": "Altitude [m]",
                 "color": "Minimum time [s]",
             },
@@ -815,7 +815,7 @@ class TrajectoriesViewer:
             title={"text": "Minimum time"},
             scene={
                 "xaxis": {
-                    "title": "Position [m]",
+                    "title": "Range [m]",
                 },
                 "yaxis": {
                     "title": "Altitude [m]",
