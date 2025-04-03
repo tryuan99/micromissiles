@@ -8,7 +8,7 @@
 #define LED_DELAY_MS 250  // milliseconds
 
 // Initialize the LED.
-void led_init() {
+static inline void led_init() {
   gpio_init(PICO_DEFAULT_LED_PIN);
   gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
 }
