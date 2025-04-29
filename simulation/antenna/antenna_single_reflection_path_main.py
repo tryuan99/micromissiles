@@ -47,16 +47,16 @@ def plot_reflectance_for_single_reflection_path_at_boresight(
             (tx_antenna.calculate_radiation_pattern(
                 azimuth=-alpha,
                 elevation=0,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=alpha,
                 elevation=0,
-            ) / (tx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern / (tx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=0,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=0,
-            )))**2 * range**2 / (4 * np.pi * r**4)) + rcs
+            ).radiation_pattern))**2 * range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(DISTANCES,
                 azimuth_reflectance,
                 color=f"C{rcs_index}",
@@ -67,16 +67,16 @@ def plot_reflectance_for_single_reflection_path_at_boresight(
             (tx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=alpha,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=alpha,
-            ) / (tx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern / (tx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=0,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=0,
-            )))**2 * range**2 / (4 * np.pi * r**4)) + rcs
+            ).radiation_pattern))**2 * range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(DISTANCES,
                 elevation_reflectance,
                 color=f"C{rcs_index}",
@@ -117,16 +117,16 @@ def plot_reflectance_for_single_reflection_path_over_azimuth(
             (tx_antenna.calculate_radiation_pattern(
                 azimuth=azimuth - alpha,
                 elevation=0,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=alpha,
                 elevation=0,
-            ) / (tx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern / (tx_antenna.calculate_radiation_pattern(
                 azimuth=azimuth,
                 elevation=0,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=0,
-            )))**2 * range**2 / (4 * np.pi * r**4)) + rcs
+            ).radiation_pattern))**2 * range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(
             DISTANCES,
             azimuth_reflectance,
@@ -168,16 +168,16 @@ def plot_reflectance_for_single_reflection_path_over_elevation(
             (tx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=elevation - alpha,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=-alpha,
-            ) / (tx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern / (tx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=elevation,
-            ) * rx_antenna.calculate_radiation_pattern(
+            ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                 azimuth=0,
                 elevation=0,
-            )))**2 * range**2 / (4 * np.pi * r**4)) + rcs
+            ).radiation_pattern))**2 * range**2 / (4 * np.pi * r**4)) + rcs
         ax.plot(
             DISTANCES,
             elevation_reflectance,
@@ -221,16 +221,16 @@ def plot_reflectance_for_single_reflection_path_over_azimuth_and_elevation(
                 (tx_antenna.calculate_radiation_pattern(
                     azimuth=azimuth - alpha,
                     elevation=elevation - alpha,
-                ) * rx_antenna.calculate_radiation_pattern(
+                ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                     azimuth=alpha,
                     elevation=-alpha,
-                ) / (tx_antenna.calculate_radiation_pattern(
+                ).radiation_pattern / (tx_antenna.calculate_radiation_pattern(
                     azimuth=azimuth,
                     elevation=elevation,
-                ) * rx_antenna.calculate_radiation_pattern(
+                ).radiation_pattern * rx_antenna.calculate_radiation_pattern(
                     azimuth=0,
                     elevation=0,
-                )))**2 * range**2 / (4 * np.pi * r**4)) + rcs
+                ).radiation_pattern))**2 * range**2 / (4 * np.pi * r**4)) + rcs
             ax.plot(
                 DISTANCES,
                 reflectance,
