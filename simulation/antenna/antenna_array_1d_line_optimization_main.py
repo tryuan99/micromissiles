@@ -95,7 +95,7 @@ def optimize_antenna_array_along_line(
     x_max: float,
     population_size: int,
     num_generations: int,
-    seed: float = None,
+    seed: int = None,
 ) -> None:
     """Optimizes the antenna array along the given line.
 
@@ -201,6 +201,6 @@ if __name__ == "__main__":
                          200,
                          "Number of generations.",
                          lower_bound=1)
-    flags.DEFINE_float("seed", None, "Random seed.")
+    flags.DEFINE_integer("seed", None, "Random seed.")
 
     app.run(main)

@@ -19,11 +19,13 @@ class Nsga2MultiObjectiveOptimizer(MultiObjectiveOptimizer):
         seed: Random seed.
     """
 
-    def __init__(self,
-                 problem: Problem,
-                 population_size: int = 100,
-                 num_generations: int = 200,
-                 seed: float = None) -> None:
+    def __init__(
+        self,
+        problem: Problem,
+        population_size: int = 100,
+        num_generations: int = 200,
+        seed: int = None,
+    ) -> None:
         super().__init__(problem)
         self.population_size = population_size
         self.num_generations = num_generations

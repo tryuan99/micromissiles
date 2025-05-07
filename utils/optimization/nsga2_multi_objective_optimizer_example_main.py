@@ -87,6 +87,6 @@ if __name__ == "__main__":
                          200,
                          "Number of generations.",
                          lower_bound=1)
-    flags.DEFINE_float("seed", None, "Random seed.")
+    flags.DEFINE_integer("seed", None, "Random seed.")
 
     app.run(main)
