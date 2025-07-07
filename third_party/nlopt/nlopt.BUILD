@@ -2,7 +2,7 @@ load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
 package(default_visibility = ["//visibility:public"])
 
-NLOPT_ABI_VERSION = "0.13.0"
+NLOPT_ABI_VERSION = "1.0.0"
 
 filegroup(
     name = "all",

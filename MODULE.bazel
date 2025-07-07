@@ -4,15 +4,15 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20250127.0",
+    version = "20250512.1",
 )
 bazel_dep(
     name = "eigen",
-    version = "4.0.0-20241125.bcr.1",
+    version = "4.0.0-20241125.bcr.2",
 )
 bazel_dep(
     name = "googletest",
-    version = "1.16.0",
+    version = "1.17.0",
 )
 bazel_dep(
     name = "pico-sdk",
@@ -20,27 +20,27 @@ bazel_dep(
 )
 bazel_dep(
     name = "platforms",
-    version = "0.0.11",
+    version = "1.0.0",
 )
 bazel_dep(
     name = "protobuf",
-    version = "30.0",
+    version = "31.1",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.1.1",
+    version = "0.1.2",
 )
 bazel_dep(
     name = "rules_foreign_cc",
-    version = "0.14.0",
+    version = "0.15.0",
 )
 bazel_dep(
     name = "rules_pkg",
-    version = "1.0.1",
+    version = "1.1.0",
 )
 bazel_dep(
     name = "rules_python",
-    version = "1.2.0",
+    version = "1.5.1",
 )
 
 # Pico SDK toolchains.
@@ -56,12 +56,12 @@ register_toolchains(
 )
 
 # Boost library.
-BOOST_VERSION = "1.87.0"
+BOOST_VERSION = "1.88.0"
 
 http_archive(
     name = "boost",
     build_file = "//third_party/boost:boost.BUILD",
-    sha256 = "f55c340aa49763b1925ccf02b2e83f35fdcf634c9d5164a2acb87540173c741d",
+    sha256 = "3621533e820dcab1e8012afd583c0c73cf0f77694952b81352bf38c1488f9cb4",
     strip_prefix = "boost_{}".format(BOOST_VERSION.replace(".", "_")),
     url = "https://archives.boost.io/release/{}/source/boost_{}.tar.gz".format(
         BOOST_VERSION,
@@ -70,23 +70,23 @@ http_archive(
 )
 
 # libmpc++ library.
-LIBMPC_VERSION = "0.7.0"
+LIBMPC_VERSION = "0.7.1"
 
 http_archive(
     name = "libmpc",
     build_file = "//third_party/libmpc:libmpc.BUILD",
-    sha256 = "b1ab237345d6a39a5314e676af8353c6fb66663630a5cfda23eeb12f6f42614b",
+    sha256 = "587d6b0f97a64c54bb7df634325f1371b0950f04e362c2e6c11decd31a111e5a",
     strip_prefix = "libmpc-{}".format(LIBMPC_VERSION),
     url = "https://github.com/nicolapiccinelli/libmpc/archive/refs/tags/{}.tar.gz".format(LIBMPC_VERSION),
 )
 
 # NLopt library.
-NLOPT_VERSION = "2.9.1"
+NLOPT_VERSION = "2.10.0"
 
 http_archive(
     name = "nlopt",
     build_file = "//third_party/nlopt:nlopt.BUILD",
-    sha256 = "1e6c33f8cbdc4138d525f3326c231f14ed50d99345561e85285638c49b64ee93",
+    sha256 = "506f83a9e778ad4f204446e99509cb2bdf5539de8beccc260a014bd560237be1",
     strip_prefix = "nlopt-{}".format(NLOPT_VERSION),
     url = "https://github.com/stevengj/nlopt/archive/refs/tags/v{}.tar.gz".format(NLOPT_VERSION),
 )
@@ -114,14 +114,14 @@ http_archive(
 )
 
 # OSQP library.
-OSQP_COMMIT_HASH = "27a2d51fa9aea19e25a3b3f90b7026c5109b5bf5"
+OSQP_VERSION = "1.0.0"
 
 http_archive(
     name = "osqp",
     build_file = "//third_party/osqp:osqp.BUILD",
-    sha256 = "478ec43bd4e7938cff175c34e3471895c4ad38605d44745f1a3f79e8278ba3bf",
-    strip_prefix = "osqp-{}".format(OSQP_COMMIT_HASH),
-    url = "https://github.com/osqp/osqp/archive/{}.tar.gz".format(OSQP_COMMIT_HASH),
+    sha256 = "dd6a1c2e7e921485697d5e7cdeeb043c712526c395b3700601f51d472a7d8e48",
+    strip_prefix = "osqp-{}".format(OSQP_VERSION),
+    url = "https://github.com/osqp/osqp/archive/refs/tags/v{}.tar.gz".format(OSQP_VERSION),
 )
 
 # Configure the Python toolchain.
