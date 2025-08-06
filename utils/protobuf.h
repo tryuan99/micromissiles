@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include <fcntl.h>
-
+#include <fstream>
 #include <stdexcept>
 #include <string>
 
@@ -13,21 +12,20 @@
 
 namespace utils {
 
-// Load the Protobuf text file.
+// Load the Protobuf text file and return the Protobuf message.
 template <typename T>
 T LoadProtobufTextFile(const std::string& file) {
-  const int fd = open(file.c_str(), O_RDONLY);
-  if (fd < 0) {
+  std::ifstream ifs(file);
+  if (!ifs.is_open()) {
     throw std::runtime_error(
-        absl::StrFormat("Failed to open the Protobuf text file: %s", file));
+        absl::StrFormat("Failed to open the Protobuf text file: %s.", file));
   }
-  google::protobuf::io::FileInputStream file_stream(fd);
+  google::protobuf::io::IstreamInputStream file_stream(&ifs);
   T message;
   if (!google::protobuf::TextFormat::Parse(&file_stream, &message)) {
     throw std::runtime_error(
         absl::StrFormat("Failed to parse the Protobuf text file: %s.", file));
   }
-  file_stream.Close();
   return message;
 }
 
