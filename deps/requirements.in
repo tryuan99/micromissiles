@@ -1,12 +1,12 @@
 absl-py==2.3.1
-cvxpy==1.6.6
+cvxpy==1.7.3
 jmetalpy==1.7.0
-joblib==1.5.1
+joblib==1.5.2
 k-means-constrained==0.7.6
 matplotlib==3.10.0
 numpy==2.2.0
 pandas==2.2.3
-plotly==6.2.0
+plotly==6.3.1
 protobuf==6.31.1
 pymoo==0.6.1.5
 pyserial==3.5
