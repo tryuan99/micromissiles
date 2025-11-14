@@ -30,7 +30,7 @@ def simulate_interceptors_and_threats(simulator_config_file_path: str,
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     simulate_interceptors_and_threats(
         FLAGS.simulator_config,

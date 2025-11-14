@@ -61,7 +61,7 @@ def plot_interceptor_speed_over_distance_to_target(data: list[str],
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     plot_interceptor_speed_over_time(FLAGS.data, FLAGS.labels)
     plot_interceptor_speed_over_distance_to_target(FLAGS.data, FLAGS.labels)

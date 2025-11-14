@@ -52,7 +52,7 @@ def plot_azimuth_radiation_pattern(data: str) -> None:
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     plot_azimuth_radiation_pattern(FLAGS.data)
 

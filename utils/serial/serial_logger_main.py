@@ -6,7 +6,7 @@ FLAGS = flags.FLAGS
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     logger = serial_logger.SerialLogger(FLAGS.port, FLAGS.baudrate,
                                         FLAGS.output_file, FLAGS.log_to_stderr)

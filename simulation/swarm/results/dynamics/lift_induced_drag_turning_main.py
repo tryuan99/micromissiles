@@ -45,7 +45,7 @@ def plot_speed_vs_azimuth(data: str) -> None:
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     plot_speed_vs_azimuth(FLAGS.data)
 

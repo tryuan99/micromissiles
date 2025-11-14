@@ -51,7 +51,7 @@ def plot_speed_vs_distance(data: str) -> None:
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     plot_speed_vs_distance(FLAGS.data)
 

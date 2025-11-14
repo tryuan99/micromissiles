@@ -7,7 +7,7 @@ FLAGS = flags.FLAGS
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     trajectories_viewer = TrajectoriesViewer(FLAGS.csv_file)
     # trajectories_viewer.plot_all_trajectories()

@@ -52,7 +52,7 @@ def plot_elevation_radiation_pattern(data: str) -> None:
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     plot_elevation_radiation_pattern(FLAGS.data)
 

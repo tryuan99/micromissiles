@@ -31,7 +31,7 @@ def simulate_interceptor_swarm_and_threats(swarm_config_file_path: str,
 
 
 def main(argv):
-    assert len(argv) == 1
+    assert len(argv) == 1, argv
 
     simulate_interceptor_swarm_and_threats(
         FLAGS.swarm_config,
