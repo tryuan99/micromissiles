@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -74,10 +75,10 @@ py_binary(
     deps = [
         ":cluster",
         ":k_means_clusterer",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -111,10 +112,10 @@ py_binary(
         ":cluster",
         ":k_means_clusterer",
         ":min_cost_flow_clusterer",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -126,9 +127,9 @@ py_binary(
         ":cluster",
         ":k_means_clusterer",
         ":min_cost_flow_clusterer",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )

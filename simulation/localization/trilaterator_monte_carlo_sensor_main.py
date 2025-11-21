@@ -2,9 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from simulation.localization.trilaterator_factory import (TrilateratorFactory,
                                                           TrilateratorType)
 from utils.coordinates import CartesianCoordinates
@@ -162,7 +162,6 @@ def simulate_monte_carlo_over_distance(
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
     # and the overall standard deviation over the target distance.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(
         target_distances,
@@ -252,7 +251,6 @@ def simulate_monte_carlo_over_num_sensors(
 
     # Plot the x, y, and z standard deviations, the lateral standard deviation,
     # and the overall standard deviation over the number of sensors.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(
         num_sensors,

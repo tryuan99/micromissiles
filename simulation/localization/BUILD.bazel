@@ -97,10 +97,10 @@ py_binary(
     deps = [
         ":trilaterator_factory",
         "//utils:coordinates",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -110,9 +110,9 @@ py_binary(
     deps = [
         ":trilaterator_factory",
         "//utils:coordinates",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )

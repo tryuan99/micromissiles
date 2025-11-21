@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from simulation.swarm.utils.py import constants
 
 FLAGS = flags.FLAGS
@@ -34,7 +34,6 @@ def plot_speed_vs_distance(data: str) -> None:
     logging.info(df.describe())
 
     # Plot the speed as a function of the distance travelled.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(df[distance_column], df[speed_column], label="Simulated")
     ax.plot(df[distance_column],

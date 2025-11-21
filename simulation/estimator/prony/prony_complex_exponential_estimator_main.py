@@ -2,9 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.estimator.complex_exponential import (ComplexExponential,
                                                       ComplexExponentialParams)
 from simulation.estimator.prony.prony_mpm_complex_exponential_estimator import (
@@ -141,8 +141,6 @@ def compare_prony_complex_exponential_estimators(snrs: np.ndarray,
             complex_exponential_estimator_label] = params_normalized_errors
 
     for param in COMPLEX_EXPONENTIAL_PARAMETERS:
-        plt.style.use(["science", "grid"])
-
         # Plot the RMS error over SNR.
         fig, ax = plt.subplots(figsize=(12, 8))
         for complex_exponential_estimator_label, marker in zip(

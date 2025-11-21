@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -19,10 +20,10 @@ py_binary(
         ":horn_antenna",
         ":patch_antenna",
         "//utils:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -48,11 +49,11 @@ py_binary(
     deps = [
         ":antenna_array",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -75,11 +76,11 @@ py_binary(
         ":antenna_array",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -88,10 +89,10 @@ py_binary(
     srcs = ["antenna_array_optimal_front_main.py"],
     data = ["//simulation/antenna/data:antenna_array_optimal_front_data"],
     deps = [
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("pandas"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -105,11 +106,11 @@ py_binary(
         "//utils:coordinates",
         "//utils/visualization:animator",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -122,11 +123,11 @@ py_binary(
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils:constants",
         "//utils/visualization:animator",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -150,12 +151,12 @@ py_binary(
         ":antenna_array_optimization",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils/optimization:nsga2_multi_objective_optimizer",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
         requirement("pymoo"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -167,12 +168,12 @@ py_binary(
         ":antenna_array_optimization",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils/optimization:nsga2_multi_objective_optimizer",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
         requirement("pymoo"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -184,12 +185,12 @@ py_binary(
         ":antenna_array_optimization",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils/optimization:nsga2_multi_objective_optimizer",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
         requirement("pymoo"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -221,11 +222,11 @@ py_binary(
         ":antenna_array_1d_spectrum",
         "//simulation/antenna/proto:antenna_array_config_py_proto",
         "//utils:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("protobuf"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -284,10 +285,10 @@ py_binary(
         "//utils:constants",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -309,10 +310,10 @@ py_binary(
         ":dipole_antenna",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -335,10 +336,10 @@ py_binary(
         ":horn_antenna",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -370,10 +371,10 @@ py_binary(
         ":patch_antenna",
         "//utils:coordinates",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 

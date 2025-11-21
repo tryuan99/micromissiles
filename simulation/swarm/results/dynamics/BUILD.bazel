@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -8,11 +9,11 @@ py_binary(
     data = ["//simulation/swarm/results/dynamics/data:air_drag_terminal_velocity_data"],
     deps = [
         "//simulation/swarm/utils/py:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("pandas"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -21,11 +22,11 @@ py_binary(
     srcs = ["lift_induced_drag_turning_main.py"],
     data = ["//simulation/swarm/results/dynamics/data:lift_induced_drag_turning_data"],
     deps = [
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("pandas"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -35,10 +36,10 @@ py_binary(
     data = ["//simulation/swarm/results/dynamics/data:total_drag_turning_data"],
     deps = [
         "//simulation/swarm/utils/py:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("pandas"),
-        requirement("SciencePlots"),
     ],
 )

@@ -4,9 +4,9 @@ estimators and the Prony complex exponential estimators.
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.estimator.exponential.exponential_regression_decaying_exponential_estimator import \
     ExponentialRegressionDecayingExponentialEstimator
 from simulation.estimator.exponential.linear_regression_decaying_exponential_estimator import \
@@ -115,8 +115,6 @@ def compare_decaying_exponential_estimators(snrs: np.ndarray,
             decaying_exponential_estimator_label] = params_normalized_errors
 
     for param in DECAYING_EXPONENTIAL_PARAMETERS:
-        plt.style.use(["science", "grid"])
-
         # Plot the RMS error over SNR.
         fig, ax = plt.subplots(figsize=(12, 8))
         for decaying_exponential_estimator_label, marker in zip(

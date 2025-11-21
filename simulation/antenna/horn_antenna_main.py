@@ -3,10 +3,10 @@
 import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 from matplotlib import cm
 
+import utils.visualization.mpl_config
 from simulation.antenna.horn_antenna import HornAntenna
 from utils.coordinates import SphericalCoordinates
 from utils.visualization.color_maps import COLOR_MAPS
@@ -60,7 +60,6 @@ def plot_radiation_pattern_3d(
     m.set_array([])
 
     # Plot the radiation pattern.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -109,7 +108,6 @@ def plot_radiation_pattern_2d(
         azimuth=azimuth,
         elevation=0,
     )
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
@@ -124,7 +122,6 @@ def plot_radiation_pattern_2d(
         azimuth=0,
         elevation=elevation,
     )
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},

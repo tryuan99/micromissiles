@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -20,9 +21,9 @@ py_library(
         ":ti_radar_subframe_data_handler",
         "//utils:constants",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -83,9 +84,9 @@ py_library(
         ":ti_radar_subframe_data",
         ":ti_radar_subframe_data_handler",
         "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 

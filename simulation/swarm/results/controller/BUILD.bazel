@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -8,10 +9,10 @@ py_binary(
     data = ["//simulation/swarm/results/controller/data:controller_data"],
     deps = [
         "//simulation/swarm/utils/py:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
         requirement("pandas"),
-        requirement("SciencePlots"),
     ],
 )

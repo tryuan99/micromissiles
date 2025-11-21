@@ -2,9 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.noise.phase_noise import IFPhaseNoise
 from simulation.radar.components.adc_data import AdcData
 from simulation.radar.components.radar import Radar, Target
@@ -50,7 +50,6 @@ def plot_range_spectrum(ranges: list[float]) -> None:
     range_fft_abs_db = constants.mag2db(range_fft.get_abs_samples())
 
     # Plot the range spectrum.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(radar.r_axis, range_fft_abs_db)
     ax.set_xlabel("Range in m")

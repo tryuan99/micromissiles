@@ -3,11 +3,11 @@
 import google.protobuf
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 from matplotlib import artist
 from matplotlib.lines import Line2D
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer)
 from simulation.antenna.proto.antenna_array_config_pb2 import \
@@ -32,7 +32,6 @@ def plot_antenna_array_elements(
         labels: Antenna array labels.
     """
     # Plot the antenna array elements.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -95,7 +94,6 @@ def plot_projected_antenna_array_elements(
         labels: Antenna array labels.
     """
     # Plot the antenna array elements projected onto the x-z plane.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={
@@ -149,7 +147,6 @@ def plot_antenna_array_radiation_pattern_2d(
     """
     # Plot the radiation patterns along zero elevation.
     azimuth = np.linspace(-np.pi, np.pi, 720, endpoint=False)
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
@@ -172,7 +169,6 @@ def plot_antenna_array_radiation_pattern_2d(
 
     # Plot the radiation patterns along zero azimuth.
     elevation = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
@@ -291,7 +287,7 @@ def animate_antenna_array_radiation_pattern_2d(
         Args:
             azimuth: Azimuth to plot.
         """
-        return rf"Radiation pattern (azimuth = ${azimuth}$ rad)"
+        return f"Radiation pattern (azimuth = {azimuth:.3f} rad)"
 
     animator.set_title("Radiation pattern", update_title)
     animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
@@ -384,7 +380,7 @@ def animate_antenna_array_radiation_pattern_2d(
         Args:
             elevation: Elevation to plot.
         """
-        return rf"Radiation pattern (elevation = ${elevation}$ rad)"
+        return f"Radiation pattern (elevation = {elevation:.3f} rad)"
 
     animator.set_title("Radiation pattern", update_title)
     animator.configure_animation(elevation_sweep, ANIMATION_INTERVAL)
@@ -408,7 +404,6 @@ def plot_antenna_array_main_lobe_width_2d(
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for array, label in zip(arrays, labels):
         azimuth_main_lobe_widths = np.zeros(azimuth_sweep.shape)
@@ -436,7 +431,6 @@ def plot_antenna_array_main_lobe_width_2d(
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     elevation_values = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for array, label in zip(arrays, labels):
         elevation_main_lobe_widths = np.zeros(elevation_sweep.shape)
@@ -479,7 +473,6 @@ def plot_antenna_array_sidelobe_level_2d(
     azimuth_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     azimuth_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for array, label in zip(arrays, labels):
         azimuth_sidelobe_levels = np.zeros(azimuth_sweep.shape)
@@ -499,7 +492,7 @@ def plot_antenna_array_sidelobe_level_2d(
             azimuth_sidelobe_levels[azimuth_index] = sidelobe_level
         ax.plot(azimuth_sweep, azimuth_sidelobe_levels, label=label)
     # Plot the -3 dB threshold.
-    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
+    ax.axhline(-3, color="red", linestyle="--", label=r"-3 dB threshold")
     ax.set_xlabel("Azimuth [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()
@@ -509,7 +502,6 @@ def plot_antenna_array_sidelobe_level_2d(
     elevation_sweep = np.linspace(-np.pi / 2, np.pi / 2, 180, endpoint=False)
     elevation_values = np.linspace(-np.pi, np.pi, 360, endpoint=False)
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for array, label in zip(arrays, labels):
         elevation_sidelobe_levels = np.zeros(elevation_sweep.shape)
@@ -530,7 +522,7 @@ def plot_antenna_array_sidelobe_level_2d(
             elevation_sidelobe_levels[elevation_index] = sidelobe_level
         ax.plot(elevation_sweep, elevation_sidelobe_levels, label=label)
     # Plot the -3 dB threshold.
-    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
+    ax.axhline(-3, color="red", linestyle="--", label=r"-3 dB threshold")
     ax.set_xlabel("Elevation [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()

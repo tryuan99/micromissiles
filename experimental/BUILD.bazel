@@ -1,4 +1,6 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -25,11 +27,11 @@ py_binary(
     name = "mopso_example_main",
     srcs = ["mopso_example_main.py"],
     deps = [
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("jmetalpy"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -47,10 +49,10 @@ py_binary(
     name = "nsga2_example_main",
     srcs = ["nsga2_example_main.py"],
     deps = [
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("pymoo"),
-        requirement("SciencePlots"),
     ],
 )
 

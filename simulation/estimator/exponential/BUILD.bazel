@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -45,10 +46,10 @@ py_binary(
         ":weighted_linear_regression_decaying_exponential_estimator",
         "//simulation/estimator:real_exponential",
         "//simulation/estimator/prony:prony_mpm_complex_exponential_estimator",
+        "//utils/visualization:mpl_config",
         requirement("numpy"),
         requirement("matplotlib"),
         requirement("absl-py"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -63,10 +64,10 @@ py_binary(
         "//simulation/estimator:real_exponential",
         "//simulation/estimator/prony:prony_complex_exponential_estimator",
         "//simulation/estimator/prony:prony_mpm_complex_exponential_estimator",
+        "//utils/visualization:mpl_config",
         requirement("numpy"),
         requirement("matplotlib"),
         requirement("absl-py"),
-        requirement("SciencePlots"),
     ],
 )
 

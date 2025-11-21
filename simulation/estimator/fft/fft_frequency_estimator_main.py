@@ -2,9 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.estimator.complex_exponential import ComplexExponential
 from simulation.estimator.fft.fft_frequency_estimator import (
     FftJacobsenFrequencyEstimator, FftParabolicInterpolationFrequencyEstimator,
@@ -55,7 +55,6 @@ def compare_fft_frequency_estimators(num_samples: int, fft_length: int,
         snrs: SNRs to simulate.
         num_iterations: Number of iterations per SNR.
     """
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     for (fft_frequency_estimator_label,
          fft_frequency_estimator_cls), marker in zip(
@@ -108,7 +107,6 @@ def plot_normalized_estimation_error_histogram() -> None:
 
     See Fig. 3 of https://ieeexplore.ieee.org/document/10313215.
     """
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     num_iterations = 1000000
     bins = np.linspace(-10, 10, 1000)

@@ -3,10 +3,10 @@
 import google.protobuf
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 from matplotlib import animation
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import AntennaArray, AntennaArrayArrival
 from simulation.antenna.antenna_array_1d_spectrum import AntennaArray1DSpectrum
 from simulation.antenna.proto.antenna_array_config_pb2 import \
@@ -29,7 +29,6 @@ def sweep_azimuth_spectrum(spectrum: AntennaArray1DSpectrum) -> None:
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
     # Plot the spectrum in an animation.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     line, = ax.plot(azimuth, np.zeros(len(azimuth)))
 
@@ -50,7 +49,7 @@ def sweep_azimuth_spectrum(spectrum: AntennaArray1DSpectrum) -> None:
         arrival = AntennaArrayArrival(azimuth=frame)
         data = spectrum.calculate_azimuth_spectrum(arrival, azimuth)
         line.set_data(azimuth, constants.mag2db(np.abs(data)))
-        ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
+        ax.set_title(f"Azimuth spectrum (azimuth = {frame:.3f} rad)")
 
     anim = animation.FuncAnimation(
         fig,
@@ -75,7 +74,6 @@ def sweep_azimuth_spectrum_resolution(
     azimuth = np.linspace(-np.pi / 2, np.pi / 2, 360, endpoint=False)
 
     # Plot the spectrum in an animation.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     line, = ax.plot(azimuth, np.zeros(len(azimuth)))
 
@@ -100,7 +98,7 @@ def sweep_azimuth_spectrum_resolution(
         azimuth_spectrum = spectrum.calculate_azimuth_spectrum(
             arrivals, azimuth)
         line.set_data(azimuth, constants.mag2db(np.abs(azimuth_spectrum)))
-        ax.set_title(rf"Azimuth spectrum (azimuth = ${frame}$ rad)")
+        ax.set_title(f"Azimuth spectrum (azimuth = {frame:.3f} rad)")
 
     anim = animation.FuncAnimation(
         fig,

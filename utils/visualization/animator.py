@@ -4,8 +4,9 @@ from abc import ABC
 from typing import Any, Callable, Iterable
 
 import matplotlib.pyplot as plt
-import scienceplots
 from matplotlib import animation, artist, axes, cm
+
+import utils.visualization.mpl_config
 
 
 class Artist:
@@ -151,7 +152,6 @@ class Animator2D(Animator):
 
     def __init__(self) -> None:
         super().__init__()
-        plt.style.use(["science", "grid"])
         self.fig, self.ax = plt.subplots(figsize=(12, 6))
 
     def set_labels(self, xlabel: str, ylabel: str) -> None:
@@ -189,7 +189,6 @@ class Animator3D(Animator):
 
     def __init__(self) -> None:
         super().__init__()
-        plt.style.use("science")
         self.fig, self.ax = plt.subplots(
             figsize=(12, 6),
             subplot_kw={"projection": "3d"},

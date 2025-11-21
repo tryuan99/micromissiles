@@ -4,9 +4,9 @@ plots the clusters and the points.
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from utils.clustering.agglomerative_clusterer import AgglomerativeClusterer
 from utils.clustering.cluster import Point
 from utils.clustering.k_means_clusterer import ConstrainedKMeansClusterer
@@ -81,7 +81,6 @@ def run_size_and_radius_constrained_clustering(
     )
 
     # Plot the clusters and the points.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for cluster_idx, cluster in enumerate(clusterer.clusters):
         point_coordinates = np.array(

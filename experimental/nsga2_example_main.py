@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import pymoo.algorithms.moo.nsga2
 import pymoo.optimize
 import pymoo.problems
-import scienceplots
 from absl import app, logging
+
+import utils.visualization.mpl_config
 
 
 def main(argv):
@@ -25,7 +26,6 @@ def main(argv):
     )
 
     # Plot the Pareto front.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(
         result.F[:, 0],

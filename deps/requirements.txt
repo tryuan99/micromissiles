@@ -382,7 +382,6 @@ matplotlib==3.10.0 \
     #   -r deps/requirements.in
     #   jmetalpy
     #   pymoo
-    #   scienceplots
 mockito==1.5.4 \
     --hash=sha256:ba7fbea6ede6ebc180f376bc5d97a4b95c7ccf54a57f12d2af740c440d35d553 \
     --hash=sha256:f00ed587c32966df3293c294cadb31769460adfc4154f52b90672946aa4b32df
@@ -727,10 +726,6 @@ pytz==2024.1 \
     --hash=sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812 \
     --hash=sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319
     # via pandas
-scienceplots==2.1.1 \
-    --hash=sha256:2e64d2e93b4f98702f30145dbb70d238f5dc315e227fec331489631232dfc9e0 \
-    --hash=sha256:d8d197e3410f87ebdad0b9c265eaab596094fb082d97123e835f6bc32800ab54
-    # via -r deps/requirements.in
 scikit-learn==1.6.1 \
     --hash=sha256:0650e730afb87402baa88afbf31c07b84c98272622aaba002559b614600ca691 \
     --hash=sha256:0c8d036eb937dbb568c6242fa598d551d88fb4399c0344d95c001980ec1c7d36 \

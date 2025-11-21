@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots
 from absl import app, flags, logging
+
+import utils.visualization.mpl_config
 
 FLAGS = flags.FLAGS
 
@@ -25,7 +26,6 @@ def plot_speed_vs_azimuth(data: str) -> None:
     logging.info(df.describe())
 
     # Plot the speed as a function of the azimuth.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(df[azimuth_column], df[speed_column], label="Simulated")
     ax.plot(df[azimuth_column],

@@ -6,9 +6,9 @@ from threading import Lock
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from matplotlib import animation, artist
 
+import utils.visualization.mpl_config
 from radar.ti.ti_radar_subframe_data import (TiRadarSubframeData,
                                              TiRadarSubframeDataType)
 from radar.ti.ti_radar_subframe_data_handler import TiRadarSubframeDataHandler
@@ -90,7 +90,6 @@ class TiRadarRangeDopplerMapPlotter(TiRadarSubframeDataHandler):
 
         This function blocks and should be called from the main thread.
         """
-        plt.style.use("science")
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.set_xlabel("Doppler bin")
         ax.set_ylabel("Range bin")

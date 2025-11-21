@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from simulation.swarm.utils.py import constants
 
 FLAGS = flags.FLAGS
@@ -48,7 +48,6 @@ def plot_speed_vs_time(data: str) -> None:
               np.tan(np.sqrt(k0 * k2) * (df[time_column] + C)))
 
     # Plot the speed as a function of the azimuth.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(df[time_column], df[speed_column], label="Simulated")
     ax.plot(df[time_column], speed, label="Theoretical", linestyle="--")
@@ -79,7 +78,6 @@ def plot_speed_vs_azimuth(data: str) -> None:
              (1 / MICROMISSILE_INITIAL_SPEED**2 + k_LD) - k_LD)))
 
     # Plot the speed as a function of the azimuth.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(df[azimuth_column], df[speed_column], label="Simulated")
     ax.plot(df[azimuth_column], speed, label="Theoretical", linestyle="--")

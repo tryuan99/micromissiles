@@ -6,10 +6,10 @@ import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots
 from absl import app, flags
 from matplotlib import cm
 
+import utils.visualization.mpl_config
 from utils import constants
 from utils.visualization.color_maps import COLOR_MAPS
 
@@ -61,7 +61,6 @@ def plot_3d_radiation_pattern(data: str) -> None:
         m.set_array([])
 
         # Plot the radiation pattern.
-        plt.style.use("science")
         fig, ax = plt.subplots(
             figsize=(12, 8),
             subplot_kw={"projection": "3d"},

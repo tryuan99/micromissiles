@@ -2,9 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.noise.phase_noise import IFPhaseNoise, PhaseNoise
 from simulation.radar.components.radar import Radar, Target
 from utils import constants
@@ -38,7 +38,6 @@ def plot_if_phase_noise_psd(rnge: float) -> None:
         if_phase_noise.calculate_phase_noise_level())
 
     # Plot the phase noise level.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.semilogx(lo_offsets, lo_phase_noise_level, label="LO")
     ax.semilogx(if_offsets, if_phase_noise_level, label="IF")
@@ -64,7 +63,6 @@ def plot_generated_phase_noise_spectrum(rnge: float) -> None:
         amplitude=1 / NUM_PHASE_NOISE_SAMPLES, length=NUM_PHASE_NOISE_SAMPLES)
 
     # Plot the generated phase noise.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.plot(np.abs(noise_samples))
     ax.set_xlabel("Noise sample index")
@@ -80,7 +78,6 @@ def plot_generated_phase_noise_spectrum(rnge: float) -> None:
     noise_spectrum_abs = np.abs(noise_spectrum)
 
     # Plot the spectrum of the generated phase noise.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
     frequency_axis = np.linspace(0, radar.fs, fft_length, endpoint=False)
     ax.semilogx(frequency_axis,

@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -26,10 +27,10 @@ py_binary(
         "//simulation/radar/components:target",
         "//simulation/radar/processors:range_doppler_processor",
         "//utils:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )
 
@@ -41,9 +42,9 @@ py_binary(
         "//simulation/radar/components:radar",
         "//simulation/radar/components:target",
         "//utils:constants",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
         requirement("numpy"),
-        requirement("SciencePlots"),
     ],
 )

@@ -5,9 +5,9 @@ level.
 import google.protobuf
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer)
 from simulation.antenna.proto.antenna_array_config_pb2 import \
@@ -60,7 +60,6 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
             ) = main_lobe_widths
 
     # Plot the main lobe width along the azimuth axis as a 3D surface.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -97,7 +96,6 @@ def plot_antenna_array_main_lobe_width_3d(array: AntennaArray) -> None:
     plt.show()
 
     # Plot the main lobe width along the elevation axis as a 3D surface.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -164,7 +162,6 @@ def plot_antenna_array_main_lobe_width_2d(
         main_lobe_width = radiation_pattern.main_lobe_width(azimuth_peak_index)
         azimuth_main_lobe_widths[azimuth_index] = main_lobe_width
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(azimuth_sweep, azimuth_main_lobe_widths)
     ax.set_xlabel("Azimuth [rad]")
@@ -191,7 +188,6 @@ def plot_antenna_array_main_lobe_width_2d(
             elevation_peak_index)
         elevation_main_lobe_widths[elevation_index] = main_lobe_width
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(elevation_sweep, elevation_main_lobe_widths)
     ax.set_xlabel("Elevation [rad]")
@@ -235,7 +231,6 @@ def plot_antenna_array_sidelobe_level_3d(array: AntennaArray) -> None:
             sidelobe_levels[azimuth_index, elevation_index] = sidelobe_level
 
     # Plot the sidelobe level as a 3D surface.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -302,11 +297,10 @@ def plot_antenna_array_sidelobe_level_2d(
         sidelobe_level = radiation_pattern.sidelobe_level(azimuth_peak_index)
         azimuth_sidelobe_levels[azimuth_index] = sidelobe_level
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(azimuth_sweep, azimuth_sidelobe_levels)
     # Plot the -3 dB threshold.
-    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
+    ax.axhline(-3, color="red", linestyle="--", label=r"-3 dB threshold")
     ax.set_xlabel("Azimuth [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()
@@ -331,11 +325,10 @@ def plot_antenna_array_sidelobe_level_2d(
         sidelobe_level = radiation_pattern.sidelobe_level(elevation_peak_index)
         elevation_sidelobe_levels[elevation_index] = sidelobe_level
 
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(elevation_sweep, elevation_sidelobe_levels)
     # Plot the -3 dB threshold.
-    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
+    ax.axhline(-3, color="red", linestyle="--", label=r"-3 dB threshold")
     ax.set_xlabel("Elevation [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()

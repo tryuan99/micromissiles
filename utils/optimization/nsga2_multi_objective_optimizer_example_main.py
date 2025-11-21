@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from utils.optimization.nsga2_multi_objective_optimizer import \
     Nsga2MultiObjectiveOptimizer
 from utils.optimization.problem import Problem
@@ -67,7 +67,6 @@ def main(argv):
     logging.info("Objective values: %s", optimizer.objective_values)
 
     # Plot the Pareto front.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(
         optimizer.objective_values[:, 0],

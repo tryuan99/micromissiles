@@ -2,10 +2,10 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from matplotlib import animation, artist
 from simulation.swarm.proto.plotting_config_pb2 import Color, LineStyle, Marker
 
+import utils.visualization.mpl_config
 from simulation.swarm.py.agent import Agent
 
 # Animation interval in fps.
@@ -75,7 +75,6 @@ class Plotter:
         Args:
             animation_file: Animation file.
         """
-        plt.style.use("science")
         fig, ax = plt.subplots(
             figsize=(6, 6),
             subplot_kw={"projection": "3d"},

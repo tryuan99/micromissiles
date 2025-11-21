@@ -4,8 +4,9 @@ lobe width and the sidelobe level.
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import scienceplots
 from absl import app, flags
+
+import utils.visualization.mpl_config
 
 FLAGS = flags.FLAGS
 
@@ -18,7 +19,6 @@ def plot_pareto_optimal_front(df: pd.DataFrame) -> None:
         df: Pareto-optimal front dataframe.
     """
     main_lobe_width_column, sidelobe_level_column = df.columns[:2]
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     df.plot.line(
         main_lobe_width_column,
@@ -28,7 +28,7 @@ def plot_pareto_optimal_front(df: pd.DataFrame) -> None:
         label="Pareto-optimal front",
     )
     # Plot the -3 dB threshold.
-    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
+    ax.axhline(-3, color="red", linestyle="--", label=r"-3 dB threshold")
     ax.set_xlabel("Main lobe width [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()

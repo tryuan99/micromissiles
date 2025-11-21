@@ -3,9 +3,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from utils import constants
 
 FLAGS = flags.FLAGS
@@ -42,7 +42,6 @@ def plot_elevation_radiation_pattern(data: str) -> None:
             np.max(antenna_radiation_pattern_abs_db))
 
         # Plot the magnitude of the spatial samples over elevation.
-        plt.style.use(["science", "grid"])
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.scatter(elevation, normalized_antenna_radiation_pattern_abs_db)
         ax.set_xlabel("Elevation [deg]")

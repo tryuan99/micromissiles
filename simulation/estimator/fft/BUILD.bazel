@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -30,8 +31,8 @@ py_binary(
     deps = [
         ":fft_frequency_estimator",
         "//simulation/estimator:complex_exponential",
+        "//utils/visualization:mpl_config",
         requirement("absl-py"),
-        requirement("SciencePlots"),
         requirement("matplotlib"),
         requirement("numpy"),
     ],

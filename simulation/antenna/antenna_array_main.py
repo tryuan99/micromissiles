@@ -3,9 +3,9 @@
 import google.protobuf
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import AntennaArray
 from simulation.antenna.proto.antenna_array_config_pb2 import \
     AntennaArrayConfig
@@ -20,7 +20,6 @@ def plot_antenna_array_elements(array: AntennaArray) -> None:
         array: Antenna array.
     """
     # Plot the antenna array elements.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -94,7 +93,6 @@ def plot_projected_antenna_array_elements(array: AntennaArray) -> None:
         array: Antenna array.
     """
     # Plot the antenna array elements projected onto the x-z plane.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={

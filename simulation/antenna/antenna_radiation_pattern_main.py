@@ -3,10 +3,10 @@
 import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 from matplotlib import cm
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_radiation_pattern import \
     AntennaRadiationPattern
 from utils import constants
@@ -41,7 +41,6 @@ def plot_radiation_pattern_3d_scatter(
     m.set_array([])
 
     # Plot the radiation pattern.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -102,7 +101,6 @@ def plot_radiation_pattern_3d(
     m.set_array([])
 
     # Plot the radiation pattern.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -138,7 +136,6 @@ def plot_radiation_pattern_2d(
         azimuth=azimuth,
         elevation=0,
     )
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
@@ -153,7 +150,6 @@ def plot_radiation_pattern_2d(
         azimuth=0,
         elevation=elevation,
     )
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},

@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from simulation.swarm.utils.py import constants
 
 FLAGS = flags.FLAGS
@@ -17,7 +17,6 @@ def plot_interceptor_speed_over_time(data: list[str],
         data: Data filenames.
         labels: Plot labels.
     """
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
 
     # Open the controller data files.
@@ -42,7 +41,6 @@ def plot_interceptor_speed_over_distance_to_target(data: list[str],
         data: Data filenames.
         labels: Plot labels.
     """
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 8))
 
     # Open the controller data files.

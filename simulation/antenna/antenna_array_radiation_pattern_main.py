@@ -4,11 +4,11 @@ import google.protobuf
 import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags
 from matplotlib import artist, cm
 from matplotlib.lines import Line2D
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer)
 from simulation.antenna.proto.antenna_array_config_pb2 import \
@@ -65,7 +65,6 @@ def plot_antenna_array_radiation_pattern_3d(
     m.set_array([])
 
     # Plot the radiation pattern of the antenna array.
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "3d"},
@@ -104,7 +103,6 @@ def plot_antenna_array_radiation_pattern_2d(
         azimuth,
         beam_steer.elevation,
     )
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
@@ -125,7 +123,6 @@ def plot_antenna_array_radiation_pattern_2d(
         beam_steer.azimuth,
         elevation,
     )
-    plt.style.use("science")
     fig, ax = plt.subplots(
         figsize=(12, 6),
         subplot_kw={"projection": "polar"},
@@ -228,7 +225,7 @@ def animate_antenna_array_radiation_pattern_3d(
         Args:
             azimuth: Azimuth to plot.
         """
-        return rf"Radiation pattern (azimuth = ${azimuth}$ rad)"
+        return f"Radiation pattern (azimuth = {azimuth:.3f} rad)"
 
     animator.set_title("Radiation pattern", update_title)
     animator.view_init(30, -45, vertical_axis="y")
@@ -305,7 +302,7 @@ def animate_antenna_array_radiation_pattern_3d(
         Args:
             elevation: Elevation to plot.
         """
-        return rf"Radiation pattern (elevation = ${elevation}$ rad)"
+        return f"Radiation pattern (elevation = {elevation:.3f} rad)"
 
     animator.set_title("Radiation pattern", update_title)
     animator.view_init(30, -45, vertical_axis="y")
@@ -390,7 +387,7 @@ def animate_antenna_array_radiation_pattern_2d(
         Args:
             azimuth: Azimuth to plot.
         """
-        return rf"Radiation pattern (azimuth = ${azimuth}$ rad)"
+        return f"Radiation pattern (azimuth = {azimuth:.3f} rad)"
 
     animator.set_title("Radiation pattern", update_title)
     animator.configure_animation(azimuth_sweep, ANIMATION_INTERVAL)
@@ -463,7 +460,7 @@ def animate_antenna_array_radiation_pattern_2d(
         Args:
             elevation: Elevation to plot.
         """
-        return rf"Radiation pattern (elevation = ${elevation}$ rad)"
+        return f"Radiation pattern (elevation = {elevation:.3f} rad)"
 
     animator.set_title("Radiation pattern", update_title)
     animator.configure_animation(elevation_sweep, ANIMATION_INTERVAL)

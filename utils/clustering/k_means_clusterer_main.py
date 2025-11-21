@@ -4,9 +4,9 @@ points.
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from utils.clustering.cluster import Point
 from utils.clustering.k_means_clusterer import KMeansClusterer
 
@@ -65,7 +65,6 @@ def run_k_means_clustering(num_points: int, num_clusters: int) -> None:
     )
 
     # Plot the clusters and the points.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     for cluster_idx, cluster in enumerate(clusterer.clusters):
         for point in cluster.points:

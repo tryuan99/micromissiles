@@ -8,15 +8,16 @@ following CSV files:
 - https://drive.google.com/file/d/13SbRva6yr3YIKUitowfXM6CCY_PapzRh/view
 """
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import scienceplots
 import scipy.interpolate
 from absl import logging
 
+import utils.visualization.mpl_config
 from utils.visualization.color_maps import COLOR_MAPS, COLOR_MAPS_RGB
 
 
@@ -69,9 +70,6 @@ class TrajectoriesViewer:
             > (self.df[self.submunition_dispense_time_column] +
                self.df[self.submunition_light_time_column]))
 
-        # Set the Matplotlib style.
-        plt.style.use(["science", "grid"])
-
     def plot_all_trajectories(self) -> None:
         """Plots all trajectories."""
         fig, ax = plt.subplots(
@@ -117,7 +115,7 @@ class TrajectoriesViewer:
         ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
         ax.set_title(f"Interceptor trajectories with submunition dispense time "
-                     rf"$t={submunition_dispense_time}$")
+                     rf"$t$ = {submunition_dispense_time}")
         plt.colorbar(scatter)
         plt.show()
 
@@ -141,7 +139,7 @@ class TrajectoriesViewer:
         )
         ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
-        ax.set_title(rf"Reachability at time $t={time}$")
+        ax.set_title(rf"Reachability at time t = {time}")
         plt.colorbar(scatter)
         plt.show()
 
@@ -159,7 +157,7 @@ class TrajectoriesViewer:
                 self.time_column,
             ],
             color_continuous_scale=COLOR_MAPS_RGB["parula"],
-            title=f"Reachability at time t={time}",
+            title=f"Reachability at time t = {time}",
             labels={
                 self.px_column: "Range [m]",
                 self.py_column: "Altitude [m]",
@@ -170,7 +168,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
             legend_orientation="h",
         )
         fig.show()
@@ -265,7 +263,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
             legend_orientation="h",
         )
         fig.show()
@@ -302,7 +300,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
             legend_orientation="h",
         )
         fig.show()
@@ -376,7 +374,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
             legend_orientation="h",
         )
         fig.show()
@@ -478,7 +476,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
             legend_orientation="h",
         )
         fig.show()
@@ -555,7 +553,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
         )
         fig.show()
 
@@ -590,7 +588,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
         )
         fig.show()
 
@@ -637,7 +635,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
         )
         fig.show()
 
@@ -672,7 +670,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
         )
         fig.show()
 
@@ -724,7 +722,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
             legend_orientation="h",
         )
         fig.show()
@@ -792,7 +790,7 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
         )
         fig.show()
 
@@ -827,6 +825,6 @@ class TrajectoriesViewer:
             autosize=False,
             width=1200,
             height=800,
-            font_family="Helvetica",
+            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
         )
         fig.show()

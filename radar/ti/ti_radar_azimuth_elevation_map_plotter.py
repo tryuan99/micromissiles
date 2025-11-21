@@ -7,9 +7,9 @@ from threading import Lock
 
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from matplotlib import animation, artist
 
+import utils.visualization.mpl_config
 from radar.ti.ti_radar_config import TiRadarConfig
 from radar.ti.ti_radar_subframe_data import (TiRadarSubframeData,
                                              TiRadarSubframeDataDetectedObject,
@@ -126,7 +126,6 @@ class TiRadarAzimuthElevationMapPlotter2D(TiRadarAzimuthElevationMapPlotter):
 
         This function blocks and should be called from the main thread.
         """
-        plt.style.use("science")
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.set_xlabel("Azimuth bin")
         ax.set_ylabel("Elevation bin")
@@ -224,7 +223,6 @@ class TiRadarAzimuthElevationMapPlotter3D(TiRadarAzimuthElevationMapPlotter):
 
         This function blocks and should be called from the main thread.
         """
-        plt.style.use("science")
         fig, ax = plt.subplots(
             figsize=(12, 8),
             subplot_kw={"projection": "3d"},

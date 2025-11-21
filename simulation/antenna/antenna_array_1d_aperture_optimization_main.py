@@ -4,9 +4,9 @@ import google.protobuf
 import matplotlib.pyplot as plt
 import numpy as np
 import pymoo.operators.sampling.lhs
-import scienceplots
 from absl import app, flags, logging
 
+import utils.visualization.mpl_config
 from simulation.antenna.antenna_array_optimization import \
     AntennaArray1DApertureOptimizationProblem
 from simulation.antenna.proto.antenna_array_config_pb2 import \
@@ -77,14 +77,13 @@ def optimize_antenna_array_within_aperture(
         )
 
     # Plot the Pareto front.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(
         optimizer.objective_values[:, 0],
         optimizer.objective_values[:, 1],
     )
     # Plot the -3 dB threshold.
-    ax.axhline(-3, color="red", linestyle="--", label=r"$-3$ dB threshold")
+    ax.axhline(-3, color="red", linestyle="--", label=r"-3 dB threshold")
     ax.set_xlabel("Main lobe width [rad]")
     ax.set_ylabel("Sidelobe level [dB]")
     ax.legend()

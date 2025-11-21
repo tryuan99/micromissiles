@@ -5,8 +5,9 @@ import jmetal.util
 import jmetal.util.solution
 import matplotlib.pyplot as plt
 import numpy as np
-import scienceplots
 from absl import app, logging
+
+import utils.visualization.mpl_config
 
 
 def main(argv):
@@ -49,7 +50,6 @@ def main(argv):
     variable_values = np.array([solution.variables for solution in solutions])
 
     # Plot the Pareto front.
-    plt.style.use(["science", "grid"])
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(
         objective_values[:, 0],
