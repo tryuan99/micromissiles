@@ -59,76 +59,58 @@ def run_size_and_radius_constrained_clustering(
     """
     # Cluster the points.
     points = _generate_random_points(num_points)
-    clusterer = CLUSTERERS[clusterer_type](points, max_size, max_radius)
-    clusterer.cluster()
-
-    logging.info("Number of clusters: %d", len(clusterer.clusters))
-
-    # Log the mean and maximum radii of the clusters.
-    cluster_radii = [cluster.radius() for cluster in clusterer.clusters]
-    logging.info(
-        "Cluster mean radius: %f, max radius: %f",
-        np.mean(cluster_radii),
-        np.max(cluster_radii),
-    )
-
-    # Log the mean and maximum sizes of the clusters.
-    cluster_sizes = [cluster.size() for cluster in clusterer.clusters]
-    logging.info(
-        "Cluster mean size: %f, max size: %f",
-        np.mean(cluster_sizes),
-        np.max(cluster_sizes),
-    )
 
     # Plot the clusters and the points.
-    fig, ax = plt.subplots(figsize=(12, 6))
-    for cluster_idx, cluster in enumerate(clusterer.clusters):
-        point_coordinates = np.array(
-            [point.coordinates() for point in cluster.points])
-        ax.scatter(
-            point_coordinates[:, 0],
-            point_coordinates[:, 1],
-            c=f"C{cluster_idx}",
-            alpha=0.2,
-        )
-        ax.scatter(
-            cluster.x,
-            cluster.y,
-            s=100,
-            c=f"C{cluster_idx}",
-            marker="*",
-            alpha=0.75,
-        )
+    fig, ax = plt.subplots(figsize=(6, 3))
+    point_coordinates = np.array([point.coordinates() for point in points])
+    ax.scatter(
+        point_coordinates[:, 0],
+        point_coordinates[:, 1],
+        s=20,
+        alpha=0.2,
+        linewidths=0,
+    )
     ax.set_aspect("equal", adjustable="box")
     plt.show()
 
-    # Plot a histogram of the cluster radii.
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.hist(
-        cluster_radii,
-        bins=np.arange(
-            0,
-            np.max(cluster_radii) + 0.01,
-            0.005,
-        ),
-    )
-    ax.axvline(
-        max_radius,
-        color="red",
-        linestyle="--",
-        linewidth=2,
-    )
-    plt.show()
+    fig, ax = plt.subplots(figsize=(5, 4))
+    for clusterer_index, clusterer_type in enumerate(CLUSTERERS):
+        clusterer = CLUSTERERS[clusterer_type](points, max_size, max_radius)
+        clusterer.cluster()
 
-    # Plot a histogram of the cluster sizes.
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.hist(
-        cluster_sizes,
-        bins=np.arange(
-            np.min(cluster_sizes) - 0.5,
-            np.max(cluster_sizes) + 1,
-        ),
-    )
+        logging.info("Number of clusters: %d", len(clusterer.clusters))
+
+        # Log the mean and maximum radii of the clusters.
+        cluster_radii = [cluster.radius() for cluster in clusterer.clusters]
+        logging.info(
+            "Cluster mean radius: %f, max radius: %f",
+            np.mean(cluster_radii),
+            np.max(cluster_radii),
+        )
+
+        # Log the mean and maximum sizes of the clusters.
+        cluster_sizes = [cluster.size() for cluster in clusterer.clusters]
+        logging.info(
+            "Cluster mean size: %f, max size: %f",
+            np.mean(cluster_sizes),
+            np.max(cluster_sizes),
+        )
+
+        # Plot a histogram of the cluster sizes.
+        ax.hist(
+            cluster_sizes,
+            bins=np.arange(
+                np.min(cluster_sizes) - 0.5,
+                np.max(cluster_sizes) + 1,
+            ),
+            color=f"C{clusterer_index}",
+            alpha=0.4,
+        )
+    ax.legend([
+        r"Constrained $k$-means",
+        "Agglomerative",
+        "Min-cost flow",
+    ])
     ax.axvline(
         max_size,
         color="red",
@@ -141,6 +123,7 @@ def run_size_and_radius_constrained_clustering(
 def main(argv):
     assert len(argv) == 1, argv
 
+    np.random.seed(5)
     run_size_and_radius_constrained_clustering(
         FLAGS.clusterer,
         FLAGS.num_points,

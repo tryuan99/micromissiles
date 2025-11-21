@@ -129,49 +129,17 @@ class TrajectoriesViewer:
         df_at_time = self.df[(self.df[self.time_column] == time)]
 
         # Plot the trajectory points in Matplotlib.
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(6, 4))
         scatter = ax.scatter(
             df_at_time[self.px_column],
             df_at_time[self.py_column],
-            s=3,
+            s=5,
             c=df_at_time[self.speed_column],
             cmap=COLOR_MAPS["parula"],
+            linewidths=0,
         )
-        ax.set_xlabel("Range [m]")
-        ax.set_ylabel("Altitude [m]")
-        ax.set_title(rf"Reachability at time t = {time}")
         plt.colorbar(scatter)
         plt.show()
-
-        # Plot the trajectory points in Plotly.
-        fig = px.scatter(
-            df_at_time,
-            x=self.px_column,
-            y=self.py_column,
-            color=self.speed_column,
-            symbol=self.submunition_dispensed_column,
-            hover_data=[
-                self.carrier_launch_angle_column,
-                self.submunition_dispense_time_column,
-                self.submunition_light_time_column,
-                self.time_column,
-            ],
-            color_continuous_scale=COLOR_MAPS_RGB["parula"],
-            title=f"Reachability at time t = {time}",
-            labels={
-                self.px_column: "Range [m]",
-                self.py_column: "Altitude [m]",
-            },
-        )
-        fig.update_traces(marker={"size": 5})
-        fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-            legend_orientation="h",
-        )
-        fig.show()
 
     def plot_reachability_around_position_before_time_color_speed(
         self,
@@ -431,6 +399,8 @@ class TrajectoriesViewer:
         # Plot the trajectory points with the maximum speed in Matplotlib.
         # The color of the points denotes the time.
         df_max_speed = self.df.iloc[np.unique(max_speed_indices)]
+        df_max_speed = df_max_speed[~((df_max_speed[self.px_column] < 2000) &
+                                      (df_max_speed[self.speed_column] < 1000))]
         fig, ax = plt.subplots(
             figsize=(12, 6),
             subplot_kw={"projection": "3d"},
@@ -448,38 +418,6 @@ class TrajectoriesViewer:
         ax.set_title("Trajectory points with maximum speed")
         plt.colorbar(scatter, label="Time [s]")
         plt.show()
-
-        # Plot the trajectory points with the maximum speed in Plotly.
-        # The color of the points denotes the time.
-        fig = px.scatter_3d(
-            df_max_speed,
-            x=self.px_column,
-            y=self.py_column,
-            z=self.speed_column,
-            color=self.time_column,
-            symbol=self.submunition_dispensed_column,
-            hover_data=[
-                self.carrier_launch_angle_column,
-                self.submunition_dispense_time_column,
-                self.submunition_light_time_column,
-            ],
-            color_continuous_scale=COLOR_MAPS_RGB["parula"][::-1],
-            title="Trajectory points with maximum speed",
-            labels={
-                self.px_column: "Range [m]",
-                self.py_column: "Altitude [m]",
-                self.speed_column: "Maximum speed [m/s]",
-            },
-        )
-        fig.update_traces(marker={"size": 5})
-        fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-            legend_orientation="h",
-        )
-        fig.show()
 
         # Interpolate the trajectory points with the maximum speed.
         x = np.arange(
@@ -511,7 +449,7 @@ class TrajectoriesViewer:
             max_speed_carrier_launch_angle_interpolator(X, Y))
 
         # Plot the interpolated maximum speed in Matplotlib.
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(4, 3))
         image = ax.imshow(
             max_speed_interpolated,
             cmap=COLOR_MAPS["parula"],
@@ -529,71 +467,12 @@ class TrajectoriesViewer:
             max_speed_interpolated,
             colors="black",
         )
-        ax.set_xlabel("Range [m]")
-        ax.set_ylabel("Altitude [m]")
-        ax.set_title("Maximum speed")
-        plt.colorbar(image, label="Maximum speed [m/s]")
+        ax.minorticks_on()
+        plt.colorbar(image)
         plt.show()
-
-        # Plot the interpolated maximum speed in Plotly 2D.
-        fig = px.imshow(
-            max_speed_interpolated,
-            x=x,
-            y=y,
-            color_continuous_scale=COLOR_MAPS_RGB["parula"],
-            origin="lower",
-            title="Maximum speed",
-            labels={
-                "x": "Range [m]",
-                "y": "Altitude [m]",
-                "color": "Maximum speed [m/s]",
-            },
-        )
-        fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-        )
-        fig.show()
-
-        # Plot the interpolated maximum speed in Plotly 3D.
-        fig = go.Figure(data=[
-            go.Surface(
-                x=x,
-                y=y,
-                z=max_speed_interpolated,
-                colorscale=COLOR_MAPS_RGB["parula"],
-                colorbar_title_text="Maximum speed [m/s]",
-                contours={
-                    "z": {
-                        "show": True,
-                    },
-                },
-            )
-        ])
-        fig.update_layout(
-            title={"text": "Maximum speed"},
-            scene={
-                "xaxis": {
-                    "title": "Range [m]",
-                },
-                "yaxis": {
-                    "title": "Altitude [m]",
-                },
-                "zaxis": {
-                    "title": "Maximum speed [m/s]",
-                },
-            },
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-        )
-        fig.show()
 
         # Plot the interpolated launch angle in Matplotlib.
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(4, 3))
         image = ax.imshow(
             max_speed_carrier_launch_angle_interpolated,
             cmap=COLOR_MAPS["parula"],
@@ -611,68 +490,9 @@ class TrajectoriesViewer:
             max_speed_carrier_launch_angle_interpolated,
             colors="black",
         )
-        ax.set_xlabel("Range [m]")
-        ax.set_ylabel("Altitude [m]")
-        ax.set_title("Launch angle for maximum speed")
-        plt.colorbar(image, label="Carrier launch angle [deg]")
+        ax.minorticks_on()
+        plt.colorbar(image)
         plt.show()
-
-        # Plot the interpolated launch angle in Plotly 2D.
-        fig = px.imshow(
-            max_speed_carrier_launch_angle_interpolated,
-            x=x,
-            y=y,
-            color_continuous_scale=COLOR_MAPS_RGB["parula"],
-            origin="lower",
-            title="Launch angle for maximum speed",
-            labels={
-                "x": "Range [m]",
-                "y": "Altitude [m]",
-                "color": "Carrier launch angle [deg]",
-            },
-        )
-        fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-        )
-        fig.show()
-
-        # Plot the interpolated launch angle in Plotly 3D.
-        fig = go.Figure(data=[
-            go.Surface(
-                x=x,
-                y=y,
-                z=max_speed_carrier_launch_angle_interpolated,
-                colorscale=COLOR_MAPS_RGB["parula"],
-                colorbar_title_text="Carrier launch angle [deg]",
-                contours={
-                    "z": {
-                        "show": True,
-                    },
-                },
-            )
-        ])
-        fig.update_layout(
-            title={"text": "Launch angle for maximum speed"},
-            scene={
-                "xaxis": {
-                    "title": "Range [m]",
-                },
-                "yaxis": {
-                    "title": "Altitude [m]",
-                },
-                "zaxis": {
-                    "title": "Carrier launch angle [deg]",
-                },
-            },
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-        )
-        fig.show()
 
         # Plot the trajectory points with the minimum time in Matplotlib.
         # The color of the points denotes the speed.
@@ -694,38 +514,6 @@ class TrajectoriesViewer:
         ax.set_title("Trajectory points with minimum time")
         plt.colorbar(scatter, label="Speed [m/s]")
         plt.show()
-
-        # Plot the trajectory points with the minimum time in Plotly.
-        # The color of the points denotes the speed.
-        fig = px.scatter_3d(
-            df_min_time,
-            x=self.px_column,
-            y=self.py_column,
-            z=self.time_column,
-            color=self.speed_column,
-            symbol=self.submunition_dispensed_column,
-            hover_data=[
-                self.carrier_launch_angle_column,
-                self.submunition_dispense_time_column,
-                self.submunition_light_time_column,
-            ],
-            color_continuous_scale=COLOR_MAPS_RGB["parula"],
-            title="Trajectory points with minimum time",
-            labels={
-                self.px_column: "Range [m]",
-                self.py_column: "Altitude [m]",
-                self.time_column: "Minimum time [s]",
-            },
-        )
-        fig.update_traces(marker={"size": 5})
-        fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-            legend_orientation="h",
-        )
-        fig.show()
 
         # Interpolate the trajectory points with the minimum time.
         x = np.arange(
@@ -768,63 +556,6 @@ class TrajectoriesViewer:
         )
         ax.set_xlabel("Range [m]")
         ax.set_ylabel("Altitude [m]")
-        ax.set_title("Minimum time")
+        ax.minorticks_on()
         plt.colorbar(image, label="Minimum time [s]")
         plt.show()
-
-        # Plot the interpolated maximum speed in Plotly 2D.
-        fig = px.imshow(
-            min_time_interpolated,
-            x=x,
-            y=y,
-            color_continuous_scale=COLOR_MAPS_RGB["parula"][::-1],
-            origin="lower",
-            title="Minimum time",
-            labels={
-                "x": "Range [m]",
-                "y": "Altitude [m]",
-                "color": "Minimum time [s]",
-            },
-        )
-        fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-        )
-        fig.show()
-
-        # Plot the interpolated minimum time in Plotly 3D.
-        fig = go.Figure(data=[
-            go.Surface(
-                x=x,
-                y=y,
-                z=min_time_interpolated,
-                colorscale=COLOR_MAPS_RGB["parula"][::-1],
-                colorbar_title_text="Minimum time [s]",
-                contours={
-                    "z": {
-                        "show": True,
-                    },
-                },
-            )
-        ])
-        fig.update_layout(
-            title={"text": "Minimum time"},
-            scene={
-                "xaxis": {
-                    "title": "Range [m]",
-                },
-                "yaxis": {
-                    "title": "Altitude [m]",
-                },
-                "zaxis": {
-                    "title": "Minimum time [s]",
-                },
-            },
-            autosize=False,
-            width=1200,
-            height=800,
-            font_family=", ".join(matplotlib.rcParams["font.sans-serif"]),
-        )
-        fig.show()

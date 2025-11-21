@@ -13,7 +13,7 @@ def main(argv):
     # trajectories_viewer.plot_all_trajectories()
     # trajectories_viewer.plot_trajectories_with_dispense_time(
     #     FLAGS.submunition_dispense_time)
-    # trajectories_viewer.plot_reachability_at_time(FLAGS.time)
+    trajectories_viewer.plot_reachability_at_time(FLAGS.time)
     # trajectories_viewer.plot_reachability_around_position_before_time_color_speed(
     #     FLAGS.x_start,
     #     FLAGS.x_end,
@@ -41,10 +41,13 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string("csv_file", None, "Trajectories CSV file.")
+    flags.DEFINE_string(
+        "csv_file",
+        "~/Documents/micromissiles-assets/hydra70_micromissile_characterization_30s.csv",
+        "Trajectories CSV file.")
     flags.DEFINE_float("submunition_dispense_time", 6,
                        "Submunition dispense time in seconds.")
-    flags.DEFINE_float("time", 8, "Time in seconds.")
+    flags.DEFINE_float("time", 10, "Time in seconds.")
     flags.DEFINE_float("x_start", 0, "x-position range start in meters.")
     flags.DEFINE_float("x_end", 10000, "x-position range end in meters.")
     flags.DEFINE_float("y_start", 0, "y-position range start in meters.")
@@ -55,6 +58,5 @@ if __name__ == "__main__":
                        "x-position interpolation step in meters.")
     flags.DEFINE_float("y_interpolation_step", 100,
                        "y-position interpolation step in meters.")
-    flags.mark_flag_as_required("csv_file")
 
     app.run(main)
