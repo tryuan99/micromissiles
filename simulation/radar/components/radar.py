@@ -385,8 +385,8 @@ class Radar:
         return GaussianNoise(shape, self.get_thermal_noise_amplitude())
 
     def get_thermal_noise_amplitude(self) -> float:
-        """Returns the thermal noise amplitude."""
+        """Returns the thermal noise amplitude before the FFT."""
         return constants.power2mag(
             scipy.constants.k * scipy.constants.convert_temperature(
-                self.temperature, "Celsius", "Kelvin") * self.fs / self.N_r *
+                self.temperature, "Celsius", "Kelvin") * self.fs *
             self.noise_factor)
