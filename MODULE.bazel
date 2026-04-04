@@ -4,11 +4,11 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20250814.1",
+    version = "20260107.1",
 )
 bazel_dep(
     name = "eigen",
-    version = "5.0.0",
+    version = "5.0.1",
 )
 bazel_dep(
     name = "googletest",
@@ -24,11 +24,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "protobuf",
-    version = "32.1",
+    version = "34.1",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.2.9",
+    version = "0.2.17",
 )
 bazel_dep(
     name = "rules_foreign_cc",
@@ -36,32 +36,20 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_pkg",
-    version = "1.1.0",
+    version = "1.2.0",
 )
 bazel_dep(
     name = "rules_python",
-    version = "1.6.3",
-)
-
-# Pico SDK toolchains.
-register_toolchains(
-    "@pico-sdk//bazel/toolchain:linux-x86_64-rp2040",
-    "@pico-sdk//bazel/toolchain:linux-x86_64-rp2350",
-    "@pico-sdk//bazel/toolchain:win-x86_64-rp2040",
-    "@pico-sdk//bazel/toolchain:win-x86_64-rp2350",
-    "@pico-sdk//bazel/toolchain:mac-x86_64-rp2040",
-    "@pico-sdk//bazel/toolchain:mac-x86_64-rp2350",
-    "@pico-sdk//bazel/toolchain:mac-aarch64-rp2040",
-    "@pico-sdk//bazel/toolchain:mac-aarch64-rp2350",
+    version = "1.9.0",
 )
 
 # Boost library.
-BOOST_VERSION = "1.89.0"
+BOOST_VERSION = "1.90.0"
 
 http_archive(
     name = "boost",
     build_file = "//third_party/boost:boost.BUILD",
-    sha256 = "9de758db755e8330a01d995b0a24d09798048400ac25c03fc5ea9be364b13c93",
+    sha256 = "5e93d582aff26868d581a52ae78c7d8edf3f3064742c6e77901a1f18a437eea9",
     strip_prefix = "boost_{}".format(BOOST_VERSION.replace(".", "_")),
     url = "https://archives.boost.io/release/{}/source/boost_{}.tar.gz".format(
         BOOST_VERSION,
@@ -81,34 +69,34 @@ http_archive(
 )
 
 # NLopt library.
-NLOPT_VERSION = "2.10.0"
+NLOPT_VERSION = "2.10.1"
 
 http_archive(
     name = "nlopt",
     build_file = "//third_party/nlopt:nlopt.BUILD",
-    sha256 = "506f83a9e778ad4f204446e99509cb2bdf5539de8beccc260a014bd560237be1",
+    sha256 = "30d13ce16da119db3e987784f7864e35a562ec62c186352fae55cd003e6c58ff",
     strip_prefix = "nlopt-{}".format(NLOPT_VERSION),
     url = "https://github.com/stevengj/nlopt/archive/refs/tags/v{}.tar.gz".format(NLOPT_VERSION),
 )
 
 # OpenCV library.
-OPENCV_VERSION = "4.12.0"
+OPENCV_VERSION = "4.13.0"
 
 http_archive(
     name = "opencv",
     build_file = "//third_party/opencv:opencv.BUILD",
-    sha256 = "44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d",
+    sha256 = "1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d",
     strip_prefix = "opencv-{}".format(OPENCV_VERSION),
     url = "https://github.com/opencv/opencv/archive/refs/tags/{}.tar.gz".format(OPENCV_VERSION),
 )
 
 # OpenCV modules.
-OPENCV_CONTRIB_VERSION = "4.12.0"
+OPENCV_CONTRIB_VERSION = "4.13.0"
 
 http_archive(
     name = "opencv_contrib",
     build_file = "//third_party/opencv_contrib:opencv_contrib.BUILD",
-    sha256 = "4197722b4c5ed42b476d42e29beb29a52b6b25c34ec7b4d589c3ae5145fee98e",
+    sha256 = "1e0077a4fd2960a7d2f4c9e49d6ba7bb891cac2d1be36d7e8e47aa97a9d1039b",
     strip_prefix = "opencv_contrib-{}".format(OPENCV_CONTRIB_VERSION),
     url = "https://github.com/opencv/opencv_contrib/archive/refs/tags/{}.tar.gz".format(OPENCV_CONTRIB_VERSION),
 )
@@ -124,18 +112,30 @@ http_archive(
     url = "https://github.com/osqp/osqp/archive/refs/tags/v{}.tar.gz".format(OSQP_VERSION),
 )
 
+# Configure Pico SDK toolchains.
+register_toolchains(
+    "@pico-sdk//bazel/toolchain:linux-x86_64-rp2040",
+    "@pico-sdk//bazel/toolchain:linux-x86_64-rp2350",
+    "@pico-sdk//bazel/toolchain:win-x86_64-rp2040",
+    "@pico-sdk//bazel/toolchain:win-x86_64-rp2350",
+    "@pico-sdk//bazel/toolchain:mac-x86_64-rp2040",
+    "@pico-sdk//bazel/toolchain:mac-x86_64-rp2350",
+    "@pico-sdk//bazel/toolchain:mac-aarch64-rp2040",
+    "@pico-sdk//bazel/toolchain:mac-aarch64-rp2350",
+)
+
 # Configure the Python toolchain.
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
     is_default = True,
-    python_version = "3.12",
+    python_version = "3.13",
 )
 
 # Load pip dependencies.
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "pypi",
-    python_version = "3.12",
+    python_version = "3.13",
     requirements_lock = "//deps:requirements.txt",
 )
 use_repo(pip, "pypi")

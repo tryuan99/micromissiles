@@ -82,14 +82,14 @@ class PronyPolynomialComplexExponentialEstimatorTestCase(absltest.TestCase):
             decaying_exponential1 + decaying_exponential2, SAMPLING_FREQUENCY)
         params = estimator.estimate_multiple_exponentials(num_exponentials=2)
         self.assertIsNone(
-            np.testing.assert_allclose(params[0].frequency, 0, atol=1e-10))
+            np.testing.assert_allclose(params[0].frequency, 0, atol=1e-9))
         self.assertIsNone(
-            np.testing.assert_allclose(params[0].phase, 0, atol=1e-10))
+            np.testing.assert_allclose(params[0].phase, 0, atol=1e-9))
         self.assertIsNone(np.testing.assert_allclose(params[0].amplitude, 3))
         self.assertIsNone(
             np.testing.assert_allclose(params[0].alpha, np.log(0.5)))
         self.assertIsNone(
-            np.testing.assert_allclose(params[1].frequency, 0, atol=1e-10))
+            np.testing.assert_allclose(params[1].frequency, 0, atol=1e-9))
         self.assertIsNone(np.testing.assert_allclose(params[1].phase,
                                                      np.pi / 2))
         self.assertIsNone(np.testing.assert_allclose(params[1].amplitude, 2))

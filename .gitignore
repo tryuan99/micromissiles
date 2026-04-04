@@ -5,4 +5,7 @@
 /bazel-*
 
 # VS Code.
-.vscode
+.vscode/
+
+# Python.
+__pycache__/

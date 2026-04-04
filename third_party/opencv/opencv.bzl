@@ -1,6 +1,6 @@
 """This module defines the OpenCV modules and libraries."""
 
-OPENCV_VERSION = "4.12.0"
+OPENCV_VERSION = "4.13.0"
 OPENCV_MODULES = [
     "core",
     "highgui",
