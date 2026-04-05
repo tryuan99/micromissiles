@@ -4,7 +4,7 @@
 # BOOTSEL mode.
 #
 # Usage:
-#   bazel-bin/firmware/pico/load_uf2 \
+#   bazel-bin/pico/load_uf2 \
 #       /path/to/uf2 \
 #       /path/to/pico/device
 #
