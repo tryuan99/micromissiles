@@ -9,6 +9,9 @@ filegroup(
 
 cmake(
     name = "libmpc",
+    cache_entries = {
+        "EIGEN3_INCLUDE_DIRS": "$$EXT_BUILD_ROOT/external/eigen+",
+    },
     lib_source = "@libmpc//:all",
     out_headers_only = True,
     tags = ["requires-network"],

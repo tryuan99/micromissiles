@@ -71,6 +71,8 @@ LIBMPC_VERSION = "0.7.1"
 http_archive(
     name = "libmpc",
     build_file = "//third_party/libmpc:libmpc.BUILD",
+    patch_args = ["-p1"],
+    patches = ["//third_party/libmpc:libmpc.patch"],
     sha256 = "587d6b0f97a64c54bb7df634325f1371b0950f04e362c2e6c11decd31a111e5a",
     strip_prefix = "libmpc-{}".format(LIBMPC_VERSION),
     url = "https://github.com/nicolapiccinelli/libmpc/archive/refs/tags/{}.tar.gz".format(LIBMPC_VERSION),
@@ -135,7 +137,7 @@ register_toolchains(
 # Configure the LLVM toolchain.
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(
-    llvm_version = "19.1.7",
+    llvm_version = "21.1.8",
 )
 use_repo(llvm, "llvm_toolchain")
 
