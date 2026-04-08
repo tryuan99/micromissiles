@@ -46,10 +46,6 @@ bazel_dep(
     name = "rules_shell",
     version = "0.7.1",
 )
-bazel_dep(
-    name = "toolchains_llvm",
-    version = "1.7.0",
-)
 
 # Boost library.
 BOOST_VERSION = "1.90.0"
@@ -133,15 +129,6 @@ register_toolchains(
     "@pico-sdk//bazel/toolchain:mac-aarch64-rp2040",
     "@pico-sdk//bazel/toolchain:mac-aarch64-rp2350",
 )
-
-# Configure the LLVM toolchain.
-llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
-llvm.toolchain(
-    llvm_version = "21.1.8",
-)
-use_repo(llvm, "llvm_toolchain")
-
-register_toolchains("@llvm_toolchain//:all")
 
 # Configure the Python toolchain.
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
