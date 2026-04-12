@@ -3,8 +3,9 @@
 #ifndef PICO_X_DORY_DDS_H_
 #define PICO_X_DORY_DDS_H_
 
+#include <stdint.h>
+
 #include "pico/common/spi.h"
-#include "pico/x/dory/config.h"
 
 // DDS mode enumeration.
 typedef enum {
@@ -18,6 +19,33 @@ typedef enum {
 typedef struct {
   // SPI I/O configuration.
   spi_io_config_t spi_io_config;
+
+  // DDS reset GPIO.
+  uint8_t gpio_rst;
+
+  // IO update GPIO.
+  uint8_t gpio_io_update;
+
+  // Profile select 0 GPIO.
+  uint8_t gpio_ps0;
+
+  // Profile select 1 GPIO.
+  uint8_t gpio_ps1;
+
+  // Profile select 2 GPIO.
+  uint8_t gpio_ps2;
+
+  // Ramp control GPIO.
+  uint8_t gpio_drctl;
+
+  // Ramp hold GPIO.
+  uint8_t gpio_drhold;
+
+  // Ramp over GPIO.
+  uint8_t gpio_drover;
+
+  // Output shift keying GPIO.
+  uint8_t gpio_osk;
 
   // DDS mode.
   dds_mode_e mode;

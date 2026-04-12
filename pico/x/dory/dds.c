@@ -3,9 +3,12 @@
 #include "hardware/spi.h"
 #include "pico/common/spi.h"
 
+// DDS SPI baudrate.
+#define DDS_SPI_BAUDRATE 1000000
+
 // DDS SPI communication configuration.
 static const spi_comms_config_t g_dds_spi_comms_config = (spi_comms_config_t){
-    .baudrate = 1000000,
+    .baudrate = DDS_SPI_BAUDRATE,
     .data_bits = 8,
     .cpol = SPI_CPOL_1,
     .cpha = SPI_CPHA_1,

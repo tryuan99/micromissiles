@@ -8,7 +8,6 @@
 #include <stdint.h>
 
 #include "pico/common/spi.h"
-#include "pico/x/dory/config.h"
 
 // VCO PFD frequency enumeration.
 typedef enum {
