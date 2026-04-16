@@ -3,6 +3,11 @@
 #ifndef PICO_X_DORY_CONFIG_H_
 #define PICO_X_DORY_CONFIG_H_
 
+#include "pico/x/dory/dds.h"
+#include "pico/x/dory/mixer.h"
+#include "pico/x/dory/vco.h"
+#include "pico/x/dory/vga.h"
+
 // GPIO enumeration.
 enum {
   GPIO_INVALID = 0,
@@ -34,5 +39,17 @@ enum {
   GPIO_VGA_SERIN = 32,
   GPIO_VGA_SEROUT = 34,
 };
+
+// VCO configuration.
+extern vco_config_t g_vco_config;
+
+// DDS configuration.
+extern dds_config_t g_dds_config;
+
+// Mixer configuration.
+extern mixer_config_t g_mixer_config;
+
+// VGA configuration.
+extern vco_config_t g_vga_config;
 
 #endif  // PICO_X_DORY_CONFIG_H_

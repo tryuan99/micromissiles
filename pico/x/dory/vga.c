@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "hardware/spi.h"
 #include "pico/common/spi.h"
 
 // VGA SPI baudrate.

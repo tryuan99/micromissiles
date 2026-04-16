@@ -6,9 +6,14 @@
 #include <string.h>
 
 #include "hardware/gpio.h"
-#include "hardware/spi.h"
 #include "pico/common/spi.h"
 #include "pico/time.h"
+
+// DDS system clock frequency.
+#define DDS_SYSCLK_FREQUENCY 3500000000
+
+// DDS clock frequency.
+#define DDS_CLK_FREQUENCY (DDS_SYSCLK_FREQUENCY / 24)
 
 // DDS SPI baudrate.
 #define DDS_SPI_BAUDRATE 1000000
@@ -111,9 +116,14 @@ static inline void dds_spi_read_register(void) {
               DDS_NUM_BYTES_PER_SPI_PACKET);
 }
 
-// Convert from the frequency to the frequency tuning word.
-static uint32_t dds_frequency_to_ftw(const uint64_t frequency) {
-  return (uint32_t)((frequency << 32) / DDS_SYSCLK_FREQUENCY);
+// Convert the frequency to the register value.
+static uint32_t dds_frequency_to_register(const double frequency) {
+  return (uint32_t)(frequency / DDS_SYSCLK_FREQUENCY * (1LL << 32));
+}
+
+// Convert the time to the register value.
+static uint16_t dds_time_to_register(const double step_time) {
+  return (uint16_t)(step_time * DDS_SYSCLK_FREQUENCY / 24);
 }
 
 // Get the register offset for the given profile.
@@ -190,7 +200,7 @@ void dds_set_profile(const uint8_t profile) {
   gpio_put(g_dds_config.gpio_ps2, (profile >> 2) & 0x1);
 }
 
-void dds_configure_cw(const uint8_t profile, const dds_cw_profile_t* config) {
+void dds_configure_cw(const uint8_t profile, const dds_cw_config_t* config) {
   dds_set_profile(profile);
 
   // Disable the digital ramp.
@@ -202,7 +212,7 @@ void dds_configure_cw(const uint8_t profile, const dds_cw_profile_t* config) {
 
   const dds_spi_register_e frequency_register =
       dds_register_offset_for_profile(profile);
-  const uint32_t ftw = dds_frequency_to_ftw(config->frequency);
+  const uint32_t ftw = dds_frequency_to_register(config->frequency);
 
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_packet.address = frequency_register;
@@ -236,7 +246,7 @@ void dds_configure_fmcw(const uint8_t profile,
   g_dds_spi_packet.data[2] = 0x09;
   dds_spi_write_register();
 
-  const uint32_t start_ftw = dds_frequency_to_ftw(config->start_frequency);
+  const uint32_t start_ftw = dds_frequency_to_register(config->start_frequency);
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_packet.address = DDS_REGISTER_RAMP_LOWER_LIMIT;
   g_dds_spi_packet.data[0] = (start_ftw >> 24) & 0xFF;
@@ -245,7 +255,7 @@ void dds_configure_fmcw(const uint8_t profile,
   g_dds_spi_packet.data[3] = start_ftw & 0xFF;
   dds_spi_write_register();
 
-  const uint32_t end_ftw = dds_frequency_to_ftw(config->end_frequency);
+  const uint32_t end_ftw = dds_frequency_to_register(config->end_frequency);
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_packet.address = DDS_REGISTER_RAMP_UPPER_LIMIT;
   g_dds_spi_packet.data[0] = (end_ftw >> 24) & 0xFF;
@@ -254,20 +264,23 @@ void dds_configure_fmcw(const uint8_t profile,
   g_dds_spi_packet.data[3] = end_ftw & 0xFF;
   dds_spi_write_register();
 
+  const uint32_t frequency_step =
+      dds_frequency_to_register(config->frequency_step);
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_packet.address = DDS_REGISTER_RAMP_RISING_STEP_SIZE;
-  g_dds_spi_packet.data[0] = (config->step_size >> 24) & 0xFF;
-  g_dds_spi_packet.data[1] = (config->step_size >> 16) & 0xFF;
-  g_dds_spi_packet.data[2] = (config->step_size >> 8) & 0xFF;
-  g_dds_spi_packet.data[3] = config->step_size & 0xFF;
+  g_dds_spi_packet.data[0] = (frequency_step >> 24) & 0xFF;
+  g_dds_spi_packet.data[1] = (frequency_step >> 16) & 0xFF;
+  g_dds_spi_packet.data[2] = (frequency_step >> 8) & 0xFF;
+  g_dds_spi_packet.data[3] = frequency_step & 0xFF;
   dds_spi_write_register();
 
+  const uint16_t step_time = dds_time_to_register(config->step_time);
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_packet.address = DDS_REGISTER_RAMP_RATE;
-  g_dds_spi_packet.data[0] = (config->step_rate >> 24) & 0xFF;
-  g_dds_spi_packet.data[1] = (config->step_rate >> 16) & 0xFF;
-  g_dds_spi_packet.data[2] = (config->step_rate >> 8) & 0xFF;
-  g_dds_spi_packet.data[3] = config->step_rate & 0xFF;
+  g_dds_spi_packet.data[0] = (step_time >> 8) & 0xFF;
+  g_dds_spi_packet.data[1] = step_time & 0xFF;
+  g_dds_spi_packet.data[2] = (step_time >> 8) & 0xFF;
+  g_dds_spi_packet.data[3] = step_time & 0xFF;
   dds_spi_write_register();
 
   const dds_spi_register_e phase_amplitude_register =

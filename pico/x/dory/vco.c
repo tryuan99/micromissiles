@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include "hardware/gpio.h"
-#include "hardware/spi.h"
 #include "pico/common/spi.h"
 
 // VCO SPI baudrate.

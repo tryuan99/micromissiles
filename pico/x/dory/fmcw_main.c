@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "pico/stdlib.h"
+#include "pico/time.h"
 #include "pico/x/dory/config.h"
 #include "pico/x/dory/dds.h"
 #include "pico/x/dory/mixer.h"
@@ -15,9 +16,13 @@
 // DDS profile.
 #define DDS_PROFILE 0
 
-// DDS CW configuration for a 9 GHz CW signal.
-static dds_cw_config_t g_dds_cw_config = (dds_cw_config_t){
-    .frequency = 1000000000,
+// DDS FMCW configuration for a FMCW signal from 8.5 GHz to 9.5 GHz.
+// The ramp increases every 20 ns for a total chirp time of 100 us.
+static dds_fmcw_config_t g_dds_fmcw_config = (dds_fmcw_config_t){
+    .start_frequency = 750000000,
+    .end_frequency = 1250000000,
+    .frequency_step = 100000,
+    .step_time = 20e-9,
     .amplitude = (1 << 12) - 1,
     .phase = 0,
 };
@@ -43,8 +48,10 @@ int main(int argc, char** argv) {
   vco_enable();
 
   // Configure the DDS.
-  dds_configure_fmcw(DDS_PROFILE, &g_dds_cw_config);
+  dds_configure_fmcw(DDS_PROFILE, &g_dds_fmcw_config);
 
-  while (true) {}
+  while (true) {
+    sleep_us(/*us=*/1);
+  }
   return EXIT_SUCCESS;
 }
