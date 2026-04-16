@@ -7,6 +7,12 @@
 
 #include "pico/common/spi.h"
 
+// DDS system clock frequency.
+#define DDS_SYSCLK_FREQUENCY 3500000000
+
+// DDS clock frequency.
+#define DDS_CLK_FREQUENCY (DDS_SYSCLK_FREQUENCY / 24)
+
 // DDS mode enumeration.
 typedef enum {
   DDS_MODE_INVALID = -1,
@@ -51,7 +57,58 @@ typedef struct {
   dds_mode_e mode;
 } dds_config_t;
 
+// DDS CW configuration struct.
+typedef struct {
+  // Frequency in Hz.
+  uint64_t frequency;
+
+  // 12-bit DAC scale.
+  uint16_t amplitude;
+
+  // 16-bit phase offset.
+  uint16_t phase;
+} dds_cw_profile_t;
+
+// DDS FMCW configuration struct.
+typedef struct {
+  // Start frequency in Hz.
+  uint64_t start_frequency;
+
+  // End frequency in Hz.
+  uint64_t end_frequency;
+
+  // Frequency step size.
+  uint32_t step_size;
+
+  // Clock cycles per step.
+  uint32_t step_rate;
+
+  // 12-bit DAC scale.
+  uint16_t amplitude;
+
+  // 16-bit phase offset.
+  uint16_t phase;
+} dds_fmcw_config_t;
+
 // Initialize the DDS chip.
 void dds_init(const dds_config_t* config);
+
+// Reset the DDS.
+void dds_reset(void);
+
+// Assert the DDS IO update.
+void dds_io_update(void);
+
+// Set the DDS profile.
+void dds_set_profile(uint8_t profile);
+
+// Configure the DDS CW mode.
+void dds_configure_cw(uint8_t profile, const dds_cw_profile_t* cfg);
+
+// Confingure the DDS FMCW mode.
+void dds_configure_fmcw(uint8_t profile, const dds_fmcw_config_t* cfg);
+
+// Start the DDS FMCW mode.
+void dds_start_fmcw(void);
 
 #endif  // PICO_X_DORY_DDS_H_

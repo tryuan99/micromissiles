@@ -38,6 +38,8 @@ cc_library(
     }),
     deps = [
         "//pico/common:spi",
+        "@pico-sdk//src/common/pico_time",
+        "@pico-sdk//src/rp2_common/hardware_gpio",
         "@pico-sdk//src/rp2_common/hardware_spi",
     ],
 )
