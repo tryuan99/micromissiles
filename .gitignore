@@ -7,5 +7,25 @@
 # VS Code.
 .vscode/
 
+# Build/
+build/
+
 # Python.
 __pycache__/
+
+# Vivado.
+*.jou
+*.log
+*.str
+*.tmp
+*.backup.*
+vivado_pid*.str
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sims/
+*.Xil/
+*.ppx
+.metadata/
+clockInfo.txt
