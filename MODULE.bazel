@@ -47,6 +47,12 @@ bazel_dep(
     version = "0.7.1",
 )
 
+single_version_override(
+    module_name = "pico-sdk",
+    patch_strip = 1,
+    patches = ["//third_party/pico_sdk:pico_sdk.patch"],
+)
+
 # Boost library.
 BOOST_VERSION = "1.90.0"
 

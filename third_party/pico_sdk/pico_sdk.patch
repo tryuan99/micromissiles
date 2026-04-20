@@ -1,0 +1,19 @@
+diff --git a/src/host/hardware_sync/include/hardware/sync.h b/src/host/hardware_sync/include/hardware/sync.h
+--- a/src/host/hardware_sync/include/hardware/sync.h
++++ b/src/host/hardware_sync/include/hardware/sync.h
+@@ -98,6 +98,15 @@ inline static void __mem_fence_release() {
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
++
++// Apple Clang on arm64 treats __sev/__wfi/__wfe as builtins, which prevents
++// the host Pico SDK shim from defining those names directly. Rename the host
++// declarations so the dummy implementation can still link cleanly.
++#if defined(__clang__) && defined(__aarch64__)
++#define __sev pico_host_sync_sev
++#define __wfi pico_host_sync_wfi
++#define __wfe pico_host_sync_wfe
++#endif
+ 
+ void __sev();
+ 
