@@ -5,6 +5,7 @@ set srcs_files [list \
     [file normalize [file join $script_dir ../src/dory.v]] \
     [file normalize [file join $script_dir ../src/button_debouncer.v]] \
     [file normalize [file join $script_dir ../src/switch_debouncer.v]] \
+    [file normalize [file join $script_dir ../src/synchronizer.v]] \
 ]
 
 # Constraint files.

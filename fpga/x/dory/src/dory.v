@@ -30,6 +30,7 @@
         wire [NUM_BUTTONS-1:0] button_debouncer_out;
         reg dds_state;
         wire dds_drctl;
+        wire dds_drover;
         wire vco_rf_en;
         wire mixer_en;
 
@@ -68,6 +69,15 @@
         // DDS.
         assign dds_drctl = button_debouncer_out[0];
 
+        synchronizer #(
+            .WIDTH(1)
+        ) dds_drover_synchronizer (
+            .clk(clk),
+            .rst(rst),
+            .in(DDS_DROVER),
+            .out(dds_drover)
+        );
+
         always @(posedge clk or posedge rst) begin
             if (rst) begin
                 dds_state <= 0;
@@ -77,7 +87,7 @@
                     // DDS ramp has begun.
                     dds_state <= 1;
                 end
-                else if (dds_state && DDS_DROVER) begin
+                else if (dds_state && dds_drover) begin
                     dds_state <= 0;
                 end
             end
