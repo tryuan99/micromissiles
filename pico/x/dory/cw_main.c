@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
   vco_enable();
 
   // Configure the DDS.
-  dds_configure_fmcw(DDS_PROFILE, &g_dds_cw_config);
+  dds_configure_cw(DDS_PROFILE, &g_dds_cw_config);
 
   while (true) {}
   return EXIT_SUCCESS;

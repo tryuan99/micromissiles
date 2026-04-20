@@ -155,15 +155,18 @@ static inline void dds_init_gpios(void) {
 
   // Ramp control pin.
   gpio_init(g_dds_config.gpio_drctl);
+  gpio_set_dir(g_dds_config.gpio_drctl, GPIO_OUT);
 
   // Ramp hold pin.
   gpio_init(g_dds_config.gpio_drhold);
+  gpio_set_dir(g_dds_config.gpio_drhold, GPIO_OUT);
 
   // Ramp over pin.
   gpio_init(g_dds_config.gpio_drover);
 
   // Output shift keying pin.
   gpio_init(g_dds_config.gpio_osk);
+  gpio_set_dir(g_dds_config.gpio_osk, GPIO_OUT);
 }
 
 void dds_init(const dds_config_t* config) {

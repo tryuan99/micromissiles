@@ -17,4 +17,4 @@ void mixer_init(const mixer_config_t* config) {
 
 void mixer_enable(void) { gpio_put(g_mixer_config.gpio_enable, true); }
 
-void mixer_disable(void) { gpio_put(g_mixer_config.gpio_enable, true); }
+void mixer_disable(void) { gpio_put(g_mixer_config.gpio_enable, false); }

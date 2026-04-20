@@ -255,7 +255,7 @@ static inline void vco_init_gpios(void) {
 
   // RF enable pin.
   gpio_init(g_vco_config.gpio_rf_enable);
-  gpio_set_dir(g_vco_config.gpio_enable, GPIO_OUT);
+  gpio_set_dir(g_vco_config.gpio_rf_enable, GPIO_OUT);
 
   // Multiplexer output pin.
   gpio_init(g_vco_config.gpio_muxout);
@@ -316,7 +316,7 @@ static inline void vco_init_registers(void) {
   // Set the control bits.
   for (size_t i = 0; i < VCO_NUM_REGISTERS; ++i) {
     g_vco_registers[VCO_NUM_REGISTERS - 1 - i] =
-        (g_vco_registers[VCO_NUM_REGISTERS - i] & 0xFFFFFFF8) | (i & 0x7);
+        (g_vco_registers[VCO_NUM_REGISTERS - 1 - i] & 0xFFFFFFF8) | (i & 0x7);
   }
 }
 

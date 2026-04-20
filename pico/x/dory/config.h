@@ -50,6 +50,6 @@ extern dds_config_t g_dds_config;
 extern mixer_config_t g_mixer_config;
 
 // VGA configuration.
-extern vco_config_t g_vga_config;
+extern vga_config_t g_vga_config;
 
 #endif  // PICO_X_DORY_CONFIG_H_
