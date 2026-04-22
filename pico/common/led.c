@@ -12,4 +12,4 @@ void led_init(void) {
 
 void led_on(void) { gpio_put(PICO_DEFAULT_LED_PIN, true); }
 
-void led_off(void) { gpio_put(PICO_DEFAULT_LED_PIN, true); }
+void led_off(void) { gpio_put(PICO_DEFAULT_LED_PIN, false); }

@@ -2,16 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "pico/common/led.h"
 #include "pico/stdlib.h"
 
 // LED delay in milliseconds.
 #define LED_DELAY_MS 250  // milliseconds
-
-// Initialize the LED.
-static inline void led_init() {
-  gpio_init(PICO_DEFAULT_LED_PIN);
-  gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-}
 
 int main(int argc, char** argv) {
   stdio_init_all();
@@ -22,9 +17,9 @@ int main(int argc, char** argv) {
     printf("Hello, world!\n");
 
     // Toggle the LED.
-    gpio_put(PICO_DEFAULT_LED_PIN, true);
+    led_on();
     sleep_ms(LED_DELAY_MS);
-    gpio_put(PICO_DEFAULT_LED_PIN, false);
+    led_off();
     sleep_ms(LED_DELAY_MS);
   }
   return EXIT_SUCCESS;

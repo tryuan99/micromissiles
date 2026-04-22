@@ -10,5 +10,8 @@ cc_binary(
         "@pico-sdk//bazel/constraint:rp2350": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
-    deps = ["@pico-sdk//src/rp2_common/pico_stdlib"],
+    deps = [
+        "//pico/common:led",
+        "@pico-sdk//src/rp2_common/pico_stdlib",
+    ],
 )
