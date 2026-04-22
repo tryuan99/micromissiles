@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "pico/common/led.h"
 #include "pico/stdlib.h"
 #include "pico/x/dory/config.h"
 #include "pico/x/dory/dds.h"
@@ -24,6 +25,7 @@ static dds_cw_config_t g_dds_cw_config = (dds_cw_config_t){
 
 int main(int argc, char** argv) {
   stdio_init_all();
+  led_init();
 
   // Initialize the VCO, DDS, mixer, and VGA.
   vco_init(&g_vco_config);
@@ -45,6 +47,7 @@ int main(int argc, char** argv) {
   // Configure the DDS.
   dds_configure_cw(DDS_PROFILE, &g_dds_cw_config);
 
+  led_on();
   while (true) {}
   return EXIT_SUCCESS;
 }

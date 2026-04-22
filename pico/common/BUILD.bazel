@@ -16,3 +16,18 @@ cc_library(
         "@pico-sdk//src/rp2_common/hardware_spi",
     ],
 )
+
+cc_library(
+    name = "led",
+    srcs = ["led.c"],
+    hdrs = ["led.h"],
+    target_compatible_with = select({
+        "@pico-sdk//bazel/constraint:rp2040": [],
+        "@pico-sdk//bazel/constraint:rp2350": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        "@pico-sdk//src/rp2_common/hardware_gpio",
+        "@pico-sdk//src/rp2_common/pico_stdlib",
+    ],
+)
