@@ -39,7 +39,7 @@
         assign rst = ~RESET;
 
         // Switches.
-        switch_debouncer #(
+        debouncer #(
             .CLK_FREQ_HZ(CLK_FREQ_HZ),
             .DEBOUNCE_TIME_MS(DEBOUNCE_TIME_MS),
             .WIDTH(NUM_SWITCHES)
@@ -53,7 +53,7 @@
         assign switch_debouncer_in = SWITCHES;
 
         // Buttons.
-        button_debouncer #(
+        debouncer #(
             .CLK_FREQ_HZ(CLK_FREQ_HZ),
             .DEBOUNCE_TIME_MS(DEBOUNCE_TIME_MS),
             .WIDTH(NUM_BUTTONS)
