@@ -1,4 +1,4 @@
-# Source: https://github.com/Digilent/digilent-xdc/blob/master/Arty-A7-100-Master.xdc
+# Source: https://github.com/Digilent/digilent-xdc/blob/master/Arty-A7-35-Master.xdc
 
 # Clock signal.
 set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports { CLK }];

@@ -1,11 +1,12 @@
 # Run synthesis, implementation and bitstream generation.
 
 set script_dir [file dirname [file normalize [info script]]]
+source [file join $script_dir board.tcl]
 source [file join $script_dir files.tcl]
 
-set part "xc7a100tcsg324-1"
-set top "dory"
 set out_dir [file normalize [file join $script_dir ../build]]
+set part $fpga_part
+set top "dory"
 
 file mkdir $out_dir
 

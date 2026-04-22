@@ -1,11 +1,12 @@
 # Create a Vivado project.
 
 set script_dir [file dirname [file normalize [info script]]]
+source [file join $script_dir board.tcl]
 source [file join $script_dir files.tcl]
 
+set proj_dir [file normalize [file join $script_dir ../proj]]
 set proj_name "dory"
-set proj_dir  [file normalize [file join $script_dir ../build]]
-set part "xc7a100tcsg324-1"
+set part $fpga_part
 set top "dory"
 
 file mkdir $proj_dir

@@ -1,6 +1,7 @@
 # Write the bitstream to the FPGA.
 
 set script_dir [file dirname [file normalize [info script]]]
+source [file join $script_dir board.tcl]
 
 set bitfile [file normalize [file join $script_dir ../build/dory.bit]]
 
@@ -13,7 +14,7 @@ connect_hw_server
 open_hw_target
 
 # Select device.
-set device [lindex [get_hw_devices xc7a100t*] 0]
+set device [lindex [get_hw_devices $hw_device_pattern] 0]
 if {$device eq ""} {
     error "No matching FPGA device found"
 }

@@ -1,6 +1,7 @@
 # Program the QSPI flash.
 
 set script_dir [file dirname [file normalize [info script]]]
+source [file join $script_dir board.tcl]
 
 set bitfile [file normalize [file join $script_dir ../build/dory.bit]]
 set mcsfile [file normalize [file join $script_dir ../build/dory.mcs]]
@@ -10,7 +11,7 @@ if {![file exists $bitfile]} {
 }
 
 # Create MCS.
-write_cfgmem -force -format mcs -interface spix4 -size 16 \
+write_cfgmem -force -format mcs -interface $cfgmem_interface -size $cfgmem_size_mb \
     -loadbit "up 0x0 $bitfile" $mcsfile
 
 open_hw
@@ -18,7 +19,7 @@ connect_hw_server
 open_hw_target
 
 # Select device.
-set device [lindex [get_hw_devices xc7a100t*] 0]
+set device [lindex [get_hw_devices $hw_device_pattern] 0]
 if {$device eq ""} {
     error "No matching FPGA device found"
 }
@@ -27,7 +28,7 @@ current_hw_device $device
 refresh_hw_device $device
 
 # Configure flash.
-set cfgmem_part [lindex [get_cfgmem_parts {mt25ql128-spi-x1_x2_x4}] 0]
+set cfgmem_part [lindex [get_cfgmem_parts $cfgmem_part_name] 0]
 create_hw_cfgmem -hw_device $device $cfgmem_part
 
 set cfgmem [lindex [get_hw_cfgmems] 0]
