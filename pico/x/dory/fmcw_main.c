@@ -4,7 +4,6 @@
 
 #include "pico/common/led.h"
 #include "pico/stdlib.h"
-#include "pico/time.h"
 #include "pico/x/dory/config.h"
 #include "pico/x/dory/dds.h"
 #include "pico/x/dory/mixer.h"

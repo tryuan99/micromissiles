@@ -71,7 +71,6 @@ cc_binary(
         ":vco",
         ":vga",
         "//pico/common:led",
-        "@pico-sdk//src/common/pico_time",
         "@pico-sdk//src/rp2_common/pico_stdlib",
     ],
 )
