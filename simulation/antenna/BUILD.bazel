@@ -405,3 +405,12 @@ py_test(
         requirement("numpy"),
     ],
 )
+
+py_binary(
+    name = "u_slot_patch_antenna_design_main",
+    srcs = ["u_slot_patch_antenna_design_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)

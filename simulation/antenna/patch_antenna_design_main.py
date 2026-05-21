@@ -20,12 +20,10 @@ def design_patch_antenna(
     """Designs a patch antenna with the given parameters.
 
     Args:
-        f: Frequency in GHz.
-        h: Dielectric height in mm.
+        f: Frequency in Hz.
+        h: Dielectric height in m.
         er: Relative dielectric constant of the substrate.
     """
-    f *= 1e9
-    h /= 1e3
     W = c / (2 * f) * np.sqrt(2 / (er + 1))
     ereff = (er + 1) / 2 + (er - 1) / 2 * (1 + 12 * h / W)**(-1 / 2)
     L_delta_over_h = 0.412 * (ereff + 0.3) * (W / h + 0.264) / (
@@ -45,13 +43,13 @@ def main(argv):
     assert len(argv) == 1, argv
     design_patch_antenna(
         FLAGS.f,
-        FLAGS.h,
+        FLAGS.h / 1e3,
         FLAGS.er,
     )
 
 
 if __name__ == "__main__":
-    flags.DEFINE_float("f", 82.5, "Frequency in GHz.", lower_bound=0.0)
+    flags.DEFINE_float("f", 82.5e9, "Frequency in Hz.", lower_bound=0.0)
     flags.DEFINE_float("h",
                        0.07849,
                        "Dielectric height in mm.",
