@@ -353,6 +353,15 @@ py_library(
     ],
 )
 
+py_binary(
+    name = "microstrip_design_main",
+    srcs = ["microstrip_design_main.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
 py_library(
     name = "patch_antenna",
     srcs = ["patch_antenna.py"],

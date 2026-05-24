@@ -49,13 +49,10 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_float("f", 82.5e9, "Frequency in Hz.", lower_bound=0.0)
-    flags.DEFINE_float("h",
-                       0.07849,
-                       "Dielectric height in mm.",
-                       lower_bound=0.0)
+    flags.DEFINE_float("f", 9e9, "Frequency in Hz.", lower_bound=0.0)
+    flags.DEFINE_float("h", 1.524, "Dielectric height in mm.", lower_bound=0.0)
     flags.DEFINE_float("er",
-                       3.91,
+                       3.48,
                        "Relative dielectric constant of the substrate.",
                        lower_bound=0.0)
 
