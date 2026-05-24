@@ -5,8 +5,7 @@ from absl import app, flags, logging
 
 FLAGS = flags.FLAGS
 
-# Copper thickness conversion.
-# 1 oz/ft^2 = 34.79 microns.
+# Copper thickness conversion: 1 oz/ft^2 = 34.79 um.
 COPPER_OZ_PER_SQ_FT_TO_METERS = 34.79e-6
 
 # Maximum number of iterations to calculate the microstrip trace width.
@@ -14,8 +13,8 @@ MAX_NUM_ITERATIONS = 100
 
 # Minimum and maximum trace width factors as a function of the dielectric
 # height to search over.
-MIN_TRACE_WIDTH_FACTOR = 1e-3
-MAX_TRACE_WIDTH_FACTOR = 100
+MIN_TRACE_WIDTH_FACTOR = 1e-6
+MAX_TRACE_WIDTH_FACTOR = 1e6
 TRACE_WIDTH_TOLERANCE_FACTOR = 1e-9
 
 
@@ -25,8 +24,8 @@ def _calculate_microstrip_impedance(
     er: float,
     t: float,
 ) -> float:
-    """Calculates the characteristic impedance of a microstrip line using the
-    Hammerstad and Jensen approximation.
+    """Calculates microstrip characteristic impedance using the Hammerstad-
+    Jensen equations.
 
     Args:
         w: Trace width in m.
@@ -37,25 +36,39 @@ def _calculate_microstrip_impedance(
     Returns:
         The characteristic impedance in Ohms.
     """
-    # Width correction due to conductor thickness.
-    # Set to zero if the thickness correction is ignored.
+    # Normalize the trace width and the copper thickness.
+    w_normalized = w / h
+    t_normalized = t / h
+
+    # Hammerstad thickness correction.
     if t > 0:
-        delta_w = (t / np.pi) * np.log(1 + (4 * np.e) / (t / h)**2)
+        coth_term = 1 / np.tanh(np.sqrt(6.517 * w_normalized))
+        delta_w_normalized_impedance = (t_normalized / np.pi *
+                                        np.log(1 + 4 * np.e /
+                                               (t_normalized * coth_term**2)))
+        delta_w_normalized_dielectric = (delta_w_normalized_impedance *
+                                         (1 + 1 / np.cosh(np.sqrt(er - 1))) / 2)
+        w_normalized_impedance = w_normalized + delta_w_normalized_impedance
+        w_normalized_dielectric = w_normalized + delta_w_normalized_dielectric
     else:
-        delta_w = 0
+        w_normalized_impedance = w_normalized
+        w_normalized_dielectric = w_normalized
 
-    weff = w + delta_w
-    u = weff / h
+    # Hammerstad-Jensen effective dielectric constant.
+    a = (1 + (1 / 49) * np.log(
+        (w_normalized_dielectric**4 + (w_normalized_dielectric / 52)**2) /
+        (w_normalized_dielectric**4 + 0.432)) +
+         (1 / 18.7) * np.log(1 + (w_normalized_dielectric / 18.1)**3))
+    b = 0.564 * ((er - 0.9) / (er + 3))**0.053
+    ereff = ((er + 1) / 2 + (er - 1) / 2 *
+             (1 + 10 / w_normalized_dielectric)**(-a * b))
 
-    # Calcualate the effective dielectric constant.
-    ereff = (er + 1) / 2 + (er - 1) / 2 * (1 + 12 / u)**(-0.5)
-
-    # Calculate the characteristic impedance.
-    if u <= 1:
-        z0 = (60 / np.sqrt(ereff)) * np.log(8 / u + 0.25 * u)
-    else:
-        z0 = (120 * np.pi) / (np.sqrt(ereff) *
-                              (u + 1.393 + 0.667 * np.log(u + 1.444)))
+    # Hammerstad impedance equation.
+    f = (6 +
+         (2 * np.pi - 6) * np.exp(-(30.666 / w_normalized_impedance)**0.7528))
+    z_air = (60 * np.log(f / w_normalized_impedance +
+                         np.sqrt(1 + (2 / w_normalized_impedance)**2)))
+    z0 = z_air / np.sqrt(ereff)
     return z0
 
 
@@ -87,11 +100,11 @@ def _calculate_microstrip_width(
         else:
             w_high = w_mid
 
-        # End the iteration early once the width interval becomes
-        # sufficiently small.
+        # End the iteration early once the width interval becomes sufficiently
+        # small.
         if w_high - w_low <= TRACE_WIDTH_TOLERANCE_FACTOR * h:
             break
-    return w_mid
+    return (w_low + w_high) / 2
 
 
 def design_microstrip(
@@ -106,7 +119,7 @@ def design_microstrip(
         z0: Desired characteristic impedance in Ohms.
         h: Dielectric height in m.
         er: Relative dielectric constant.
-        t_oz: Copper thickness in m.
+        t: Copper thickness in m.
     """
     w = _calculate_microstrip_width(z0, h, er, t)
     z0_actual = _calculate_microstrip_impedance(w, h, er, t)
