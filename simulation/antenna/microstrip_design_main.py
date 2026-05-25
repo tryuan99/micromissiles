@@ -5,6 +5,9 @@ from absl import app, flags, logging
 
 FLAGS = flags.FLAGS
 
+# Speed of light in free space in m/s.
+c = 299792458  # m/s
+
 # Copper thickness conversion: 1 oz/ft^2 = 34.79 um.
 COPPER_OZ_PER_SQ_FT_TO_METERS = 34.79e-6
 
@@ -23,7 +26,7 @@ def _calculate_microstrip_impedance(
     h: float,
     er: float,
     t: float,
-) -> float:
+) -> tuple[float, float]:
     """Calculates microstrip characteristic impedance using the Hammerstad-
     Jensen equations.
 
@@ -34,7 +37,8 @@ def _calculate_microstrip_impedance(
         t: Copper thickness in m.
 
     Returns:
-        The characteristic impedance in Ohms.
+        A tuple consisting of the characteristic impedance in Ohms and the
+        effective dielectric constant.
     """
     # Normalize the trace width and the copper thickness.
     w_normalized = w / h
@@ -69,7 +73,7 @@ def _calculate_microstrip_impedance(
     z_air = (60 * np.log(f / w_normalized_impedance +
                          np.sqrt(1 + (2 / w_normalized_impedance)**2)))
     z0 = z_air / np.sqrt(ereff)
-    return z0
+    return z0, ereff
 
 
 def _calculate_microstrip_width(
@@ -94,7 +98,8 @@ def _calculate_microstrip_width(
 
     for _ in range(MAX_NUM_ITERATIONS):
         w_mid = (w_low + w_high) / 2
-        z0 = _calculate_microstrip_impedance(w_mid, h, er, t)
+        z0, _ = _calculate_microstrip_impedance(w_mid, h, er, t)
+
         if z0 > z0_target:
             w_low = w_mid
         else:
@@ -112,6 +117,8 @@ def design_microstrip(
     h: float,
     er: float,
     t: float,
+    f: float | None = None,
+    length: float | None = None,
 ) -> None:
     """Designs a microstrip line.
 
@@ -120,21 +127,38 @@ def design_microstrip(
         h: Dielectric height in m.
         er: Relative dielectric constant.
         t: Copper thickness in m.
+        f: Frequency in Hz.
+        length: Electrical length in units of lambda. If provided, calculates
+            the physical length of the microstrip trace.
     """
     w = _calculate_microstrip_width(z0, h, er, t)
-    z0_actual = _calculate_microstrip_impedance(w, h, er, t)
-    logging.info("Z0 = %f Ohms, h = %f mm, er = %f, t = %f oz/ft^2", z0,
-                 h * 1e3, er, t / COPPER_OZ_PER_SQ_FT_TO_METERS)
-    logging.info("Width = %f mm, estimated Z0 = %f Ohms", w * 1e3, z0_actual)
+    z0_actual, ereff = _calculate_microstrip_impedance(w, h, er, t)
+
+    logging.info("Z0 = %f Ohms, h = %f mm, er = %f, ereff = %f, t = %f oz/ft^2",
+                 z0, h * 1e3, er, ereff, t / COPPER_OZ_PER_SQ_FT_TO_METERS)
+    logging.info("Width = %f mm, actual Z0 = %f Ohms", w * 1e3, z0_actual)
+
+    if length is not None:
+        if f is None:
+            raise ValueError(
+                "Frequency must be provided if length is specified.")
+        lambda_g = c / (f * np.sqrt(ereff))
+        physical_length = length * lambda_g
+        logging.info(
+            "Guided wavelength = %f mm, electrical length = %f lambda, physical length = %f mm",
+            lambda_g * 1e3, length, physical_length * 1e3)
 
 
 def main(argv):
     assert len(argv) == 1, argv
+
     design_microstrip(
         FLAGS.z0,
         FLAGS.h / 1e3,
         FLAGS.er,
         FLAGS.t * COPPER_OZ_PER_SQ_FT_TO_METERS,
+        FLAGS.f,
+        FLAGS.length,
     )
 
 
@@ -149,5 +173,11 @@ if __name__ == "__main__":
                        "Relative dielectric constant.",
                        lower_bound=0.0)
     flags.DEFINE_float("t", 1, "Copper thickness in oz/ft^2.", lower_bound=0.0)
+
+    flags.DEFINE_float("f", None, "Frequency in Hz.", lower_bound=0.0)
+    flags.DEFINE_float("length",
+                       None,
+                       "Optional electrical length in units of lambda.",
+                       lower_bound=0.0)
 
     app.run(main)
