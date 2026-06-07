@@ -8,7 +8,7 @@ from ansys.aedt.core import Hfss
 
 class HfssRunner:
     """Runs HFSS simulations for already-formatted design variable values.
-    
+
     Attributes:
         hfss: HFSS instance.
     """
@@ -94,6 +94,12 @@ class HfssRunner:
         if self.hfss is None:
             raise RuntimeError("HFSS is not open.")
 
+        available_reports = self.hfss.get_oo_name(self.hfss.oreportsetup) or []
+        if report_name not in available_reports:
+            raise ValueError(
+                f"HFSS report {report_name!r} does not exist. Available "
+                f"reports: {available_reports}.")
+
         for name, value in design_variables.items():
             self.hfss[name] = value
 
@@ -103,12 +109,6 @@ class HfssRunner:
         if not self.hfss.analyze(setup=analyze_setup_name):
             raise RuntimeError(
                 f"HFSS simulation failed for {design_variables}.")
-
-        available_reports = self.hfss.get_oo_name(self.hfss.oreportsetup) or []
-        if report_name not in available_reports:
-            raise ValueError(
-                f"HFSS report {report_name!r} does not exist. Available "
-                f"reports: {available_reports}.")
 
         data_csv = (Path(output_dir) /
                     f"{report_name.lower().replace(' ', '_')}.csv")

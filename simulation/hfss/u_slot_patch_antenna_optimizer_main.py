@@ -112,12 +112,12 @@ def run_patch_antenna_optimizer(project_config: HfssProjectConfig) -> None:
     result = optimizer.run()
 
     logging.info("Optimal values: %s", result.optimal_values)
-    logging.info("Objective value: %.6g", result.objective_value)
+    logging.info("Objective value: %g", result.objective_value)
     logging.info("Feasible: %s", result.feasible)
     logging.info("History CSV: %s", result.history_csv)
     for evaluation in result.final_run.constraint_evaluations:
         logging.info(
-            "%s: violation %.6g dB, worst %.6g dB at %.6g GHz",
+            "%s: violation %g dB, worst %g dB at %g GHz",
             evaluation.name,
             evaluation.violation,
             evaluation.worst_value_db,
@@ -148,7 +148,8 @@ if __name__ == "__main__":
     )
     flags.DEFINE_string("design_name", "u_slot_patch_antenna_ro4350b",
                         "HFSS design name.")
-    flags.DEFINE_string("report_name", "S Parameter Plot 1", "HFSS report name to export.")
+    flags.DEFINE_string("report_name", "S Parameter Plot 1",
+                        "HFSS report name to export.")
     flags.DEFINE_string(
         "output_dir",
         None,

@@ -70,7 +70,7 @@ class HfssRunResult:
 
     Attributes:
         run_index: One-based run index within the optimizer session.
-        values: Design variable values used for this run.
+        values: Fixed and optimized design variable values used for this run.
         objective_value: Scalar optimizer objective. Positive values indicate
             the largest constraint violation while non-positive values are
             feasible.
@@ -348,7 +348,7 @@ class HfssOptimizer(ABC):
         with self.history_csv.open("w", newline="") as history_file:
             writer = csv.writer(history_file)
             writer.writerow([
-                "Run",
+                "Run index",
                 "Objective value",
                 "Feasible",
                 "Elapsed seconds",
@@ -379,7 +379,7 @@ class HfssOptimizer(ABC):
                     for variable in self.optimizer_variables
                 ],
                 *[
-                    evaluation.value
+                    evaluation.violation
                     for evaluation in run_result.constraint_evaluations
                 ],
             ])

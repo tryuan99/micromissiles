@@ -197,10 +197,10 @@ class SParameterData:
     @staticmethod
     def _find_header_index(rows: pd.DataFrame) -> int:
         """Finds the header row.
-        
+
         Args:
             rows: Dataframe containing the CSV data.
-        
+
         Returns:
             The row index of the header row.
         """
@@ -216,10 +216,10 @@ class SParameterData:
     @staticmethod
     def _find_frequency_column(headers: list[str]) -> int:
         """Finds the frequency column.
-        
+
         Args:
             headers: List of header names.
-        
+
         Returns:
             The index of the frequency column.
         """
@@ -231,10 +231,10 @@ class SParameterData:
     @staticmethod
     def _blank_rows(data: pd.DataFrame) -> pd.Series:
         """Finds the blank rows.
-        
+
         Args:
             data: Dataframe containing the CSV data.
-        
+
         Returns:
             A mask whether the corresponding row is blank.
         """
@@ -244,10 +244,10 @@ class SParameterData:
     @staticmethod
     def _find_s_parameter_columns(headers: list[str]) -> dict[int, str]:
         """Finds the S-parameter columns.
-        
+
         Args:
             headers: List of header names.
-        
+
         Returns:
             A map from the column index to the S-parameter.
         """
@@ -269,10 +269,10 @@ class SParameterData:
     @staticmethod
     def _frequency_scale_from_header(header: str) -> float:
         """Parses the frequency scale from the header.
-        
+
         Args:
             header: Header name.
-        
+
         Returns:
             The frequency scale for the header.
         """
@@ -292,12 +292,12 @@ class SParameterData:
         column_name: str,
     ) -> np.ndarray:
         """Parses a numeric array from a column.
-        
+
         Args:
             values: Series values.
             path: Path to the CSV data.
             column_name: Column name.
-        
+
         Returns:
             A numeric array.
         """
