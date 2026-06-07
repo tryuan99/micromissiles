@@ -16,9 +16,9 @@ FLAGS = flags.FLAGS
 FIXED_VARIABLES = [
     FixedVariable("w_dielectric", value=25, unit="mm"),
     FixedVariable("l_dielectric", value=25, unit="mm"),
-    FixedVariable("h_prepreg", value=7.496, unit="mm"),
-    FixedVariable("h_dielectric_microstrip", value=10, unit="mm"),
-    FixedVariable("h_dielectric_antenna", value=40, unit="mm"),
+    FixedVariable("h_prepreg", value=7.496, unit="mil"),
+    FixedVariable("h_dielectric_microstrip", value=10, unit="mil"),
+    FixedVariable("h_dielectric_antenna", value=40, unit="mil"),
     FixedVariable("w_microstrip", value=0.5105, unit="mm"),
     FixedVariable("h_copper", value=1, unit="copper_oz_per_ft2"),
     FixedVariable("r_via", value=0.3, unit="mm"),
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     )
     flags.DEFINE_string("design_name", "u_slot_patch_antenna_ro4350b",
                         "HFSS design name.")
-    flags.DEFINE_string("report_name", "SParams", "HFSS report name to export.")
+    flags.DEFINE_string("report_name", "S Parameter Plot 1", "HFSS report name to export.")
     flags.DEFINE_string(
         "output_dir",
         None,
