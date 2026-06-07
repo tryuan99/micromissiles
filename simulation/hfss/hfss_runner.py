@@ -104,15 +104,20 @@ class HfssRunner:
             raise RuntimeError(
                 f"HFSS simulation failed for {design_variables}.")
 
-        exported_data_csv = self.hfss.post.export_report_to_file(
-            str(output_dir),
+        available_reports = self.hfss.get_oo_name(self.hfss.oreportsetup) or []
+        if report_name not in available_reports:
+            raise ValueError(
+                f"HFSS report {report_name!r} does not exist. Available "
+                f"reports: {available_reports}.")
+
+        data_csv = (Path(output_dir) /
+                    f"{report_name.lower().replace(' ', '_')}.csv")
+        logging.info("Exporting HFSS report %s to %s.", report_name, data_csv)
+        self.hfss.oreportsetup.ExportToFile(
             report_name,
-            ".csv",
+            str(data_csv),
+            False,
         )
-        if not exported_data_csv:
-            raise RuntimeError(f"Failed to export report {report_name!r} for "
-                               f"{design_variables}.")
-        data_csv = Path(exported_data_csv)
         if cleanup_variations:
             if not self.hfss.cleanup_solution(variations="All"):
                 raise RuntimeError("Failed to clean up HFSS solution data for "

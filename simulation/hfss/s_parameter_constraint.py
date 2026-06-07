@@ -79,7 +79,10 @@ class SParameterData:
             raise ValueError(f"{path} is empty.")
 
         header_index = cls._find_header_index(raw_csv)
-        headers = cls._headers_from_row(raw_csv.iloc[header_index])
+        headers = [
+            "" if pd.isna(value) else str(value).strip()
+            for value in raw_csv.iloc[header_index].to_list()
+        ]
         frequency_column = cls._find_frequency_column(headers)
         frequency_scale = cls._frequency_scale_from_header(
             headers[frequency_column])
@@ -123,11 +126,11 @@ class SParameterData:
             The trace corresponding to the given S-parameter.
         """
         normalized_parameter = self.normalize_s_parameter(s_parameter)
-        if normalized_parameter not in self._traces:
+        if normalized_parameter not in self.traces:
             raise ValueError(
                 f"{normalized_parameter} is not present in exported data. "
-                f"Available traces: {sorted(self._traces)}.")
-        return self._traces[normalized_parameter]
+                f"Available traces: {sorted(self.traces)}.")
+        return self.traces[normalized_parameter]
 
     @staticmethod
     def normalize_s_parameter(s_parameter: str) -> str:
