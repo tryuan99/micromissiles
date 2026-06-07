@@ -4,7 +4,7 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20260107.1",
+    version = "20260526.0",
 )
 bazel_dep(
     name = "eigen",
@@ -12,7 +12,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "googletest",
-    version = "1.17.0",
+    version = "1.17.0.bcr.2",
 )
 bazel_dep(
     name = "pico-sdk",
@@ -20,15 +20,15 @@ bazel_dep(
 )
 bazel_dep(
     name = "platforms",
-    version = "1.0.0",
+    version = "1.1.0",
 )
 bazel_dep(
     name = "protobuf",
-    version = "34.1",
+    version = "35.0",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.2.17",
+    version = "0.2.19",
 )
 bazel_dep(
     name = "rules_foreign_cc",
@@ -44,7 +44,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_shell",
-    version = "0.7.1",
+    version = "0.8.0",
 )
 
 single_version_override(
