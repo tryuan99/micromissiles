@@ -3,6 +3,7 @@ constraints.
 """
 
 import csv
+import json
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -275,6 +276,7 @@ class HfssOptimizer(ABC):
         )
         self.runs.append(run_result)
         self._append_history(run_result, elapsed_seconds)
+        self._write_run_metadata(run_result, run_dir)
         return run_result
 
     def _format_design_values(self, values: dict[str, float]) -> dict[str, str]:
@@ -381,6 +383,25 @@ class HfssOptimizer(ABC):
                     for evaluation in run_result.constraint_evaluations
                 ],
             ])
+
+    def _write_run_metadata(self, run_result: HfssRunResult,
+                            run_dir: Path) -> None:
+        """Writes run metadata next to the exported HFSS data.
+
+        Args:
+            run_result: HFSS run result.
+            run_dir: Directory for this run's exported files.
+        """
+        metadata = {
+            "run_index": run_result.run_index,
+            "objective_value": run_result.objective_value,
+            "feasible": run_result.feasible,
+            "design_variables": self._format_design_values(run_result.values),
+            "data_csv": run_result.data_csv.name,
+        }
+        with (run_dir / "metadata.json").open("w") as metadata_file:
+            json.dump(metadata, metadata_file, indent=2)
+            metadata_file.write("\n")
 
 
 class SParameterHfssOptimizer(HfssOptimizer):
