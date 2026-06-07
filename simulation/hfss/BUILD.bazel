@@ -23,10 +23,20 @@ py_library(
     srcs = ["hfss_optimizer.py"],
     deps = [
         ":design_variable",
+        ":hfss_runner",
         ":s_parameter_constraint",
         requirement("absl-py"),
         requirement("numpy"),
         requirement("scipy"),
+    ],
+)
+
+py_library(
+    name = "hfss_runner",
+    srcs = ["hfss_runner.py"],
+    deps = [
+        requirement("absl-py"),
+        requirement("pyaedt"),
     ],
 )
 

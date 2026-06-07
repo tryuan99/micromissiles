@@ -59,7 +59,7 @@ class SParameterData:
         self.traces = dict(traces)
 
     @classmethod
-    def from_csv(cls, path: str | Path) -> "SParameterData":
+    def from_csv(cls, path: Path | str) -> "SParameterData":
         """Loads S-parameter traces from an HFSS report CSV.
 
         The parser accepts typical HFSS report exports with a frequency column

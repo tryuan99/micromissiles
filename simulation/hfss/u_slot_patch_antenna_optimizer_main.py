@@ -129,14 +129,11 @@ def main(argv: list[str]) -> None:
     assert len(argv) == 1, argv
 
     project_config = HfssProjectConfig(
-        hfss=FLAGS.hfss,
-        hfss_install_dir=FLAGS.hfss_install_dir,
-        hfss_desktop_plugin_dir=FLAGS.hfss_desktop_plugin_dir,
-        project_name=FLAGS.project_name,
+        project_path=FLAGS.project_path,
         design_name=FLAGS.design_name,
         report_name=FLAGS.report_name,
         output_dir=FLAGS.output_dir,
-        extra_hfss_args=tuple(FLAGS.extra_hfss_args),
+        aedt_version=FLAGS.aedt_version,
         analyze_setup_name=FLAGS.analyze_setup_name,
         cleanup_variations=FLAGS.cleanup_variations,
     )
@@ -145,33 +142,22 @@ def main(argv: list[str]) -> None:
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "hfss",
-        r"C:\Program Files\AnsysEM\v232\Win64\ansysedt.exe",
-        "Path to ansysedt.exe.",
+        "project_path",
+        r"C:\Users\tryua\Documents\Ansoft\MARLIN.aedt",
+        "Path to the AEDT project file to optimize.",
     )
-    flags.DEFINE_string(
-        "hfss_install_dir",
-        r"C:\Program Files\AnsysEM\v232\Win64",
-        "Ansys Electronics Desktop installation directory.",
-    )
-    flags.DEFINE_string(
-        "hfss_desktop_plugin_dir",
-        r"C:\Program Files\AnsysEM\v232\Win64\PythonFiles\DesktopPlugin",
-        "Directory containing ScriptEnv.py.",
-    )
-    flags.DEFINE_string("project_name", "MARLIN", "HFSS project name.")
     flags.DEFINE_string("design_name", "u_slot_patch_antenna_ro4350b",
                         "HFSS design name.")
     flags.DEFINE_string("report_name", "SParams", "HFSS report name to export.")
     flags.DEFINE_string(
         "output_dir",
         None,
-        "Directory for generated HFSS scripts, S-parameter CSVs, and history.",
+        "Directory for exported S-parameter CSVs and optimizer history.",
     )
-    flags.DEFINE_multi_string(
-        "extra_hfss_args",
-        [],
-        "Additional command-line argument passed to ansysedt.exe.",
+    flags.DEFINE_string(
+        "aedt_version",
+        None,
+        "Optional AEDT version for PyAEDT, for example, 2026.1 or 261.",
     )
     flags.DEFINE_string(
         "analyze_setup_name",
@@ -181,7 +167,7 @@ if __name__ == "__main__":
     flags.DEFINE_bool(
         "cleanup_variations",
         False,
-        "Delete full solved variations after each run.",
+        "If true, full solved variations are deleted after each run.",
     )
     flags.mark_flag_as_required("output_dir")
 

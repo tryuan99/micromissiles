@@ -3,7 +3,6 @@ constraints.
 """
 
 import csv
-import subprocess
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -16,6 +15,7 @@ from absl import logging
 
 from simulation.hfss.constraint import Constraint, ConstraintEvaluation
 from simulation.hfss.design_variable import FixedVariable, OptimizerVariable
+from simulation.hfss.hfss_runner import HfssRunner
 from simulation.hfss.s_parameter_constraint import SParameterData
 
 
@@ -24,32 +24,21 @@ class HfssProjectConfig:
     """HFSS project/report execution configuration.
 
     Attributes:
-        hfss: Path to `ansysedt.exe` or the executable name if it is available
-            on PATH.
-        hfss_install_dir: Ansys Electronics Desktop installation directory for
-            importing `ScriptEnv.py` inside the generated script.
-        hfss_desktop_plugin_dir: Directory containing `ScriptEnv.py`.
-        project_name: Already-open or loadable HFSS project name.
+        project_path: Path to the AEDT project.
         design_name: HFSS design name inside the project.
         report_name: Existing report to export, typically a rectangular plot
             containing S-parameter traces.
-        output_dir: Directory for generated scripts, exported CSVs, and
-            history.
-        run_script_flag: AEDT command-line flag used to run the script.
-        extra_hfss_args: Additional AEDT command-line arguments.
+        output_dir: Directory for exported CSVs and history.
+        aedt_version: Optional AEDT version passed to PyAEDT.
         analyze_setup_name: Optional setup name. If unset, `AnalyzeAll()` runs.
         cleanup_variations: Whether to delete solved variations after each run.
     """
 
-    hfss: str
-    hfss_install_dir: str
-    hfss_desktop_plugin_dir: str
-    project_name: str
+    project_path: Path | str
     design_name: str
     report_name: str
-    output_dir: str | Path
-    run_script_flag: str = "-RunScriptAndExit"
-    extra_hfss_args: tuple[str, ...] = ()
+    output_dir: Path | str
+    aedt_version: str | None = None
     analyze_setup_name: str | None = None
     cleanup_variations: bool = False
 
@@ -81,20 +70,18 @@ class HfssRunResult:
     Attributes:
         run_index: One-based run index within the optimizer session.
         values: Design variable values used for this run.
-        data: Path to the HFSS-exported CSV.
-        script_path: Path to the generated HFSS automation script.
-        constraint_evaluations: Constraint evaluations computed from the data.
         objective_value: Scalar optimizer objective. Positive values indicate
             the largest constraint violation while non-positive values are
             feasible.
+        constraint_evaluations: Constraint evaluations computed from the data.
+        data_csv: Path to the HFSS-exported CSV.
     """
 
     run_index: int
     values: dict[str, float]
-    data: Path
-    script_path: Path
-    constraint_evaluations: tuple[ConstraintEvaluation, ...]
     objective_value: float
+    constraint_evaluations: tuple[ConstraintEvaluation, ...]
+    data_csv: Path
 
     @property
     def feasible(self) -> bool:
@@ -132,10 +119,10 @@ class HfssOptimizer(ABC):
         optimizer_variables: HFSS local variables to optimize.
         constraints: Constraints evaluated after each HFSS run.
         optimization_config: Numerical optimizer configuration.
-        output_dir: Absolute directory for generated scripts, exported
-            CSVs, and optimizer history.
-        history_csv: CSV file containing the per-run optimizer history.
+        hfss_runner: HFSS simulation runner.
         runs: HFSS simulation runs evaluated during this optimizer session.
+        output_dir: Absolute directory for exported CSVs and optimizer history.
+        history_csv: CSV file containing the per-run optimizer history.
     """
 
     def __init__(
@@ -156,10 +143,16 @@ class HfssOptimizer(ABC):
         self.optimizer_variables = optimizer_variables
         self.constraints = tuple(constraints)
         self.optimization_config = (optimization_config or OptimizationConfig())
+
+        self.hfss_runner = HfssRunner(
+            project_config.project_path,
+            project_config.design_name,
+            project_config.aedt_version,
+        )
+        self.runs: list[HfssRunResult] = []
         self.output_dir = Path(project_config.output_dir).expanduser().resolve()
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.history_csv = self.output_dir / "hfss_optimization_history.csv"
-        self.runs: list[HfssRunResult] = []
 
     def run(self) -> HfssOptimizationResult:
         """Runs bounded derivative-free optimization.
@@ -168,43 +161,48 @@ class HfssOptimizer(ABC):
             The final HFSS optimizer result.
         """
         self._initialize_history()
-        initial_values = np.asarray(
-            [variable.initial_value for variable in self.optimizer_variables],
-            dtype=float,
-        )
-        bounds = scipy.optimize.Bounds(
-            [variable.lower_bound for variable in self.optimizer_variables],
-            [variable.upper_bound for variable in self.optimizer_variables],
-        )
-
-        optimization_config = self.optimization_config
-        result = scipy.optimize.minimize(
-            self._objective,
-            initial_values,
-            method="Nelder-Mead",
-            bounds=bounds,
-            options={
-                "maxiter": optimization_config.max_iterations,
-                "maxfev": optimization_config.max_function_evaluations,
-                "xatol": optimization_config.x_tolerance,
-                "fatol": optimization_config.function_tolerance,
-                "initial_simplex": self._initial_simplex(initial_values),
+        try:
+            initial_values = np.asarray(
+                [
+                    variable.initial_value
+                    for variable in self.optimizer_variables
+                ],
+                dtype=float,
+            )
+            bounds = scipy.optimize.Bounds(
+                [variable.lower_bound for variable in self.optimizer_variables],
+                [variable.upper_bound for variable in self.optimizer_variables],
+            )
+            options = {
+                "maxiter": self.optimization_config.max_iterations,
+                "maxfev": self.optimization_config.max_function_evaluations,
+                "xatol": self.optimization_config.x_tolerance,
+                "fatol": self.optimization_config.function_tolerance,
+                "initial_simplex": self._define_initial_simplex(initial_values),
                 "disp": True,
-            },
-        )
+            }
+            result = scipy.optimize.minimize(
+                self._evaluate_objective,
+                initial_values,
+                method="Nelder-Mead",
+                bounds=bounds,
+                options=options,
+            )
 
-        final_values = np.asarray(result.x, dtype=float)
-        final_run = self._simulate(final_values)
-        return HfssOptimizationResult(
-            optimal_values=final_run.values,
-            objective_value=final_run.objective_value,
-            feasible=final_run.feasible,
-            final_run=final_run,
-            scipy_result=result,
-            history_csv=self.history_csv,
-        )
+            final_values = np.asarray(result.x, dtype=float)
+            final_run = self._simulate(final_values)
+            return HfssOptimizationResult(
+                optimal_values=final_run.values,
+                objective_value=final_run.objective_value,
+                feasible=final_run.feasible,
+                final_run=final_run,
+                scipy_result=result,
+                history_csv=self.history_csv,
+            )
+        finally:
+            self.hfss_runner.close()
 
-    def _objective(self, x: np.ndarray) -> float:
+    def _evaluate_objective(self, x: np.ndarray) -> float:
         """Evaluates the scalar optimization objective for one set of design values.
 
         Args:
@@ -215,7 +213,7 @@ class HfssOptimizer(ABC):
         """
         run_result = self._simulate(x)
         logging.info(
-            "Run %d: objective %.6g feasible=%s values=%s",
+            "Completed run %d with objective value %g, feasible %s, and values %s.",
             run_result.run_index,
             run_result.objective_value,
             run_result.feasible,
@@ -246,38 +244,19 @@ class HfssOptimizer(ABC):
             }
         }
         run_index = len(self.runs) + 1
-        run_directory = self.output_dir / f"run_{run_index:04d}"
-        run_directory.mkdir(parents=True, exist_ok=False)
-        data_csv = run_directory / "data.csv"
-        script_path = run_directory / "run_hfss.py"
+        run_dir = self.output_dir / f"run_{run_index:04d}"
+        run_dir.mkdir(parents=True, exist_ok=False)
 
-        script_path.write_text(
-            self._render_hfss_script(values, data_csv),
-            encoding="utf-8",
-        )
-
+        logging.info("Starting run %d with values %s.", run_index, values)
         start_time = time.monotonic()
-        command = [
-            self.project_config.hfss,
-            *self.project_config.extra_hfss_args,
-            self.project_config.run_script_flag,
-            str(script_path),
-        ]
-        completed_process = subprocess.run(
-            command,
-            cwd=run_directory,
-            check=False,
-            capture_output=True,
-            text=True,
+        data_csv = self.hfss_runner.run(
+            self._format_design_values(values),
+            report_name=self.project_config.report_name,
+            output_dir=run_dir,
+            analyze_setup_name=self.project_config.analyze_setup_name,
+            cleanup_variations=self.project_config.cleanup_variations,
         )
         elapsed_seconds = time.monotonic() - start_time
-        if completed_process.returncode != 0:
-            logging.error("Command: %s", command)
-            logging.error("stdout: %s", completed_process.stdout)
-            logging.error("stderr: %s", completed_process.stderr)
-            raise RuntimeError(
-                f"HFSS simulation failed for {values} after {elapsed_seconds:.1f} seconds."
-            )
         if not data_csv.exists():
             raise FileNotFoundError(
                 f"HFSS completed but did not export {data_csv}.")
@@ -290,14 +269,27 @@ class HfssOptimizer(ABC):
         run_result = HfssRunResult(
             run_index=run_index,
             values=values,
-            data=data_csv,
-            script_path=script_path,
-            constraint_evaluations=evaluations,
             objective_value=objective_value,
+            constraint_evaluations=evaluations,
+            data_csv=data_csv,
         )
         self.runs.append(run_result)
         self._append_history(run_result, elapsed_seconds)
         return run_result
+
+    def _format_design_values(self, values: dict[str, float]) -> dict[str, str]:
+        """Formats the design variable values for HFSS.
+
+        Args:
+            values: Design variable values.
+
+        Returns:
+            A map from the HFSS local variable names to the formatted HFSS values.
+        """
+        return {
+            variable.name: variable.format(values[variable.name])
+            for variable in self.fixed_variables + self.optimizer_variables
+        }
 
     @abstractmethod
     def _parse_data(self, data_csv: Path) -> Any:
@@ -323,14 +315,14 @@ class HfssOptimizer(ABC):
                 return run_result
         return None
 
-    def _initial_simplex(self, initial_values: np.ndarray) -> np.ndarray:
+    def _define_initial_simplex(self, initial_values: np.ndarray) -> np.ndarray:
         """Defines the initial simplex.
 
         Args:
             initial_values: Initial design variable values.
 
         Returns:
-            Initial simplex points.
+            The initial simplex points.
         """
         settings = self.optimization_config
         simplex = [initial_values]
@@ -354,7 +346,7 @@ class HfssOptimizer(ABC):
         with self.history_csv.open("w", newline="") as history_file:
             writer = csv.writer(history_file)
             writer.writerow([
-                "Run index",
+                "Run",
                 "Objective value",
                 "Feasible",
                 "Elapsed seconds",
@@ -389,74 +381,6 @@ class HfssOptimizer(ABC):
                     for evaluation in run_result.constraint_evaluations
                 ],
             ])
-
-    def _render_hfss_script(
-        self,
-        values: dict[str, float],
-        data_csv: Path,
-    ) -> str:
-        """Renders the HFSS automation script.
-
-        Args:
-            values: Design variable values.
-            data_csv: Path to the CSV data.
-
-        Returns:
-            The HFSS automation script.
-        """
-        variable_lines = [
-            f"set_local_variable({variable.name!r}, "
-            f"{variable.format(values[variable.name])!r})"
-            for variable in self.fixed_variables + self.optimizer_variables
-        ]
-
-        analyze_line = "oDesign.AnalyzeAll()"
-        if self.project_config.analyze_setup_name:
-            analyze_line = (
-                f"oDesign.Analyze({self.project_config.analyze_setup_name!r})")
-
-        cleanup_line = ""
-        if self.project_config.cleanup_variations:
-            cleanup_line = 'oDesign.DeleteFullVariation("All", False)'
-
-        return "\n".join([
-            "import sys",
-            f"sys.path.append({self.project_config.hfss_install_dir!r})",
-            f"sys.path.append({self.project_config.hfss_desktop_plugin_dir!r})",
-            "import ScriptEnv",
-            "",
-            'ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")',
-            "oDesktop.RestoreWindow()",
-            f"oProject = oDesktop.SetActiveProject("
-            f"{self.project_config.project_name!r})",
-            f"oDesign = oProject.SetActiveDesign("
-            f"{self.project_config.design_name!r})",
-            "",
-            "def set_local_variable(name, value):",
-            "    oDesign.ChangeProperty(",
-            "        [",
-            '            "NAME:AllTabs",',
-            "            [",
-            '                "NAME:LocalVariableTab",',
-            '                ["NAME:PropServers", "LocalVariables"],',
-            "                [",
-            '                    "NAME:ChangedProps",',
-            '                    ["NAME:" + name, "Value:=", value],',
-            "                ],",
-            "            ],",
-            "        ]",
-            "    )",
-            "",
-            *variable_lines,
-            "",
-            "oProject.Save()",
-            analyze_line,
-            'oModule = oDesign.GetModule("ReportSetup")',
-            f"oModule.ExportToFile({self.project_config.report_name!r}, "
-            f"{str(data_csv)!r}, False)",
-            cleanup_line,
-            "",
-        ])
 
 
 class SParameterHfssOptimizer(HfssOptimizer):
