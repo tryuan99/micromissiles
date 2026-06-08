@@ -48,9 +48,8 @@ run_tcl() {
     fi
 
     local cmd=(vivado -mode batch -source "$script")
-    echo "Executing: ${cmd[*]}"   # Full command printed
-    "${cmd[@]}"                  # Run safely
-    if [[ $? -ne 0 ]]; then
+    echo "Executing: ${cmd[*]}"
+    if ! "${cmd[@]}"; then
         echo "Error: $script failed."
         exit 1
     fi

@@ -1,4 +1,4 @@
-// The HMC625B chip is a 0.5 dB LSB 6-Bit digital variable gain amplifier.
+// The HMC625B chip is a 0.5 dB LSB 6-bit digital variable gain amplifier.
 
 #ifndef PICO_X_DORY_VGA_H_
 #define PICO_X_DORY_VGA_H_
