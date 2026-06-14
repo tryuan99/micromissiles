@@ -50,7 +50,6 @@ class OptimizationConfig:
 
     Attributes:
         max_iterations: Maximum number of optimizer iterations.
-        max_function_evaluations: Maximum number of HFSS objective evaluations.
         x_tolerance: Termination tolerance for design variable changes.
         function_tolerance: Termination tolerance for objective changes.
         initial_simplex_scale: Fraction of each variable's bounded span used to
@@ -58,7 +57,6 @@ class OptimizationConfig:
     """
 
     max_iterations: int = 100
-    max_function_evaluations: int = 200
     x_tolerance: float = 1e-3
     function_tolerance: float = 1e-3
     initial_simplex_scale: float = 0.05
@@ -176,7 +174,6 @@ class HfssOptimizer(ABC):
             )
             options = {
                 "maxiter": self.optimization_config.max_iterations,
-                "maxfev": self.optimization_config.max_function_evaluations,
                 "xatol": self.optimization_config.x_tolerance,
                 "fatol": self.optimization_config.function_tolerance,
                 "initial_simplex": self._define_initial_simplex(initial_values),

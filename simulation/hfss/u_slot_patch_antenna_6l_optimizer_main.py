@@ -29,49 +29,49 @@ FIXED_VARIABLES = [
 OPTIMIZER_VARIABLES = [
     OptimizerVariable(
         "w_patch",
-        initial_value=11.128047148845422,
+        initial_value=11.351233468873,
         lower_bound=8,
         upper_bound=12,
         unit="mm",
     ),
     OptimizerVariable(
         "l_patch",
-        initial_value=7.118444904876794,
+        initial_value=7.2853538839845,
         lower_bound=6,
         upper_bound=8,
         unit="mm",
     ),
     OptimizerVariable(
         "y_feed",
-        initial_value=-1.0741568677283952,
+        initial_value=-0.88311337503946,
         lower_bound=-2,
         upper_bound=2,
         unit="mm",
     ),
     OptimizerVariable(
         "w_slot",
-        initial_value=5.081586857010237,
+        initial_value=5.1296180155303,
         lower_bound=3.5,
         upper_bound=6,
         unit="mm",
     ),
     OptimizerVariable(
         "l_slot",
-        initial_value=4.163143706987398,
+        initial_value=3.9465483840618,
         lower_bound=3,
         upper_bound=6,
         unit="mm",
     ),
     OptimizerVariable(
         "t_slot",
-        initial_value=0.6145087269036262,
+        initial_value=0.66644061509258,
         lower_bound=0.4,
         upper_bound=1.4,
         unit="mm",
     ),
     OptimizerVariable(
         "y_slot",
-        initial_value=1.7265992013016582,
+        initial_value=1.7868141044441,
         lower_bound=0,
         upper_bound=2,
         unit="mm",
@@ -82,16 +82,15 @@ OPTIMIZER_VARIABLES = [
 CONSTRAINTS = [
     SParameterUpperBoundConstraint(
         s_parameter="S11",
-        upper_bound_db=-10.0,
-        lower_frequency_hz=constants.ghz(8),
-        upper_frequency_hz=constants.ghz(10),
+        upper_bound_db=-10,
+        lower_frequency_hz=constants.ghz(8.5),
+        upper_frequency_hz=constants.ghz(9.5),
     ),
 ]
 
 # Optimization configuration.
 OPTIMIZATION_CONFIG = OptimizationConfig(
     max_iterations=100,
-    max_function_evaluations=200,
     x_tolerance=1e-3,
     function_tolerance=1e-3,
     initial_simplex_scale=0.05,
