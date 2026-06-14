@@ -16,10 +16,10 @@ FLAGS = flags.FLAGS
 FIXED_VARIABLES = [
     FixedVariable("w_dielectric", value=25, unit="mm"),
     FixedVariable("l_dielectric", value=25, unit="mm"),
-    FixedVariable("h_prepreg_1", value=8, unit="mil"),
-    FixedVariable("h_dielectric_antenna_1", value=40, unit="mil"),
+    FixedVariable("h_prepreg_1", value=10, unit="mil"),
+    FixedVariable("h_dielectric_antenna_1", value=30, unit="mil"),
     FixedVariable("h_prepreg_2", value=8, unit="mil"),
-    FixedVariable("h_dielectric_antenna_2", value=40, unit="mil"),
+    FixedVariable("h_dielectric_antenna_2", value=30, unit="mil"),
     FixedVariable("h_dielectric_microstrip", value=10, unit="mil"),
     FixedVariable("w_microstrip", value=0.5105, unit="mm"),
     FixedVariable("h_copper", value=1, unit="copper_oz_per_ft2"),
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         r"C:\Users\tryua\Documents\Ansoft\MARLIN.aedt",
         "Path to the AEDT project file to optimize.",
     )
-    flags.DEFINE_string("design_name", "u_slot_patch_antenna_ro4350b",
+    flags.DEFINE_string("design_name", "u_slot_patch_antenna_ro4350b_6L",
                         "HFSS design name.")
     flags.DEFINE_string("report_name", "S Parameter Plot 1",
                         "HFSS report name to export.")
