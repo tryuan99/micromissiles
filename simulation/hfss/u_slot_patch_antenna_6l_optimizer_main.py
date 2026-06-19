@@ -29,49 +29,49 @@ FIXED_VARIABLES = [
 OPTIMIZER_VARIABLES = [
     OptimizerVariable(
         "w_patch",
-        initial_value=11.711033031319072,
+        initial_value=11.507651143504589,
         lower_bound=8,
         upper_bound=12,
         unit="mm",
     ),
     OptimizerVariable(
         "l_patch",
-        initial_value=7.277135217404149,
+        initial_value=7.303825637508277,
         lower_bound=6,
         upper_bound=8,
         unit="mm",
     ),
     OptimizerVariable(
         "y_feed",
-        initial_value=-1.195310168215475,
+        initial_value=-1.18059631045278,
         lower_bound=-2,
         upper_bound=2,
         unit="mm",
     ),
     OptimizerVariable(
         "w_slot",
-        initial_value=4.526531959998817,
+        initial_value=4.5427947252179255,
         lower_bound=3.5,
         upper_bound=6,
         unit="mm",
     ),
     OptimizerVariable(
         "l_slot",
-        initial_value=4.277096459702516,
+        initial_value=4.265354240380268,
         lower_bound=3,
         upper_bound=6,
         unit="mm",
     ),
     OptimizerVariable(
         "t_slot",
-        initial_value=0.7032029478654456,
+        initial_value=0.7248376924882505,
         lower_bound=0.4,
         upper_bound=1.4,
         unit="mm",
     ),
     OptimizerVariable(
         "y_slot",
-        initial_value=1.840659337397071,
+        initial_value=1.9002553572549257,
         lower_bound=0,
         upper_bound=2,
         unit="mm",
@@ -83,8 +83,8 @@ CONSTRAINTS = [
     SParameterUpperBoundConstraint(
         s_parameter="S11",
         upper_bound_db=-10,
-        lower_frequency_hz=constants.ghz(8.5),
-        upper_frequency_hz=constants.ghz(9.5),
+        lower_frequency_hz=constants.ghz(8.4),
+        upper_frequency_hz=constants.ghz(9.6),
     ),
 ]
 
