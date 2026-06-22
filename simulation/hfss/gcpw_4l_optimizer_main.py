@@ -1,4 +1,4 @@
-"""Optimizes the HFSS design variables for a U-slot patch antenna."""
+"""Optimizes the HFSS design variables for a grounded coplanar waveguide."""
 
 from absl import app, flags, logging
 
@@ -7,71 +7,38 @@ from simulation.hfss.design_variable import FixedVariable, OptimizerVariable
 from simulation.hfss.hfss_optimizer import (HfssProjectConfig,
                                             OptimizationConfig,
                                             SParameterHfssOptimizer)
-from simulation.hfss.s_parameter_constraint import \
-    SParameterUpperBoundConstraint
+from simulation.hfss.s_parameter_constraint import (
+    SParameterLowerBoundConstraint, SParameterUpperBoundConstraint)
 
 FLAGS = flags.FLAGS
 
 # Design variables.
 FIXED_VARIABLES = [
     FixedVariable("w_dielectric", value=50, unit="mm"),
-    FixedVariable("l_dielectric", value=50, unit="mm"),
+    FixedVariable("l_dielectric", value=20, unit="mm"),
     FixedVariable("h_prepreg", value=18, unit="mil"),
     FixedVariable("h_dielectric_antenna", value=60, unit="mil"),
     FixedVariable("h_dielectric_microstrip", value=10, unit="mil"),
-    FixedVariable("w_microstrip", value=0.5105, unit="mm"),
+    FixedVariable("w_cpw_ground", value=2, unit="mm"),
     FixedVariable("h_copper", value=1, unit="copper_oz_per_ft2"),
-    FixedVariable("r_via", value=0.3, unit="mm"),
-    FixedVariable("r_via_clearance", value=0.2, unit="mm"),
+    FixedVariable("r_via", value=0.2, unit="mm"),
+    FixedVariable("x_via_offset", value=0.5, unit="mm"),
+    FixedVariable("y_via_offset", value=0, unit="mm"),
+    FixedVariable("y_via", value=1, unit="mm"),
 ]
 OPTIMIZER_VARIABLES = [
     OptimizerVariable(
-        "w_patch",
-        initial_value=11.583978626373085,
-        lower_bound=8,
-        upper_bound=12,
+        "w_cpw",
+        initial_value=0.49,
+        lower_bound=0.2,
+        upper_bound=1,
         unit="mm",
     ),
     OptimizerVariable(
-        "l_patch",
-        initial_value=7.019098623847235,
-        lower_bound=6,
-        upper_bound=8,
-        unit="mm",
-    ),
-    OptimizerVariable(
-        "y_feed",
-        initial_value=-0.9698464279534099,
-        lower_bound=-2,
-        upper_bound=2,
-        unit="mm",
-    ),
-    OptimizerVariable(
-        "w_slot",
-        initial_value=4.890262249402689,
-        lower_bound=3.5,
-        upper_bound=6,
-        unit="mm",
-    ),
-    OptimizerVariable(
-        "l_slot",
-        initial_value=3.9432724811430804,
-        lower_bound=3,
-        upper_bound=6,
-        unit="mm",
-    ),
-    OptimizerVariable(
-        "t_slot",
-        initial_value=0.7095652890027121,
-        lower_bound=0.4,
-        upper_bound=1.4,
-        unit="mm",
-    ),
-    OptimizerVariable(
-        "y_slot",
-        initial_value=1.9822708216103841,
-        lower_bound=0,
-        upper_bound=2,
+        "w_cpw_gap",
+        initial_value=0.256,
+        lower_bound=0.05,
+        upper_bound=0.5,
         unit="mm",
     ),
 ]
@@ -80,9 +47,15 @@ OPTIMIZER_VARIABLES = [
 CONSTRAINTS = [
     SParameterUpperBoundConstraint(
         s_parameter="S11",
-        upper_bound_db=-10,
-        lower_frequency_hz=constants.ghz(8.4),
-        upper_frequency_hz=constants.ghz(9.6),
+        upper_bound_db=-25,
+        lower_frequency_hz=constants.ghz(4),
+        upper_frequency_hz=constants.ghz(14),
+    ),
+    SParameterLowerBoundConstraint(
+        s_parameter="S21",
+        lower_bound_db=-0.75,
+        lower_frequency_hz=constants.ghz(4),
+        upper_frequency_hz=constants.ghz(14),
     ),
 ]
 
@@ -97,7 +70,7 @@ OPTIMIZATION_CONFIG = OptimizationConfig(
 
 def run_s_parameter_hfss_optimizer(project_config: HfssProjectConfig) -> None:
     """Configures and runs the S-parameter HFSS optimizer.
-    
+
     Args:
         project_config: Project configuration.
     """
@@ -143,11 +116,10 @@ def main(argv: list[str]) -> None:
 if __name__ == "__main__":
     flags.DEFINE_string(
         "project_path",
-        r"C:\Users\tryua\Documents\Ansoft\MARLIN.aedt",
+        r"C:\Users\tryua\Documents\Ansoft\MARLIN1.aedt",
         "Path to the AEDT project file to optimize.",
     )
-    flags.DEFINE_string("design_name", "u_slot_patch_antenna_ro4350b_4L",
-                        "HFSS design name.")
+    flags.DEFINE_string("design_name", "gcpw_ro4350b_4L", "HFSS design name.")
     flags.DEFINE_string("report_name", "S Parameter Plot 1",
                         "HFSS report name to export.")
     flags.DEFINE_string(

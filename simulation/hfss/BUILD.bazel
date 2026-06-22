@@ -18,6 +18,18 @@ py_library(
     srcs = ["design_variable.py"],
 )
 
+py_binary(
+    name = "gcpw_4l_optimizer_main",
+    srcs = ["gcpw_4l_optimizer_main.py"],
+    deps = [
+        ":constants",
+        ":design_variable",
+        ":hfss_optimizer",
+        ":s_parameter_constraint",
+        requirement("absl-py"),
+    ],
+)
+
 py_library(
     name = "hfss_optimizer",
     srcs = ["hfss_optimizer.py"],

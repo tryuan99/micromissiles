@@ -14,8 +14,8 @@ FLAGS = flags.FLAGS
 
 # Design variables.
 FIXED_VARIABLES = [
-    FixedVariable("w_dielectric", value=25, unit="mm"),
-    FixedVariable("l_dielectric", value=25, unit="mm"),
+    FixedVariable("w_dielectric", value=50, unit="mm"),
+    FixedVariable("l_dielectric", value=50, unit="mm"),
     FixedVariable("h_prepreg_1", value=10, unit="mil"),
     FixedVariable("h_dielectric_antenna_1", value=30, unit="mil"),
     FixedVariable("h_prepreg_2", value=8, unit="mil"),
@@ -97,8 +97,8 @@ OPTIMIZATION_CONFIG = OptimizationConfig(
 )
 
 
-def run_patch_antenna_optimizer(project_config: HfssProjectConfig) -> None:
-    """Configures and runs the patch antenna HFSS optimizer.
+def run_s_parameter_hfss_optimizer(project_config: HfssProjectConfig) -> None:
+    """Configures and runs the S-parameter HFSS optimizer.
     
     Args:
         project_config: Project configuration.
@@ -139,7 +139,7 @@ def main(argv: list[str]) -> None:
         analyze_setup_name=FLAGS.analyze_setup_name,
         cleanup_variations=FLAGS.cleanup_variations,
     )
-    run_patch_antenna_optimizer(project_config)
+    run_s_parameter_hfss_optimizer(project_config)
 
 
 if __name__ == "__main__":
