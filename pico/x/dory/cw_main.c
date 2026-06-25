@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
                        /*aux_output_power=*/VCO_OUTPUT_POWER_FIVE_DBM);
   vco_configure();
   vco_enable();
+  vco_rf_enable();
 
   // Configure the DDS.
   dds_configure_cw(DDS_PROFILE, &g_dds_cw_config);

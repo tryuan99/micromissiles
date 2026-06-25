@@ -68,6 +68,13 @@ typedef enum {
   VCO_CHARGE_PUMP_CURRENT_5_00 = 15,
 } vco_charge_pump_current_e;
 
+// VCO auxiliary output select enumeration.
+typedef enum {
+  VCO_AUX_OUTPUT_INVALID = -1,
+  VCO_AUX_OUTPUT_DIVIDED = 0,
+  VCO_AUX_OUTPUT_FUNDAMENTAL = 1,
+} vco_aux_output_select_e;
+
 // VCO lock detect function enumeration.
 typedef enum {
   VCO_LOCK_DETECT_INVALID = -1,
@@ -97,6 +104,12 @@ typedef struct {
 
   // RF output enable.
   bool rf_output_enable;
+
+  // Auxiliary output enable.
+  bool aux_output_enable;
+
+  // Auxiliary output select.
+  vco_aux_output_select_e aux_output_select;
 
   // Lock detect pin.
   vco_lock_detect_pin_e lock_detect_pin;
@@ -162,6 +175,8 @@ static vco_static_config_t g_vco_static_config = (vco_static_config_t){
     .multiplexer_output = VCO_MULTIPLEXER_OUTPUT_THREE_STATE_OUTPUT,
     .charge_pump_current = VCO_CHARGE_PUMP_CURRENT_2_50,
     .rf_output_enable = true,
+    .aux_output_enable = true,
+    .aux_output_select = VCO_AUX_OUTPUT_FUNDAMENTAL,
     .lock_detect_pin = VCO_LOCK_DETECT_PIN_DIGITAL_LOCK_DETECT,
 };
 
@@ -267,7 +282,7 @@ static inline void vco_init_registers(void) {
   data[1] = (g_vco_frequency_config.integer >> 1) & 0xFF;
   data[2] = ((g_vco_frequency_config.integer & 0x1) << 7) |
             ((g_vco_frequency_config.fraction >> 5) & 0x7F);
-  data[3] = (g_vco_frequency_config.fraction & 0x1F) << 3;
+  data[3] = ((g_vco_frequency_config.fraction & 0x1F) << 3) | (0 & 0x7);
 
   // Register 1.
   data = (uint8_t*)&g_vco_registers[1];
@@ -276,7 +291,7 @@ static inline void vco_init_registers(void) {
   data[1] = (g_vco_frequency_config.phase >> 1) & 0xFF;
   data[2] = ((g_vco_frequency_config.phase & 0x1) << 7) |
             ((g_vco_frequency_config.modulus >> 5) & 0x7F);
-  data[3] = (g_vco_frequency_config.modulus & 0x1F) << 3;
+  data[3] = ((g_vco_frequency_config.modulus & 0x1F) << 3) | (1 & 0x7);
 
   // Register 2.
   data = (uint8_t*)&g_vco_registers[2];
@@ -287,32 +302,31 @@ static inline void vco_init_registers(void) {
   data[2] = ((g_vco_pfd_config.R & 0x3) << 6) |
             ((g_vco_static_config.charge_pump_current & 0xF) << 1) |
             (g_vco_frequency_config.lock_detect & 0x1);
-  data[3] = 0;
+  data[3] = 2 & 0x7;
 
   // Register 3.
-  g_vco_registers[3] = 0;
+  data = (uint8_t*)&g_vco_registers[3];
+  data[0] = 0;
+  data[1] = 0;
+  data[2] = 0;
+  data[3] = 3 & 0x7;
 
   // Register 4.
   data = (uint8_t*)&g_vco_registers[4];
   data[0] = 0;
   data[1] = 0;
-  data[2] = 0;
+  data[2] = ((g_vco_static_config.aux_output_select & 0x1) << 1) |
+            (g_vco_static_config.aux_output_enable & 0x1);
   data[3] = ((g_vco_output_config.aux_output_power & 0x3) << 6) |
             ((g_vco_static_config.rf_output_enable & 0x1) << 5) |
-            ((g_vco_output_config.output_power & 0x3) << 3);
+            ((g_vco_output_config.output_power & 0x3) << 3) | (4 & 0x7);
 
   // Register 5.
   data = (uint8_t*)&g_vco_registers[5];
   data[0] = 0;
-  data[1] = ((g_vco_static_config.lock_detect_pin & 0x3) << 6);
+  data[1] = ((g_vco_static_config.lock_detect_pin & 0x3) << 6) | (3 << 3);
   data[2] = 0;
-  data[3] = 0;
-
-  // Set the control bits.
-  for (size_t i = 0; i < VCO_NUM_REGISTERS; ++i) {
-    g_vco_registers[VCO_NUM_REGISTERS - 1 - i] =
-        (g_vco_registers[VCO_NUM_REGISTERS - 1 - i] & 0xFFFFFFF8) | (i & 0x7);
-  }
+  data[3] = 5 & 0x7;
 }
 
 void vco_init(const vco_config_t* config) {
