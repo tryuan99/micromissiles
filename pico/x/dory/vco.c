@@ -157,7 +157,13 @@ static const spi_comms_config_t g_vco_spi_comms_config = (spi_comms_config_t){
 static vco_config_t g_vco_config;
 
 // VCO register data.
-static vco_static_config_t g_vco_static_config;
+static vco_static_config_t g_vco_static_config = (vco_static_config_t){
+    .mode = VCO_MODE_LOW_NOISE,
+    .multiplexer_output = VCO_MULTIPLEXER_OUTPUT_THREE_STATE_OUTPUT,
+    .charge_pump_current = VCO_CHARGE_PUMP_CURRENT_2_50,
+    .rf_output_enable = true,
+    .lock_detect_pin = VCO_LOCK_DETECT_PIN_DIGITAL_LOCK_DETECT,
+};
 
 // VCO PFD configuration.
 static vco_pfd_config_t g_vco_pfd_config;
@@ -236,17 +242,6 @@ static inline vco_frequency_config_t vco_get_frequency_config(
   return frequency_config;
 }
 
-// Initialize the static configuration.
-static inline void vco_init_static_config(void) {
-  g_vco_static_config = (vco_static_config_t){
-      .mode = VCO_MODE_LOW_NOISE,
-      .multiplexer_output = VCO_MULTIPLEXER_OUTPUT_THREE_STATE_OUTPUT,
-      .charge_pump_current = VCO_CHARGE_PUMP_CURRENT_2_50,
-      .rf_output_enable = true,
-      .lock_detect_pin = VCO_LOCK_DETECT_PIN_DIGITAL_LOCK_DETECT,
-  };
-}
-
 // Initialize the VCO GPIO pins.
 static inline void vco_init_gpios(void) {
   // Enable pin.
@@ -322,7 +317,6 @@ static inline void vco_init_registers(void) {
 
 void vco_init(const vco_config_t* config) {
   g_vco_config = *config;
-  vco_init_static_config();
   spi_inst_init(&g_vco_config.spi_io_config, &g_vco_spi_comms_config);
   vco_init_gpios();
 }
