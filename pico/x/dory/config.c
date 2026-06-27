@@ -55,4 +55,5 @@ vga_config_t g_vga_config = (vga_config_t){
             .gpio_miso = GPIO_VGA_SEROUT,
             .gpio_cs = GPIO_VGA_LE,
         },
+    .gpio_ps = GPIO_VGA_PS,
 };

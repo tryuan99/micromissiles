@@ -331,7 +331,6 @@ static inline void vco_init_registers(void) {
 
 void vco_init(const vco_config_t* config) {
   g_vco_config = *config;
-  spi_inst_init(&g_vco_config.spi_io_config, &g_vco_spi_comms_config);
   vco_init_gpios();
 }
 

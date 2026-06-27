@@ -111,5 +111,8 @@ cc_library(
         "@pico-sdk//bazel/constraint:rp2350": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
-    deps = ["//pico/common:spi"],
+    deps = [
+        "//pico/common:spi",
+        "@pico-sdk//src/rp2_common/hardware_gpio",
+    ],
 )

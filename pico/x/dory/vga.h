@@ -9,6 +9,9 @@
 typedef struct {
   // SPI I/O configuration.
   spi_io_config_t spi_io_config;
+
+  // VGA parallel/serial select GPIO.
+  uint8_t gpio_ps;
 } vga_config_t;
 
 // Initialize the VGA.

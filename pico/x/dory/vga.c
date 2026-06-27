@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "hardware/gpio.h"
 #include "pico/common/spi.h"
 
 // VGA SPI baudrate.
@@ -52,7 +53,16 @@ static inline uint8_t vga_get_attenuation_control(
   return gain_attenuation_control;
 }
 
-void vga_init(const vga_config_t* config) { g_vga_config = *config; }
+void vga_init(const vga_config_t* config) {
+  g_vga_config = *config;
+
+  // Initialize the parallel/serial pin.
+  gpio_init(g_vga_config.gpio_ps);
+  gpio_set_dir(g_vga_config.gpio_ps, GPIO_OUT);
+
+  // Keep parallel/serial high to enable serial mode.
+  gpio_put(g_vga_config.gpio_ps, true);
+}
 
 void vga_set_gain_attenuation(const double gain_attenuation) {
   const uint8_t gain_attenuation_control =
@@ -65,27 +75,5 @@ void vga_set_gain_attenuation(const double gain_attenuation) {
   if (num_tx_bytes != 1) {
     printf("Failed to transmit VGA gain attenuation control.\n");
     return;
-  }
-
-  // Receive the transmitted VGA gain attenuation control.
-  uint8_t rx_gain_attenuation_control = 0;
-  const int num_rx_bytes = spi_receive(
-      &g_vga_config.spi_io_config, &rx_gain_attenuation_control, /*length=*/1);
-  if (num_rx_bytes != 1) {
-    printf("Failed to receive VGA gain attenuation control.\n");
-    return;
-  }
-
-  // Compare the transmitted and received VGA gain attenuation control.
-  const uint8_t mask = (1 << VGA_NUM_DATA_BITS) - 1;
-  const uint8_t masked_gain_attenuation_control =
-      gain_attenuation_control & mask;
-  const uint8_t masked_rx_gain_attenuation_control =
-      rx_gain_attenuation_control & mask;
-  if (masked_rx_gain_attenuation_control != masked_gain_attenuation_control) {
-    printf(
-        "Received VGA gain attenuation control does not match transmitted VGA "
-        "gain attenuation control: %u vs. %u.",
-        masked_gain_attenuation_control, masked_rx_gain_attenuation_control);
   }
 }
