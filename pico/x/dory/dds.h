@@ -3,6 +3,7 @@
 #ifndef PICO_X_DORY_DDS_H_
 #define PICO_X_DORY_DDS_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "pico/common/spi.h"
@@ -17,6 +18,9 @@ typedef enum {
 
 // DDS configuration struct.
 typedef struct {
+  // If true, the microcontroller is controlling the DDS output.
+  bool controller;
+
   // SPI I/O configuration.
   spi_io_config_t spi_io_config;
 
@@ -101,6 +105,12 @@ void dds_configure_cw(uint8_t profile, const dds_cw_config_t* cfg);
 
 // Confingure the DDS FMCW mode.
 void dds_configure_fmcw(uint8_t profile, const dds_fmcw_config_t* cfg);
+
+// Enable the DDS output.
+void dds_output_enable(void);
+
+// Disable the DDS output.
+void dds_output_enable(void);
 
 // Start the DDS FMCW mode.
 void dds_start_fmcw(void);

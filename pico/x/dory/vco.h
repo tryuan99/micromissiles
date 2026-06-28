@@ -44,11 +44,8 @@ typedef struct {
 } vco_config_t;
 
 // Initialize the VCO.
-void vco_init(const vco_config_t* config);
-
-// Set the VCO PFD and RF output frequencies.
-void vco_set_frequencies(vco_pfd_frequency_e pfd_frequency,
-                         double rf_frequency);
+void vco_init(const vco_config_t* config, vco_pfd_frequency_e pfd_frequency,
+              double rf_frequency);
 
 // Set the VCO output power.
 void vco_set_output_power(vco_output_power_e output_power,

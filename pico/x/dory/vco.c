@@ -18,6 +18,9 @@
 // The VCO reference frequency is fixed at 50 MHz.
 #define VCO_REFERENCE_FREQUENCY 50000000
 
+// Maximum VCO band select clock frequency in Hz.
+#define VCO_MAX_BAND_SELECT_CLOCK_FREQUENCY 125000
+
 // Fixed VCO frequency modulus.
 #define VCO_FREQUENCY_MODULUS 2500
 
@@ -68,19 +71,36 @@ typedef enum {
   VCO_CHARGE_PUMP_CURRENT_5_00 = 15,
 } vco_charge_pump_current_e;
 
-// VCO auxiliary output select enumeration.
-typedef enum {
-  VCO_AUX_OUTPUT_INVALID = -1,
-  VCO_AUX_OUTPUT_DIVIDED = 0,
-  VCO_AUX_OUTPUT_FUNDAMENTAL = 1,
-} vco_aux_output_select_e;
-
 // VCO lock detect function enumeration.
 typedef enum {
   VCO_LOCK_DETECT_INVALID = -1,
   VCO_LOCK_DETECT_FRAC_N = 0,
   VCO_LOCK_DETECT_INT_N = 1,
 } vco_lock_detect_e;
+
+// VCO phase detector polarity.
+// When using a passive loop filter or non-inverting active loop filter, this
+// must be set to 1. If using an active filter with an inverting characteristic,
+// this must be set to 0.
+typedef enum {
+  VCO_PHASE_DETECTOR_POLARITY_INVALID = -1,
+  VCO_PHASE_DETECTOR_POLARITY_NEGATIVE = 0,
+  VCO_PHASE_DETECTOR_POLARITY_POSITIVE = 1,
+} vco_phase_detector_polarity_e;
+
+// VCO feedback pin enumeration.
+typedef enum {
+  VCO_FEEDBACK_SELECT_INVALID = -1,
+  VCO_FEEDBACK_SELECT_DIVIDED = 0,
+  VCO_FEEDBACK_SELECT_FUNDAMENTAL = 1,
+} vco_feedback_select_e;
+
+// VCO auxiliary output select enumeration.
+typedef enum {
+  VCO_AUX_OUTPUT_INVALID = -1,
+  VCO_AUX_OUTPUT_DIVIDED = 0,
+  VCO_AUX_OUTPUT_FUNDAMENTAL = 1,
+} vco_aux_output_select_e;
 
 // VCO lock detect pin operation enumeration.
 typedef enum {
@@ -102,14 +122,20 @@ typedef struct {
   // Charge pump current setting.
   vco_charge_pump_current_e charge_pump_current;
 
-  // RF output enable.
-  bool rf_output_enable;
+  // Lock detect polarity.
+  vco_phase_detector_polarity_e phase_detector_polarity;
+
+  // Feedback select.
+  vco_feedback_select_e feedback_select;
+
+  // Auxiliary output select.
+  vco_aux_output_select_e aux_output_select;
 
   // Auxiliary output enable.
   bool aux_output_enable;
 
-  // Auxiliary output select.
-  vco_aux_output_select_e aux_output_select;
+  // RF output enable.
+  bool rf_output_enable;
 
   // Lock detect pin.
   vco_lock_detect_pin_e lock_detect_pin;
@@ -161,8 +187,8 @@ typedef struct {
 static const spi_comms_config_t g_vco_spi_comms_config = (spi_comms_config_t){
     .baudrate = VCO_SPI_BAUDRATE,
     .data_bits = 8,
-    .cpol = SPI_CPOL_1,
-    .cpha = SPI_CPHA_1,
+    .cpol = SPI_CPOL_0,
+    .cpha = SPI_CPHA_0,
     .order = SPI_MSB_FIRST,
 };
 
@@ -174,14 +200,22 @@ static vco_static_config_t g_vco_static_config = (vco_static_config_t){
     .mode = VCO_MODE_LOW_NOISE,
     .multiplexer_output = VCO_MULTIPLEXER_OUTPUT_THREE_STATE_OUTPUT,
     .charge_pump_current = VCO_CHARGE_PUMP_CURRENT_2_50,
-    .rf_output_enable = true,
-    .aux_output_enable = true,
+    .phase_detector_polarity = VCO_PHASE_DETECTOR_POLARITY_POSITIVE,
+    .feedback_select = VCO_FEEDBACK_SELECT_FUNDAMENTAL,
     .aux_output_select = VCO_AUX_OUTPUT_FUNDAMENTAL,
+    .aux_output_enable = true,
+    .rf_output_enable = true,
     .lock_detect_pin = VCO_LOCK_DETECT_PIN_DIGITAL_LOCK_DETECT,
 };
 
 // VCO PFD configuration.
 static vco_pfd_config_t g_vco_pfd_config;
+
+// VCO PFD frequency.
+static vco_pfd_frequency_e g_vco_pfd_frequency;
+
+// VCO RF frequency in Hz.
+static double g_vco_rf_frequency = 0;
 
 // VCO frequency configuration.
 static vco_frequency_config_t g_vco_frequency_config;
@@ -213,7 +247,7 @@ static inline vco_pfd_config_t vco_get_pfd_config(
     case VCO_PFD_FREQUENCY_25_MHZ: {
       return (vco_pfd_config_t){
           .D = 0,
-          .R = 0,
+          .R = 1,
           .T = 1,
       };
     }
@@ -222,6 +256,13 @@ static inline vco_pfd_config_t vco_get_pfd_config(
       return (vco_pfd_config_t){0};
     }
   }
+}
+
+// Get the band select clock divider value.
+static inline uint8_t vco_get_band_select_clock_divider(
+    const double pfd_frequency) {
+  return (uint8_t)((pfd_frequency + VCO_MAX_BAND_SELECT_CLOCK_FREQUENCY - 1) /
+                   VCO_MAX_BAND_SELECT_CLOCK_FREQUENCY);
 }
 
 // Get the frequency configuration.
@@ -274,6 +315,18 @@ static inline void vco_init_gpios(void) {
   gpio_init(g_vco_config.gpio_ld);
 }
 
+// Initialize the VCO frequencies.
+static inline void vco_init_frequencies(void) {
+  g_vco_pfd_config = vco_get_pfd_config(g_vco_pfd_frequency);
+  g_vco_frequency_config = vco_get_frequency_config(
+      g_vco_rf_frequency, vco_get_pfd_frequency(g_vco_pfd_frequency));
+  if (g_vco_frequency_config.fraction == 0) {
+    g_vco_frequency_config.lock_detect = VCO_LOCK_DETECT_INT_N;
+  } else {
+    g_vco_frequency_config.lock_detect = VCO_LOCK_DETECT_FRAC_N;
+  }
+}
+
 // Initialize the VCO registers.
 static inline void vco_init_registers(void) {
   // Register 0.
@@ -302,7 +355,8 @@ static inline void vco_init_registers(void) {
   data[2] = ((g_vco_pfd_config.R & 0x3) << 6) |
             ((g_vco_static_config.charge_pump_current & 0xF) << 1) |
             (g_vco_frequency_config.lock_detect & 0x1);
-  data[3] = 2 & 0x7;
+  data[3] =
+      ((g_vco_static_config.phase_detector_polarity & 0x1) << 6) | (2 & 0x7);
 
   // Register 3.
   data = (uint8_t*)&g_vco_registers[3];
@@ -312,10 +366,14 @@ static inline void vco_init_registers(void) {
   data[3] = 3 & 0x7;
 
   // Register 4.
+  const uint8_t band_select_clock_divider = vco_get_band_select_clock_divider(
+      vco_get_pfd_frequency(g_vco_pfd_frequency));
   data = (uint8_t*)&g_vco_registers[4];
   data[0] = 0;
-  data[1] = 0;
-  data[2] = ((g_vco_static_config.aux_output_select & 0x1) << 1) |
+  data[1] = ((g_vco_static_config.feedback_select & 0x1) << 7) |
+            ((band_select_clock_divider >> 4) & 0xF);
+  data[2] = ((band_select_clock_divider & 0xF) << 4) |
+            ((g_vco_static_config.aux_output_select & 0x1) << 1) |
             (g_vco_static_config.aux_output_enable & 0x1);
   data[3] = ((g_vco_output_config.aux_output_power & 0x3) << 6) |
             ((g_vco_static_config.rf_output_enable & 0x1) << 5) |
@@ -329,19 +387,15 @@ static inline void vco_init_registers(void) {
   data[3] = 5 & 0x7;
 }
 
-void vco_init(const vco_config_t* config) {
+void vco_init(const vco_config_t* config,
+              const vco_pfd_frequency_e pfd_frequency,
+              const double rf_frequency) {
   g_vco_config = *config;
-  vco_init_gpios();
-}
+  g_vco_pfd_frequency = pfd_frequency;
+  g_vco_rf_frequency = rf_frequency;
 
-void vco_set_frequencies(const vco_pfd_frequency_e pfd_frequency,
-                         const double rf_frequency) {
-  g_vco_pfd_config = vco_get_pfd_config(pfd_frequency);
-  g_vco_frequency_config = vco_get_frequency_config(
-      rf_frequency, vco_get_pfd_frequency(pfd_frequency));
-  if (g_vco_frequency_config.fraction == 0) {
-    g_vco_frequency_config.lock_detect = VCO_LOCK_DETECT_INT_N;
-  }
+  vco_init_gpios();
+  vco_init_frequencies();
 }
 
 void vco_set_output_power(const vco_output_power_e output_power,

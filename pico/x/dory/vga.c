@@ -28,8 +28,8 @@ typedef enum {
 static const spi_comms_config_t g_vga_spi_comms_config = (spi_comms_config_t){
     .baudrate = VGA_SPI_BAUDRATE,
     .data_bits = VGA_NUM_DATA_BITS,
-    .cpol = SPI_CPOL_1,
-    .cpha = SPI_CPHA_1,
+    .cpol = SPI_CPOL_0,
+    .cpha = SPI_CPHA_0,
     .order = SPI_MSB_FIRST,
 };
 

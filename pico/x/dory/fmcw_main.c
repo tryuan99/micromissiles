@@ -32,7 +32,9 @@ int main(int argc, char** argv) {
   led_init();
 
   // Initialize the VCO, DDS, mixer, and VGA.
-  vco_init(&g_vco_config);
+  vco_init(&g_vco_config, VCO_PFD_FREQUENCY_25_MHZ, VCO_RF_FREQUENCY);
+  // The FPGA controls the DDS output.
+  g_dds_config.controller = false;
   dds_init(&g_dds_config);
   mixer_init(&g_mixer_config);
   vga_init(&g_vga_config);
@@ -42,11 +44,11 @@ int main(int argc, char** argv) {
   vga_set_gain_attenuation(/*gain_attenuation=*/0);
 
   // Configure the VCO.
-  vco_set_frequencies(VCO_PFD_FREQUENCY_25_MHZ, VCO_RF_FREQUENCY);
   vco_set_output_power(VCO_OUTPUT_POWER_FIVE_DBM,
                        /*aux_output_power=*/VCO_OUTPUT_POWER_FIVE_DBM);
-  vco_configure();
   vco_enable();
+  vco_configure();
+  vco_rf_enable();
 
   // Configure the DDS.
   dds_configure_fmcw(DDS_PROFILE, &g_dds_fmcw_config);
