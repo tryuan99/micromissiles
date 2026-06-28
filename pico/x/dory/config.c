@@ -39,7 +39,6 @@ dds_config_t g_dds_config = (dds_config_t){
     .gpio_drhold = GPIO_DDS_DRHOLD,
     .gpio_drover = GPIO_DDS_DROVER,
     .gpio_osk = GPIO_DDS_OSK,
-    .mode = DDS_MODE_CW,
 };
 
 mixer_config_t g_mixer_config = (mixer_config_t){

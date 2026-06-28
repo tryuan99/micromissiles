@@ -181,12 +181,34 @@ static inline void dds_init_gpios(void) {
   }
 }
 
+static inline void dds_calibrate_dac(void) {
+  g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
+  g_dds_spi_packet.address = DDS_REGISTER_CFR_4;
+  memset(g_dds_spi_packet.data, 0, DDS_NUM_BYTES_PER_SPI_PACKET);
+  // Set the DAC calibration enable bit.
+  g_dds_spi_packet.data[0] = 0x01;
+  g_dds_spi_packet.data[1] = 0x05;
+  g_dds_spi_packet.data[2] = 0x21;
+  g_dds_spi_packet.data[3] = 0x20;
+  dds_spi_write_register();
+  dds_io_update();
+
+  // The maximum DAC calibration time is 135 us for a system clock frequency
+  // of 3.5 GHz.
+  sleep_us(/*us=*/200);
+
+  // Clear the DAC calibration enable bit.
+  g_dds_spi_packet.data[0] = 0x00;
+  dds_spi_write_register();
+  dds_io_update();
+}
+
 void dds_init(const dds_config_t* config) {
   g_dds_config = *config;
   spi_inst_init(&g_dds_config.spi_io_config, &g_dds_spi_comms_config);
   dds_init_gpios();
 
-  // A master reset is required after power up.
+  // A master reset is required after each power-up.
   dds_reset();
 
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
@@ -196,9 +218,28 @@ void dds_init(const dds_config_t* config) {
   g_dds_spi_packet.data[1] = 0x01;
   // Enable OSK enable and external OSK enable.
   g_dds_spi_packet.data[2] = 0x03;
-  // Disable external power-down control and configure SDIO as input only.
-  g_dds_spi_packet.data[3] = 0x02;
+  // Enable external power-down control and configure SDIO as input only.
+  g_dds_spi_packet.data[3] = 0x0A;
   dds_spi_write_register();
+
+  g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
+  g_dds_spi_packet.address = DDS_REGISTER_CFR_2;
+  memset(g_dds_spi_packet.data, 0, DDS_NUM_BYTES_PER_SPI_PACKET);
+  // Enable profile mode.
+  g_dds_spi_packet.data[1] = 0x80;
+  if (g_dds_config.mode == DDS_MODE_FMCW) {
+    // Enable the digital ramp with no-dwell high for the frequency.
+    g_dds_spi_packet.data[1] |= (DDS_RAMP_FREQUENCY << 4) | 0xC;
+  }
+  g_dds_spi_packet.data[2] = 0x0B;
+  dds_spi_write_register();
+
+  dds_io_update();
+
+  // The DAC calibration bit must be manually set and then cleared after each
+  // power-up and every time the REF CLK or the internal system clock is
+  // changed.
+  dds_calibrate_dac();
 }
 
 void dds_reset(void) {
@@ -210,7 +251,7 @@ void dds_reset(void) {
 
 void dds_io_update(void) {
   gpio_put(g_dds_config.gpio_io_update, true);
-  sleep_us(/*us=*/1);
+  sleep_us(/*us=*/10);
   gpio_put(g_dds_config.gpio_io_update, false);
 }
 
@@ -250,14 +291,6 @@ void dds_configure_cw(const uint8_t profile, const dds_cw_config_t* config) {
 void dds_configure_fmcw(const uint8_t profile,
                         const dds_fmcw_config_t* config) {
   dds_set_profile(profile);
-
-  g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
-  g_dds_spi_packet.address = DDS_REGISTER_CFR_2;
-  memset(g_dds_spi_packet.data, 0, DDS_NUM_BYTES_PER_SPI_PACKET);
-  // Enable the digital ramp with no-dwell high for the frequency.
-  g_dds_spi_packet.data[1] = (DDS_RAMP_FREQUENCY << 4) | 0xC;
-  g_dds_spi_packet.data[2] = 0x0B;
-  dds_spi_write_register();
 
   const uint32_t start_ftw = dds_frequency_to_register(config->start_frequency);
   g_dds_spi_packet.command = DDS_SPI_COMMAND_WRITE;
@@ -315,6 +348,6 @@ void dds_output_disable(void) { gpio_put(g_dds_config.gpio_osk, false); }
 
 void dds_start_fmcw(void) {
   gpio_put(g_dds_config.gpio_drctl, true);
-  sleep_us(/*us=*/1);
+  sleep_us(/*us=*/10);
   gpio_put(g_dds_config.gpio_drctl, false);
 }

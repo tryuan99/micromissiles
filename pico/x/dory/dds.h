@@ -13,7 +13,6 @@ typedef enum {
   DDS_MODE_INVALID = -1,
   DDS_MODE_CW,
   DDS_MODE_FMCW,
-  DDS_MODE_MAX,
 } dds_mode_e;
 
 // DDS configuration struct.
