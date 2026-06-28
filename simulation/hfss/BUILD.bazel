@@ -65,6 +65,18 @@ py_binary(
 )
 
 py_binary(
+    name = "u_slot_patch_antenna_4l_sma_optimizer_main",
+    srcs = ["u_slot_patch_antenna_4l_sma_optimizer_main.py"],
+    deps = [
+        ":constants",
+        ":design_variable",
+        ":hfss_optimizer",
+        ":s_parameter_constraint",
+        requirement("absl-py"),
+    ],
+)
+
+py_binary(
     name = "u_slot_patch_antenna_6l_optimizer_main",
     srcs = ["u_slot_patch_antenna_6l_optimizer_main.py"],
     deps = [
