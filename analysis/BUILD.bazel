@@ -1,0 +1,17 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "fsw_plotter_main",
+    srcs = ["fsw_plotter_main.py"],
+    deps = [
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("pandas"),
+    ],
+)
