@@ -53,6 +53,9 @@ int main(int argc, char** argv) {
 
   // Configure the DDS.
   dds_configure_fmcw(DDS_PROFILE, &g_dds_fmcw_config);
+  if (g_dds_config.controller) {
+    dds_output_enable();
+  }
 
   led_on();
   while (true) {}
