@@ -6,7 +6,7 @@ package(default_visibility = ["//visibility:public"])
 py_binary(
     name = "ti_radar_azimuth_radiation_pattern_main",
     srcs = ["ti_radar_azimuth_radiation_pattern_main.py"],
-    data = ["//antenna/data:ti_radar_azimuth_radiation_pattern_data"],
+    data = ["//analysis/antenna/ti/data:ti_radar_azimuth_radiation_pattern_data"],
     deps = [
         "//utils:constants",
         "//utils/visualization:mpl_config",
@@ -20,7 +20,7 @@ py_binary(
 py_binary(
     name = "ti_radar_elevation_radiation_pattern_main",
     srcs = ["ti_radar_elevation_radiation_pattern_main.py"],
-    data = ["//antenna/data:ti_radar_elevation_radiation_pattern_data"],
+    data = ["//analysis/antenna/ti/data:ti_radar_elevation_radiation_pattern_data"],
     deps = [
         "//utils:constants",
         "//utils/visualization:mpl_config",
@@ -34,7 +34,7 @@ py_binary(
 py_binary(
     name = "ti_radar_3d_radiation_pattern_main",
     srcs = ["ti_radar_3d_radiation_pattern_main.py"],
-    data = ["//antenna/data:ti_radar_3d_radiation_pattern_data"],
+    data = ["//analysis/antenna/ti/data:ti_radar_3d_radiation_pattern_data"],
     deps = [
         "//utils:constants",
         "//utils/visualization:color_maps",

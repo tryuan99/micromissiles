@@ -90,7 +90,8 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string(
-        "data", "antenna/data/ti_iwr6843aopevm_3d_radiation_pattern_data_1.csv",
+        "data",
+        "analysis/antenna/ti/data/ti_iwr6843aopevm_3d_radiation_pattern_data_1.csv",
         "Data filename.")
 
     app.run(main)

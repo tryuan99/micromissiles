@@ -1,4 +1,4 @@
-"""Plots the radiation pattern of the radar antennas over azimuth."""
+"""Plots the radiation pattern of the radar antennas over elevation."""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,8 +11,8 @@ from utils import constants
 FLAGS = flags.FLAGS
 
 
-def plot_azimuth_radiation_pattern(data: str) -> None:
-    """Plots the azimuth radiation pattern of the radar antennas.
+def plot_elevation_radiation_pattern(data: str) -> None:
+    """Plots the elevation radiation pattern of the radar antennas.
 
     Args:
         data: Data filename.
@@ -30,9 +30,9 @@ def plot_azimuth_radiation_pattern(data: str) -> None:
     azimuth_column, elevation_column, *antenna_columns = df.columns
 
     # For each antenna, plot the magnitude of the spatial samples over
-    # azimuth.
+    # elevation.
     for antenna_column in antenna_columns:
-        azimuth = df[azimuth_column]
+        elevation = df[elevation_column]
         antenna_radiation_pattern = df[antenna_column]
         antenna_radiation_pattern_abs = np.abs(antenna_radiation_pattern)
         antenna_radiation_pattern_abs_db = (
@@ -41,25 +41,25 @@ def plot_azimuth_radiation_pattern(data: str) -> None:
             antenna_radiation_pattern_abs_db -
             np.max(antenna_radiation_pattern_abs_db))
 
-        # Plot the magnitude of the spatial samples over azimuth.
+        # Plot the magnitude of the spatial samples over elevation.
         fig, ax = plt.subplots(figsize=(12, 8))
-        ax.scatter(azimuth, normalized_antenna_radiation_pattern_abs_db)
-        ax.set_xlabel("Azimuth [deg]")
+        ax.scatter(elevation, normalized_antenna_radiation_pattern_abs_db)
+        ax.set_xlabel("Elevation [deg]")
         ax.set_ylabel("Normalized magnitude [dB]")
-        ax.set_title(f"{antenna_column} azimuth radiation pattern")
+        ax.set_title(f"{antenna_column} elevation radiation pattern")
         plt.show()
 
 
 def main(argv):
     assert len(argv) == 1, argv
 
-    plot_azimuth_radiation_pattern(FLAGS.data)
+    plot_elevation_radiation_pattern(FLAGS.data)
 
 
 if __name__ == "__main__":
     flags.DEFINE_string(
         "data",
-        "antenna/data/ti_iwr6843aopevm_azimuth_radiation_pattern_data_1.csv",
+        "analysis/antenna/ti/data/ti_iwr6843aopevm_elevation_radiation_pattern_data_1.csv",
         "Data filename.")
 
     app.run(main)
