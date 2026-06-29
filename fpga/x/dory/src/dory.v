@@ -1,5 +1,6 @@
 module dory #(
     parameter CLK_FREQ_HZ = 100_000_000,
+    parameter CHIRP_TO_CHIRP_TIME_US = 120,
     parameter DEBOUNCE_TIME_MS = 20,
     parameter NUM_SWITCHES = 4,
     parameter NUM_BUTTONS = 4,
@@ -29,6 +30,7 @@ module dory #(
     wire [NUM_BUTTONS-1:0] button_debouncer_in;
     wire [NUM_BUTTONS-1:0] button_debouncer_out;
     reg dds_state;
+    wire dds_trigger;
     wire dds_drctl;
     wire dds_drover;
     wire vco_rf_en;
@@ -67,7 +69,17 @@ module dory #(
     assign button_debouncer_in = BUTTONS;
 
     // DDS.
-    assign dds_drctl = button_debouncer_out[0];
+    counter #(
+        .CLK_FREQ_HZ(CLK_FREQ_HZ),
+        .PERIOD_US(CHIRP_TO_CHIRP_TIME_US)
+    ) dds_trigger (
+        .clk(clk),
+        .rst(rst),
+        .out(dds_trigger)
+    );
+
+    // The chirp is either triggered by the chirp-to-chirp time trigger or the button.
+    assign dds_drctl = dds_trigger | button_debouncer_out[0];
 
     synchronizer #(
         .WIDTH(1)
