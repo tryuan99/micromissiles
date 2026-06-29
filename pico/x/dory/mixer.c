@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "hardware/gpio.h"
+#include "pico/x/dory/defs.h"
 
 // Mixer configuration.
 static mixer_config_t g_mixer_config;
@@ -12,7 +13,9 @@ void mixer_init(const mixer_config_t* config) {
 
   // Initialize the enable pin.
   gpio_init(g_mixer_config.gpio_enable);
+#if PICO_CONTROLLER
   gpio_set_dir(g_mixer_config.gpio_enable, GPIO_OUT);
+#endif  // PICO_CONTROLLER
 }
 
 void mixer_enable(void) { gpio_put(g_mixer_config.gpio_enable, true); }

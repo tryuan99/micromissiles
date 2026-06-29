@@ -29,8 +29,6 @@ int main(int argc, char** argv) {
 
   // Initialize the VCO, DDS, mixer, and VGA.
   vco_init(&g_vco_config, VCO_PFD_FREQUENCY_25_MHZ, VCO_RF_FREQUENCY);
-  // The Pico controls the DDS output.
-  g_dds_config.controller = true;
   g_dds_config.mode = DDS_MODE_CW;
   dds_init(&g_dds_config);
   mixer_init(&g_mixer_config);

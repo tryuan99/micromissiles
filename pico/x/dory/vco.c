@@ -8,6 +8,7 @@
 
 #include "hardware/gpio.h"
 #include "pico/common/spi.h"
+#include "pico/x/dory/defs.h"
 
 // VCO SPI baudrate.
 #define VCO_SPI_BAUDRATE 1000000
@@ -306,7 +307,9 @@ static inline void vco_init_gpios(void) {
 
   // RF enable pin.
   gpio_init(g_vco_config.gpio_rf_enable);
+#if PICO_CONTROLLER
   gpio_set_dir(g_vco_config.gpio_rf_enable, GPIO_OUT);
+#endif  // PICO_CONTROLLER
 
   // Multiplexer output pin.
   gpio_init(g_vco_config.gpio_muxout);

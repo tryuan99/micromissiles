@@ -3,7 +3,6 @@
 #ifndef PICO_X_DORY_DDS_H_
 #define PICO_X_DORY_DDS_H_
 
-#include <stdbool.h>
 #include <stdint.h>
 
 #include "pico/common/spi.h"
@@ -17,9 +16,6 @@ typedef enum {
 
 // DDS configuration struct.
 typedef struct {
-  // If true, the microcontroller is controlling the DDS output.
-  bool controller;
-
   // SPI I/O configuration.
   spi_io_config_t spi_io_config;
 

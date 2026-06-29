@@ -10,9 +10,6 @@
 #include "pico/x/dory/vco.h"
 #include "pico/x/dory/vga.h"
 
-// Macro for whether the Pico is acting as the controller.
-#define PICO_CONTROLLER true
-
 // VCO RF frequency.
 #define VCO_RF_FREQUENCY 3500000000
 
@@ -36,19 +33,13 @@ int main(int argc, char** argv) {
 
   // Initialize the VCO, DDS, mixer, and VGA.
   vco_init(&g_vco_config, VCO_PFD_FREQUENCY_25_MHZ, VCO_RF_FREQUENCY);
-  // The FPGA controls the DDS output.
-  g_dds_config.controller = PICO_CONTROLLER;
   g_dds_config.mode = DDS_MODE_FMCW;
   dds_init(&g_dds_config);
-#if PICO_CONTROLLER
   mixer_init(&g_mixer_config);
-#endif  // PICO_CONTROLLER
   vga_init(&g_vga_config);
 
   // Enable the mixer and VGA.
-#if PICO_CONTROLLER
   mixer_enable();
-#endif  // PICO_CONTROLLER
   vga_set_gain_attenuation(/*gain_attenuation=*/0);
 
   // Configure the VCO.
@@ -56,15 +47,11 @@ int main(int argc, char** argv) {
                        /*aux_output_power=*/VCO_OUTPUT_POWER_FIVE_DBM);
   vco_enable();
   vco_configure();
-#if PICO_CONTROLLER
   vco_rf_enable();
-#endif
 
   // Configure the DDS.
   dds_configure_fmcw(DDS_PROFILE, &g_dds_fmcw_config);
-#if PICO_CONTROLLER
   dds_output_enable();
-#endif  // PICO_CONTROLLER
 
   led_on();
   while (true) {

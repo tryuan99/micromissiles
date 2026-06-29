@@ -8,6 +8,7 @@
 #include "hardware/gpio.h"
 #include "pico/common/spi.h"
 #include "pico/time.h"
+#include "pico/x/dory/defs.h"
 
 // DDS system clock frequency.
 #define DDS_SYSCLK_FREQUENCY 3500000000
@@ -161,24 +162,24 @@ static inline void dds_init_gpios(void) {
 
   // Ramp control pin.
   gpio_init(g_dds_config.gpio_drctl);
-  if (g_dds_config.controller) {
-    gpio_set_dir(g_dds_config.gpio_drctl, GPIO_OUT);
-  }
+#if PICO_CONTROLLER
+  gpio_set_dir(g_dds_config.gpio_drctl, GPIO_OUT);
+#endif  // PICO_CONTROLLER
 
   // Ramp hold pin.
   gpio_init(g_dds_config.gpio_drhold);
-  if (g_dds_config.controller) {
-    gpio_set_dir(g_dds_config.gpio_drhold, GPIO_OUT);
-  }
+#if PICO_CONTROLLER
+  gpio_set_dir(g_dds_config.gpio_drhold, GPIO_OUT);
+#endif  // PICO_CONTROLLER
 
   // Ramp over pin.
   gpio_init(g_dds_config.gpio_drover);
 
   // Output shift keying pin.
   gpio_init(g_dds_config.gpio_osk);
-  if (g_dds_config.controller) {
-    gpio_set_dir(g_dds_config.gpio_osk, GPIO_OUT);
-  }
+#if PICO_CONTROLLER
+  gpio_set_dir(g_dds_config.gpio_osk, GPIO_OUT);
+#endif  // PICO_CONTROLLER
 }
 
 static inline void dds_calibrate_dac(void) {

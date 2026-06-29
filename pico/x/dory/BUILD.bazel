@@ -21,6 +21,16 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "defs",
+    hdrs = ["defs.h"],
+    target_compatible_with = select({
+        "@pico-sdk//bazel/constraint:rp2040": [],
+        "@pico-sdk//bazel/constraint:rp2350": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+)
+
 cc_binary(
     name = "cw_main",
     srcs = ["cw_main.c"],
@@ -50,6 +60,7 @@ cc_library(
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = [
+        ":defs",
         "//pico/common:spi",
         "@pico-sdk//src/common/pico_time",
         "@pico-sdk//src/rp2_common/hardware_gpio",
@@ -84,7 +95,10 @@ cc_library(
         "@pico-sdk//bazel/constraint:rp2350": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
-    deps = ["@pico-sdk//src/rp2_common/hardware_gpio"],
+    deps = [
+        ":defs",
+        "@pico-sdk//src/rp2_common/hardware_gpio",
+    ],
 )
 
 cc_library(
@@ -97,6 +111,7 @@ cc_library(
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = [
+        ":defs",
         "//pico/common:spi",
         "@pico-sdk//src/rp2_common/hardware_gpio",
     ],
