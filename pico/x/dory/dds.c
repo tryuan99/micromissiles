@@ -232,7 +232,8 @@ void dds_init(const dds_config_t* config) {
     // Enable the digital ramp with no-dwell high for the frequency.
     g_dds_spi_packet.data[1] |= (DDS_RAMP_FREQUENCY << 4) | 0xC;
   }
-  g_dds_spi_packet.data[2] = 0x0B;
+  // Enable the digital ramp generator over output.
+  g_dds_spi_packet.data[2] = 0x2B;
   dds_spi_write_register();
 
   dds_io_update();
