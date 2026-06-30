@@ -1,7 +1,6 @@
 module dory #(
     parameter CLK_FREQ_HZ = 100_000_000,
     parameter CHIRP_TO_CHIRP_TIME_US = 120,
-    parameter MIN_RAMP_TIME_US = 1,
     parameter DEBOUNCE_TIME_MS = 20,
     parameter NUM_SWITCHES = 4,
     parameter NUM_BUTTONS = 4,
@@ -25,8 +24,9 @@ module dory #(
     output [NUM_LEDS-1:0] LEDS
 );
     // DDS states.
-    localparam DDS_STATE_IDLE = 1'b0;
-    localparam DDS_STATE_RAMP = 1'b1;
+    localparam DDS_STATE_IDLE = 2'b00;
+    localparam DDS_STATE_WAIT = 2'b01;
+    localparam DDS_STATE_RAMP = 2'b10;
 
     wire clk;
     wire rst;
@@ -34,7 +34,7 @@ module dory #(
     wire [NUM_SWITCHES-1:0] switch_debouncer_out;
     wire [NUM_BUTTONS-1:0] button_debouncer_in;
     wire [NUM_BUTTONS-1:0] button_debouncer_out;
-    reg dds_state;
+    reg[1:0] dds_state;
     wire dds_trigger;
     wire dds_drctl;
     wire dds_drover;
@@ -96,17 +96,6 @@ module dory #(
         .out(dds_drover)
     );
 
-    // The output should be enabled for at least MIN_RAMP_TIME_US.
-    timer #(
-        .CLK_FREQ_HZ(CLK_FREQ_HZ),
-        .PERIOD_US(MIN_RAMP_TIME_US)
-    ) min_ramp_timer (
-        .clk(clk),
-        .rst(rst),
-        .en(dds_state == DDS_STATE_RAMP),
-        .out(dds_min_ramp_done)
-    );
-
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             dds_state <= DDS_STATE_IDLE;
@@ -116,11 +105,17 @@ module dory #(
                 DDS_STATE_IDLE: begin
                     if (dds_drctl) begin
                         // DDS ramp has started.
+                        dds_state <= DDS_STATE_WAIT;
+                    end
+                end
+                DDS_STATE_WAIT: begin
+                    if (!dds_drover) begin
+                        // DDS over signal was de-asserted.
                         dds_state <= DDS_STATE_RAMP;
                     end
                 end
                 DDS_STATE_RAMP: begin
-                    if (dds_drover && dds_min_ramp_done) begin
+                    if (dds_drover) begin
                         // DDS ramp has finished.
                         dds_state <= DDS_STATE_IDLE;
                     end
@@ -147,5 +142,5 @@ module dory #(
     assign LEDS[0] = rst;
     assign LEDS[1] = vco_rf_en;
     assign LEDS[2] = mixer_en;
-    assign LEDS[3] = dds_state;
+    assign LEDS[3] = (dds_state != DDS_STATE_IDLE);
 endmodule
