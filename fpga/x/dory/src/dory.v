@@ -1,6 +1,7 @@
 module dory #(
     parameter CLK_FREQ_HZ = 100_000_000,
     parameter CHIRP_TO_CHIRP_TIME_US = 120,
+    parameter MIN_RAMP_TIME_US = 1,
     parameter DEBOUNCE_TIME_MS = 20,
     parameter NUM_SWITCHES = 4,
     parameter NUM_BUTTONS = 4,
@@ -23,6 +24,10 @@ module dory #(
     input [NUM_BUTTONS-1:0] BUTTONS,
     output [NUM_LEDS-1:0] LEDS
 );
+    // DDS states.
+    localparam DDS_STATE_IDLE = 1'b0;
+    localparam DDS_STATE_RAMP = 1'b1;
+
     wire clk;
     wire rst;
     wire [NUM_SWITCHES-1:0] switch_debouncer_in;
@@ -33,6 +38,7 @@ module dory #(
     wire dds_trigger;
     wire dds_drctl;
     wire dds_drover;
+    wire dds_min_ramp_done;
     wire vco_rf_en;
     wire mixer_en;
 
@@ -72,7 +78,7 @@ module dory #(
     counter #(
         .CLK_FREQ_HZ(CLK_FREQ_HZ),
         .PERIOD_US(CHIRP_TO_CHIRP_TIME_US)
-    ) dds_trigger (
+    ) dds_trigger_counter (
         .clk(clk),
         .rst(rst),
         .out(dds_trigger)
@@ -90,24 +96,45 @@ module dory #(
         .out(dds_drover)
     );
 
+    // The output should be enabled for at least MIN_RAMP_TIME_US.
+    timer #(
+        .CLK_FREQ_HZ(CLK_FREQ_HZ),
+        .PERIOD_US(MIN_RAMP_TIME_US)
+    ) min_ramp_timer (
+        .clk(clk),
+        .rst(rst),
+        .en(dds_state == DDS_STATE_RAMP),
+        .out(dds_min_ramp_done)
+    );
+
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            dds_state <= 0;
+            dds_state <= DDS_STATE_IDLE;
         end
         else begin
-            if (!dds_state && dds_drctl) begin
-                // DDS ramp has begun.
-                dds_state <= 1;
-            end
-            else if (dds_state && dds_drover) begin
-                dds_state <= 0;
-            end
+            case (dds_state)
+                DDS_STATE_IDLE: begin
+                    if (dds_drctl) begin
+                        // DDS ramp has started.
+                        dds_state <= DDS_STATE_RAMP;
+                    end
+                end
+                DDS_STATE_RAMP: begin
+                    if (dds_drover && dds_min_ramp_done) begin
+                        // DDS ramp has finished.
+                        dds_state <= DDS_STATE_IDLE;
+                    end
+                end
+                default: begin
+                    dds_state <= DDS_STATE_IDLE;
+                end
+            endcase
         end
     end
 
     assign DDS_DRCTL = dds_drctl;
     assign DDS_DRHOLD = button_debouncer_out[1];
-    assign DDS_OSK = dds_state;
+    assign DDS_OSK = (dds_state == DDS_STATE_RAMP);
 
     // Enables.
     assign vco_rf_en = switch_debouncer_out[0];
