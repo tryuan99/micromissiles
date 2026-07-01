@@ -1,12 +1,14 @@
 module counter #(
     parameter CLK_FREQ_HZ = 100_000_000,
-    parameter PERIOD_US = 100
+    parameter PERIOD_US = 100,
+    parameter WIDTH_US = 10
 )(
     input clk,
     input rst,
     output out
 );
     localparam MAX_COUNT = (CLK_FREQ_HZ / 1_000_000) * PERIOD_US;
+    localparam WIDTH_COUNT = (CLK_FREQ_HZ / 1_000_000) * WIDTH_US;
     localparam COUNTER_WIDTH = $clog2(MAX_COUNT);
 
     reg [COUNTER_WIDTH-1:0] count;
@@ -24,6 +26,12 @@ module counter #(
             end
             else begin
                 count <= count + 1'b1;
+            end
+
+            if (count == (MAX_COUNT - 1)) begin
+                pulse <= 1'b1;
+            end
+            else if (count == (WIDTH_COUNT - 1)) begin
                 pulse <= 1'b0;
             end
         end

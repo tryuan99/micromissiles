@@ -77,7 +77,8 @@ module dory #(
     // DDS.
     counter #(
         .CLK_FREQ_HZ(CLK_FREQ_HZ),
-        .PERIOD_US(CHIRP_TO_CHIRP_TIME_US)
+        .PERIOD_US(CHIRP_TO_CHIRP_TIME_US),
+        .WIDTH_US(10)
     ) dds_trigger_counter (
         .clk(clk),
         .rst(rst),
