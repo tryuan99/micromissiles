@@ -13,9 +13,9 @@ void mixer_init(const mixer_config_t* config) {
 
   // Initialize the enable pin.
   gpio_init(g_mixer_config.gpio_enable);
-#if PICO_CONTROLLER
+#ifdef CONTROLLER_PICO
   gpio_set_dir(g_mixer_config.gpio_enable, GPIO_OUT);
-#endif  // PICO_CONTROLLER
+#endif  // CONTROLLER_PICO
 }
 
 void mixer_enable(void) { gpio_put(g_mixer_config.gpio_enable, true); }

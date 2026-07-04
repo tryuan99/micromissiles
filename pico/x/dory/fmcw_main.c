@@ -55,10 +55,10 @@ int main(int argc, char** argv) {
 
   led_on();
   while (true) {
-#if PICO_CONTROLLER
+#ifdef CONTROLLER_PICO
     dds_start_fmcw();
     sleep_us(/*us=*/100);
-#endif  // PICO_CONTROLLER
+#endif  // CONTROLLER_PICO
   }
   return EXIT_SUCCESS;
 }

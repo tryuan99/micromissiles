@@ -162,24 +162,24 @@ static inline void dds_init_gpios(void) {
 
   // Ramp control pin.
   gpio_init(g_dds_config.gpio_drctl);
-#if PICO_CONTROLLER
+#ifdef CONTROLLER_PICO
   gpio_set_dir(g_dds_config.gpio_drctl, GPIO_OUT);
-#endif  // PICO_CONTROLLER
+#endif  // CONTROLLER_PICO
 
   // Ramp hold pin.
   gpio_init(g_dds_config.gpio_drhold);
-#if PICO_CONTROLLER
+#ifdef CONTROLLER_PICO
   gpio_set_dir(g_dds_config.gpio_drhold, GPIO_OUT);
-#endif  // PICO_CONTROLLER
+#endif  // CONTROLLER_PICO
 
   // Ramp over pin.
   gpio_init(g_dds_config.gpio_drover);
 
   // Output shift keying pin.
   gpio_init(g_dds_config.gpio_osk);
-#if PICO_CONTROLLER
+#ifdef CONTROLLER_PICO
   gpio_set_dir(g_dds_config.gpio_osk, GPIO_OUT);
-#endif  // PICO_CONTROLLER
+#endif  // CONTROLLER_PICO
 }
 
 static inline void dds_calibrate_dac(void) {

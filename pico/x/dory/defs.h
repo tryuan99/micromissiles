@@ -5,7 +5,8 @@
 
 #include <stdbool.h>
 
-// Macro for whether the Pico is acting as the controller.
-#define PICO_CONTROLLER true
+// Define the controlling device.
+#define CONTROLLER_PICO
+// #define CONTROLLER_FPGA
 
 #endif  // PICO_X_DORY_DEFS_H_

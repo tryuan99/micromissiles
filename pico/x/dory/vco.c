@@ -307,9 +307,9 @@ static inline void vco_init_gpios(void) {
 
   // RF enable pin.
   gpio_init(g_vco_config.gpio_rf_enable);
-#if PICO_CONTROLLER
+#ifdef CONTROLLER_PICO
   gpio_set_dir(g_vco_config.gpio_rf_enable, GPIO_OUT);
-#endif  // PICO_CONTROLLER
+#endif  // CONTROLLER_PICO
 
   // Multiplexer output pin.
   gpio_init(g_vco_config.gpio_muxout);
