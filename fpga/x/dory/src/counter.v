@@ -1,7 +1,7 @@
 module counter #(
     parameter CLK_FREQ_HZ = 100_000_000,
     parameter PERIOD_US = 100,
-    parameter WIDTH_US = 10
+    parameter WIDTH_US = 1
 )(
     input clk,
     input rst,
