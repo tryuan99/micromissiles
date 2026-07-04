@@ -1,4 +1,4 @@
-"""Plots spectra exported from the Rohde & Schwarz FSW spectrum analyzer."""
+"""Plots timem domain waveforms exported from an oscilloscope."""
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,20 +9,19 @@ import utils.visualization.mpl_config
 FLAGS = flags.FLAGS
 
 
-def plot_spectra(dfs: list[pd.DataFrame], labels: list[str]) -> None:
-    """Plots the spectra exported from the Rohde & Schwarz FSW spectrum
-    analyzer.
+def plot_waveforms(dfs: list[pd.DataFrame], labels: list[str]) -> None:
+    """Plots the waveforms exported from an oscilloscope.
 
     Args:
-        dfs: Spectrum dataframes.
+        dfs: Waveform dataframes.
         labels: Data labels.
     """
     fig, ax = plt.subplots(figsize=(12, 6))
     for df, label in zip(dfs, labels or [""] * len(dfs)):
-        frequency_column, power_column = df.columns
-        ax.semilogx(df[frequency_column], df[power_column], label=label)
-    ax.set_xlabel("Frequency [Hz]")
-    ax.set_ylabel("Power [dBm]")
+        time_column, voltage_column = df.columns
+        ax.plot(df[time_column], df[voltage_column], label=label)
+    ax.set_xlabel("Time [s]")
+    ax.set_ylabel("Voltage [V]")
     ax.grid(visible=True, which="both")
     if labels:
         ax.legend()
@@ -34,7 +33,7 @@ def main(argv):
     assert len(argv) == 1
 
     dfs = [pd.read_csv(data, comment="#") for data in FLAGS.data]
-    plot_spectra(dfs, FLAGS.labels)
+    plot_waveforms(dfs, FLAGS.labels)
 
 
 if __name__ == "__main__":

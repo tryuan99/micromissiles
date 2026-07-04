@@ -15,3 +15,16 @@ py_binary(
         requirement("pandas"),
     ],
 )
+
+py_binary(
+    name = "scope_plotter_main",
+    srcs = ["scope_plotter_main.py"],
+    deps = [
+        "//utils:constants",
+        "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("pandas"),
+    ],
+)
