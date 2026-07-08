@@ -25,6 +25,7 @@ py_binary(
         "//utils/visualization:mpl_config",
         requirement("absl-py"),
         requirement("matplotlib"),
+        requirement("numpy"),
         requirement("pandas"),
     ],
 )
