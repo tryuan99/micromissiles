@@ -1,0 +1,24 @@
+load("@protobuf//bazel:proto_library.bzl", "proto_library")
+load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
+
+package(default_visibility = ["//visibility:public"])
+
+proto_library(
+    name = "static_config_proto",
+    srcs = ["static_config.proto"],
+)
+
+py_proto_library(
+    name = "static_config_py_proto",
+    deps = [":static_config_proto"],
+)
+
+proto_library(
+    name = "engagement_config_proto",
+    srcs = ["engagement_config.proto"],
+)
+
+py_proto_library(
+    name = "engagement_config_py_proto",
+    deps = [":engagement_config_proto"],
+)
