@@ -108,7 +108,7 @@ typedef enum {
   BEAMFORMER_REGISTER_TX_BIAS_RAM_CTL = 0x052,
   BEAMFORMER_REGISTER_LDO_TRIM_CTL_0 = 0x400,
   BEAMFORMER_REGISTER_LDO_TRIM_CTL_1 = 0x401,
-} beamformer_spi_register_e;
+} beamformer_register_e;
 
 // Beamformer SPI transmit/receive control enumeration.
 typedef enum {
@@ -129,7 +129,7 @@ typedef struct {  // SPI command.
   beamformer_spi_command_e command;
 
   // Address.
-  beamformer_spi_register_e address;
+  beamformer_register_e address;
 
   // Data bytes.
   uint8_t data[BEAMFORMER_NUM_BYTES_PER_SPI_PACKET];
@@ -322,8 +322,6 @@ static inline void beamformer_spi_read_register(void) {
                                ((BEAMFORMER_SPI_ADDRESS & 0x3) << 5) |
                                ((g_beamformer_spi_packet.address >> 8) & 0x7);
   g_beamformer_spi_buffer[1] = g_beamformer_spi_packet.address & 0xFF;
-  memcpy(&g_beamformer_spi_buffer[2], g_beamformer_spi_packet.data,
-         BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
   spi_transmit(&g_beamformer_config.spi_io_config, g_beamformer_spi_buffer,
                /*length=*/BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET);
   spi_receive(&g_beamformer_config.spi_io_config, g_beamformer_spi_packet.data,

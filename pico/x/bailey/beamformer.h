@@ -180,6 +180,7 @@ typedef struct {
   beamformer_phase_e phase;
 } beamformer_tx_channel_config_t;
 
+// Beamformer TX configuration struct.
 typedef struct {
   // TX channel configurations.
   beamformer_tx_channel_config_t channel_configs[BEAMFORMER_NUM_CHANNELS];
