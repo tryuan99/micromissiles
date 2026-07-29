@@ -293,24 +293,37 @@ static const beamformer_phase_iq_setting_t
 // DDS configuration.
 static beamformer_config_t g_beamformer_config;
 
-// DDS SPI packet.
-static beamformer_spi_packet_t g_beamformer_spi_packet;
+// DDS SPI TX packet.
+static beamformer_spi_packet_t g_beamformer_spi_tx_packet;
 
-// DDS SPI buffer for the address bytes and the data byte.
+// DDS SPI RX packet.
+static beamformer_spi_packet_t g_beamformer_spi_rx_packet;
+
+// DDS SPI TX buffer for the address bytes and the data byte.
 static uint8_t
-    g_beamformer_spi_buffer[BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
-                            BEAMFORMER_NUM_BYTES_PER_SPI_PACKET];
+    g_beamformer_spi_tx_buffer[BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
+                               BEAMFORMER_NUM_BYTES_PER_SPI_PACKET];
+
+// DDS SPI RX buffer for the address bytes and the data byte.
+static uint8_t
+    g_beamformer_spi_rx_buffer[BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
+                               BEAMFORMER_NUM_BYTES_PER_SPI_PACKET];
 
 // Write to a DDS register via SPI. Assume that the SPI instance has been
 // initialized already.
 static inline void beamformer_spi_write_register(void) {
-  g_beamformer_spi_buffer[0] = (BEAMFORMER_SPI_COMMAND_WRITE << 7) |
-                               ((BEAMFORMER_SPI_ADDRESS & 0x3) << 5) |
-                               ((g_beamformer_spi_packet.address >> 8) & 0x7);
-  g_beamformer_spi_buffer[1] = g_beamformer_spi_packet.address & 0xFF;
-  memcpy(&g_beamformer_spi_buffer[2], g_beamformer_spi_packet.data,
-         BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
-  spi_transmit(&g_beamformer_config.spi_io_config, g_beamformer_spi_buffer,
+  memset(g_beamformer_spi_tx_buffer, 0,
+         BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
+             BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
+  g_beamformer_spi_tx_buffer[0] =
+      (BEAMFORMER_SPI_COMMAND_WRITE << 7) |
+      ((BEAMFORMER_SPI_ADDRESS & 0x3) << 5) |
+      ((g_beamformer_spi_tx_packet.address >> 8) & 0x7);
+  g_beamformer_spi_tx_buffer[1] = g_beamformer_spi_tx_packet.address & 0xFF;
+  memcpy(
+      &g_beamformer_spi_tx_buffer[BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET],
+      g_beamformer_spi_tx_packet.data, BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
+  spi_transmit(&g_beamformer_config.spi_io_config, g_beamformer_spi_tx_buffer,
                /*length=*/BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
                    BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
 }
@@ -318,60 +331,68 @@ static inline void beamformer_spi_write_register(void) {
 // Read from a DDS register via SPI. Assume that the SPI instance has been
 // initialized already.
 static inline void beamformer_spi_read_register(void) {
-  g_beamformer_spi_buffer[0] = (BEAMFORMER_SPI_COMMAND_WRITE << 7) |
-                               ((BEAMFORMER_SPI_ADDRESS & 0x3) << 5) |
-                               ((g_beamformer_spi_packet.address >> 8) & 0x7);
-  g_beamformer_spi_buffer[1] = g_beamformer_spi_packet.address & 0xFF;
-  spi_transmit(&g_beamformer_config.spi_io_config, g_beamformer_spi_buffer,
-               /*length=*/BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET);
-  spi_receive(&g_beamformer_config.spi_io_config, g_beamformer_spi_packet.data,
-              BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
+  memset(g_beamformer_spi_tx_buffer, 0,
+         BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
+             BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
+  g_beamformer_spi_tx_buffer[0] =
+      (BEAMFORMER_SPI_COMMAND_READ << 7) |
+      ((BEAMFORMER_SPI_ADDRESS & 0x3) << 5) |
+      ((g_beamformer_spi_tx_packet.address >> 8) & 0x7);
+  g_beamformer_spi_tx_buffer[1] = g_beamformer_spi_tx_packet.address & 0xFF;
+  spi_transmit_receive(&g_beamformer_config.spi_io_config,
+                       g_beamformer_spi_tx_buffer, g_beamformer_spi_rx_buffer,
+                       /*length=*/BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET +
+                           BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
+  memcpy(
+      g_beamformer_spi_rx_packet.data,
+      &g_beamformer_spi_rx_buffer[BEAMFORMER_NUM_ADDRESS_BYTES_PER_SPI_PACKET],
+      BEAMFORMER_NUM_BYTES_PER_SPI_PACKET);
 }
 
 // Initialize the transmit/receive control.
 static inline void beamformer_init_tr_control(void) {
-  g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-  g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_SW_CTRL;
+  g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+  g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_SW_CTRL;
   // Enable TX and set the transmit/receive control to SPI.
-  g_beamformer_spi_packet.data[0] =
+  g_beamformer_spi_tx_packet.data[0] =
       (1 << 6) | (BEAMFORMER_TR_SOURCE_SPI << 2) | (BEAMFORMER_SPI_TR_TX << 1);
   beamformer_spi_write_register();
 }
 
 // Initialize the memory control.
 static inline void beamformer_init_memory(void) {
-  g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-  g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_MEM_CTRL;
+  g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+  g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_MEM_CTRL;
   // Load beam and bias position settings from the registers.
-  g_beamformer_spi_packet.data[0] = (1 << 6) | (1 << 5);
+  g_beamformer_spi_tx_packet.data[0] = (1 << 6) | (1 << 5);
   beamformer_spi_write_register();
 }
 
 // Initialize the bias for the TX subcircuits.
 static inline void beamformer_init_tx_bias(void) {
-  g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-  g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_BIAS_CURRENT_TX;
+  g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+  g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_BIAS_CURRENT_TX;
   // Set the VGA bias and the vector modulator bias to 5 (recommended).
-  g_beamformer_spi_packet.data[0] = (5 << 3) | 5;
+  g_beamformer_spi_tx_packet.data[0] = (5 << 3) | 5;
   beamformer_spi_write_register();
 
-  g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-  g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_BIAS_CURRENT_TX_DRV;
+  g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+  g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_BIAS_CURRENT_TX_DRV;
   // Set the TX driver bias to 6 (recommended).
-  g_beamformer_spi_packet.data[0] = 6;
+  g_beamformer_spi_tx_packet.data[0] = 6;
   beamformer_spi_write_register();
 }
 
 // Set the TX enables.
 static inline void beamformer_enable_tx(const beamformer_tx_config_t* config) {
-  g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-  g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_TX_ENABLES;
+  g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+  g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_TX_ENABLES;
   // Enable all TX channel drivers, vector modulators, and VGAs.
-  g_beamformer_spi_packet.data[0] = 0x7;
+  g_beamformer_spi_tx_packet.data[0] = 0x7;
   // Enable each channel.
   for (size_t i = 0; i < BEAMFORMER_NUM_CHANNELS; ++i) {
-    g_beamformer_spi_packet.data[0] |= config->channel_configs[i].enabled
-                                       << (6 - i);
+    g_beamformer_spi_tx_packet.data[0] |= config->channel_configs[i].enabled
+                                          << (6 - i);
   }
   beamformer_spi_write_register();
 }
@@ -396,11 +417,11 @@ void beamformer_init(const beamformer_config_t* config) {
 }
 
 void beamformer_reset(void) {
-  g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-  g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_INTERFACE_CONFIG_A;
+  g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+  g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_INTERFACE_CONFIG_A;
   // Trigger a soft reset, configure MSB first, enable address ascension, and
   // enable SDO.
-  g_beamformer_spi_packet.data[0] = 0b10111101;
+  g_beamformer_spi_tx_packet.data[0] = 0b10111101;
   beamformer_spi_write_register();
 }
 
@@ -411,25 +432,25 @@ void beamformer_configure_tx(const beamformer_tx_config_t* config) {
         &config->channel_configs[i];
 
     // Set the attenuator and VGA gain.
-    g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-    g_beamformer_spi_packet.address = BEAMFORMER_REGISTER_CH1_TX_GAIN + i;
-    g_beamformer_spi_packet.data[0] =
+    g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+    g_beamformer_spi_tx_packet.address = BEAMFORMER_REGISTER_CH1_TX_GAIN + i;
+    g_beamformer_spi_tx_packet.data[0] =
         (channel_config->attenuator << 7) | (channel_config->vga_gain & 0x7F);
     beamformer_spi_write_register();
 
     // Set the vector modulator I input.
-    g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-    g_beamformer_spi_packet.address =
+    g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+    g_beamformer_spi_tx_packet.address =
         BEAMFORMER_REGISTER_CH1_TX_PHASE_I + 2 * i;
-    g_beamformer_spi_packet.data[0] =
+    g_beamformer_spi_tx_packet.data[0] =
         g_beamformer_phase_iq_settings[channel_config->phase].i & 0x3F;
     beamformer_spi_write_register();
 
     // Set the vector modulator Q input.
-    g_beamformer_spi_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
-    g_beamformer_spi_packet.address =
+    g_beamformer_spi_tx_packet.command = BEAMFORMER_SPI_COMMAND_WRITE;
+    g_beamformer_spi_tx_packet.address =
         BEAMFORMER_REGISTER_CH1_TX_PHASE_Q + 2 * i;
-    g_beamformer_spi_packet.data[0] =
+    g_beamformer_spi_tx_packet.data[0] =
         g_beamformer_phase_iq_settings[channel_config->phase].q & 0x3F;
     beamformer_spi_write_register();
   }

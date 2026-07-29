@@ -119,33 +119,43 @@ static const spi_comms_config_t g_mixer_spi_comms_config = (spi_comms_config_t){
 // Mixer configuration.
 static mixer_config_t g_mixer_config;
 
-// Mixer SPI packet.
-static mixer_spi_packet_t g_mixer_spi_packet;
+// Mixer SPI TX packet.
+static mixer_spi_packet_t g_mixer_spi_tx_packet;
 
-// Mixer SPI buffer for the instruction byte and the data bytes.
-static uint8_t g_mixer_spi_buffer[MIXER_NUM_BYTES_PER_SPI_PACKET + 1];
+// Mixer SPI RX packet.
+static mixer_spi_packet_t g_mixer_spi_rx_packet;
+
+// Mixer SPI TX buffer for the instruction byte and the data bytes.
+static uint8_t g_mixer_spi_tx_buffer[MIXER_NUM_BYTES_PER_SPI_PACKET + 1];
+
+// Mixer SPI RX buffer for the instruction byte and the data bytes.
+static uint8_t g_mixer_spi_rx_buffer[MIXER_NUM_BYTES_PER_SPI_PACKET + 1];
 
 // Write to a mixer register via SPI. Assume that the SPI instance has been
 // initialized already.
 static inline void mixer_spi_write_register(void) {
-  const uint8_t instruction =
-      (g_mixer_spi_packet.command << 7) | (g_mixer_spi_packet.address & 0x7F);
-  memset(g_mixer_spi_buffer, 0, MIXER_NUM_BYTES_PER_SPI_PACKET + 1);
-  g_mixer_spi_buffer[0] = instruction;
-  memcpy(&g_mixer_spi_buffer[1], g_mixer_spi_packet.data,
+  const uint8_t instruction = (g_mixer_spi_tx_packet.command << 7) |
+                              (g_mixer_spi_tx_packet.address & 0x7F);
+  memset(g_mixer_spi_tx_buffer, 0, MIXER_NUM_BYTES_PER_SPI_PACKET + 1);
+  g_mixer_spi_tx_buffer[0] = instruction;
+  memcpy(&g_mixer_spi_tx_buffer[1], g_mixer_spi_tx_packet.data,
          MIXER_NUM_BYTES_PER_SPI_PACKET);
-  spi_transmit(&g_mixer_config.spi_io_config, g_mixer_spi_buffer,
+  spi_transmit(&g_mixer_config.spi_io_config, g_mixer_spi_tx_buffer,
                /*length=*/MIXER_NUM_BYTES_PER_SPI_PACKET + 1);
 }
 
 // Read from a mixer register via SPI. Assume that the SPI instance has been
 // initialized already.
 static inline void mixer_spi_read_register(void) {
-  const uint8_t instruction =
-      (g_mixer_spi_packet.command << 7) | (g_mixer_spi_packet.address & 0x7F);
-  spi_transmit(&g_mixer_config.spi_io_config, &instruction, /*length=*/1);
-  spi_receive(&g_mixer_config.spi_io_config, g_mixer_spi_packet.data,
-              MIXER_NUM_BYTES_PER_SPI_PACKET);
+  const uint8_t instruction = (g_mixer_spi_tx_packet.command << 7) |
+                              (g_mixer_spi_tx_packet.address & 0x7F);
+  memset(g_mixer_spi_tx_buffer, 0, MIXER_NUM_BYTES_PER_SPI_PACKET + 1);
+  g_mixer_spi_tx_buffer[0] = instruction;
+  spi_transmit_receive(&g_mixer_config.spi_io_config, g_mixer_spi_tx_buffer,
+                       g_mixer_spi_rx_buffer,
+                       /*length=*/MIXER_NUM_BYTES_PER_SPI_PACKET + 1);
+  memcpy(g_mixer_spi_rx_packet.data, &g_mixer_spi_rx_buffer[1],
+         MIXER_NUM_BYTES_PER_SPI_PACKET);
 }
 
 // Perform the initial power-up sequence.
@@ -155,94 +165,95 @@ static inline void mixer_power_up(void) {
   //  2. Program register R127 to value 0x007F0003.
   //  3. Program register R6 to value 0x00060100.
   //  4. Program register R127 to R0 in reverse order.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 0;
-  g_mixer_spi_packet.data[0] = 0x00;
-  g_mixer_spi_packet.data[1] = (MIXER_PLL_RESET_TRIGGER & 0x1) << 1;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 0;
+  g_mixer_spi_tx_packet.data[0] = 0x00;
+  g_mixer_spi_tx_packet.data[1] = (MIXER_PLL_RESET_TRIGGER & 0x1) << 1;
   mixer_spi_write_register();
 
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 127;
-  g_mixer_spi_packet.data[0] = 0x00;
-  g_mixer_spi_packet.data[1] = 0x03;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 127;
+  g_mixer_spi_tx_packet.data[0] = 0x00;
+  g_mixer_spi_tx_packet.data[1] = 0x03;
   mixer_spi_write_register();
 
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 6;
-  g_mixer_spi_packet.data[0] = 0x01;
-  g_mixer_spi_packet.data[1] = 0x00;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 6;
+  g_mixer_spi_tx_packet.data[0] = 0x01;
+  g_mixer_spi_tx_packet.data[1] = 0x00;
   mixer_spi_write_register();
 
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 127;
-  g_mixer_spi_packet.data[0] = 0x00;
-  g_mixer_spi_packet.data[1] = 0x00;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 127;
+  g_mixer_spi_tx_packet.data[0] = 0x00;
+  g_mixer_spi_tx_packet.data[1] = 0x00;
   mixer_spi_write_register();
 }
 
 // Initialize the external LO clock.
 static inline void mixer_init_external_lo(void) {
   // Set the differential LO termination to 100 Ohms.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 123;
-  g_mixer_spi_packet.data[0] = 0x00;
-  g_mixer_spi_packet.data[1] = MIXER_LO_TERMINATION_100_OHMS & 0x3;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 123;
+  g_mixer_spi_tx_packet.data[0] = 0x00;
+  g_mixer_spi_tx_packet.data[1] = MIXER_LO_TERMINATION_100_OHMS & 0x3;
   mixer_spi_write_register();
 
   // Set the divider for the DC offset correction.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 84;
-  g_mixer_spi_packet.data[0] = (6 >> 2) & 0xFF;
-  g_mixer_spi_packet.data[1] = (6 & 0x3) << 6;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 84;
+  g_mixer_spi_tx_packet.data[0] = (6 >> 2) & 0xFF;
+  g_mixer_spi_tx_packet.data[1] = (6 & 0x3) << 6;
   mixer_spi_write_register();
 
   // Set the dividers for the state machine clock.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 82;
-  g_mixer_spi_packet.data[0] = 0x06;
-  g_mixer_spi_packet.data[1] = ((MIXER_DIV_A_SIXTEEN & 0x3) << 3) | (3 & 0x3);
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 82;
+  g_mixer_spi_tx_packet.data[0] = 0x06;
+  g_mixer_spi_tx_packet.data[1] =
+      ((MIXER_DIV_A_SIXTEEN & 0x3) << 3) | (3 & 0x3);
   mixer_spi_write_register();
 
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 81;
-  g_mixer_spi_packet.data[0] = MIXER_LO_POLYPHASE_MODE_1_EXTERNAL & 0xF;
-  g_mixer_spi_packet.data[1] =
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 81;
+  g_mixer_spi_tx_packet.data[0] = MIXER_LO_POLYPHASE_MODE_1_EXTERNAL & 0xF;
+  g_mixer_spi_tx_packet.data[1] =
       ((MIXER_STATE_MACHINE_CLOCK_DRIVER_EXTERNAL & 0x3) << 6) |
-      ((MIXER_LO_QUADRATURE_DRIVER_EXTERNAL & 0x3) << 4) |
-      ((MIXER_LO_QUADRATURE_DRIVER_EXTERNAL & 0x3) << 1) |
+      ((MIXER_LO_QUADRATURE_DRIVER_EXTERNAL & 0x3) << 4) | (3 << 1) |
       (MIXER_STATE_MACHINE_CLOCK_SOURCE_EXTERNAL & 0x1);
   mixer_spi_write_register();
 
   // Set the LO multiplexer.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 80;
-  g_mixer_spi_packet.data[0] = 0x00;
-  g_mixer_spi_packet.data[1] = 0x22;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 80;
+  g_mixer_spi_tx_packet.data[0] = 0x00;
+  g_mixer_spi_tx_packet.data[1] = 0x22;
   mixer_spi_write_register();
 
   // Enable lock detect on the multiplexer output pin and power down the PLL.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 0;
-  g_mixer_spi_packet.data[0] = 0x00;
-  g_mixer_spi_packet.data[1] = ((MIXER_MUXOUT_SELECT_LOCK_DETECT & 0x1) << 2) |
-                               (MIXER_PLL_POWER_DOWN & 0x1);
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 0;
+  g_mixer_spi_tx_packet.data[0] = 0x00;
+  g_mixer_spi_tx_packet.data[1] =
+      ((MIXER_MUXOUT_SELECT_LOCK_DETECT & 0x1) << 2) |
+      (MIXER_PLL_POWER_DOWN & 0x1);
   mixer_spi_write_register();
 
   // Wait 100 us before performing DC offset correction.
   sleep_us(/*us=*/100);
 
   // Reset the DC offset correction FSM.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 126;
-  g_mixer_spi_packet.data[0] = 0x01;
-  g_mixer_spi_packet.data[1] = 0x00;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 126;
+  g_mixer_spi_tx_packet.data[0] = 0x01;
+  g_mixer_spi_tx_packet.data[1] = 0x00;
   mixer_spi_write_register();
 
   // Enable offset calibration for I and Q channels.
-  g_mixer_spi_packet.command = MIXER_SPI_COMMAND_WRITE;
-  g_mixer_spi_packet.address = 84;
-  g_mixer_spi_packet.data[0] = (6 >> 2) & 0xFF;
-  g_mixer_spi_packet.data[1] = ((6 & 0x3) << 6) | 0x3;
+  g_mixer_spi_tx_packet.command = MIXER_SPI_COMMAND_WRITE;
+  g_mixer_spi_tx_packet.address = 84;
+  g_mixer_spi_tx_packet.data[0] = (6 >> 2) & 0xFF;
+  g_mixer_spi_tx_packet.data[1] = ((6 & 0x3) << 6) | 0x3;
   mixer_spi_write_register();
 }
 
