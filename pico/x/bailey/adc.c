@@ -225,13 +225,12 @@ static inline void adc_init_pll(void) {
 
 // Initialize the ADC output.
 static inline void adc_init_output(void) {
-  // Set the ADC to be the SCLK_ADC master, set FS_ADC to be a 50/50 duty cycle
-  // clock, set positive polarity for SCLK_ADC and FS_ADC, and output 2 channels
-  // per pin.
+  // Set the ADC to be the SCLK_ADC master, set FS_ADC to be in pulse mode, set
+  // positive polarity for SCLK_ADC and FS_ADC, and output 2 channels per pin.
   g_adc_spi_tx_packet.command = ADC_SPI_COMMAND_WRITE;
   g_adc_spi_tx_packet.address = ADC_REGISTER_SERIAL_MODE;
   g_adc_spi_tx_packet.data[0] = 0x00;
-  g_adc_spi_tx_packet.data[1] = 0b01011100;
+  g_adc_spi_tx_packet.data[1] = 0b01111100;
   adc_spi_write_register();
 
   // Output in serial mode and enable CONV_START_N.

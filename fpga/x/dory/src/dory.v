@@ -30,14 +30,21 @@ module dory #(
 
     wire clk;
     wire rst;
+    wire [NUM_SWITCHES-1:0] switch_synchronizer_in;
+    wire [NUM_SWITCHES-1:0] switch_synchronizer_out;
     wire [NUM_SWITCHES-1:0] switch_debouncer_in;
     wire [NUM_SWITCHES-1:0] switch_debouncer_out;
+    wire [NUM_BUTTONS-1:0] button_synchronizer_in;
+    wire [NUM_BUTTONS-1:0] button_synchronizer_out;
     wire [NUM_BUTTONS-1:0] button_debouncer_in;
     wire [NUM_BUTTONS-1:0] button_debouncer_out;
-    reg[1:0] dds_state;
+    reg [1:0] dds_state;
     wire dds_trigger;
+    wire dds_trigger_counter_out;
     wire dds_drctl;
     wire dds_drover;
+    wire dds_drover_synchronizer_in;
+    wire dds_drover_synchronizer_out;
     wire dds_min_ramp_done;
     wire vco_rf_en;
     wire mixer_en;
@@ -47,6 +54,15 @@ module dory #(
     assign rst = ~RESET;
 
     // Switches.
+    synchronizer #(
+        .WIDTH(NUM_SWITCHES)
+    ) switch_synchronizer (
+        .clk(clk),
+        .rst(rst),
+        .in(switch_synchronizer_in),
+        .out(switch_synchronizer_out)
+    );
+
     debouncer #(
         .CLK_FREQ_HZ(CLK_FREQ_HZ),
         .DEBOUNCE_TIME_MS(DEBOUNCE_TIME_MS),
@@ -58,9 +74,19 @@ module dory #(
         .out(switch_debouncer_out)
     );
 
-    assign switch_debouncer_in = SWITCHES;
+    assign switch_synchronizer_in = SWITCHES;
+    assign switch_debouncer_in = switch_synchronizer_out;
 
     // Buttons.
+    synchronizer #(
+        .WIDTH(NUM_BUTTONS)
+    ) button_synchronizer (
+        .clk(clk),
+        .rst(rst),
+        .in(button_synchronizer_in),
+        .out(button_synchronizer_out)
+    );
+
     debouncer #(
         .CLK_FREQ_HZ(CLK_FREQ_HZ),
         .DEBOUNCE_TIME_MS(DEBOUNCE_TIME_MS),
@@ -72,7 +98,8 @@ module dory #(
         .out(button_debouncer_out)
     );
 
-    assign button_debouncer_in = BUTTONS;
+    assign button_synchronizer_in = BUTTONS;
+    assign button_debouncer_in = button_synchronizer_out;
 
     // DDS.
     counter #(
@@ -82,8 +109,10 @@ module dory #(
     ) dds_trigger_counter (
         .clk(clk),
         .rst(rst),
-        .out(dds_trigger)
+        .out(dds_trigger_counter_out)
     );
+
+    assign dds_trigger = dds_trigger_counter_out;
 
     // The chirp is either triggered by the chirp-to-chirp time trigger or the button.
     assign dds_drctl = dds_trigger | button_debouncer_out[0];
@@ -93,9 +122,12 @@ module dory #(
     ) dds_drover_synchronizer (
         .clk(clk),
         .rst(rst),
-        .in(DDS_DROVER),
-        .out(dds_drover)
+        .in(dds_drover_synchronizer_in),
+        .out(dds_drover_synchronizer_out)
     );
+
+    assign dds_drover_synchronizer_in = DDS_DROVER;
+    assign dds_drover = dds_drover_synchronizer_out;
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
