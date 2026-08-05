@@ -3,6 +3,8 @@
 #ifndef PICO_X_DORY_VGA_H_
 #define PICO_X_DORY_VGA_H_
 
+#include <stdint.h>
+
 #include "pico/common/spi.h"
 
 // VGA configuration struct.

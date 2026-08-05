@@ -4,11 +4,11 @@
 
 #include "pico/common/led.h"
 #include "pico/stdlib.h"
+#include "pico/x/dory/attenuator.h"
 #include "pico/x/dory/config.h"
 #include "pico/x/dory/dds.h"
 #include "pico/x/dory/mixer.h"
 #include "pico/x/dory/vco.h"
-#include "pico/x/dory/vga.h"
 
 // VCO RF frequency.
 #define VCO_RF_FREQUENCY 3500000000
@@ -31,16 +31,16 @@ int main(int argc, char** argv) {
   stdio_init_all();
   led_init();
 
-  // Initialize the VCO, DDS, mixer, and VGA.
+  // Initialize the VCO, DDS, mixer, and attenuator.
   vco_init(&g_vco_config, VCO_PFD_FREQUENCY_25_MHZ, VCO_RF_FREQUENCY);
   g_dds_config.mode = DDS_MODE_FMCW;
   dds_init(&g_dds_config);
   mixer_init(&g_mixer_config);
-  vga_init(&g_vga_config);
+  attenuator_init(&g_attenuator_config);
 
-  // Enable the mixer and VGA.
+  // Enable the mixer and the attenuator.
   mixer_enable();
-  vga_set_gain_attenuation(/*gain_attenuation=*/0);
+  attenuator_set_gain_attenuation(/*gain_attenuation=*/8);
 
   // Configure the VCO.
   vco_set_output_power(VCO_OUTPUT_POWER_FIVE_DBM,

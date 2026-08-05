@@ -1,10 +1,10 @@
 #include "pico/x/dory/config.h"
 
 #include "hardware/spi.h"
+#include "pico/x/dory/attenuator.h"
 #include "pico/x/dory/dds.h"
 #include "pico/x/dory/mixer.h"
 #include "pico/x/dory/vco.h"
-#include "pico/x/dory/vga.h"
 
 vco_config_t g_vco_config = (vco_config_t){
     .spi_io_config =
@@ -45,14 +45,9 @@ mixer_config_t g_mixer_config = (mixer_config_t){
     .gpio_enable = GPIO_MIXER_EN,
 };
 
-vga_config_t g_vga_config = (vga_config_t){
-    .spi_io_config =
-        (spi_io_config_t){
-            .inst = spi0,
-            .gpio_sclk = GPIO_VGA_CLK,
-            .gpio_mosi = GPIO_VGA_SERIN,
-            .gpio_miso = GPIO_VGA_SEROUT,
-            .gpio_cs = GPIO_VGA_LE,
-        },
-    .gpio_ps = GPIO_VGA_PS,
+attenuator_config_t g_attenuator_config = (attenuator_config_t){
+    .gpio_v1 = GPIO_ATTENUATOR_V1,
+    .gpio_v2 = GPIO_ATTENUATOR_V2,
+    .gpio_v3 = GPIO_ATTENUATOR_V3,
+    .gpio_v4 = GPIO_ATTENUATOR_V4,
 };
