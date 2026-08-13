@@ -3,6 +3,7 @@
 #ifndef PICO_X_DORY_DDS_H_
 #define PICO_X_DORY_DDS_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "pico/common/spi.h"
@@ -105,9 +106,12 @@ void dds_configure_fmcw(uint8_t profile, const dds_fmcw_config_t* cfg);
 void dds_output_enable(void);
 
 // Disable the DDS output.
-void dds_output_enable(void);
+void dds_output_disable(void);
 
 // Start the DDS FMCW mode.
 void dds_start_fmcw(void);
+
+// Return whether the DDS ramp is over.
+bool dds_ramp_over(void);
 
 #endif  // PICO_X_DORY_DDS_H_

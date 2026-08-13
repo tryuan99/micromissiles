@@ -129,6 +129,9 @@ typedef struct {
   // Feedback select.
   vco_feedback_select_e feedback_select;
 
+  // Mute till lock detect.
+  bool mute_till_lock_detect;
+
   // Auxiliary output select.
   vco_aux_output_select_e aux_output_select;
 
@@ -203,6 +206,7 @@ static vco_static_config_t g_vco_static_config = (vco_static_config_t){
     .charge_pump_current = VCO_CHARGE_PUMP_CURRENT_2_50,
     .phase_detector_polarity = VCO_PHASE_DETECTOR_POLARITY_POSITIVE,
     .feedback_select = VCO_FEEDBACK_SELECT_FUNDAMENTAL,
+    .mute_till_lock_detect = true,
     .aux_output_select = VCO_AUX_OUTPUT_FUNDAMENTAL,
     .aux_output_enable = true,
     .rf_output_enable = true,
@@ -281,16 +285,16 @@ static inline vco_frequency_config_t vco_get_frequency_config(
   // If the frequency is greater than 3 GHz, the prescaler must be set to 8/9.
   if (rf_frequency > 3000000000) {
     frequency_config.prescaler = VCO_FREQUENCY_PRESCALAR_EIGHT_NINE;
-    // The minimum INT value is 23.
-    if (frequency_config.integer < 23) {
-      printf("When the prescaler is set to 4/5, the minimum INT is 23: %u.",
+    // The minimum INT value is 75.
+    if (frequency_config.integer < 75) {
+      printf("When the prescaler is set to 8/9, the minimum INT is 75: %u.",
              frequency_config.integer);
     }
   } else {
     frequency_config.prescaler = VCO_FREQUENCY_PRESCALAR_FOUR_FIVE;
-    // The minimum INT value is 75.
-    if (frequency_config.integer < 75) {
-      printf("When the prescaler is set to 8/9, the minimum INT is 75: %u.",
+    // The minimum INT value is 23.
+    if (frequency_config.integer < 23) {
+      printf("When the prescaler is set to 4/5, the minimum INT is 23: %u.",
              frequency_config.integer);
     }
   }
@@ -376,6 +380,7 @@ static inline void vco_init_registers(void) {
   data[1] = ((g_vco_static_config.feedback_select & 0x1) << 7) |
             ((band_select_clock_divider >> 4) & 0xF);
   data[2] = ((band_select_clock_divider & 0xF) << 4) |
+            ((g_vco_static_config.mute_till_lock_detect & 0x1) << 2) |
             ((g_vco_static_config.aux_output_select & 0x1) << 1) |
             (g_vco_static_config.aux_output_enable & 0x1);
   data[3] = ((g_vco_output_config.aux_output_power & 0x3) << 6) |

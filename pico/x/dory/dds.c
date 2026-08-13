@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "hardware/gpio.h"
@@ -134,17 +135,29 @@ static inline void dds_spi_read_register(void) {
 }
 
 // Convert the frequency to the register value.
-static uint32_t dds_frequency_to_register(const double frequency) {
+static inline uint32_t dds_frequency_to_register(const double frequency) {
   return (uint32_t)(frequency / DDS_SYSCLK_FREQUENCY * (1LL << 32) + 0.5);
 }
 
-// Convert the time to the register value.
-static uint16_t dds_time_to_register(const double step_time) {
-  return (uint16_t)(step_time * DDS_SYSCLK_FREQUENCY / 24 + 0.5);
+// Convert the time to the register value denoting the number of DDS clock
+// periods.
+static inline uint16_t dds_time_to_register(const double step_time) {
+  const double num_dds_clk_periods =
+      step_time * DDS_SYSCLK_FREQUENCY / 24 + 0.5;
+  if (num_dds_clk_periods < 1) {
+    printf("Clamping the ramp step time to 1 DDS clock period.\n");
+    return 1;
+  }
+  if (num_dds_clk_periods >= (double)UINT16_MAX + 1) {
+    printf("Clamping the ramp step time to %u DDS clock periods.\n",
+           UINT16_MAX);
+    return UINT16_MAX;
+  }
+  return (uint16_t)num_dds_clk_periods;
 }
 
 // Get the register offset for the given profile.
-static uint8_t dds_register_offset_for_profile(const uint8_t profile) {
+static inline uint8_t dds_register_offset_for_profile(const uint8_t profile) {
   return 11 + profile * 2;
 }
 
@@ -243,7 +256,7 @@ void dds_init(const dds_config_t* config) {
     g_dds_spi_tx_packet.data[1] |= (DDS_RAMP_FREQUENCY << 4) | 0xC;
   }
   // Enable the digital ramp generator over output.
-  g_dds_spi_tx_packet.data[2] = 0x2B;
+  g_dds_spi_tx_packet.data[2] = 0x29;
   dds_spi_write_register();
 
   dds_io_update();
@@ -322,8 +335,13 @@ void dds_configure_fmcw(const uint8_t profile,
   g_dds_spi_tx_packet.data[3] = end_ftw & 0xFF;
   dds_spi_write_register();
 
+  // Calculate the frequency step from the requested chirp slope and the actual
+  // step time to preserve the chirp slope.
+  const uint16_t step_time = dds_time_to_register(config->step_time);
+  const double actual_step_time = step_time * 24.0 / DDS_SYSCLK_FREQUENCY;
+  const double chirp_slope = config->frequency_step / config->step_time;
   const uint32_t frequency_step =
-      dds_frequency_to_register(config->frequency_step);
+      dds_frequency_to_register(chirp_slope * actual_step_time);
   g_dds_spi_tx_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_tx_packet.address = DDS_REGISTER_RAMP_RISING_STEP_SIZE;
   g_dds_spi_tx_packet.data[0] = (frequency_step >> 24) & 0xFF;
@@ -332,7 +350,6 @@ void dds_configure_fmcw(const uint8_t profile,
   g_dds_spi_tx_packet.data[3] = frequency_step & 0xFF;
   dds_spi_write_register();
 
-  const uint16_t step_time = dds_time_to_register(config->step_time);
   g_dds_spi_tx_packet.command = DDS_SPI_COMMAND_WRITE;
   g_dds_spi_tx_packet.address = DDS_REGISTER_RAMP_RATE;
   g_dds_spi_tx_packet.data[0] = (step_time >> 8) & 0xFF;
@@ -363,3 +380,5 @@ void dds_start_fmcw(void) {
   sleep_us(/*us=*/10);
   gpio_put(g_dds_config.gpio_drctl, false);
 }
+
+bool dds_ramp_over(void) { return gpio_get(g_dds_config.gpio_drover); }
