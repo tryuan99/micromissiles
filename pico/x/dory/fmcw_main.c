@@ -31,25 +31,24 @@ int main(int argc, char** argv) {
   stdio_init_all();
   led_init();
 
-  // Initialize the VCO, DDS, mixer, and attenuator.
+  // Initialize the VCO.
   vco_init(&g_vco_config, VCO_PFD_FREQUENCY_25_MHZ, VCO_RF_FREQUENCY);
-  g_dds_config.mode = DDS_MODE_FMCW;
-  dds_init(&g_dds_config);
-  mixer_init(&g_mixer_config);
-  attenuator_init(&g_attenuator_config);
-
-  // Enable the mixer and the attenuator.
-  mixer_enable();
-  attenuator_set_gain_attenuation(/*gain_attenuation=*/8);
-
-  // Configure the VCO.
   vco_set_output_power(VCO_OUTPUT_POWER_FIVE_DBM,
                        /*aux_output_power=*/VCO_OUTPUT_POWER_FIVE_DBM);
   vco_enable();
   vco_configure();
   vco_rf_enable();
+  while (!vco_locked()) {}
 
-  // Configure the DDS.
+  // Initialize the mixer and the attenuator.
+  mixer_init(&g_mixer_config);
+  mixer_enable();
+  attenuator_init(&g_attenuator_config);
+  attenuator_set_gain_attenuation(/*gain_attenuation=*/8);
+
+  // Initialize the DDS.
+  g_dds_config.mode = DDS_MODE_FMCW;
+  dds_init(&g_dds_config);
   dds_configure_fmcw(DDS_PROFILE, &g_dds_fmcw_config);
   dds_output_enable();
 
