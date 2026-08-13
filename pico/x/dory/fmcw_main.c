@@ -20,7 +20,9 @@
 #define MAX_CHIRP_TIME_US 1000
 
 // DDS FMCW configuration for a FMCW signal from 8.5 GHz to 9.5 GHz.
-// The ramp increases every 20 ns for a total chirp time of 100 us.
+// The hardware quantizes the ramp step interval to 3 SYNC_CLK periods
+// (~20.571 ns), and the driver scales the frequency step to preserve the
+// requested chirp slope of 5 MHz/us for a total chirp time of 100 us.
 static dds_fmcw_config_t g_dds_fmcw_config = (dds_fmcw_config_t){
     .start_frequency = 750000000,
     .end_frequency = 1250000000,

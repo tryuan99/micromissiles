@@ -17,6 +17,9 @@
 // DDS clock frequency.
 #define DDS_CLK_FREQUENCY (DDS_SYSCLK_FREQUENCY / 24)
 
+// Maximum DDS output frequency in Hz.
+#define DDS_MAX_OUTPUT_FREQUENCY (0.4 * DDS_SYSCLK_FREQUENCY)
+
 // DDS SPI baudrate.
 #define DDS_SPI_BAUDRATE 1000000
 
@@ -136,6 +139,16 @@ static inline void dds_spi_read_register(void) {
 
 // Convert the frequency to the register value.
 static inline uint32_t dds_frequency_to_register(const double frequency) {
+  if (frequency < 0) {
+    printf("DDS frequency is negative: %f Hz.\n", frequency);
+    return 0;
+  }
+  if (frequency > DDS_MAX_OUTPUT_FREQUENCY) {
+    printf(
+        "DDS frequency exceeds the maximum output frequency of 0.4 x SYSCLK: "
+        "%f Hz.\n",
+        frequency);
+  }
   return (uint32_t)(frequency / DDS_SYSCLK_FREQUENCY * (1LL << 32) + 0.5);
 }
 
@@ -255,8 +268,9 @@ void dds_init(const dds_config_t* config) {
     // Enable the digital ramp with no-dwell high for the frequency.
     g_dds_spi_tx_packet.data[1] |= (DDS_RAMP_FREQUENCY << 4) | 0xC;
   }
-  // Enable the digital ramp generator over output.
-  g_dds_spi_tx_packet.data[2] = 0x29;
+  // Enable the digital ramp generator over output and disable the SYNC_CLK
+  // output driver.
+  g_dds_spi_tx_packet.data[2] = 0x21;
   dds_spi_write_register();
 
   dds_io_update();
