@@ -7,8 +7,10 @@
 #include "pico/x/dory/attenuator.h"
 #include "pico/x/dory/config.h"
 #include "pico/x/dory/dds.h"
+#include "pico/x/dory/defs.h"
 #include "pico/x/dory/mixer.h"
 #include "pico/x/dory/vco.h"
+#include "pico/x/dory/vga.h"
 
 // VCO RF frequency.
 #define VCO_RF_FREQUENCY 3500000000
@@ -36,11 +38,19 @@ int main(int argc, char** argv) {
   vco_rf_enable();
   while (!vco_locked()) {}
 
-  // Initialize the mixer and the attenuator.
+  // Initialize the mixer.
   mixer_init(&g_mixer_config);
   mixer_enable();
+
+#if DORY_REV == 1
+  // Initialize the VGA.
+  vga_init(&g_vga_config);
+  vga_set_gain_attenuation(/*gain_attenuation=*/0);
+#else   // DORY_REV != 1
+  // Initialize the attenuator.
   attenuator_init(&g_attenuator_config);
   attenuator_set_gain_attenuation(/*gain_attenuation=*/8);
+#endif  // DORY_REV == 1
 
   // Initialize the DDS.
   g_dds_config.mode = DDS_MODE_CW;
