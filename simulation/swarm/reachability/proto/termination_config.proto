@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package reachability;
+
+// Termination configuration for optimizing the compute time.
+message TerminationConfig {
+  // Maximum engagement time in seconds.
+  float max_time = 1;
+
+  // Once the range grows past this factor of the initial range, the intercept
+  // is considered a miss.
+  float escape_margin = 2;
+
+  // Seconds of sustained divergence before declaring an escape.
+  float escape_dwell = 3;
+
+  // Once the range exceeds this factor of the closest point of approach, the
+  // intercept is considered a miss.
+  float post_cpa_factor = 4;
+
+  // Once the point of closest approach stops improving for this stall time in
+  // seconds, the intercept is considered a miss.
+  float stall_time = 5;
+
+  // Improvement smaller than this tolerance in meters does not reset the stall
+  // clock.
+  float stall_tolerance = 6;
+
+  // If the interceptor's speed is below the minimum speed in m/s, the intercept
+  // is considered a miss.
+  float min_intercept_speed = 7;
+
+  // If the interceptor is below this altitude in meters, the intercept is
+  // considered a miss.
+  float ground_level = 8;
+}

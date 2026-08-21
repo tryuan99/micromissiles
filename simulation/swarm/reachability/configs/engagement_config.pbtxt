@@ -1,23 +1,31 @@
-plant_time_step: 0.01
-control_time_step: 0.04
-max_time: 8.0
-mpc_time_step: 0.08
-time_to_go_horizon_factor: 2.0
-min_horizon: 5
-max_horizon: 60
-best_response_iterations: 1
+mpc_config {
+  interceptor_config {
+    terminal_weight: 100.0
+    running_weight: 1.0
+    interceptor_control_regularization: 1e-6
+  }
+  ucav_config {
+    evade_range_weight: 1.0
+    evade_orthogonal_weight: 1e-3
+    ucav_control_regularization: 1e-6
+  }
+  control_time_step: 0.04
+  mpc_time_step: 0.04
+  time_to_go_horizon_factor: 2.0
+  min_horizon: 5
+  max_horizon: 50
+  best_response_iterations: 1
+}
+termination_config {
+  max_time: 8.0
+  escape_margin: 1.10
+  escape_dwell: 0.5
+  post_cpa_factor: 1.5
+  stall_time: 1.5
+  stall_tolerance: 3.0
+  min_intercept_speed: 50.0
+  ground_level: 0.0
+}
+plant_time_step: 0.002
 capture_radius: 1.0
-escape_margin: 1.10
-escape_dwell: 0.5
-post_cpa_factor: 1.5
-stall_time: 1.5
-stall_tolerance: 3.0
-min_intercept_speed: 50.0
-ground_level: 0.0
 engagement_altitude: 1000.0
-terminal_weight: 100.0
-running_weight: 1.0
-interceptor_control_regularization: 1e-6
-evade_range_weight: 1.0
-evade_orthogonal_weight: 1e-3
-ucav_control_regularization: 1e-6

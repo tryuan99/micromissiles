@@ -1,65 +1,25 @@
 syntax = "proto3";
 
-package configs;
+package reachability;
 
-// Configuration for a reachability engagement: time stepping, the adaptive
-// (time-to-go) horizon, capture and termination criteria, and the MPC cost
-// weights.
+import "simulation/swarm/reachability/proto/mpc_config.proto";
+import "simulation/swarm/reachability/proto/termination_config.proto";
+
+// Engagement configuration, including time stepping, adaptive horizon, capture
+// and termination criteria, and the MPC cost weights.
 message EngagementConfig {
-  // Truth (plant) integration step in s.
-  float plant_time_step = 1;
+  // MPC configuration.
+  MpcConfig mpc_config = 1;
 
-  // MPC replan period in s.
-  float control_time_step = 2;
+  // Termination configuration.
+  TerminationConfig termination_config = 2;
 
-  // Hard cap on an engagement in s.
-  float max_time = 3;
+  // Plant time step in seconds.
+  float plant_time_step = 3;
 
-  // Prediction step of each MPC solve in s.
-  float mpc_time_step = 4;
+  // Capture radius in meters.
+  float capture_radius = 4;
 
-  // The MPC horizon is always this factor times the time-to-go.
-  float time_to_go_horizon_factor = 5;
-
-  // Lower and upper bounds on the adaptive horizon, in steps.
-  int32 min_horizon = 6;
-  int32 max_horizon = 7;
-
-  // Best-response (Gauss-Seidel) iterations per control step.
-  int32 best_response_iterations = 8;
-
-  // Capture radius in m: |interceptor - ucav| <= this counts as a hit.
-  float capture_radius = 9;
-
-  // Miss if range grows past this factor of the initial range while opening.
-  float escape_margin = 10;
-
-  // Seconds of sustained divergence before declaring an escape.
-  float escape_dwell = 11;
-
-  // Miss once range exceeds this factor of the best-so-far separation.
-  float post_cpa_factor = 12;
-
-  // Miss if the closest approach stops improving for this long in s.
-  float stall_time = 13;
-
-  // Improvement smaller than this in m does not reset the stall clock.
-  float stall_tolerance = 14;
-
-  // Interceptor too slow to catch in m/s -> miss.
-  float min_intercept_speed = 15;
-
-  // Interceptor below this altitude in m -> miss.
-  float ground_level = 16;
-
-  // Nominal altitude the engagement starts at in m.
-  float engagement_altitude = 17;
-
-  // MPC cost weights.
-  float terminal_weight = 18;
-  float running_weight = 19;
-  float interceptor_control_regularization = 20;
-  float evade_range_weight = 21;
-  float evade_orthogonal_weight = 22;
-  float ucav_control_regularization = 23;
+  // Nominal altitude that the engagement starts at in meters.
+  float engagement_altitude = 5;
 }

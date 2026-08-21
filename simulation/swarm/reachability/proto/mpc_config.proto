@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package reachability;
+
+// Interceptor MPC configuration.
+message InterceptorMpcConfig {
+  // Terminal weight.
+  float terminal_weight = 1;
+
+  // Running weight.
+  float running_weight = 2;
+
+  // Interceptor control regularization.
+  float interceptor_control_regularization = 3;
+}
+
+// UCAV MPC configuration.
+message UcavMpcConfig {
+  // Evade range weight.
+  float evade_range_weight = 1;
+
+  // Evade orthogonal weight.
+  float evade_orthogonal_weight = 2;
+
+  // UCAV control regularization.
+  float ucav_control_regularization = 3;
+}
+
+// MPC configuration, including time steps and cost weights,
+message MpcConfig {
+  // Interceptor MPC configuration.
+  InterceptorMpcConfig interceptor_config = 1;
+
+  // Interceptor UCAV configuration.
+  UcavMpcConfig ucav_config = 2;
+
+  // Control time step in seconds.
+  float control_time_step = 3;
+
+  // MPC prediction time step in seconds.
+  float mpc_time_step = 4;
+
+  // Each replan looks ahead this multiple of the time-to-go (range / closing
+  // speed). The horizon in steps is this value divided by the MPC prediction
+  // time step, clamped to the minimum and maximum horizon.
+  float time_to_go_horizon_factor = 5;
+
+  // Minimum number of steps in the adaptive horizon.
+  uint32 min_horizon = 6;
+
+  // Maximum number of steps in the adaptive horizon.
+  uint32 max_horizon = 7;
+
+  // Number of best-response (Gauss-Seidel) iterations per control step.
+  uint32 best_response_iterations = 8;
+}

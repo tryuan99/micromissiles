@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package configs;
+package reachability;
 
 // Agent type enumeration.
 enum AgentType {

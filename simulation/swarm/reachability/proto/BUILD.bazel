@@ -4,6 +4,30 @@ load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
 package(default_visibility = ["//visibility:public"])
 
 proto_library(
+    name = "engagement_config_proto",
+    srcs = ["engagement_config.proto"],
+    deps = [
+        ":mpc_config_proto",
+        ":termination_config_proto",
+    ],
+)
+
+py_proto_library(
+    name = "engagement_config_py_proto",
+    deps = [":engagement_config_proto"],
+)
+
+proto_library(
+    name = "mpc_config_proto",
+    srcs = ["mpc_config.proto"],
+)
+
+py_proto_library(
+    name = "mpc_config_py_proto",
+    deps = [":mpc_config_proto"],
+)
+
+proto_library(
     name = "static_config_proto",
     srcs = ["static_config.proto"],
 )
@@ -14,11 +38,11 @@ py_proto_library(
 )
 
 proto_library(
-    name = "engagement_config_proto",
-    srcs = ["engagement_config.proto"],
+    name = "termination_config_proto",
+    srcs = ["termination_config.proto"],
 )
 
 py_proto_library(
-    name = "engagement_config_py_proto",
-    deps = [":engagement_config_proto"],
+    name = "termination_config_py_proto",
+    deps = [":termination_config_proto"],
 )
