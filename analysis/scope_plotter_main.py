@@ -1,4 +1,4 @@
-"""Plots timem domain waveforms exported from an oscilloscope."""
+"""Plots time domain waveforms exported from an oscilloscope."""
 
 from itertools import zip_longest
 
