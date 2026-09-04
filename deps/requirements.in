@@ -11,6 +11,7 @@ plotly==6.6.0
 protobuf==6.33.6
 pymoo==0.6.1.6
 pyaedt===1.0.1
+pylablib==1.4.5
 pyserial==3.5
 scikit-learn==1.8.0
 scipy==1.17.1

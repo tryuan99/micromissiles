@@ -1,0 +1,27 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "motor",
+    srcs = ["motor.py"],
+)
+
+py_library(
+    name = "thorlabs_motor",
+    srcs = ["thorlabs_motor.py"],
+    deps = [
+        ":motor",
+        requirement("pylablib"),
+    ],
+)
+
+py_binary(
+    name = "thorlabs_motor_move_main",
+    srcs = ["thorlabs_motor_move_main.py"],
+    deps = [
+        ":thorlabs_motor",
+        requirement("absl-py"),
+    ],
+)
