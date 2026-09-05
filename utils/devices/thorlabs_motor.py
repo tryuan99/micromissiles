@@ -1,4 +1,4 @@
-"""The Thorlabs motor class is an interface for a Thorlabs motor.
+"""The Thorlabs motor class is an interface for a Thorlabs stepper motor.
 
 See https://pylablib.readthedocs.io/en/latest/.apidoc/pylablib.devices.Thorlabs.html#pylablib.devices.Thorlabs.kinesis.KinesisMotor
 for the API reference.

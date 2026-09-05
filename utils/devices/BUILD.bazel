@@ -9,6 +9,25 @@ py_library(
 )
 
 py_library(
+    name = "polulu_tic_motor",
+    srcs = ["polulu_tic_motor.py"],
+    deps = [
+        ":motor",
+        requirement("absl-py"),
+        requirement("pyyaml"),
+    ],
+)
+
+py_binary(
+    name = "polulu_tic_motor_move_main",
+    srcs = ["polulu_tic_motor_move_main.py"],
+    deps = [
+        ":polulu_tic_motor",
+        requirement("absl-py"),
+    ],
+)
+
+py_library(
     name = "thorlabs_motor",
     srcs = ["thorlabs_motor.py"],
     deps = [
