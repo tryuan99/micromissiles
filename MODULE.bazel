@@ -4,7 +4,7 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20260526.0",
+    version = "20260817.0",
 )
 bazel_dep(
     name = "eigen",
@@ -12,11 +12,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "googletest",
-    version = "1.17.0.bcr.2",
+    version = "1.18.0",
 )
 bazel_dep(
     name = "pico-sdk",
-    version = "2.2.0",
+    version = "2.3.0",
 )
 bazel_dep(
     name = "platforms",
@@ -24,11 +24,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "protobuf",
-    version = "35.0",
+    version = "36.1.bcr.1",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.2.19",
+    version = "0.2.22",
 )
 bazel_dep(
     name = "rules_foreign_cc",
@@ -36,11 +36,11 @@ bazel_dep(
 )
 bazel_dep(
     name = "rules_pkg",
-    version = "1.2.0",
+    version = "1.3.0",
 )
 bazel_dep(
     name = "rules_python",
-    version = "1.9.0",
+    version = "2.3.2",
 )
 bazel_dep(
     name = "rules_shell",
@@ -54,12 +54,12 @@ single_version_override(
 )
 
 # Boost library.
-BOOST_VERSION = "1.90.0"
+BOOST_VERSION = "1.92.0"
 
 http_archive(
     name = "boost",
     build_file = "//third_party/boost:boost.BUILD",
-    sha256 = "5e93d582aff26868d581a52ae78c7d8edf3f3064742c6e77901a1f18a437eea9",
+    sha256 = "c4a3b310ddd2472416e091067166b0713be97c63f38c212c484ada022fd296ce",
     strip_prefix = "boost_{}".format(BOOST_VERSION.replace(".", "_")),
     url = "https://archives.boost.io/release/{}/source/boost_{}.tar.gz".format(
         BOOST_VERSION,
@@ -68,47 +68,49 @@ http_archive(
 )
 
 # libmpc++ library.
-LIBMPC_VERSION = "0.7.1"
+LIBMPC_VERSION = "1.0.0"
 
 http_archive(
     name = "libmpc",
     build_file = "//third_party/libmpc:libmpc.BUILD",
     patch_args = ["-p1"],
     patches = ["//third_party/libmpc:libmpc.patch"],
-    sha256 = "587d6b0f97a64c54bb7df634325f1371b0950f04e362c2e6c11decd31a111e5a",
+    sha256 = "1445741e5bf62e0b0dd350d0d2fac4b61cdfc1a6737026d3d1b12787ac787094",
     strip_prefix = "libmpc-{}".format(LIBMPC_VERSION),
     url = "https://github.com/nicolapiccinelli/libmpc/archive/refs/tags/{}.tar.gz".format(LIBMPC_VERSION),
 )
 
 # NLopt library.
-NLOPT_VERSION = "2.10.1"
+NLOPT_VERSION = "2.11.0"
 
 http_archive(
     name = "nlopt",
     build_file = "//third_party/nlopt:nlopt.BUILD",
-    sha256 = "30d13ce16da119db3e987784f7864e35a562ec62c186352fae55cd003e6c58ff",
+    sha256 = "53e552d83e9294d67db37f0f4a23f15933a9ef698485301a18b98b40004cf0de",
     strip_prefix = "nlopt-{}".format(NLOPT_VERSION),
     url = "https://github.com/stevengj/nlopt/archive/refs/tags/v{}.tar.gz".format(NLOPT_VERSION),
 )
 
 # OpenCV library.
-OPENCV_VERSION = "4.13.0"
+OPENCV_VERSION = "5.0.0"
 
 http_archive(
     name = "opencv",
     build_file = "//third_party/opencv:opencv.BUILD",
-    sha256 = "1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d",
+    sha256 = "b0528f5a1d379d59d4701cb28c36e22214cc51cf64594e5b56f2d3e6c0233095",
     strip_prefix = "opencv-{}".format(OPENCV_VERSION),
     url = "https://github.com/opencv/opencv/archive/refs/tags/{}.tar.gz".format(OPENCV_VERSION),
 )
 
 # OpenCV modules.
-OPENCV_CONTRIB_VERSION = "4.13.0"
+OPENCV_CONTRIB_VERSION = "5.0.0"
 
 http_archive(
     name = "opencv_contrib",
     build_file = "//third_party/opencv_contrib:opencv_contrib.BUILD",
-    sha256 = "1e0077a4fd2960a7d2f4c9e49d6ba7bb891cac2d1be36d7e8e47aa97a9d1039b",
+    patch_args = ["-p1"],
+    patches = ["//third_party/opencv_contrib:opencv_contrib.patch"],
+    sha256 = "c58f6344170c39abf187c56f3843b59cab1fd3e89cf19ba2ce25dc061659b27f",
     strip_prefix = "opencv_contrib-{}".format(OPENCV_CONTRIB_VERSION),
     url = "https://github.com/opencv/opencv_contrib/archive/refs/tags/{}.tar.gz".format(OPENCV_CONTRIB_VERSION),
 )

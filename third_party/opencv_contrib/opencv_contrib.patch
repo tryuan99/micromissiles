@@ -1,0 +1,44 @@
+diff --git a/modules/viz/src/vtk/vtkVizInteractorStyle.cpp b/modules/viz/src/vtk/vtkVizInteractorStyle.cpp
+index e2d3380..9896291 100644
+--- a/modules/viz/src/vtk/vtkVizInteractorStyle.cpp
++++ b/modules/viz/src/vtk/vtkVizInteractorStyle.cpp
+@@ -45,6 +45,8 @@
+ 
+ #include "../precomp.hpp"
+ 
++#include <iostream>
++
+ namespace cv { namespace viz
+ {
+     vtkStandardNewMacro(vtkVizInteractorStyle)
+@@ -96,7 +98,7 @@ void cv::viz::vtkVizInteractorStyle::saveScreenshot(const String &file)
+     snapshot_writer->SetFileName(file.c_str());
+     snapshot_writer->Write();
+ 
+-    cout << "Screenshot successfully captured (" << file.c_str() << ")" << endl;
++    std::cout << "Screenshot successfully captured (" << file.c_str() << ")" << endl;
+ }
+ 
+ //////////////////////////////////////////////////////////////////////////////////////////////
+@@ -118,7 +120,7 @@ void cv::viz::vtkVizInteractorStyle::exportScene(const String &file)
+     exporter->SetInput(Interactor->GetRenderWindow());
+     exporter->Write();
+ 
+-    cout << "Scene successfully exported (" << file.c_str() << ")" << endl;
++    std::cout << "Scene successfully exported (" << file.c_str() << ")" << endl;
+ }
+ 
+ void cv::viz::vtkVizInteractorStyle::exportScene()
+diff --git a/modules/viz/src/widget.cpp b/modules/viz/src/widget.cpp
+index b46d3d1..3bfcd6a 100644
+--- a/modules/viz/src/widget.cpp
++++ b/modules/viz/src/widget.cpp
+@@ -45,6 +45,8 @@
+ 
+ #include "precomp.hpp"
+ 
++#include <iostream>
++
+ ///////////////////////////////////////////////////////////////////////////////////////////////
+ /// widget implementation
+ 

@@ -1,6 +1,6 @@
 """This module defines the OpenCV modules and libraries."""
 
-OPENCV_VERSION = "4.13.0"
+OPENCV_VERSION = "5.0.0"
 OPENCV_MODULES = [
     "core",
     "highgui",
@@ -18,7 +18,6 @@ def opencv_shared_libs_osx():
     for module in OPENCV_MODULES:
         module_libs = [
             "libopencv_{}.dylib".format(module),
-            "libopencv_{}.{}.dylib".format(module, "".join(OPENCV_VERSION.split(".")[:2])),
             "libopencv_{}.{}.dylib".format(module, OPENCV_VERSION),
         ]
         shared_libs.extend(module_libs)
@@ -34,7 +33,6 @@ def opencv_shared_libs_unix():
     for module in OPENCV_MODULES:
         module_libs = [
             "libopencv_{}.so".format(module),
-            "libopencv_{}.so.{}".format(module, "".join(OPENCV_VERSION.split(".")[:2])),
             "libopencv_{}.so.{}".format(module, OPENCV_VERSION),
         ]
         shared_libs.extend(module_libs)

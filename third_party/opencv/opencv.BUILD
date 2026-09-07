@@ -20,7 +20,7 @@ cmake(
         "BUILD_ZLIB": "OFF",
     },
     lib_source = "@opencv//:all",
-    out_include_dir = "include/opencv4",
+    out_include_dir = "include/opencv5",
     out_shared_libs = OPENCV_SHARED_LIBS,
     tags = ["requires-network"],
 )
