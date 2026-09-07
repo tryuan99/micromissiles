@@ -17,7 +17,7 @@ def main(argv):
             raise ValueError("No devices detected.")
         serial_number = devices[0][0]
 
-    motor = ThorlabsMotor(serial_number)
+    motor = ThorlabsMotor(serial_number, FLAGS.stage)
     logging.info("Stage profile: %s", motor.stage())
     logging.info("Units: %s", motor.scale_units())
 
@@ -29,6 +29,7 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string("serial_number", None, "Motor serial number.")
+    flags.DEFINE_string("stage", "PRM1-Z8", "Motor stage.")
     flags.DEFINE_float("position", None, "Position in degrees.")
     flags.DEFINE_boolean("home", False, "If true, home the motor first.")
     flags.mark_flag_as_required("position")

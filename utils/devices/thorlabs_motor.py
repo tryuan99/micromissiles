@@ -16,8 +16,8 @@ class ThorlabsMotor(Motor):
         motor: Kinesis motor.
     """
 
-    def __init__(self, serial_number: str) -> None:
-        self.motor = Thorlabs.KinesisMotor(serial_number, scale="stage")
+    def __init__(self, serial_number: str, stage: str) -> None:
+        self.motor = Thorlabs.KinesisMotor(serial_number, scale=stage)
 
     def stage(self) -> str:
         """Returns the name of the stage."""
