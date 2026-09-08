@@ -41,7 +41,8 @@ def main(argv):
         motor.move_to(position)
         time.sleep(CAPTURE_TIMEOUT)
 
-        output_path = output_dir_path / f"{FLAGS.output_prefix}_{position}deg.s2p"
+        position_str = f"{position:.6f}".rstrip("0").rstrip(".")
+        output_path = output_dir_path / f"{FLAGS.output_prefix}_{position_str}deg.s2p"
         logging.info("Capturing S2P to %s.", output_path)
         field_fox.capture_sp(output_path)
 
@@ -53,7 +54,12 @@ if __name__ == "__main__":
     flags.DEFINE_string("stage", "PRM1-Z8", "Motor stage.")
     flags.DEFINE_float("start", None, "Start position in degrees.")
     flags.DEFINE_float("stop", None, "Stop position in degrees.")
-    flags.DEFINE_float("step", None, "Step position in degrees.")
+    flags.DEFINE_float(
+        "step",
+        None,
+        "Step position in degrees.",
+        lower_bound=0.0,
+    )
     flags.DEFINE_boolean("home", True, "If true, home the motor first.")
     flags.DEFINE_string("output_dir", None, "Output directory.")
     flags.DEFINE_string("output_prefix", "antenna_sweep", "Output file prefix.")

@@ -1,0 +1,16 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "radiation_pattern_main",
+    srcs = ["radiation_pattern_main.py"],
+    deps = [
+        "//utils:constants",
+        "//utils/network:sparam_viewer",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+    ],
+)
