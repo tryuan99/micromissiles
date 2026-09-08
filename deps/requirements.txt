@@ -1111,6 +1111,7 @@ numpy==2.5.3 \
     #   pyqtgraph
     #   qdldl
     #   scikit-learn
+    #   scikit-rf
     #   scipy
     #   scs
     #   sparsediffpy
@@ -1244,6 +1245,7 @@ pandas==3.0.5 \
     #   jmetalpy
     #   ortools
     #   pylablib
+    #   scikit-rf
     #   statsmodels
 patsy==1.0.2 \
     --hash=sha256:37bfddbc58fcf0362febb5f54f10743f8b21dd2aa73dec7e7ef59d1b02ae668a \
@@ -2005,6 +2007,10 @@ scikit-learn==1.9.0 \
     --hash=sha256:f7e254636164090da847715a27f8e5478feb98c40a9e0ee90cbd277de9e5ceb8 \
     --hash=sha256:fd3a8ef0c758555a3b23c03adaa858af32f7736785ded50ad5991f59c4ed03fa
     # via -r deps/requirements.in
+scikit-rf==1.11.0 \
+    --hash=sha256:a8e7c8e3b89630685b1e1ab4c48fe19a6f830bbf31c26cd6f438e90902c2b9c5 \
+    --hash=sha256:ac6c532e327da473abb15864105337424061a9d36429808362de0247eb2906d1
+    # via -r deps/requirements.in
 scipy==1.18.1 \
     --hash=sha256:011413b7426b75012840e35649e00fe0a2c3bae89fed433876e3a99251572efc \
     --hash=sha256:0ac49ea97594532dd44b7136094d35f5440fa06e6d9c6384a74c01764df388c5 \
@@ -2078,6 +2084,7 @@ scipy==1.18.1 \
     #   pymoo
     #   qdldl
     #   scikit-learn
+    #   scikit-rf
     #   scs
     #   statsmodels
 scooby==0.11.2 \
@@ -2215,6 +2222,7 @@ typing-extensions==4.15.0 \
     #   pydantic
     #   pydantic-core
     #   pyvisa
+    #   scikit-rf
     #   typing-inspection
 typing-inspection==0.4.2 \
     --hash=sha256:4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7 \
