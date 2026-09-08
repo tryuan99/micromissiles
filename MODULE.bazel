@@ -16,7 +16,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "pico-sdk",
-    version = "2.3.0",
+    version = "2.2.0",
 )
 bazel_dep(
     name = "platforms",
