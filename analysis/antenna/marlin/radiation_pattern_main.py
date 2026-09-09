@@ -19,10 +19,10 @@ def main(argv):
     positions = np.arange(FLAGS.start, FLAGS.stop + FLAGS.step, FLAGS.step)
     data = np.empty((len(FLAGS.frequencies), len(positions)))
 
-    output_dir_path = Path(FLAGS.output_dir)
+    data_dir_path = Path(FLAGS.data_dir)
     for data_index, position in enumerate(positions):
         position_str = f"{position:.6f}".rstrip("0").rstrip(".")
-        data_path = output_dir_path / f"{FLAGS.output_prefix}_{position_str}deg.s2p"
+        data_path = data_dir_path / f"{FLAGS.data_prefix}_{position_str}deg.s2p"
 
         sparam_data = SParamViewer(data_path)
         indices = np.abs(sparam_data.frequency()[:, None] -
@@ -69,11 +69,11 @@ if __name__ == "__main__":
         "Step position in degrees.",
         lower_bound=0.0,
     )
-    flags.DEFINE_string("output_dir", None, "Output directory.")
-    flags.DEFINE_string("output_prefix", "antenna_sweep", "Output file prefix.")
+    flags.DEFINE_string("data_dir", None, "Data directory.")
+    flags.DEFINE_string("data_prefix", "antenna_sweep", "Data file prefix.")
     flags.DEFINE_multi_float("frequencies", None, "Frequencies to plot in Hz.")
     flags.DEFINE_multi_string("labels", None, "Labels for the plot.")
     flags.mark_flags_as_required(
-        ["start", "stop", "step", "output_dir", "frequencies"])
+        ["start", "stop", "step", "data_dir", "frequencies"])
 
     app.run(main)
