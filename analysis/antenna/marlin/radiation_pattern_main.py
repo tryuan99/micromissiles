@@ -40,7 +40,8 @@ def main(argv):
         )
     ax.set_xlabel("Position [deg]")
     ax.set_ylabel("S21 Magnitude [dB]")
-    ax.legend()
+    if FLAGS.labels:
+        ax.legend()
     plt.show()
 
     fig, ax = plt.subplots(
@@ -56,7 +57,8 @@ def main(argv):
             label=FLAGS.labels[frequency_index] if FLAGS.labels else None,
             marker="^",
         )
-    ax.legend()
+    if FLAGS.labels:
+        ax.legend()
     plt.show()
 
 
