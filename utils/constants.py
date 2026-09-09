@@ -37,9 +37,9 @@ def mag2power(magnitude: Any) -> Any:
 
 def deg2rad(degree: Any) -> Any:
     """Converts degrees to radians."""
-    return degree * np.pi / 180
+    return np.deg2rad(degree)
 
 
 def rad2deg(radians: Any) -> Any:
     """Converts radians to degrees."""
-    return radians * 180 / np.pi
+    return np.rad2deg(radians)
