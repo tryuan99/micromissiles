@@ -56,6 +56,7 @@ class ThorlabsMotor(Motor):
             position: Absolute position in degrees.
         """
         self.motor.move_to(position)
+        self.motor.wait_move()
 
     def move_by(self, position: float) -> None:
         """Move the motor by the desired angle.
@@ -64,6 +65,7 @@ class ThorlabsMotor(Motor):
             position: Relative position in degrees.
         """
         self.motor.move_by(position)
+        self.motor.wait_move()
 
     def stop(self, immediate=False) -> None:
         """Stops the motion.
