@@ -35,7 +35,7 @@ def main(argv):
         ax.plot(
             positions,
             data[frequency_index],
-            label=FLAGS.labels[frequency_index],
+            label=FLAGS.labels[frequency_index] if FLAGS.labels else None,
             marker="^",
         )
     ax.set_xlabel("Position [deg]")
@@ -53,7 +53,7 @@ def main(argv):
         ax.plot(
             constants.deg2rad(positions),
             pattern,
-            label=FLAGS.labels[frequency_index],
+            label=FLAGS.labels[frequency_index] if FLAGS.labels else None,
             marker="^",
         )
     ax.legend()
