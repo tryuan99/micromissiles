@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package marlin;
+
+// Cartesian coordinates.
+message CartesianCoordinates {
+  // x-coordinate.
+  float x = 1;
+
+  // y-coordinate.
+  float y = 2;
+
+  // z-coordinate.
+  float z = 3;
+}

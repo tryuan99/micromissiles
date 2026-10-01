@@ -1,12 +1,40 @@
 load("@pypi//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
-    name = "radiation_pattern_main",
-    srcs = ["radiation_pattern_main.py"],
+    name = "beamforming_main",
+    srcs = ["beamforming_main.py"],
+    data = ["//analysis/antenna/marlin/configs"],
     deps = [
+        ":common",
+        "//analysis/antenna/marlin/proto:antenna_array_config_py_proto",
+        "//utils:constants",
+        "//utils/network:sparam_viewer",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "common",
+    srcs = ["common.py"],
+    deps = [
+        requirement("numpy"),
+        requirement("pandas"),
+    ],
+)
+
+py_binary(
+    name = "radiation_pattern_plot_main",
+    srcs = ["radiation_pattern_plot_main.py"],
+    deps = [
+        ":common",
         "//utils:constants",
         "//utils/network:sparam_viewer",
         "//utils/visualization:mpl_config",

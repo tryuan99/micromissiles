@@ -1,0 +1,60 @@
+antenna_array_element_configs {
+  port: 1
+  position {
+    x: -0.75
+    y: -0.25
+  }
+}
+antenna_array_element_configs {
+  port: 2
+  position {
+    x: -0.25
+    y: -0.25
+  }
+}
+antenna_array_element_configs {
+  port: 3
+  position {
+    x: 0.25
+    y: -0.25
+  }
+}
+antenna_array_element_configs {
+  port: 4
+  position {
+    x: 0.75
+    y: -0.25
+  }
+}
+antenna_array_element_configs {
+  port: 5
+  position {
+    x: -0.75
+    y: 0.25
+  }
+  inverted: true
+}
+antenna_array_element_configs {
+  port: 6
+  position {
+    x: -0.25
+    y: 0.25
+  }
+  inverted: true
+}
+antenna_array_element_configs {
+  port: 7
+  position {
+    x: 0.25
+    y: 0.25
+  }
+  inverted: true
+}
+antenna_array_element_configs {
+  port: 8
+  position {
+    x: 0.75
+    y: 0.25
+  }
+  inverted: true
+}

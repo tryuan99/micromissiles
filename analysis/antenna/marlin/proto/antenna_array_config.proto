@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package marlin;
+
+import "analysis/antenna/marlin/proto/geometry.proto";
+
+// Antenna array element configuration.
+message AntennaArrayElementConfig {
+  // Port number.
+  uint32 port = 1;
+
+  // Position in units of lambda.
+  CartesianCoordinates position = 2;
+
+  // If true, the feed is inverted.
+  bool inverted = 3;
+}
+
+// Antenna array configuration.
+message AntennaArrayConfig {
+  // Antenna array element configurations.
+  repeated AntennaArrayElementConfig antenna_array_element_configs = 1;
+}

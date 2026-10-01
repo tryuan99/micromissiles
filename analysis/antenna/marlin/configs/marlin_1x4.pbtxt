@@ -1,0 +1,24 @@
+antenna_array_element_configs {
+  port: 1
+  position {
+    x: -0.75
+  }
+}
+antenna_array_element_configs {
+  port: 2
+  position {
+    x: -0.25
+  }
+}
+antenna_array_element_configs {
+  port: 3
+  position {
+    x: 0.25
+  }
+}
+antenna_array_element_configs {
+  port: 4
+  position {
+    x: 0.75
+  }
+}
