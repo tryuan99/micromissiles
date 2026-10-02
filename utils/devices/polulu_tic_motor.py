@@ -84,7 +84,7 @@ class PoluluTicMotor(Motor):
         return PoluluTicMotor.send_command(["--list"])
 
     @staticmethod
-    def send_command(*args: str | list[str]) -> str:
+    def send_command(args: list[str]) -> str:
         try:
             result = subprocess.run(
                 ["ticcmd", "--exit-safe-start", *args],
@@ -109,10 +109,10 @@ class PoluluTicMotor(Motor):
         """
         return value * 360 / (self.num_steps_per_revolution * self.step_mode)
 
-    def _position_to_microsteps(self, value: int) -> float:
+    def _position_to_microsteps(self, value: float) -> int:
         """Converts from units of degrees to units of microsteps.
 
         Args:
             value: Value in degrees.
         """
-        return value * self.num_steps_per_revolution * self.step_mode / 360
+        return int(value * self.num_steps_per_revolution * self.step_mode / 360)
