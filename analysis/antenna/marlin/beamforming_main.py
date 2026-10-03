@@ -84,8 +84,10 @@ def main(argv):
         simulation_df[SIMULATION_RE_THETA_COLUMN] = simulation_df[
             simulation_rE_theta_real_column] + 1j * simulation_df[
                 simulation_rE_theta_imag_column]
-        simulation_df[SIMULATION_RE_PHI_COLUMN] *= weights[simulation_index]
-        simulation_df[SIMULATION_RE_THETA_COLUMN] *= weights[simulation_index]
+        simulation_df[SIMULATION_RE_PHI_COLUMN] *= (
+            feed_signs[simulation_index] * weights[simulation_index])
+        simulation_df[SIMULATION_RE_THETA_COLUMN] *= (
+            feed_signs[simulation_index] * weights[simulation_index])
         simulation_dfs.append(simulation_df[[
             simulation_frequency_column,
             simulation_angle_column,
