@@ -10,20 +10,20 @@ message InterceptorMpcConfig {
   // Running weight.
   float running_weight = 2;
 
-  // Interceptor control regularization.
-  float interceptor_control_regularization = 3;
+  // Control regularization.
+  float control_regularization = 3;
 }
 
-// UCAV MPC configuration.
-message UcavMpcConfig {
+// Threat MPC configuration.
+message ThreatMpcConfig {
   // Evade range weight.
   float evade_range_weight = 1;
 
   // Evade orthogonal weight.
   float evade_orthogonal_weight = 2;
 
-  // UCAV control regularization.
-  float ucav_control_regularization = 3;
+  // Control regularization.
+  float control_regularization = 3;
 }
 
 // MPC configuration, including time steps and cost weights,
@@ -31,8 +31,8 @@ message MpcConfig {
   // Interceptor MPC configuration.
   InterceptorMpcConfig interceptor_config = 1;
 
-  // Interceptor UCAV configuration.
-  UcavMpcConfig ucav_config = 2;
+  // Threat MPC configuration.
+  ThreatMpcConfig threat_config = 2;
 
   // Control time step in seconds.
   float control_time_step = 3;

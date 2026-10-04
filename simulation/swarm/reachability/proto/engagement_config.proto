@@ -21,5 +21,5 @@ message EngagementConfig {
   float capture_radius = 4;
 
   // Nominal altitude that the engagement starts at in meters.
-  float engagement_altitude = 5;
+  float altitude = 5;
 }

@@ -6,8 +6,8 @@ import scipy.constants
 # Air density in kg/m^3.
 AIR_DENSITY = 1.204
 
-# Air density scale height in km.
-AIR_DENSITY_SCALE_HEIGHT = 10.4
+# Air density scale height in m.
+AIR_DENSITY_SCALE_HEIGHT = 10.4e3
 
 
 def air_density_at_altitude(altitude: float | np.ndarray) -> float | np.ndarray:
@@ -19,7 +19,7 @@ def air_density_at_altitude(altitude: float | np.ndarray) -> float | np.ndarray:
     Returns:
         The air density at the given altitude in kg/m^3.
     """
-    return AIR_DENSITY * np.exp(-altitude / (AIR_DENSITY_SCALE_HEIGHT * 1000))
+    return AIR_DENSITY * np.exp(-altitude / (AIR_DENSITY_SCALE_HEIGHT))
 
 
 # Standard gravity in m/s^2.

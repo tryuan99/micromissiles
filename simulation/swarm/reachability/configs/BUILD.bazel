@@ -1,6 +1,22 @@
 package(default_visibility = ["//visibility:public"])
 
 filegroup(
-    name = "configs",
-    srcs = glob(["*.pbtxt"]),
+    name = "engagement_configs",
+    srcs = ["engagement_config.pbtxt"],
+)
+
+filegroup(
+    name = "interceptor_configs",
+    srcs = [
+        "hydra70.pbtxt",
+        "micromissile.pbtxt",
+    ],
+)
+
+filegroup(
+    name = "threat_configs",
+    srcs = [
+        "quadcopter.pbtxt",
+        "ucav.pbtxt",
+    ],
 )
