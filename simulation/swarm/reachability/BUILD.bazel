@@ -109,7 +109,6 @@ py_library(
     deps = [
         ":model",
         ":state",
-        ":threat",
         "//simulation/swarm/reachability/proto:engagement_config_py_proto",
         requirement("absl-py"),
         requirement("casadi"),

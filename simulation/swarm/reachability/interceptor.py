@@ -15,8 +15,11 @@ class Interceptor(Agent):
     air drag, lift-induced drag, and ground avoidance maneuvers.
     """
 
-    def total_acceleration(self, state: State,
-                           acceleration: np.ndarray) -> np.ndarray:
+    def total_acceleration(
+        self,
+        state: State,
+        acceleration: np.ndarray,
+    ) -> np.ndarray:
         """Returns the total acceleration for the applied acceleration command.
 
         Args:
@@ -64,8 +67,11 @@ class Interceptor(Agent):
         return (lift_drag.drag_coefficient * dynamic_pressure *
                 body.cross_sectional_area / body.mass)
 
-    def _lift_induced_drag(self, acceleration: np.ndarray,
-                           forward: np.ndarray) -> float:
+    def _lift_induced_drag(
+        self,
+        acceleration: np.ndarray,
+        forward: np.ndarray,
+    ) -> float:
         """Returns the lift-induced drag deceleration for the applied acceleration.
 
         Args:
@@ -77,8 +83,11 @@ class Interceptor(Agent):
         return np.abs(lift_acceleration /
                       self.static_config.lift_drag_config.lift_drag_ratio)
 
-    def _avoid_ground(self, acceleration: np.ndarray,
-                      state: State) -> np.ndarray:
+    def _avoid_ground(
+        self,
+        acceleration: np.ndarray,
+        state: State,
+    ) -> np.ndarray:
         """Returns the command blended with an upward pull near the ground.
 
         Args:

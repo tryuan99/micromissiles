@@ -16,7 +16,6 @@ from simulation.swarm.reachability.model import PredictionModel
 from simulation.swarm.reachability.proto.engagement_config_pb2 import \
     EngagementConfig
 from simulation.swarm.reachability.state import State
-from simulation.swarm.reachability.threat import Threat
 
 # The result consists of the (controls, positions, velocities, solved), where
 # solved is false if the solve fell back to the warm start.
@@ -142,12 +141,14 @@ class InterceptorMpc(ConvexMpc):
     path.
     """
 
-    def solve(self,
-              initial_state: State,
-              prediction_model: PredictionModel,
-              threat_positions: np.ndarray,
-              horizon: int,
-              initial_controls: np.ndarray | None = None) -> Result:
+    def solve(
+        self,
+        initial_state: State,
+        prediction_model: PredictionModel,
+        threat_positions: np.ndarray,
+        horizon: int,
+        initial_controls: np.ndarray | None = None,
+    ) -> Result:
         """Solves the interceptor's quadratic problem.
 
         Args:
@@ -197,24 +198,17 @@ class InterceptorMpc(ConvexMpc):
 
 
 class ThreatMpc(ConvexMpc):
-    """The threat MPC maximizes separation from the pursuer.
+    """The threat MPC maximizes separation from the pursuer."""
 
-    Attributes:
-        threat: Threat configuration.
-    """
-
-    def __init__(self, threat: Threat,
-                 engagement_config: EngagementConfig) -> None:
-        super().__init__(engagement_config)
-        self.threat = threat
-
-    def solve(self,
-              initial_state: State,
-              prediction_model: PredictionModel,
-              pursuer_away_directions: np.ndarray,
-              pursuer_forward_directions: np.ndarray,
-              horizon: int,
-              initial_controls: np.ndarray | None = None) -> Result:
+    def solve(
+        self,
+        initial_state: State,
+        prediction_model: PredictionModel,
+        pursuer_away_directions: np.ndarray,
+        pursuer_forward_directions: np.ndarray,
+        horizon: int,
+        initial_controls: np.ndarray | None = None,
+    ) -> Result:
         """Solves the threat's quadratic problem.
 
         Args:
@@ -236,10 +230,15 @@ class ThreatMpc(ConvexMpc):
             pursuer_away_directions=pursuer_away_directions,
             pursuer_forward_directions=pursuer_forward_directions)
 
-    def _objective(self, optimizer: casadi.Opti, positions: list[casadi.MX],
-                   velocities: list[casadi.MX], horizon: int,
-                   pursuer_away_directions: np.ndarray,
-                   pursuer_forward_directions: np.ndarray) -> casadi.MX:
+    def _objective(
+        self,
+        optimizer: casadi.Opti,
+        positions: list[casadi.MX],
+        velocities: list[casadi.MX],
+        horizon: int,
+        pursuer_away_directions: np.ndarray,
+        pursuer_forward_directions: np.ndarray,
+    ) -> casadi.MX:
         """Builds the threat's objective.
 
         Args:
@@ -253,7 +252,6 @@ class ThreatMpc(ConvexMpc):
         Returns:
             The cost expression to minimize.
         """
-        max_speed = self.threat.max_speed()
         cost = 0
         for step in range(1, horizon + 1):
             cost -= self.engagement_config.mpc_config.threat_config.evade_range_weight * casadi.dot(
@@ -261,10 +259,6 @@ class ThreatMpc(ConvexMpc):
             alignment = casadi.dot(velocities[step],
                                    casadi.DM(pursuer_forward_directions[step]))
             cost += self.engagement_config.mpc_config.threat_config.evade_orthogonal_weight * alignment**2
-            if max_speed is not None:
-                optimizer.subject_to(
-                    casadi.dot(velocities[step], velocities[step]) <= max_speed
-                    **2)
         return cost
 
     def _control_regularization(self) -> float:

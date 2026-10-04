@@ -21,8 +21,11 @@ class FixedWingThreat(Threat):
     dependent on the power table.
     """
 
-    def total_acceleration(self, state: State,
-                           acceleration: np.ndarray) -> np.ndarray:
+    def total_acceleration(
+        self,
+        state: State,
+        acceleration: np.ndarray,
+    ) -> np.ndarray:
         """Returns the total acceleration for the applied acceleration command.
 
         Args:
@@ -54,8 +57,12 @@ class FixedWingThreat(Threat):
             max_forward_acceleration=0.0,
         )
 
-    def _apply_speed_control(self, acceleration: np.ndarray,
-                             forward: np.ndarray, speed: float) -> np.ndarray:
+    def _apply_speed_control(
+        self,
+        acceleration: np.ndarray,
+        forward: np.ndarray,
+        speed: float,
+    ) -> np.ndarray:
         """Returns the acceleration command with the forward component tracking
         the maximum speed.
 

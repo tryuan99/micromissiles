@@ -99,7 +99,7 @@ class Engagement:
         self.threat = threat
         self.engagement_config = engagement_config
         self.interceptor_mpc = InterceptorMpc(engagement_config)
-        self.threat_mpc = ThreatMpc(threat, engagement_config)
+        self.threat_mpc = ThreatMpc(engagement_config)
         self.num_plant_steps_per_control_step = max(
             1,
             round(engagement_config.mpc_config.control_time_step /
