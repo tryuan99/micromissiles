@@ -1,0 +1,158 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "agent",
+    srcs = ["agent.py"],
+    deps = [
+        ":constants",
+        ":model",
+        ":state",
+        "//simulation/swarm/reachability/proto:static_config_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "closest_approach",
+    srcs = ["closest_approach.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "constants",
+    srcs = ["constants.py"],
+    deps = [
+        requirement("numpy"),
+        requirement("scipy"),
+    ],
+)
+
+py_library(
+    name = "engagement",
+    srcs = ["engagement.py"],
+    deps = [
+        ":closest_approach",
+        ":constants",
+        ":interceptor",
+        ":mpc",
+        ":state",
+        ":termination",
+        ":threat",
+        ":trajectory",
+        "//simulation/swarm/reachability/proto:engagement_config_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "engagement_runner",
+    srcs = ["engagement_runner.py"],
+    deps = [
+        ":constants",
+        ":engagement",
+        ":interceptor",
+        ":state",
+        ":threat",
+        "//simulation/swarm/reachability/proto:engagement_config_py_proto",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "interceptor",
+    srcs = ["interceptor.py"],
+    deps = [
+        ":agent",
+        ":constants",
+        ":model",
+        ":state",
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "lookup_table_main",
+    srcs = ["lookup_table_main.py"],
+    data = [
+        "//simulation/swarm/reachability/configs:engagement_configs",
+        "//simulation/swarm/reachability/configs:interceptor_configs",
+        "//simulation/swarm/reachability/configs:threat_configs",
+    ],
+    deps = [
+        ":engagement_runner",
+        ":interceptor",
+        ":threat",
+        "//simulation/swarm/reachability/proto:engagement_config_py_proto",
+        "//simulation/swarm/reachability/proto:static_config_py_proto",
+        requirement("absl-py"),
+        requirement("numpy"),
+        requirement("protobuf"),
+    ],
+)
+
+py_library(
+    name = "model",
+    srcs = ["model.py"],
+    deps = [
+        ":state",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "mpc",
+    srcs = ["mpc.py"],
+    deps = [
+        ":model",
+        ":state",
+        ":threat",
+        "//simulation/swarm/reachability/proto:engagement_config_py_proto",
+        requirement("absl-py"),
+        requirement("casadi"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "state",
+    srcs = ["state.py"],
+    deps = [
+        ":constants",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "termination",
+    srcs = ["termination.py"],
+    deps = [
+        ":state",
+        "//simulation/swarm/reachability/proto:engagement_config_py_proto",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "threat",
+    srcs = ["threat.py"],
+    deps = [
+        ":agent",
+        ":constants",
+        ":model",
+        ":state",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "trajectory",
+    srcs = ["trajectory.py"],
+    deps = [
+        ":state",
+        requirement("numpy"),
+    ],
+)

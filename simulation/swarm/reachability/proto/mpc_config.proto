@@ -26,7 +26,7 @@ message ThreatMpcConfig {
   float control_regularization = 3;
 }
 
-// MPC configuration, including time steps and cost weights,
+// MPC configuration, including time steps and cost weights.
 message MpcConfig {
   // Interceptor MPC configuration.
   InterceptorMpcConfig interceptor_config = 1;
@@ -41,8 +41,8 @@ message MpcConfig {
   float mpc_time_step = 4;
 
   // Each replan looks ahead this multiple of the time-to-go (range / closing
-  // speed). The horizon in steps is this value divided by the MPC prediction
-  // time step, clamped to the minimum and maximum horizon.
+  // speed). The horizon in steps is this look-ahead time divided by the MPC
+  // prediction time step, clamped to the minimum and maximum horizon.
   float time_to_go_horizon_factor = 5;
 
   // Minimum number of steps in the adaptive horizon.
