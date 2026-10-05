@@ -30,6 +30,10 @@ class State:
 
     @classmethod
     def from_array(cls, array: np.ndarray) -> "State":
-        """Returns the state parsed from a 6-length array."""
+        """Returns the state parsed from a 6-length array.
+
+        Args:
+            array: Position followed by the velocity.
+        """
         array = np.asarray(array, dtype=float)
         return cls(position=array[:3].copy(), velocity=array[3:].copy())

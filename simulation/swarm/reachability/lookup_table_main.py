@@ -29,6 +29,11 @@ FLAGS = flags.FLAGS
 
 
 def main(argv):
+    """Sweeps the engagement parameters and writes the lookup table.
+
+    Args:
+        argv: Command-line arguments, which must only contain the program name.
+    """
     assert len(argv) == 1
 
     with open(FLAGS.interceptor_config, "r") as interceptor_config_file:

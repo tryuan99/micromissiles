@@ -45,16 +45,21 @@ class FixedWingThreat(Threat):
         Args:
             state: Agent state.
         """
-        # The plant's speed control overrides any forward acceleration command.
+        # The plant's speed control overrides any forward acceleration command,
+        # so the threat always accelerates toward its maximum speed.
+        speed = state.speed
+        max_speed = self.max_speed()
+        target_speed = speed if max_speed is None else max_speed
+        acceleration = self.max_forward_acceleration()
         return self._prediction_model(
             state,
-            acceleration_bias=self._apply_speed_control(
-                np.zeros(3),
-                state.forward,
-                state.speed,
-            ),
-            drag=0.0,
+            acceleration_bias=np.zeros(3),
             max_forward_acceleration=0.0,
+            speed_profile=lambda times: speed + np.clip(
+                target_speed - speed,
+                -acceleration * times,
+                acceleration * times,
+            ),
         )
 
     def _apply_speed_control(

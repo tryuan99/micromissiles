@@ -17,6 +17,7 @@ class TerminationReason(StrEnum):
     MAX_TIME = "max_time"
     INTERCEPTOR_GROUND = "interceptor_ground"
     INTERCEPTOR_TOO_SLOW = "interceptor_too_slow"
+    THREAT_GROUND = "threat_ground"
     DIVERGING = "diverging"
     ESCAPING = "escaping"
     STALLED = "stalled"
@@ -65,6 +66,8 @@ class Termination:
             return TerminationReason.INTERCEPTOR_GROUND
         if interceptor_state.speed < termination_config.min_intercept_speed:
             return TerminationReason.INTERCEPTOR_TOO_SLOW
+        if threat_state.position[1] < termination_config.ground_level:
+            return TerminationReason.THREAT_GROUND
 
         missing = min_distance > self.engagement_config.capture_radius
         current_range = np.linalg.norm(threat_state.position -

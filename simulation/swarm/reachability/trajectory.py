@@ -41,7 +41,9 @@ class Trajectory:
     def arrays(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the (times, interceptor states, threat states) as arrays.
 
-        The times array has shape (N,), and each state array has shape (N, 6).
+        Returns:
+            A tuple consisting of the times with shape (N,) and the interceptor
+            and threat states, each with shape (N, 6).
         """
         return (
             np.asarray(self.times, dtype=float),

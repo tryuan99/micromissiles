@@ -1,6 +1,7 @@
 """The agent interface is an interface for interceptors and threats."""
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 
 import numpy as np
 
@@ -33,7 +34,11 @@ class Agent(ABC):
                 constants.GRAVITY / acceleration_config.reference_speed**2)
 
     def max_normal_acceleration(self, speed: float) -> float:
-        """Returns the maximum speed-dependent normal acceleration in m/s^2."""
+        """Returns the maximum speed-dependent normal acceleration in m/s^2.
+
+        Args:
+            speed: Speed in m/s.
+        """
         return self.max_normal_acceleration_coefficient() * speed**2
 
     def max_speed(self) -> float | None:
@@ -85,16 +90,17 @@ class Agent(ABC):
         self,
         state: State,
         acceleration_bias: np.ndarray,
-        drag: float,
         max_forward_acceleration: float,
+        speed_profile: Callable[[np.ndarray], np.ndarray],
     ) -> PredictionModel:
         """Returns the model at the given state.
 
         Args:
             state: Agent state.
             acceleration_bias: Acceleration bias in m/s^2.
-            drag: Drag in m/s^2.
             max_forward_acceleration: Maximum forward acceleration in m/s^2.
+            speed_profile: Predicted speed in m/s as a function of the elapsed
+                time in seconds.
         """
         first_normal, second_normal = constants.normal_basis(state.forward)
         return PredictionModel(
@@ -105,8 +111,7 @@ class Agent(ABC):
             max_forward_acceleration=max_forward_acceleration,
             max_normal_acceleration_coefficient=self.
             max_normal_acceleration_coefficient(),
-            speed=state.speed,
-            drag=drag,
+            speed_profile=speed_profile,
         )
 
     def step(

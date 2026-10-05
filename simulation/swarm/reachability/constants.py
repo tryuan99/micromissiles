@@ -46,7 +46,12 @@ def gravity_vector() -> np.ndarray:
 
 def normalize_vector(vector: np.ndarray,
                      fallback: np.ndarray = FORWARD) -> np.ndarray:
-    """Returns the normalized vector, or fallback if its magnitude is near zero."""
+    """Returns the normalized vector, or fallback if its magnitude is near zero.
+
+    Args:
+        vector: Vector to normalize.
+        fallback: Vector returned if the magnitude is near zero.
+    """
     magnitude = np.linalg.norm(vector)
     if magnitude < _EPSILON:
         return fallback
@@ -54,17 +59,32 @@ def normalize_vector(vector: np.ndarray,
 
 
 def project_onto_axis(vector: np.ndarray, direction: np.ndarray) -> np.ndarray:
-    """Returns the component of the vector parallel to the direction vector."""
+    """Returns the component of the vector parallel to the direction vector.
+
+    Args:
+        vector: Vector to project.
+        direction: Direction vector of the axis.
+    """
     return np.dot(vector, direction) / np.linalg.norm(direction)**2 * direction
 
 
 def project_off_axis(vector: np.ndarray, direction: np.ndarray) -> np.ndarray:
-    """Returns the component of the vector perpendicular to the direction vector."""
+    """Returns the component of the vector perpendicular to the direction vector.
+
+    Args:
+        vector: Vector to project.
+        direction: Direction vector of the axis.
+    """
     return vector - project_onto_axis(vector, direction)
 
 
 def clamp_magnitude(vector: np.ndarray, maximum_magnitude: float) -> np.ndarray:
-    """Returns the vector scaled down to at most the maximum_magnitude."""
+    """Returns the vector scaled down to at most the maximum_magnitude.
+
+    Args:
+        vector: Vector to clamp.
+        maximum_magnitude: Maximum magnitude.
+    """
     magnitude = np.linalg.norm(vector)
     if magnitude > maximum_magnitude and magnitude > _EPSILON:
         return vector * (maximum_magnitude / magnitude)
@@ -72,7 +92,11 @@ def clamp_magnitude(vector: np.ndarray, maximum_magnitude: float) -> np.ndarray:
 
 
 def normal_basis(normal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Returns two orthonormal vectors spanning the plane normal to the normal vector."""
+    """Returns two orthonormal vectors spanning the plane normal to the normal vector.
+
+    Args:
+        normal: Unit normal vector of the plane.
+    """
     reference = UP if abs(np.dot(normal, UP)) < 0.95 else FORWARD
     first_normal_axis = normalize_vector(reference -
                                          project_onto_axis(reference, normal))

@@ -80,7 +80,8 @@ class ConvexMpc(ABC):
         """
         time_step = self.engagement_config.mpc_config.mpc_time_step
         basis = casadi.DM(prediction_model.basis_matrix())
-        acceleration_bias = casadi.DM(prediction_model.acceleration_bias)
+        acceleration_biases = prediction_model.acceleration_biases(
+            horizon, time_step)
         max_forward_acceleration = prediction_model.max_forward_acceleration
         max_normal_accelerations = prediction_model.max_normal_accelerations(
             horizon, time_step)
@@ -90,7 +91,8 @@ class ConvexMpc(ABC):
         positions = [casadi.DM(initial_state.position)]
         velocities = [casadi.DM(initial_state.velocity)]
         for step in range(horizon):
-            acceleration = acceleration_bias + basis @ controls[:, step]
+            acceleration = (casadi.DM(acceleration_biases[step]) +
+                            basis @ controls[:, step])
             velocities.append(velocities[step] + time_step * acceleration)
             positions.append(positions[step] + time_step * velocities[step + 1])
 
@@ -241,6 +243,9 @@ class ThreatMpc(ConvexMpc):
     ) -> casadi.MX:
         """Builds the threat's objective.
 
+        The threat's planned positions are also constrained to remain above the
+        ground level, so the threat cannot evade by flying underground.
+
         Args:
             optimizer: The optimizer stack.
             positions: Positions for each step during the horizon.
@@ -252,6 +257,7 @@ class ThreatMpc(ConvexMpc):
         Returns:
             The cost expression to minimize.
         """
+        ground_level = self.engagement_config.termination_config.ground_level
         cost = 0
         for step in range(1, horizon + 1):
             cost -= self.engagement_config.mpc_config.threat_config.evade_range_weight * casadi.dot(
@@ -259,6 +265,7 @@ class ThreatMpc(ConvexMpc):
             alignment = casadi.dot(velocities[step],
                                    casadi.DM(pursuer_forward_directions[step]))
             cost += self.engagement_config.mpc_config.threat_config.evade_orthogonal_weight * alignment**2
+            optimizer.subject_to(positions[step][1] >= ground_level)
         return cost
 
     def _control_regularization(self) -> float:
