@@ -35,15 +35,17 @@ class Trajectory:
             threat_state: Threat state.
         """
         self.times.append(time)
-        self.interceptor_states.append(interceptor_state.to_array())
-        self.threat_states.append(threat_state.to_array())
+        self.interceptor_states.append(
+            np.concatenate(
+                [interceptor_state.position, interceptor_state.velocity]))
+        self.threat_states.append(
+            np.concatenate([threat_state.position, threat_state.velocity]))
 
     def arrays(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Returns the (times, interceptor states, threat states) as arrays.
 
-        Returns:
-            A tuple consisting of the times with shape (N,) and the interceptor
-            and threat states, each with shape (N, 6).
+        Timestamps have shape (samples,). Each state array has shape
+        (samples, 6), with position in meters and velocity in m/s.
         """
         return (
             np.asarray(self.times, dtype=float),

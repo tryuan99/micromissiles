@@ -1,7 +1,7 @@
 mpc_config {
   interceptor_config {
     terminal_weight: 100.0
-    running_weight: 1.0
+    running_weight: 0.0
     control_regularization: 1e-6
   }
   threat_config {

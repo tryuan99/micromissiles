@@ -23,17 +23,32 @@ from simulation.swarm.reachability.interceptor import Interceptor
 from simulation.swarm.reachability.proto.engagement_config_pb2 import \
     EngagementConfig
 from simulation.swarm.reachability.proto.static_config_pb2 import StaticConfig
-from simulation.swarm.reachability.threat import FixedWingThreat
+from simulation.swarm.reachability.termination import TerminationReason
+from simulation.swarm.reachability.threat import Threat
 
 FLAGS = flags.FLAGS
 
 
-def main(argv):
-    """Sweeps the engagement parameters and writes the lookup table.
+def _sweep_values(minimum: float, maximum: float, step: float) -> np.ndarray:
+    """Returns grid samples within the requested inclusive bounds.
+
+    The result is a one-dimensional array starting at minimum with no values
+    exceeding maximum. The upper bound is included when it lies on the grid.
 
     Args:
-        argv: Command-line arguments, which must only contain the program name.
+        minimum: Smallest allowed sample value.
+        maximum: Largest allowed sample value.
+        step: Positive spacing between adjacent samples.
     """
+    intervals = (maximum - minimum) / step
+    nearest = round(intervals)
+    tolerance = 8 * np.finfo(float).eps * max(1, abs(intervals))
+    count = nearest if abs(intervals -
+                           nearest) <= tolerance else int(np.floor(intervals))
+    return np.minimum(minimum + step * np.arange(count + 1), maximum)
+
+
+def main(argv):
     assert len(argv) == 1
 
     with open(FLAGS.interceptor_config, "r") as interceptor_config_file:
@@ -47,42 +62,41 @@ def main(argv):
             engagement_config_file.read(), EngagementConfig())
 
     interceptor = Interceptor(interceptor_config)
-    threat = FixedWingThreat(threat_config)
+    threat = Threat(threat_config)
 
-    interceptor_speeds = np.arange(
+    interceptor_speeds = _sweep_values(
         FLAGS.min_interceptor_speed,
-        FLAGS.max_interceptor_speed + FLAGS.interceptor_speed_step,
+        FLAGS.max_interceptor_speed,
         FLAGS.interceptor_speed_step,
     )
-    ranges = np.arange(
+    ranges = _sweep_values(
         FLAGS.min_range,
-        FLAGS.max_range + FLAGS.range_step,
+        FLAGS.max_range,
         FLAGS.range_step,
     )
-    relative_azimuths = np.arange(
+    relative_azimuths = _sweep_values(
         FLAGS.min_relative_azimuth,
-        FLAGS.max_relative_azimuth + FLAGS.relative_azimuth_step,
+        FLAGS.max_relative_azimuth,
         FLAGS.relative_azimuth_step,
     )
-    relative_elevations = np.arange(
+    relative_elevations = _sweep_values(
         FLAGS.min_relative_elevation,
-        FLAGS.max_relative_elevation + FLAGS.relative_elevation_step,
+        FLAGS.max_relative_elevation,
         FLAGS.relative_elevation_step,
     )
-    threat_speeds = np.arange(
+    threat_speeds = _sweep_values(
         FLAGS.min_threat_speed,
-        FLAGS.max_threat_speed + FLAGS.threat_speed_step,
+        FLAGS.max_threat_speed,
         FLAGS.threat_speed_step,
     )
-    threat_heading_azimuths = np.arange(
+    threat_heading_azimuths = _sweep_values(
         FLAGS.min_threat_heading_azimuth,
-        FLAGS.max_threat_heading_azimuth + FLAGS.threat_heading_azimuth_step,
+        FLAGS.max_threat_heading_azimuth,
         FLAGS.threat_heading_azimuth_step,
     )
-    threat_heading_elevations = np.arange(
+    threat_heading_elevations = _sweep_values(
         FLAGS.min_threat_heading_elevation,
-        FLAGS.max_threat_heading_elevation +
-        FLAGS.threat_heading_elevation_step,
+        FLAGS.max_threat_heading_elevation,
         FLAGS.threat_heading_elevation_step,
     )
 
@@ -113,10 +127,7 @@ def main(argv):
             "Success",
             "Minimum separation [m]",
             "Time of minimum separation [s]",
-            "Intercept time [s]",
             "Reason for ending engagement",
-            "Number of control steps",
-            "Number of solver failures",
         ])
 
         for sample, result in pool.imap(
@@ -126,15 +137,13 @@ def main(argv):
         ):
             if result is None:
                 continue
+            success = result.reason == TerminationReason.INTERCEPT
             writer.writerow([
                 *sample,
-                result.success,
+                success,
                 result.min_separation,
                 result.time_of_min_separation,
-                result.intercept_time,
                 result.reason,
-                result.step_count,
-                result.solver_failures,
             ])
 
 

@@ -1,87 +1,30 @@
-"""The threat classes represent a threat model."""
+"""Threat dynamics."""
 
-from abc import ABC
-
-import numpy as np
+import casadi
 
 from simulation.swarm.reachability import constants
 from simulation.swarm.reachability.agent import Agent
-from simulation.swarm.reachability.model import PredictionModel
 from simulation.swarm.reachability.state import State
 
 
-class Threat(Agent, ABC):
-    """Interface for a threat."""
+class Threat(Agent):
+    """Threat dynamics."""
 
-
-class FixedWingThreat(Threat):
-    """Fixed-wing threat model.
-
-    The threat is not subject to drag or gravity, but has a maximum speed
-    dependent on the power table.
-    """
-
-    def total_acceleration(
+    def _total_acceleration(
         self,
         state: State,
-        acceleration: np.ndarray,
-    ) -> np.ndarray:
-        """Returns the total acceleration for the applied acceleration command.
+        command: casadi.SX | casadi.MX,
+    ) -> casadi.SX | casadi.MX:
+        """Returns the total acceleration.
 
         Args:
-            state: Agent state.
-            acceleration: Acceleration command in m/s^2.
+            state: Flight state with position, velocity, and rotation.
+            command: Acceleration command in m/s^2 with shape (3,).
         """
-
-        forward_unit = state.forward
-        controlled = self._apply_speed_control(acceleration, forward_unit,
-                                               state.speed)
-        return self.limit_acceleration_input(controlled, forward_unit,
-                                             state.speed)
-
-    def prediction_model(self, state: State) -> PredictionModel:
-        """Returns the linearized prediction model at the state.
-
-        Args:
-            state: Agent state.
-        """
-        # The plant's speed control overrides any forward acceleration command,
-        # so the threat always accelerates toward its maximum speed.
-        speed = state.speed
-        max_speed = self.max_speed()
-        target_speed = speed if max_speed is None else max_speed
-        acceleration = self.max_forward_acceleration()
-        return self._prediction_model(
-            state,
-            acceleration_bias=np.zeros(3),
-            max_forward_acceleration=0.0,
-            speed_profile=lambda times: speed + np.clip(
-                target_speed - speed,
-                -acceleration * times,
-                acceleration * times,
-            ),
-        )
-
-    def _apply_speed_control(
-        self,
-        acceleration: np.ndarray,
-        forward: np.ndarray,
-        speed: float,
-    ) -> np.ndarray:
-        """Returns the acceleration command with the forward component tracking
-        the maximum speed.
-
-        Args:
-            acceleration: Acceleration in m/s^2.
-            forward: Forward direction.
-            speed: Speed in m/s.
-        """
-        desired_speed = self.max_speed()
-        if desired_speed is None:
-            return acceleration
-        speed_error = desired_speed - speed
-        normal_acceleration = constants.project_off_axis(acceleration, forward)
-        if np.abs(speed_error) < constants.SPEED_ERROR_THRESHOLD:
-            return normal_acceleration
-        return normal_acceleration + (np.sign(speed_error) *
-                                      self.max_forward_acceleration() * forward)
+        forward = casadi.dot(command, state.forward) * state.forward
+        normal = constants.casadi_project_off_axis(command, state.forward)
+        speed_error = self.max_speed() - state.speed
+        acceleration_command = normal + casadi.if_else(
+            casadi.fabs(speed_error) < constants.SPEED_ERROR_THRESHOLD,
+            casadi.SX.zeros(3), forward * casadi.sign(speed_error))
+        return super()._total_acceleration(state, acceleration_command)

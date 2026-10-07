@@ -4,10 +4,11 @@ package reachability;
 
 // Interceptor MPC configuration.
 message InterceptorMpcConfig {
-  // Terminal weight.
+  // Weight on separation at the predicted continuous closest approach.
   float terminal_weight = 1;
 
-  // Running weight.
+  // Weight on separation at each step before closest approach. A nonzero
+  // value favors early pursuit of the threat's path as well as interception.
   float running_weight = 2;
 
   // Control regularization.

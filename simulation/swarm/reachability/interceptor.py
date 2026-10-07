@@ -1,144 +1,48 @@
-"""The interceptor class represents an interceptor model."""
+"""Interceptor dynamics."""
 
-import numpy as np
+import casadi
 
 from simulation.swarm.reachability import constants
 from simulation.swarm.reachability.agent import Agent
-from simulation.swarm.reachability.model import PredictionModel
 from simulation.swarm.reachability.state import State
 
 
 class Interceptor(Agent):
-    """Interceptor model.
+    """Interceptor dynamics."""
 
-    The acceleration command is subject to maximum acceleration bounds, gravity,
-    air drag, lift-induced drag, and ground avoidance maneuvers.
-    """
-
-    def total_acceleration(
+    def _total_acceleration(
         self,
         state: State,
-        acceleration: np.ndarray,
-    ) -> np.ndarray:
-        """Returns the total acceleration for the applied acceleration command.
+        command: casadi.SX | casadi.MX,
+    ) -> casadi.SX | casadi.MX:
+        """Returns the total acceleration with ground avoidance.
 
         Args:
-            state: Agent state.
-            acceleration: Acceleration command in m/s^2.
+            state: Flight state with position, velocity, and rotation.
+            command: Acceleration command in m/s^2 with shape (3,).
         """
-        forward = state.forward
-        acceleration_with_ground_avoidance = self._avoid_ground(
-            acceleration, state)
-        # The interceptor always accelerates forward at the maximum forward
-        # acceleration to maximize the speed and thus the agility.
-        acceleration_with_thrust = (constants.project_off_axis(
-            acceleration_with_ground_avoidance,
-            forward,
-        ) + self.max_forward_acceleration() * forward)
-        limited_acceleration = self.limit_acceleration_input(
-            acceleration_with_thrust,
-            forward,
-            state.speed,
-        )
-        gravity = constants.gravity_vector()
-        drag = -(self._air_drag(state) +
-                 self._lift_induced_drag(limited_acceleration, forward))
-        return limited_acceleration + gravity + drag * forward
-
-    def prediction_model(self, state: State) -> PredictionModel:
-        """Returns the linearized prediction model at the state.
-
-        Args:
-            state: Agent state.
-        """
-        # The plant always applies the maximum forward acceleration a against
-        # the air drag k * v^2, so the speed follows v' = a - k * v^2. Its exact
-        # solution is v(t) = (v0 + a * s) / (1 + k * v0 * s), where
-        # s = tanh(sqrt(a * k) * t) / sqrt(a * k), which tends to t as a * k
-        # tends to zero.
-        speed = state.speed
-        acceleration = self.max_forward_acceleration()
-        drag_per_speed_squared = self._drag_per_speed_squared(state)
-        rate = np.sqrt(acceleration * drag_per_speed_squared)
-
-        def speed_profile(times: np.ndarray) -> np.ndarray:
-            """Returns the predicted speed under thrust and air drag.
-
-            Args:
-                times: Elapsed times in seconds.
-
-            Returns:
-                The predicted speeds in m/s at the given times.
-            """
-            effective_times = (np.tanh(rate * times) /
-                               rate if rate > 0 else times)
-            return ((speed + acceleration * effective_times) /
-                    (1 + drag_per_speed_squared * speed * effective_times))
-
-        return self._prediction_model(
-            state,
-            acceleration_bias=constants.gravity_vector(),
-            max_forward_acceleration=0.0,
-            speed_profile=speed_profile,
-        )
-
-    def _air_drag(self, state: State) -> float:
-        """Returns the air drag deceleration in m/s^2 at the state.
-
-        Args:
-            state: Agent state.
-        """
-        return self._drag_per_speed_squared(state) * state.speed**2
-
-    def _drag_per_speed_squared(self, state: State) -> float:
-        """Returns the air drag deceleration per speed squared in 1/m.
-
-        Args:
-            state: Agent state.
-        """
-        lift_drag = self.static_config.lift_drag_config
-        body = self.static_config.body_config
-        return (0.5 * constants.air_density_at_altitude(state.position[1]) *
-                lift_drag.drag_coefficient * body.cross_sectional_area /
-                body.mass)
-
-    def _lift_induced_drag(
-        self,
-        acceleration: np.ndarray,
-        forward: np.ndarray,
-    ) -> float:
-        """Returns the lift-induced drag deceleration for the applied acceleration.
-
-        Args:
-            acceleration: Acceleration in m/s^2.
-            forward: Forward direction.
-        """
-        lift_acceleration = np.linalg.norm(
-            constants.project_off_axis(acceleration, forward))
-        return np.abs(lift_acceleration /
-                      self.static_config.lift_drag_config.lift_drag_ratio)
-
-    def _avoid_ground(
-        self,
-        acceleration: np.ndarray,
-        state: State,
-    ) -> np.ndarray:
-        """Returns the command blended with an upward pull near the ground.
-
-        Args:
-            acceleration: Acceleration in m/s^2.
-            state: Agent state.
-        """
-        vertical_speed = state.velocity[1]
-        altitude = state.position[1]
-        threshold = (np.abs(vertical_speed) *
+        max_normal_acceleration = self.max_normal_acceleration(state.speed)
+        threshold = (casadi.fabs(state.velocity[1]) *
                      constants.GROUND_PROXIMITY_THRESHOLD_FACTOR +
                      0.5 * constants.GRAVITY *
                      constants.GROUND_PROXIMITY_THRESHOLD_FACTOR**2)
-        if vertical_speed < 0 and altitude < threshold:
-            blend_factor = 1.0 - altitude / threshold
-            body_up = constants.normalize_vector(
-                constants.project_off_axis(constants.UP, state.forward))
-            return acceleration + (blend_factor * self.max_normal_acceleration(
-                state.speed) * body_up)
-        return acceleration
+        pull = (1 - state.position[1] /
+                threshold) * max_normal_acceleration * state.up
+        acceleration_command = command + casadi.if_else(
+            casadi.logic_and(state.velocity[1] < 0, state.position[1]
+                             < threshold), pull, casadi.SX.zeros(3))
+        limited_acceleration = super()._total_acceleration(
+            state, acceleration_command)
+        air_density = constants.AIR_DENSITY_SEA_LEVEL * casadi.exp(
+            -state.position[1] / constants.AIR_DENSITY_SCALE_HEIGHT)
+        air_drag = (0.5 * air_density *
+                    self.static_config.lift_drag_config.drag_coefficient *
+                    self.static_config.body_config.cross_sectional_area /
+                    self.static_config.body_config.mass * state.speed**2)
+        lift_induced_drag = casadi.fabs(
+            constants.casadi_vector_norm(
+                constants.casadi_project_off_axis(limited_acceleration,
+                                                  state.forward)) /
+            self.static_config.lift_drag_config.lift_drag_ratio)
+        return (limited_acceleration + casadi.DM(constants.gravity_vector()) -
+                (air_drag + lift_induced_drag) * state.forward)

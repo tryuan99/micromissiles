@@ -14,7 +14,7 @@ message TerminationConfig {
   // Seconds of sustained divergence before declaring an escape.
   float escape_dwell = 3;
 
-  // Once the range exceeds this factor of the closest point of approach, the
+  // Once the range exceeds this factor of the minimum separation, the
   // intercept is considered a miss.
   float post_cpa_factor = 4;
 

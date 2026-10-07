@@ -52,6 +52,9 @@ class EngagementRunner:
             A tuple consisting of the sample and the engagement result. The
             result is None if the threat starts below the ground level, in
             which case the engagement is skipped.
+
+        Raises:
+            RuntimeError: If optimization fails.
         """
         (
             interceptor_speed,
@@ -93,11 +96,11 @@ class EngagementRunner:
                 threat_position[1], ground_level)
             return sample, None
 
-        interceptor_state = State(
+        interceptor_state = State.from_components(
             interceptor_position,
             interceptor_velocity,
         )
-        threat_state = State(
+        threat_state = State.from_components(
             threat_position,
             threat_velocity,
         )
@@ -107,7 +110,11 @@ class EngagementRunner:
             self.threat,
             self.engagement_config,
         )
-        return sample, engagement.run(
-            interceptor_state,
-            threat_state,
-        )
+        try:
+            return sample, engagement.run(
+                interceptor_state,
+                threat_state,
+            )
+        except RuntimeError as err:
+            raise RuntimeError(
+                f"Engagement failed for sample {sample}: {err}") from err

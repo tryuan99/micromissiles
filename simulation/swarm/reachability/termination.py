@@ -1,5 +1,5 @@
-"""The termination class determines when a non-capturing engagement can be
-abandoned as a miss.
+"""The termination class determines when an engagement can be abandoned as a
+miss.
 """
 
 from enum import StrEnum
@@ -24,16 +24,16 @@ class TerminationReason(StrEnum):
 
 
 class Termination:
-    """The termination class determines when to abandon the engagement as a miss.
+    """Determines when to abandon the engagement.
 
     Attributes:
         engagement_config: Engagement configuration.
         initial_range: Initial range in meters.
         previous_range: Previous range in meters.
         diverging_time: Duration over which the distance is increasing.
-        min_distance: Closest point of approach.
-        last_improvement_time: Time at which the closest point of approach last
-            improved by more than the stall tolerance.
+        min_distance: Minimum separation in meters.
+        last_improvement_time: Time at which minimum separation last improved
+            by more than the stall tolerance.
     """
 
     def __init__(
@@ -48,8 +48,14 @@ class Termination:
         self.min_distance = initial_range
         self.last_improvement_time = 0.0
 
-    def reason(self, interceptor_state: State, threat_state: State,
-               elapsed_time: float, min_distance: float) -> str | None:
+    def reason(
+        self,
+        interceptor_state: State,
+        threat_state: State,
+        elapsed_time: float,
+        min_distance: float,
+        time_step: float,
+    ) -> TerminationReason | None:
         """Checks whether the engagement is decided.
 
         Args:
@@ -57,6 +63,7 @@ class Termination:
             threat_state: Threat state.
             elapsed_time: Elapsed simulation time in seconds.
             min_distance: Minimum distance so far in meters.
+            time_step: Actual elapsed time since the previous check in seconds.
 
         Returns:
             The reason the engagement should stop or None to keep going.
@@ -78,14 +85,16 @@ class Termination:
         if (missing and diverging and current_range
                 > termination_config.post_cpa_factor * min_distance):
             return TerminationReason.DIVERGING
-        if diverging and current_range > termination_config.escape_margin * self.initial_range:
-            self.diverging_time += self.engagement_config.mpc_config.control_time_step
+        if (diverging and current_range
+                > termination_config.escape_margin * self.initial_range):
+            self.diverging_time += time_step
             if self.diverging_time >= termination_config.escape_dwell:
                 return TerminationReason.ESCAPING
         else:
             self.diverging_time = 0.0
 
-        if min_distance < self.min_distance - termination_config.stall_tolerance:
+        if (min_distance
+                < self.min_distance - termination_config.stall_tolerance):
             self.min_distance = min_distance
             self.last_improvement_time = elapsed_time
         if (missing and elapsed_time - self.last_improvement_time

@@ -8,9 +8,9 @@ py_library(
     srcs = ["agent.py"],
     deps = [
         ":constants",
-        ":model",
         ":state",
         "//simulation/swarm/reachability/proto:static_config_py_proto",
+        requirement("casadi"),
         requirement("numpy"),
     ],
 )
@@ -25,6 +25,7 @@ py_library(
     name = "constants",
     srcs = ["constants.py"],
     deps = [
+        requirement("casadi"),
         requirement("numpy"),
         requirement("scipy"),
     ],
@@ -37,6 +38,7 @@ py_library(
         ":closest_approach",
         ":constants",
         ":interceptor",
+        ":model",
         ":mpc",
         ":state",
         ":termination",
@@ -68,9 +70,8 @@ py_library(
     deps = [
         ":agent",
         ":constants",
-        ":model",
         ":state",
-        requirement("numpy"),
+        requirement("casadi"),
     ],
 )
 
@@ -85,6 +86,7 @@ py_binary(
     deps = [
         ":engagement_runner",
         ":interceptor",
+        ":termination",
         ":threat",
         "//simulation/swarm/reachability/proto:engagement_config_py_proto",
         "//simulation/swarm/reachability/proto:static_config_py_proto",
@@ -98,7 +100,10 @@ py_library(
     name = "model",
     srcs = ["model.py"],
     deps = [
+        ":agent",
+        ":constants",
         ":state",
+        requirement("casadi"),
         requirement("numpy"),
     ],
 )
@@ -107,10 +112,10 @@ py_library(
     name = "mpc",
     srcs = ["mpc.py"],
     deps = [
+        ":constants",
         ":model",
         ":state",
         "//simulation/swarm/reachability/proto:engagement_config_py_proto",
-        requirement("absl-py"),
         requirement("casadi"),
         requirement("numpy"),
     ],
@@ -121,6 +126,7 @@ py_library(
     srcs = ["state.py"],
     deps = [
         ":constants",
+        requirement("casadi"),
         requirement("numpy"),
     ],
 )
@@ -141,9 +147,8 @@ py_library(
     deps = [
         ":agent",
         ":constants",
-        ":model",
         ":state",
-        requirement("numpy"),
+        requirement("casadi"),
     ],
 )
 
