@@ -20,6 +20,19 @@ py_binary(
     ],
 )
 
+py_binary(
+    name = "chladni_plot_main",
+    srcs = ["chladni_plot_main.py"],
+    deps = [
+        "//utils/visualization:color_maps",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+        requirement("pandas"),
+    ],
+)
+
 py_library(
     name = "integrator",
     srcs = ["integrator.py"],

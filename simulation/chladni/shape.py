@@ -20,7 +20,12 @@ class Shape(ABC):
 
     @abstractmethod
     def contains(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
-        """Returns whether the points (x, y) in m lie inside the shape."""
+        """Returns whether the points lie inside the shape.
+
+        Args:
+            x: x-coordinates in m.
+            y: y-coordinates in m.
+        """
 
 
 class Circle(Shape):
@@ -36,7 +41,12 @@ class Circle(Shape):
         self.radius = radius
 
     def contains(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
-        """Returns whether the points (x, y) in m lie inside the shape."""
+        """Returns whether the points lie inside the shape.
+
+        Args:
+            x: x-coordinates in m.
+            y: y-coordinates in m.
+        """
         return (x / self.radius)**2 + (y / self.radius)**2 <= 1
 
 
@@ -54,7 +64,12 @@ class Rectangle(Shape):
         self.height = height
 
     def contains(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
-        """Returns whether the points (x, y) in m lie inside the shape."""
+        """Returns whether the points lie inside the shape.
+
+        Args:
+            x: x-coordinates in m.
+            y: y-coordinates in m.
+        """
         return (np.abs(x) <= self.width / 2) & (np.abs(y) <= self.height / 2)
 
 
@@ -80,7 +95,7 @@ class ShapeFactory:
             ValueError: If the shape name is unknown.
         """
         if type not in SHAPES:
-            raise ValueError(f"Unknown shape type: {type}.")
+            raise ValueError(f"Invalid shape type: {type}.")
         return SHAPES[type](*args)
 
 
