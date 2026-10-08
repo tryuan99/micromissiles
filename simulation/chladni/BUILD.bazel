@@ -1,0 +1,77 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "basis",
+    srcs = ["basis.py"],
+    deps = [requirement("numpy")],
+)
+
+py_binary(
+    name = "chladni_main",
+    srcs = ["chladni_main.py"],
+    deps = [
+        ":material",
+        ":plate",
+        ":shape",
+        requirement("absl-py"),
+    ],
+)
+
+py_library(
+    name = "integrator",
+    srcs = ["integrator.py"],
+    deps = [
+        ":shape",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "material",
+    srcs = ["material.py"],
+)
+
+py_library(
+    name = "modes",
+    srcs = ["modes.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "plate",
+    srcs = ["plate.py"],
+    deps = [
+        ":material",
+        ":modes",
+        ":response",
+        ":ritz_model",
+        ":shape",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "response",
+    srcs = ["response.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "ritz_model",
+    srcs = ["ritz_model.py"],
+    deps = [
+        ":basis",
+        ":integrator",
+        ":material",
+        ":shape",
+    ],
+)
+
+py_library(
+    name = "shape",
+    srcs = ["shape.py"],
+    deps = [requirement("numpy")],
+)
