@@ -27,7 +27,12 @@ def main(argv):
         base_material.density,
         FLAGS.thickness,
     )
-    plate = ChladniPlate(shape, material, (FLAGS.drive_x, FLAGS.drive_y))
+    plate = ChladniPlate(
+        shape,
+        material,
+        (FLAGS.drive_x, FLAGS.drive_y),
+        FLAGS.drive_mass,
+    )
     logging.info("Resonances excitable from the drive point: %s Hz.",
                  plate.resonances(10, 10000)[0])
     response = plate.steady_state(
@@ -93,6 +98,12 @@ if __name__ == "__main__":
                        "x-coordinate in m of the drive point from the center.")
     flags.DEFINE_float("drive_y", 0,
                        "y-coordinate in m of the drive point from the center.")
+    flags.DEFINE_float(
+        "drive_mass",
+        0.02,
+        "Moving mass in kg of the wave driver attached at the drive point.",
+        lower_bound=0.0,
+    )
     flags.DEFINE_integer(
         "num_points_per_side",
         401,

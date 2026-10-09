@@ -17,6 +17,8 @@ class ChladniPlate:
         model: Stiffness and mass matrices.
         modes: Natural frequencies and vibration shapes.
         drive_point: Drive point.
+        drive_mass: Moving mass of the wave driver attached at the drive point
+            in kg.
         damping_ratio: How strongly each mode is damped, e.g., 0.005 = 0.5%.
         drive_mode_coefficients: How much each mode moves at the drive point.
     """
@@ -26,6 +28,7 @@ class ChladniPlate:
         shape: Shape,
         material: Material,
         drive_point: tuple[float, float] = (0.0, 0.0),
+        drive_mass: float = 0.0,
         degree: int = 14,
         num_integration_points_per_side: int = 160,
         damping_ratio: float = 0.005,
@@ -38,6 +41,7 @@ class ChladniPlate:
                                num_integration_points_per_side)
         self.modes = Modes(self.model.stiffness, self.model.mass)
         self.drive_point = drive_point
+        self.drive_mass = drive_mass
         self.damping_ratio = damping_ratio
         # Calculate the coefficients of the drive in terms of the basis
         # functions and then transform it into the eigenmode basis.
@@ -45,8 +49,8 @@ class ChladniPlate:
             self.modes.modes.T @ self.model.basis.evaluate(*drive_point)[0])
 
     def responses(self, angular_frequency: float | np.ndarray) -> np.ndarray:
-        """Returns how much each mode moves for a 1 N force at the drive point
-        at the given frequencies.
+        """Returns how much each mode moves for a 1 N force applied to the plate
+        at the drive point at the given frequencies.
 
         Args:
             angular_frequency: Drive frequency or frequencies in rad/s.
@@ -55,11 +59,18 @@ class ChladniPlate:
             The complex amplitude of each mode in m/N with one row per
             frequency and one column per mode.
         """
-        angular_frequency = np.asarray(angular_frequency)[..., None]
+        angular_frequency = np.asarray(angular_frequency)
         natural_frequencies = self.modes.angular_frequencies
-        return self.drive_mode_coefficients / (
-            natural_frequencies**2 - angular_frequency**2 +
-            2j * self.damping_ratio * natural_frequencies * angular_frequency)
+        free_responses = self.drive_mode_coefficients / (
+            natural_frequencies**2 - angular_frequency[..., None]**2 +
+            2j * self.damping_ratio * natural_frequencies *
+            angular_frequency[..., None])
+        # The drive mass and the plate move together according to F_plate =
+        # F_driver - m * (-omega^2) * w_0, where w_0 = deflection at drive point
+        # * F_plate. Thus, F_plate = F_driver / (1 - * omega^2 * deflection).
+        deflection_at_drive_point = free_responses @ self.drive_mode_coefficients
+        return free_responses / (1 - self.drive_mass * angular_frequency**2 *
+                                 deflection_at_drive_point)[..., None]
 
     def resonances(
         self,
@@ -68,6 +79,9 @@ class ChladniPlate:
         num_steps: int = 10001,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Returns the resonances in the frequency band.
+
+        If a drive mass is present, the resonances are of the coupled plate and
+        driver.
 
         Args:
             min_frequency: Lower frequency in Hz.
