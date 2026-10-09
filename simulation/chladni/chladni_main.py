@@ -51,21 +51,54 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_enum("shape", "square", list(SHAPES.keys()), "Plate shape.")
-    flags.DEFINE_float("diameter", 0.24, "Diameter in m for a circular plate.")
-    flags.DEFINE_float("width", 0.24,
-                       "Width in m for a rectangular or square plate.")
-    flags.DEFINE_float("height", 0.24, "Height in m for a rectangular plate.")
+    flags.DEFINE_float(
+        "diameter",
+        0.24,
+        "Diameter in m for a circular plate.",
+        lower_bound=0.0,
+    )
+    flags.DEFINE_float(
+        "width",
+        0.24,
+        "Width in m for a rectangular or square plate.",
+        lower_bound=0.0,
+    )
+    flags.DEFINE_float(
+        "height",
+        0.24,
+        "Height in m for a rectangular plate.",
+        lower_bound=0.0,
+    )
     flags.DEFINE_enum("material", "aluminum", list(MATERIALS.keys()),
                       "Plate material.")
-    flags.DEFINE_float("thickness", 1e-3, "Plate thickness in m.")
-    flags.DEFINE_float("frequency", 268.5, "Drive frequency in Hz.")
-    flags.DEFINE_float("amplitude", 1e-4, "Drive amplitude in m.")
+    flags.DEFINE_float(
+        "thickness",
+        1e-3,
+        "Plate thickness in m.",
+        lower_bound=0.0,
+    )
+    flags.DEFINE_float(
+        "frequency",
+        268.5,
+        "Drive frequency in Hz.",
+        lower_bound=0.0,
+    )
+    flags.DEFINE_float(
+        "amplitude",
+        1e-4,
+        "Drive amplitude in m.",
+        lower_bound=0.0,
+    )
     flags.DEFINE_float("drive_x", 0,
                        "x-coordinate in m of the drive point from the center.")
     flags.DEFINE_float("drive_y", 0,
                        "y-coordinate in m of the drive point from the center.")
-    flags.DEFINE_integer("num_points_per_side", 401,
-                         "Number of grid points per side.")
+    flags.DEFINE_integer(
+        "num_points_per_side",
+        401,
+        "Number of grid points per side.",
+        lower_bound=0,
+    )
     flags.DEFINE_string("output", None, "Output CSV file.")
     flags.mark_flag_as_required("output")
 

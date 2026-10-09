@@ -144,8 +144,9 @@ def main(argv):
 
 if __name__ == "__main__":
     flags.DEFINE_string("response_csv", None,
-                        "CSV file written by chladni_main.")
-    flags.DEFINE_bool("nodes", False, "Draw the nodes as dashed lines.")
+                        "Chladni plate simulation CSV file.")
+    flags.DEFINE_bool("nodes", False,
+                      "If true, draw the nodes as dashed lines.")
     flags.mark_flag_as_required("response_csv")
 
     app.run(main)
