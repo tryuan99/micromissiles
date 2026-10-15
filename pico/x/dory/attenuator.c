@@ -45,8 +45,8 @@ void attenuator_init(const attenuator_config_t* config) {
 void attenuator_set_gain_attenuation(const uint8_t gain_attenuation) {
   const uint8_t gain_attenuation_control =
       attenuator_get_attenuation_control(gain_attenuation);
-  gpio_put(g_attenuator_config.gpio_v1, gain_attenuation_control & 0x1);
-  gpio_put(g_attenuator_config.gpio_v2, (gain_attenuation_control >> 1) & 0x1);
-  gpio_put(g_attenuator_config.gpio_v3, (gain_attenuation_control >> 2) & 0x1);
-  gpio_put(g_attenuator_config.gpio_v4, (gain_attenuation_control >> 3) & 0x1);
+  gpio_put(g_attenuator_config.gpio_v1, (gain_attenuation_control >> 3) & 0x1);
+  gpio_put(g_attenuator_config.gpio_v2, (gain_attenuation_control >> 2) & 0x1);
+  gpio_put(g_attenuator_config.gpio_v3, (gain_attenuation_control >> 1) & 0x1);
+  gpio_put(g_attenuator_config.gpio_v4, gain_attenuation_control & 0x1);
 }
