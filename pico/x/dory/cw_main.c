@@ -42,15 +42,9 @@ int main(int argc, char** argv) {
   mixer_init(&g_mixer_config);
   mixer_enable();
 
-#if DORY_REV == 1
-  // Initialize the VGA.
-  vga_init(&g_vga_config);
-  vga_set_gain_attenuation(/*gain_attenuation=*/0);
-#else   // DORY_REV != 1
   // Initialize the attenuator.
   attenuator_init(&g_attenuator_config);
   attenuator_set_gain_attenuation(/*gain_attenuation=*/8);
-#endif  // DORY_REV == 1
 
   // Initialize the DDS.
   g_dds_config.mode = DDS_MODE_CW;
