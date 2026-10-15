@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
   // Initialize the attenuator.
   attenuator_init(&g_attenuator_config);
-  attenuator_set_gain_attenuation(/*gain_attenuation=*/8);
+  attenuator_set_gain_attenuation(/*gain_attenuation=*/12);
 
   // Initialize the DDS.
   g_dds_config.mode = DDS_MODE_FMCW;
