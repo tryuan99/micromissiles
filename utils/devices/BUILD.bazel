@@ -13,9 +13,21 @@ py_binary(
     ],
 )
 
+py_binary(
+    name = "bailey_tx_sweep_main",
+    srcs = ["bailey_tx_sweep_main.py"],
+    deps = [
+        ":fieldfox_interface",
+        "//utils/serial:serial_interface",
+        requirement("absl-py"),
+        requirement("pandas"),
+    ],
+)
+
 py_library(
     name = "fieldfox_interface",
     srcs = ["fieldfox_interface.py"],
+    deps = [requirement("numpy")],
 )
 
 py_library(
