@@ -18,8 +18,8 @@ class FieldFoxOutputFormat(StrEnum):
 class FieldFoxInterface:
     """Interface to the Keysight FieldFox N9918B VNA.
 
-    The VNA's IP address defaults to 192.168.1.1, so the Ethernet port must be
-    configured to 192.168.1.2 with a subnet of 255.255.0.0.
+    The VNA's IP address defaults to 192.168.1.2, so the Ethernet port must be
+    configured to 192.168.1.1 with a subnet of 255.255.255.0.
 
     Attributes:
         ip_address: IP address of the VNA.
@@ -30,7 +30,7 @@ class FieldFoxInterface:
     DEFAULT_TIMEOUT = 30
 
     def __init__(self,
-                 ip_address: str = "192.168.1.1",
+                 ip_address: str = "192.168.1.2",
                  port: int = 5025) -> None:
         self.ip_address = ip_address
         self.port = port
@@ -87,38 +87,54 @@ class FieldFoxInterface:
                 self._send_command(connection, "*CLS")
                 self._send_command(connection, ":FORM:DATA ASC")
 
-                # Store the data and wait for the operation to complete.
-                self._send_command(
-                    connection,
-                    f':MMEM:STOR:{output_format.value} "{output_file}"')
-                if self._read_command(connection, reader, "*OPC?") != "1":
-                    raise RuntimeError("FieldFox failed to save the data.")
+                try:
+                    # Switch to single-sweep mode.
+                    self._send_command(connection, "INIT:CONT 0")
+                    if self._read_command(connection, reader, "*OPC?") != "1":
+                        raise RuntimeError(
+                            "FieldFox failed to enter single-sweep mode.")
 
-                # Download the binary data.
-                self._send_command(connection, f':MMEM:DATA? "{output_file}"')
-                if self._read_data(reader, num_bytes=1) != b"#":
-                    raise RuntimeError(
-                        f"FieldFox returned an invalid binary block.")
+                    # Trigger one sweep and wait for it to complete.
+                    self._send_command(connection, "INIT:IMM")
+                    if self._read_command(connection, reader, "*OPC?") != "1":
+                        raise RuntimeError("FieldFox sweep did not complete.")
 
-                num_digits_str = self._read_data(reader, num_bytes=1)
-                if not num_digits_str.isdigit() or num_digits_str == b"0":
-                    raise RuntimeError(
-                        "FieldFox returned an unsupported binary header.")
-                num_digits = int(num_digits_str)
+                    # Store the data and wait for the operation to complete.
+                    self._send_command(
+                        connection,
+                        f':MMEM:STOR:{output_format.value} "{output_file}"')
+                    if self._read_command(connection, reader, "*OPC?") != "1":
+                        raise RuntimeError("FieldFox failed to save the data.")
 
-                payload_size = int(
-                    self._read_data(reader,
-                                    num_bytes=num_digits).decode("ascii"))
-                payload = self._read_data(reader, payload_size)
+                    # Download the binary data.
+                    self._send_command(connection,
+                                       f':MMEM:DATA? "{output_file}"')
+                    if self._read_data(reader, num_bytes=1) != b"#":
+                        raise RuntimeError(
+                            f"FieldFox returned an invalid binary block.")
 
-                # The FieldFox terminates the response with LF or CRLF, so flush it.
-                if self._read_data(reader, num_bytes=1) == b"\r":
-                    self._read_data(reader, num_bytes=1)
+                    num_digits_str = self._read_data(reader, num_bytes=1)
+                    if not num_digits_str.isdigit() or num_digits_str == b"0":
+                        raise RuntimeError(
+                            "FieldFox returned an unsupported binary header.")
+                    num_digits = int(num_digits_str)
 
-                # Delete the temporary data file.
-                self._send_command(connection, f':MMEM:DEL "{output_file}"')
+                    payload_size = int(
+                        self._read_data(reader,
+                                        num_bytes=num_digits).decode("ascii"))
+                    payload = self._read_data(reader, payload_size)
 
-                return payload
+                    # The FieldFox terminates the response with LF or CRLF, so flush it.
+                    if self._read_data(reader, num_bytes=1) == b"\r":
+                        self._read_data(reader, num_bytes=1)
+
+                    # Delete the temporary data file.
+                    self._send_command(connection, f':MMEM:DEL "{output_file}"')
+
+                    return payload
+                finally:
+                    # Resume continuous sweeping.
+                    self._send_command(connection, "INIT:CONT 1")
 
     @staticmethod
     def _save_data(payload: bytes, output_file: str | Path) -> None:
@@ -143,8 +159,11 @@ class FieldFoxInterface:
         connection.sendall(f"{command}\n".encode("ascii"))
 
     @staticmethod
-    def _read_command(connection: socket.socket, reader: BinaryIO,
-                      command: str) -> str:
+    def _read_command(
+        connection: socket.socket,
+        reader: BinaryIO,
+        command: str,
+    ) -> str:
         """Reads the command from the socket.
 
         Args:
