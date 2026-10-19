@@ -8,10 +8,8 @@ from matplotlib import artist
 from matplotlib.lines import Line2D
 
 import utils.visualization.mpl_config
-from simulation.antenna.antenna_array import (AntennaArray,
-                                              AntennaArrayBeamSteer)
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.antenna_array import AntennaArray, AntennaArrayBeamSteer
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 from utils import constants
 from utils.visualization.animator import Animator2D
 

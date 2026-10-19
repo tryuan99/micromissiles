@@ -1,8 +1,7 @@
 """The antenna factory class instantiates various antennas."""
 
 from simulation.antenna.antenna import Antenna
-from simulation.antenna.antenna_radiation_pattern import \
-    AntennaRadiationPattern
+from simulation.antenna.antenna_radiation_pattern import AntennaRadiationPattern
 from simulation.antenna.dipole_antenna import DipoleAntenna
 from simulation.antenna.horn_antenna import HornAntenna
 from simulation.antenna.isotropic_antenna import IsotropicAntenna

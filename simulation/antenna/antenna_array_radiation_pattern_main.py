@@ -9,10 +9,8 @@ from matplotlib import artist, cm
 from matplotlib.lines import Line2D
 
 import utils.visualization.mpl_config
-from simulation.antenna.antenna_array import (AntennaArray,
-                                              AntennaArrayBeamSteer)
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.antenna_array import AntennaArray, AntennaArrayBeamSteer
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 from utils.coordinates import SphericalCoordinates
 from utils.visualization.animator import Animator2D, Animator3D
 from utils.visualization.color_maps import COLOR_MAPS

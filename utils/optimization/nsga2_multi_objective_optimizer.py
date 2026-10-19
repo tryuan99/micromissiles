@@ -5,8 +5,7 @@ optimization problem solver.
 import pymoo.algorithms.moo.nsga2
 import pymoo.optimize
 
-from utils.optimization.multi_objective_optimizer import \
-    MultiObjectiveOptimizer
+from utils.optimization.multi_objective_optimizer import MultiObjectiveOptimizer
 from utils.optimization.problem import Problem, ProblemWrapper
 
 

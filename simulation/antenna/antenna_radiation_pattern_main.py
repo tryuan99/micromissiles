@@ -7,8 +7,7 @@ from absl import app, flags
 from matplotlib import cm
 
 import utils.visualization.mpl_config
-from simulation.antenna.antenna_radiation_pattern import \
-    AntennaRadiationPattern
+from simulation.antenna.antenna_radiation_pattern import AntennaRadiationPattern
 from utils import constants
 from utils.coordinates import SphericalCoordinates
 from utils.visualization.color_maps import COLOR_MAPS

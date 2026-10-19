@@ -10,8 +10,7 @@ import numpy as np
 from simulation.antenna.antenna_array import (AntennaArray,
                                               AntennaArrayBeamSteer,
                                               AntennaArrayElement)
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 from simulation.antenna.proto.geometry_pb2 import (CartesianCoordinates,
                                                    Quaternion)
 from utils.optimization.problem import Problem

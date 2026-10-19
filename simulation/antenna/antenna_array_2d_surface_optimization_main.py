@@ -11,8 +11,7 @@ from absl import app, flags, logging
 import utils.visualization.mpl_config
 from simulation.antenna.antenna_array_optimization import (
     AntennaArray2DSurfaceOptimizationProblem, Surface)
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 from utils.optimization.nsga2_multi_objective_optimizer import \
     Nsga2MultiObjectiveOptimizer
 

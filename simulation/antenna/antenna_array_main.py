@@ -7,8 +7,7 @@ from absl import app, flags
 
 import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import AntennaArray
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 
 FLAGS = flags.FLAGS
 

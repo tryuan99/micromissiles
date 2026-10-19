@@ -2,8 +2,7 @@ import numpy as np
 from absl.testing import absltest
 
 from simulation.antenna.antenna_factory import AntennaFactory
-from simulation.antenna.antenna_radiation_pattern import \
-    AntennaRadiationPattern
+from simulation.antenna.antenna_radiation_pattern import AntennaRadiationPattern
 from simulation.antenna.dipole_antenna import DipoleAntenna
 from simulation.antenna.horn_antenna import HornAntenna
 from simulation.antenna.isotropic_antenna import IsotropicAntenna

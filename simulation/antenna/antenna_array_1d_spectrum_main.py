@@ -9,8 +9,7 @@ from matplotlib import animation
 import utils.visualization.mpl_config
 from simulation.antenna.antenna_array import AntennaArray, AntennaArrayArrival
 from simulation.antenna.antenna_array_1d_spectrum import AntennaArray1DSpectrum
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 from utils import constants
 
 FLAGS = flags.FLAGS

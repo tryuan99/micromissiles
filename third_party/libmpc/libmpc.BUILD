@@ -10,6 +10,7 @@ filegroup(
 cmake(
     name = "libmpc",
     cache_entries = {
+        # buildifier: disable=external-path
         "EIGEN3_INCLUDE_DIRS": "$$EXT_BUILD_ROOT/external/eigen+",
     },
     lib_source = "@libmpc//:all",

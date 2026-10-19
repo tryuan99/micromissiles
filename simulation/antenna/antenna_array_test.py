@@ -1,8 +1,7 @@
 import numpy as np
 from absl.testing import absltest
 
-from simulation.antenna.antenna_array import (AntennaArray,
-                                              AntennaArrayArrival,
+from simulation.antenna.antenna_array import (AntennaArray, AntennaArrayArrival,
                                               AntennaArrayElement)
 from utils.quaternion import RotationQuaternion
 

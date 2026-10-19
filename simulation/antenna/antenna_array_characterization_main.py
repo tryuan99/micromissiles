@@ -8,10 +8,8 @@ import numpy as np
 from absl import app, flags
 
 import utils.visualization.mpl_config
-from simulation.antenna.antenna_array import (AntennaArray,
-                                              AntennaArrayBeamSteer)
-from simulation.antenna.proto.antenna_array_config_pb2 import \
-    AntennaArrayConfig
+from simulation.antenna.antenna_array import AntennaArray, AntennaArrayBeamSteer
+from simulation.antenna.proto.antenna_array_config_pb2 import AntennaArrayConfig
 from utils.visualization.color_maps import COLOR_MAPS
 
 FLAGS = flags.FLAGS

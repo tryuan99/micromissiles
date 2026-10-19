@@ -20,3 +20,13 @@ jobs:
           PICO_TARGETS=$(bazel query --output=package //... | grep -E '(^|/)pico(/|$)' | sed -e 's|^|//|' -e 's|$|:all|')
           bazel build --platforms //pico/platform:pico2 --aspects @pico-sdk//tools:uf2_aspect.bzl%pico_uf2_aspect --output_groups=+pico_uf2_files $PICO_TARGETS
       - run: bazel test --test_output=errors //...
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pre-commit
+      - run: pre-commit run --all-files --show-diff-on-failure
