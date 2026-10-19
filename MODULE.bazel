@@ -145,6 +145,10 @@ python.toolchain(
     python_version = "3.13",
 )
 
+# Do not create __init__.py files implicitly.
+rules_python_config = use_extension("@rules_python//python/extensions:config.bzl", "config")
+rules_python_config.explicit_init_py(default = True)
+
 # Load pip dependencies.
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
