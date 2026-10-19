@@ -4,7 +4,7 @@
 #define PICO_COMMON_CLI_H_
 
 // Callback function type for each input.
-typedef void (*cli_callback_t)(const char* command);
+typedef void (*cli_callback_t)(const char* input);
 
 // Register the input callback function.
 void cli_register_callback(cli_callback_t callback);
