@@ -148,8 +148,8 @@ python.toolchain(
 # Load pip dependencies.
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
-    hub_name = "pypi",
+    hub_name = "micromissiles_pypi",
     python_version = "3.13",
     requirements_lock = "//deps:requirements.txt",
 )
-use_repo(pip, "pypi")
+use_repo(pip, pypi = "micromissiles_pypi")
