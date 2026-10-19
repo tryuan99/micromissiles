@@ -1,0 +1,114 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from absl import app, flags, logging
+
+import utils.visualization.mpl_config
+from utils.optimization.mopso_cd_multi_objective_optimizer import \
+    MopsoCdMultiObjectiveOptimizer
+from utils.optimization.problem import Problem
+
+FLAGS = flags.FLAGS
+
+
+class Zdt1Problem(Problem):
+    """ZDT1 problem.
+
+    See https://pymoo.org/problems/multi/zdt.html#ZDT1 for more details.
+    """
+
+    def num_variables(self) -> int:
+        """Returns the number of design variables."""
+        return 30
+
+    def num_objectives(self) -> int:
+        """Returns the number of objectives."""
+        return 2
+
+    def evaluate_objectives(
+        self,
+        x: float | np.ndarray,
+    ) -> float | list[float] | np.ndarray:
+        """Evaluates the objective(s) on the given design variable values.
+
+        Args:
+            x: Design variable values.
+
+        Returns:
+            The objective(s) evaluated on the given design variable values.
+        """
+        f = x[0]
+        g = 1 + 9 / len(x) * np.sum(x[1:])
+        h = 1 - np.sqrt(f / g)
+        return [f, h]
+
+    def lower_bound(self) -> float | np.ndarray:
+        """Returns the lower bound on the design variables."""
+        return 0
+
+    def upper_bound(self) -> float | np.ndarray:
+        """Returns the upper bound on the design variables."""
+        return 1
+
+
+def main(argv):
+    assert len(argv) == 1, argv
+
+    problem = Zdt1Problem()
+    optimizer = MopsoCdMultiObjectiveOptimizer(
+        problem,
+        FLAGS.population_size,
+        FLAGS.num_generations,
+        FLAGS.inertia_weight,
+        FLAGS.cognitive_coefficient,
+        FLAGS.social_coefficient,
+        FLAGS.max_velocity_rate,
+        FLAGS.archive_size,
+        FLAGS.seed,
+    )
+    optimizer.run()
+
+    # Log the optimal values and objective values.
+    logging.info("Optimal values: %s", optimizer.optimal_values)
+    logging.info("Objective values: %s", optimizer.objective_values)
+
+    # Plot the Pareto front.
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.scatter(
+        optimizer.objective_values[:, 0],
+        optimizer.objective_values[:, 1],
+    )
+    ax.set_xlabel(r"$f_1$")
+    ax.set_ylabel(r"$f_2$")
+    plt.show()
+
+
+if __name__ == "__main__":
+    flags.DEFINE_integer("population_size",
+                         100,
+                         "Population size.",
+                         lower_bound=1)
+    flags.DEFINE_integer("num_generations",
+                         200,
+                         "Number of generations.",
+                         lower_bound=1)
+    flags.DEFINE_float("inertia_weight", 0.6, "Inertia weight.")
+    flags.DEFINE_float("cognitive_coefficient",
+                       2.0,
+                       "Cognitive coefficient (personal best influence).",
+                       lower_bound=0)
+    flags.DEFINE_float("social_coefficient",
+                       2.0,
+                       "Social coefficient (global best influence).",
+                       lower_bound=0)
+    flags.DEFINE_float(
+        "max_velocity_rate",
+        0.5,
+        "Maximum velocity relative to the design variable range.",
+        lower_bound=0)
+    flags.DEFINE_integer("archive_size",
+                         200,
+                         "Maximum size of the external archive.",
+                         lower_bound=1)
+    flags.DEFINE_integer("seed", None, "Random seed.")
+
+    app.run(main)

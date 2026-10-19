@@ -24,6 +24,30 @@ py_test(
 )
 
 py_library(
+    name = "mopso_cd_multi_objective_optimizer",
+    srcs = ["mopso_cd_multi_objective_optimizer.py"],
+    deps = [
+        ":multi_objective_optimizer",
+        ":problem",
+        requirement("numpy"),
+        requirement("pymoo"),
+    ],
+)
+
+py_binary(
+    name = "mopso_cd_multi_objective_optimizer_example_main",
+    srcs = ["mopso_cd_multi_objective_optimizer_example_main.py"],
+    deps = [
+        ":mopso_cd_multi_objective_optimizer",
+        ":problem",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "multi_objective_optimizer",
     srcs = ["multi_objective_optimizer.py"],
     deps = [
@@ -62,5 +86,35 @@ py_library(
     deps = [
         requirement("numpy"),
         requirement("pymoo"),
+    ],
+)
+
+py_library(
+    name = "pso_single_objective_optimizer",
+    srcs = ["pso_single_objective_optimizer.py"],
+    deps = [
+        ":problem",
+        ":single_objective_optimizer",
+        requirement("pymoo"),
+    ],
+)
+
+py_binary(
+    name = "pso_single_objective_optimizer_example_main",
+    srcs = ["pso_single_objective_optimizer_example_main.py"],
+    deps = [
+        ":problem",
+        ":pso_single_objective_optimizer",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "single_objective_optimizer",
+    srcs = ["single_objective_optimizer.py"],
+    deps = [
+        ":problem",
+        requirement("numpy"),
     ],
 )
