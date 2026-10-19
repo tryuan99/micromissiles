@@ -12,4 +12,4 @@ void led_on(void);
 // Turn the LED off.
 void led_off(void);
 
-#endif  // PICO_X_DORY_UTILS_H_
+#endif  // PICO_COMMON_LED_H_
