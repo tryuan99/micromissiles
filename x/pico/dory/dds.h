@@ -1,7 +1,7 @@
 // The AD9914 chip is a 3.5 GSPS direct digital synthesizer with a 12-bit DAC.
 
-#ifndef PICO_X_DORY_DDS_H_
-#define PICO_X_DORY_DDS_H_
+#ifndef X_PICO_DORY_DDS_H_
+#define X_PICO_DORY_DDS_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -114,4 +114,4 @@ void dds_start_fmcw(void);
 // Return whether the DDS ramp is over.
 bool dds_ramp_over(void);
 
-#endif  // PICO_X_DORY_DDS_H_
+#endif  // X_PICO_DORY_DDS_H_

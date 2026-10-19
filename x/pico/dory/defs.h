@@ -1,7 +1,7 @@
 // Global definitions for Dory.
 
-#ifndef PICO_X_DORY_DEFS_H_
-#define PICO_X_DORY_DEFS_H_
+#ifndef X_PICO_DORY_DEFS_H_
+#define X_PICO_DORY_DEFS_H_
 
 #include <stdbool.h>
 
@@ -9,4 +9,4 @@
 #define CONTROLLER_PICO
 // #define CONTROLLER_FPGA
 
-#endif  // PICO_X_DORY_DEFS_H_
+#endif  // X_PICO_DORY_DEFS_H_

@@ -1,9 +1,9 @@
-#include "pico/x/bailey/config.h"
+#include "x/pico/bailey/config.h"
 
 #include "hardware/spi.h"
-#include "pico/x/bailey/adc.h"
-#include "pico/x/bailey/beamformer.h"
-#include "pico/x/bailey/mixer.h"
+#include "x/pico/bailey/adc.h"
+#include "x/pico/bailey/beamformer.h"
+#include "x/pico/bailey/mixer.h"
 
 adc_config_t g_adc_config = (adc_config_t){
     .spi_io_config =

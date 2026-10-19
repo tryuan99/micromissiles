@@ -1,4 +1,4 @@
-#include "pico/x/bailey/mixer.h"
+#include "x/pico/bailey/mixer.h"
 
 #include <stdbool.h>
 #include <string.h>

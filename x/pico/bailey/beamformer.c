@@ -1,4 +1,4 @@
-#include "pico/x/bailey/beamformer.h"
+#include "x/pico/bailey/beamformer.h"
 
 #include <stdbool.h>
 #include <stddef.h>

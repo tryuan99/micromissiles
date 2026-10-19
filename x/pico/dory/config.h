@@ -1,14 +1,14 @@
 // Configurations for Dory.
 
-#ifndef PICO_X_DORY_CONFIG_H_
-#define PICO_X_DORY_CONFIG_H_
+#ifndef X_PICO_DORY_CONFIG_H_
+#define X_PICO_DORY_CONFIG_H_
 
-#include "pico/x/dory/attenuator.h"
-#include "pico/x/dory/dds.h"
-#include "pico/x/dory/defs.h"
-#include "pico/x/dory/mixer.h"
-#include "pico/x/dory/vco.h"
-#include "pico/x/dory/vga.h"
+#include "x/pico/dory/attenuator.h"
+#include "x/pico/dory/dds.h"
+#include "x/pico/dory/defs.h"
+#include "x/pico/dory/mixer.h"
+#include "x/pico/dory/vco.h"
+#include "x/pico/dory/vga.h"
 
 // GPIO enumeration.
 enum {
@@ -52,4 +52,4 @@ extern mixer_config_t g_mixer_config;
 // Attenuator configuration.
 extern attenuator_config_t g_attenuator_config;
 
-#endif  // PICO_X_DORY_CONFIG_H_
+#endif  // X_PICO_DORY_CONFIG_H_

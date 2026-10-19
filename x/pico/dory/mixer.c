@@ -1,9 +1,9 @@
-#include "pico/x/dory/mixer.h"
+#include "x/pico/dory/mixer.h"
 
 #include <stdbool.h>
 
 #include "hardware/gpio.h"
-#include "pico/x/dory/defs.h"
+#include "x/pico/dory/defs.h"
 
 // Mixer configuration.
 static mixer_config_t g_mixer_config;

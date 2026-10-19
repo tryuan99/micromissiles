@@ -4,6 +4,16 @@ load("@rules_python//python:defs.bzl", "py_binary")
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
+    name = "antenna_sweep_main",
+    srcs = ["antenna_sweep_main.py"],
+    deps = [
+        "//utils/devices:fieldfox_interface",
+        "//utils/devices:thorlabs_motor",
+        requirement("absl-py"),
+    ],
+)
+
+py_binary(
     name = "beamformer_sweep_main",
     srcs = ["beamformer_sweep_main.py"],
     deps = [

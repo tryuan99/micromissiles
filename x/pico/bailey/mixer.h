@@ -1,8 +1,8 @@
 // The LMX8410L chip is a 5 GHz to 10 GHz downconverter with a fully integrated
 // synthesizer.
 
-#ifndef PICO_X_BAILEY_MIXER_H_
-#define PICO_X_BAILEY_MIXER_H_
+#ifndef X_PICO_BAILEY_MIXER_H_
+#define X_PICO_BAILEY_MIXER_H_
 
 #include <stdint.h>
 
@@ -29,4 +29,4 @@ void mixer_enable(void);
 // Disable the mixer.
 void mixer_disable(void);
 
-#endif  // PICO_X_BAILEY_MIXER_H_
+#endif  // X_PICO_BAILEY_MIXER_H_

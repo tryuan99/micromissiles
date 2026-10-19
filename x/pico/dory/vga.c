@@ -1,4 +1,4 @@
-#include "pico/x/dory/vga.h"
+#include "x/pico/dory/vga.h"
 
 #include <stddef.h>
 #include <stdint.h>

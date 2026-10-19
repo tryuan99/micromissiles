@@ -1,11 +1,11 @@
 // Configurations for Bailey.
 
-#ifndef PICO_X_BAILEY_CONFIG_H_
-#define PICO_X_BAILEY_CONFIG_H_
+#ifndef X_PICO_BAILEY_CONFIG_H_
+#define X_PICO_BAILEY_CONFIG_H_
 
-#include "pico/x/bailey/adc.h"
-#include "pico/x/bailey/beamformer.h"
-#include "pico/x/bailey/mixer.h"
+#include "x/pico/bailey/adc.h"
+#include "x/pico/bailey/beamformer.h"
+#include "x/pico/bailey/mixer.h"
 
 // GPIO enumeration.
 enum {
@@ -35,4 +35,4 @@ extern mixer_config_t g_mixer_config;
 // ADC configuration.
 extern adc_config_t g_adc_config;
 
-#endif  // PICO_X_BAILEY_CONFIG_H_
+#endif  // X_PICO_BAILEY_CONFIG_H_

@@ -1,12 +1,12 @@
-#include "pico/x/dory/config.h"
+#include "x/pico/dory/config.h"
 
 #include "hardware/spi.h"
-#include "pico/x/dory/attenuator.h"
-#include "pico/x/dory/dds.h"
-#include "pico/x/dory/defs.h"
-#include "pico/x/dory/mixer.h"
-#include "pico/x/dory/vco.h"
-#include "pico/x/dory/vga.h"
+#include "x/pico/dory/attenuator.h"
+#include "x/pico/dory/dds.h"
+#include "x/pico/dory/defs.h"
+#include "x/pico/dory/mixer.h"
+#include "x/pico/dory/vco.h"
+#include "x/pico/dory/vga.h"
 
 vco_config_t g_vco_config = (vco_config_t){
     .spi_io_config =

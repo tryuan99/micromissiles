@@ -1,8 +1,8 @@
 // The ADF4350 chip is a wideband synthesizer up to 4.4 GHz with an integrated
 // VCO.
 
-#ifndef PICO_X_DORY_VCO_H_
-#define PICO_X_DORY_VCO_H_
+#ifndef X_PICO_DORY_VCO_H_
+#define X_PICO_DORY_VCO_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -69,4 +69,4 @@ void vco_rf_disable(void);
 // Return whether the VCO is locked.
 bool vco_locked(void);
 
-#endif  // PICO_X_DORY_VCO_H_
+#endif  // X_PICO_DORY_VCO_H_

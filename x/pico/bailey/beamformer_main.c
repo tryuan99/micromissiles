@@ -4,10 +4,10 @@
 
 #include "pico/common/led.h"
 #include "pico/stdlib.h"
-#include "pico/x/bailey/adc.h"
-#include "pico/x/bailey/beamformer.h"
-#include "pico/x/bailey/config.h"
-#include "pico/x/bailey/mixer.h"
+#include "x/pico/bailey/adc.h"
+#include "x/pico/bailey/beamformer.h"
+#include "x/pico/bailey/config.h"
+#include "x/pico/bailey/mixer.h"
 
 // Beamformer TX configuration.
 // All four channels are enabled with a zero phase shift.

@@ -1,8 +1,8 @@
 // The ADAR1000 chip is a 8 GHz to 16 GHz, 4-channel, X-band and Ku-band
 // beamformer.
 
-#ifndef PICO_X_BAILEY_BEAMFORMER_H_
-#define PICO_X_BAILEY_BEAMFORMER_H_
+#ifndef X_PICO_BAILEY_BEAMFORMER_H_
+#define X_PICO_BAILEY_BEAMFORMER_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -198,4 +198,4 @@ void beamformer_configure_tx(const beamformer_tx_config_t* config);
 // Pulse the TX load pin to load the new TX configuration.
 void beamformer_load_tx(void);
 
-#endif  // PICO_X_BAILEY_BEAMFORMER_H_
+#endif  // X_PICO_BAILEY_BEAMFORMER_H_

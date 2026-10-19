@@ -1,4 +1,4 @@
-#include "pico/x/dory/vco.h"
+#include "x/pico/dory/vco.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -8,7 +8,7 @@
 
 #include "hardware/gpio.h"
 #include "pico/common/spi.h"
-#include "pico/x/dory/defs.h"
+#include "x/pico/dory/defs.h"
 
 // VCO SPI baudrate.
 #define VCO_SPI_BAUDRATE 1000000

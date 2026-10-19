@@ -1,7 +1,7 @@
 // The HMC540S chip is a 1 dB LSB 4-bit digital positive control attenuator.
 
-#ifndef PICO_X_DORY_ATTENUATOR_H_
-#define PICO_X_DORY_ATTENUATOR_H_
+#ifndef X_PICO_DORY_ATTENUATOR_H_
+#define X_PICO_DORY_ATTENUATOR_H_
 
 #include <stdint.h>
 
@@ -20,4 +20,4 @@ void attenuator_init(const attenuator_config_t* config);
 // Set the attenuation's gain.
 void attenuator_set_gain_attenuation(uint8_t gain_attenuation);
 
-#endif  // PICO_X_DORY_ATTENUATOR_H_
+#endif  // X_PICO_DORY_ATTENUATOR_H_

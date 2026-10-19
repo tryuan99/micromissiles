@@ -1,4 +1,4 @@
-#include "pico/x/dory/dds.h"
+#include "x/pico/dory/dds.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -9,7 +9,7 @@
 #include "hardware/gpio.h"
 #include "pico/common/spi.h"
 #include "pico/time.h"
-#include "pico/x/dory/defs.h"
+#include "x/pico/dory/defs.h"
 
 // DDS system clock frequency.
 #define DDS_SYSCLK_FREQUENCY 3500000000

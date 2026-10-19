@@ -1,7 +1,7 @@
 // The ADAR7251 chip is a 4-channel, 16-bit continuous time acquisition ADC.
 
-#ifndef PICO_X_BAILEY_ADC_H_
-#define PICO_X_BAILEY_ADC_H_
+#ifndef X_PICO_BAILEY_ADC_H_
+#define X_PICO_BAILEY_ADC_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -94,4 +94,4 @@ void adc_disable(void);
 // Return whether the ADC PLL is locked.
 bool adc_pll_locked(void);
 
-#endif  // PICO_X_BAILEY_ADC_H_
+#endif  // X_PICO_BAILEY_ADC_H_

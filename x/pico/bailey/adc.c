@@ -1,4 +1,4 @@
-#include "pico/x/bailey/adc.h"
+#include "x/pico/bailey/adc.h"
 
 #include <stdbool.h>
 #include <stddef.h>

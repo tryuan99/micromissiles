@@ -1,7 +1,7 @@
 // The HMC625B chip is a 0.5 dB LSB 6-bit digital variable gain amplifier.
 
-#ifndef PICO_X_DORY_VGA_H_
-#define PICO_X_DORY_VGA_H_
+#ifndef X_PICO_DORY_VGA_H_
+#define X_PICO_DORY_VGA_H_
 
 #include <stdint.h>
 
@@ -22,4 +22,4 @@ void vga_init(const vga_config_t* config);
 // Set the VGA gain attenuation.
 void vga_set_gain_attenuation(double gain_attenuation);
 
-#endif  // PICO_X_DORY_VGA_H_
+#endif  // X_PICO_DORY_VGA_H_

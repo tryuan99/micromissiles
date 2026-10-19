@@ -6,8 +6,8 @@
 #include "pico/common/cli.h"
 #include "pico/common/led.h"
 #include "pico/stdlib.h"
-#include "pico/x/bailey/beamformer.h"
-#include "pico/x/bailey/config.h"
+#include "x/pico/bailey/beamformer.h"
+#include "x/pico/bailey/config.h"
 
 // Beamformer TX configuration.
 static beamformer_tx_config_t g_beamformer_tx_config;

@@ -1,4 +1,4 @@
-#include "pico/x/dory/attenuator.h"
+#include "x/pico/dory/attenuator.h"
 
 #include <stddef.h>
 #include <stdint.h>
