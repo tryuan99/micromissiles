@@ -39,14 +39,21 @@ static inline void beamformer_configure(void) {
 }
 
 static void beamformer_cli_callback(const char* input) {
-  // Parse the input.
-  g_beamformer_cli_valid =
-      sscanf(input, "%u %u %u %c", &g_beamformer_channel,
-             &g_beamformer_vga_gain, &g_beamformer_phase_index) == 3;
-  if (g_beamformer_channel < 1 ||
-      g_beamformer_channel > BEAMFORMER_NUM_CHANNELS) {
+  // Parse the input. The trailing character conversion rejects extra input.
+  unsigned int channel = 0;
+  unsigned int vga_gain = 0;
+  unsigned int phase_index = 0;
+  char trailing = '\0';
+  g_beamformer_cli_valid = sscanf(input, "%u %u %u %c", &channel, &vga_gain,
+                                  &phase_index, &trailing) == 3;
+
+  if (channel < 1 || channel > BEAMFORMER_NUM_CHANNELS) {
     g_beamformer_cli_valid = false;
+    return;
   }
+  g_beamformer_channel = (uint8_t)channel;
+  g_beamformer_vga_gain = (uint8_t)vga_gain;
+  g_beamformer_phase_index = (uint8_t)phase_index;
 }
 
 int main(int argc, char** argv) {
@@ -66,8 +73,9 @@ int main(int argc, char** argv) {
       printf("Channel %u: VGA gain = %u, phase index = %u\n",
              g_beamformer_channel, g_beamformer_vga_gain,
              g_beamformer_phase_index);
+      beamformer_configure();
     } else {
-      printf("Error: Failed to parse CLI input.");
+      printf("Error: Failed to parse CLI input.\n");
     }
   }
   return EXIT_SUCCESS;

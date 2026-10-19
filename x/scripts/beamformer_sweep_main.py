@@ -53,12 +53,12 @@ def _beamformer_configure(
         vga_gain: VGA gain code.
         phase: Phase index.
     """
-    input = f"{channel} {vga_gain} {phase}"
-    pico.write(input.encode("ascii"))
+    command = f"{channel} {vga_gain} {phase}"
+    pico.write(command.encode("ascii"))
     response = pico.read().decode("ascii").strip()
     if response != f"Channel {channel}: VGA gain = {vga_gain}, phase index = {phase}":
         raise RuntimeError(
-            f"Pico responded with '{response}' to input '{input}'.")
+            f"Pico responded with '{response}' to input '{command}'.")
 
 
 def main(argv):
@@ -66,7 +66,7 @@ def main(argv):
 
     field_fox = FieldFoxInterface(FLAGS.fieldfox_ip_address)
     pico = SerialInterface(
-        FLAGS.serial_port,
+        FLAGS.pico_serial_port,
         PICO_BAUDRATE,
         write_terminator=b"\n",
     )
@@ -123,6 +123,6 @@ if __name__ == "__main__":
     flags.DEFINE_string("output_dir", None, "Output directory.")
     flags.DEFINE_string("output_prefix", "beamformer_sweep",
                         "Output file prefix.")
-    flags.mark_flag_as_required("output_dir")
+    flags.mark_flags_as_required(["sweep", "output_dir"])
 
     app.run(main)
