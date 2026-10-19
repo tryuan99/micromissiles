@@ -1,0 +1,14 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "beamformer_sweep_main",
+    srcs = ["beamformer_sweep_main.py"],
+    deps = [
+        "//utils/devices:fieldfox_interface",
+        "//utils/serial:serial_interface",
+        requirement("absl-py"),
+    ],
+)

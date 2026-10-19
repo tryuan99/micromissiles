@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
              g_beamformer_channel, g_beamformer_vga_gain,
              g_beamformer_phase_index);
     } else {
-      printf("Failed to parse input.");
+      printf("Error: Failed to parse CLI input.");
     }
   }
   return EXIT_SUCCESS;

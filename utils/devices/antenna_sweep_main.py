@@ -34,7 +34,7 @@ def main(argv):
     output_dir_path = Path(FLAGS.output_dir)
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
-    field_fox = FieldFoxInterface()
+    field_fox = FieldFoxInterface(FLAGS.fieldfox_ip_address)
     position = FLAGS.start
     while position <= FLAGS.stop:
         logging.info("Moving motor to %f.", position)
@@ -50,6 +50,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    flags.DEFINE_string("fieldfox_ip_address", "192.168.1.2",
+                        "FieldFox IP address.")
     flags.DEFINE_string("serial_number", None, "Motor serial number.")
     flags.DEFINE_string("stage", "PRM1-Z8", "Motor stage.")
     flags.DEFINE_float("start", None, "Start position in degrees.")
