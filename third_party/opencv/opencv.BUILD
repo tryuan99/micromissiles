@@ -1,5 +1,5 @@
+load("@//third_party/foreign_cc:cmake.bzl", "cmake")
 load("@//third_party/opencv:opencv.bzl", "OPENCV_MODULES", "OPENCV_SHARED_LIBS")
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
 package(default_visibility = ["//visibility:public"])
 

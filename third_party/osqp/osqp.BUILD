@@ -1,4 +1,4 @@
-load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+load("@//third_party/foreign_cc:cmake.bzl", "cmake")
 
 package(default_visibility = ["//visibility:public"])
 
