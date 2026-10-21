@@ -50,7 +50,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    flags.DEFINE_string("fieldfox_ip_address", "192.168.1.2",
+    flags.DEFINE_string("fieldfox_ip_address", "192.168.1.1",
                         "FieldFox IP address.")
     flags.DEFINE_string("serial_number", None, "Motor serial number.")
     flags.DEFINE_string("stage", "PRM1-Z8", "Motor stage.")

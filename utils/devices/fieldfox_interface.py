@@ -18,8 +18,8 @@ class FieldFoxOutputFormat(StrEnum):
 class FieldFoxInterface:
     """Interface to the Keysight FieldFox N9918B VNA.
 
-    The VNA's IP address defaults to 192.168.1.2, so the Ethernet port must be
-    configured to 192.168.1.1 with a subnet of 255.255.255.0.
+    The VNA's IP address defaults to 192.168.1.1, so the Ethernet port must be
+    configured to 192.168.1.x with a subnet mask of 255.255.255.0.
 
     Attributes:
         ip_address: IP address of the VNA.
@@ -30,7 +30,7 @@ class FieldFoxInterface:
     DEFAULT_TIMEOUT = 30
 
     def __init__(self,
-                 ip_address: str = "192.168.1.2",
+                 ip_address: str = "192.168.1.1",
                  port: int = 5025) -> None:
         self.ip_address = ip_address
         self.port = port
