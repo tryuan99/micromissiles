@@ -1,9 +1,9 @@
-"""Moves the Polulu Tic motor to the desired position."""
+"""Moves the Pololu Tic motor to the desired position."""
 
 from absl import app, flags, logging
 
-from utils.devices.polulu_tic_motor import (PoluluTicMotor,
-                                            PoluluTicMotorStepMode)
+from utils.devices.pololu_tic_motor import (PololuTicMotor,
+                                            PololuTicMotorStepMode)
 
 FLAGS = flags.FLAGS
 
@@ -22,9 +22,9 @@ MAX_DEGREES_PER_SECOND = 5
 def main(argv):
     assert len(argv) == 1
 
-    motor = PoluluTicMotor(
+    motor = PololuTicMotor(
         NUM_STEPS_PER_REVOLUTION,
-        PoluluTicMotorStepMode.STEP_1,
+        PololuTicMotorStepMode.STEP_1,
         max_current=MAX_CURRENT,
         max_degrees_per_second=MAX_DEGREES_PER_SECOND,
     )

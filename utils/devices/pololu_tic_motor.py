@@ -1,4 +1,4 @@
-"""The Polulu Tic motor class is an interface for a Polulu Tic stepper motor.
+"""The Pololu Tic motor class is an interface for a Pololu Tic stepper motor.
 
 See https://www.pololu.com/docs/0J71/12 for the API reference.
 """
@@ -13,8 +13,8 @@ from absl import logging
 from utils.devices.motor import Motor
 
 
-class PoluluTicMotorStepMode(IntEnum):
-    """Polulu Tic motor step mode enumeration."""
+class PololuTicMotorStepMode(IntEnum):
+    """Pololu Tic motor step mode enumeration."""
     STEP_1 = 1
     STEP_1_2 = 2
     STEP_1_4 = 4
@@ -26,8 +26,8 @@ class PoluluTicMotorStepMode(IntEnum):
     STEP_1_256 = 256
 
 
-class PoluluTicMotor(Motor):
-    """Interface for a Polulu Tic motor.
+class PololuTicMotor(Motor):
+    """Interface for a Pololu Tic motor.
 
     Attributes:
         num_steps_per_revolution: Number of steps per revolution.
@@ -37,7 +37,7 @@ class PoluluTicMotor(Motor):
     def __init__(
         self,
         num_steps_per_revolution: int,
-        step_mode: PoluluTicMotorStepMode,
+        step_mode: PololuTicMotorStepMode,
         max_current: float,
         max_degrees_per_second: float,
     ) -> None:
@@ -102,7 +102,7 @@ class PoluluTicMotor(Motor):
         Returns:
             The raw list of devices.
         """
-        return PoluluTicMotor.send_command(["--list"])
+        return PololuTicMotor.send_command(["--list"])
 
     @staticmethod
     def send_command(args: list[str]) -> str:
