@@ -23,7 +23,7 @@ NUM_PHASES = 128
 
 class SweepType(StrEnum):
     """Sweep type enumeration."""
-    VGA_GAIN = "vga_gain"
+    VGA_GAIN = "gain"
     PHASE = "phase"
 
 
