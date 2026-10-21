@@ -3,6 +3,8 @@
 OPENCV_VERSION = "5.0.0"
 OPENCV_MODULES = [
     "core",
+    "flann",
+    "geometry",
     "highgui",
     "imgproc",
     "viz",
