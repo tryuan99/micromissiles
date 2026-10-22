@@ -1,4 +1,4 @@
-"""Sweeps the Thorlabs motor while capturing the FieldFox output."""
+"""Sweeps the Pololu Tic motor while capturing the FieldFox output."""
 
 import time
 from pathlib import Path
@@ -6,9 +6,21 @@ from pathlib import Path
 from absl import app, flags, logging
 
 from utils.devices.fieldfox_interface import FieldFoxInterface
-from utils.devices.thorlabs_motor import ThorlabsMotor
+from utils.devices.pololu_tic_motor import (PololuTicMotor,
+                                            PololuTicMotorStepMode)
 
 FLAGS = flags.FLAGS
+
+# Number of steps per platform revolution.
+# The stepper motor has a step angle of 1.8 degrees with a 180:1 transmission
+# ratio.
+NUM_STEPS_PER_REVOLUTION = 200 * 180
+
+# Maximum current in A.
+MAX_CURRENT = 1
+
+# Maximum degrees per second.
+MAX_DEGREES_PER_SECOND = 5
 
 # Capture timeout in seconds.
 CAPTURE_TIMEOUT = 1
@@ -17,17 +29,13 @@ CAPTURE_TIMEOUT = 1
 def main(argv):
     assert len(argv) == 1
 
-    serial_number = FLAGS.serial_number
-    if serial_number is None:
-        devices = ThorlabsMotor.list_devices()
-        if not devices:
-            raise ValueError("No devices detected.")
-        serial_number = devices[0][0]
-
-    motor = ThorlabsMotor(serial_number, FLAGS.stage)
-    logging.info("Stage profile: %s", motor.stage())
-    logging.info("Units: %s", motor.scale_units())
-
+    motor = PololuTicMotor(
+        NUM_STEPS_PER_REVOLUTION,
+        PololuTicMotorStepMode.STEP_1_16,
+        max_current=MAX_CURRENT,
+        max_degrees_per_second=MAX_DEGREES_PER_SECOND,
+    )
+    logging.info("Status: %s", motor.status())
     if FLAGS.home:
         motor.home()
 
@@ -52,8 +60,6 @@ def main(argv):
 if __name__ == "__main__":
     flags.DEFINE_string("fieldfox_ip_address", "192.168.1.1",
                         "FieldFox IP address.")
-    flags.DEFINE_string("serial_number", None, "Motor serial number.")
-    flags.DEFINE_string("stage", "PRM1-Z8", "Motor stage.")
     flags.DEFINE_float("start", None, "Start position in degrees.")
     flags.DEFINE_float("stop", None, "Stop position in degrees.")
     flags.DEFINE_float(

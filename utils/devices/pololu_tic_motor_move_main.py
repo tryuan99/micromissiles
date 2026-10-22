@@ -24,7 +24,7 @@ def main(argv):
 
     motor = PololuTicMotor(
         NUM_STEPS_PER_REVOLUTION,
-        PololuTicMotorStepMode.STEP_1,
+        PololuTicMotorStepMode.STEP_1_16,
         max_current=MAX_CURRENT,
         max_degrees_per_second=MAX_DEGREES_PER_SECOND,
     )

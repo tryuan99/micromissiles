@@ -8,6 +8,16 @@ py_binary(
     srcs = ["antenna_sweep_main.py"],
     deps = [
         "//utils/devices:fieldfox_interface",
+        "//utils/devices:pololu_tic_motor",
+        requirement("absl-py"),
+    ],
+)
+
+py_binary(
+    name = "antenna_sweep_thorlabs_main",
+    srcs = ["antenna_sweep_thorlabs_main.py"],
+    deps = [
+        "//utils/devices:fieldfox_interface",
         "//utils/devices:thorlabs_motor",
         requirement("absl-py"),
     ],
