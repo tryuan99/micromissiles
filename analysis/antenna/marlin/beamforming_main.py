@@ -1,4 +1,4 @@
-"""Plots the beamformed radiation pattern from measured S2P files."""
+"""Plots the simulated beamformed radiation pattern from measured S2P files."""
 
 from pathlib import Path
 
@@ -10,6 +10,7 @@ from absl import app, flags
 
 import utils.visualization.mpl_config
 from analysis.antenna.marlin.common import (RadiationPatternSlice,
+                                            calculate_beamforming_phases,
                                             prune_hfss_simulation_result)
 from analysis.antenna.marlin.proto.antenna_array_config_pb2 import \
     AntennaArrayConfig
@@ -31,14 +32,6 @@ def main(argv):
         antenna_array_config = google.protobuf.text_format.Parse(
             antenna_array_config_file.read(), AntennaArrayConfig())
 
-    x = np.array([
-        element.position.x
-        for element in antenna_array_config.antenna_array_element_configs
-    ])
-    y = np.array([
-        element.position.y
-        for element in antenna_array_config.antenna_array_element_configs
-    ])
     feed_signs = 1 - 2 * np.array(
         [
             element.inverted
@@ -46,15 +39,12 @@ def main(argv):
         ],
         dtype=int,
     )
-
-    # Calculate the beamforming weights as a function of the azimuth and the elevation.
-    azimuth = constants.deg2rad(FLAGS.azimuth)
-    elevation = constants.deg2rad(FLAGS.elevation)
-    # Positive azimuth points toward -x.
-    u = -np.cos(elevation) * np.sin(azimuth)
-    v = np.sin(elevation)
-    phases = -2 * np.pi * (x * u + y * v)
-    weights = np.exp(1j * phases)
+    phases = calculate_beamforming_phases(
+        antenna_array_config,
+        FLAGS.azimuth,
+        FLAGS.elevation,
+    )
+    weights = feed_signs * np.exp(1j * phases)
 
     if FLAGS.simulations and len(FLAGS.data_dirs) != len(FLAGS.simulations):
         raise ValueError(
@@ -84,10 +74,8 @@ def main(argv):
         simulation_df[SIMULATION_RE_THETA_COLUMN] = simulation_df[
             simulation_rE_theta_real_column] + 1j * simulation_df[
                 simulation_rE_theta_imag_column]
-        simulation_df[SIMULATION_RE_PHI_COLUMN] *= (
-            feed_signs[simulation_index] * weights[simulation_index])
-        simulation_df[SIMULATION_RE_THETA_COLUMN] *= (
-            feed_signs[simulation_index] * weights[simulation_index])
+        simulation_df[SIMULATION_RE_PHI_COLUMN] *= weights[simulation_index]
+        simulation_df[SIMULATION_RE_THETA_COLUMN] *= weights[simulation_index]
         simulation_dfs.append(simulation_df[[
             simulation_frequency_column,
             simulation_angle_column,
@@ -116,8 +104,7 @@ def main(argv):
             sparam_data = SParamViewer(data_path)
             indices = np.abs(sparam_data.frequency()[:, None] -
                              FLAGS.frequencies).argmin(axis=0)
-            s21[:, data_index] += (feed_signs[data_dir_index] *
-                                   weights[data_dir_index] *
+            s21[:, data_index] += (weights[data_dir_index] *
                                    sparam_data.s(2, 1)[indices])
     gain = constants.mag2db(np.abs(s21))
 

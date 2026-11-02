@@ -7,6 +7,10 @@ from enum import StrEnum
 import numpy as np
 import pandas as pd
 
+from analysis.antenna.marlin.proto.antenna_array_config_pb2 import \
+    AntennaArrayConfig
+from utils import constants
+
 
 class RadiationPatternSlice(StrEnum):
     """Radiation pattern slice enumeration."""
@@ -69,3 +73,35 @@ def prune_hfss_simulation_result(hfss_df: pd.DataFrame,
             raise ValueError(f"Invalid radiation pattern slice: {slice}.")
     return pruned_df[[frequency_column, elevation_column,
                       *data_columns]].sort_values(by=elevation_column)
+
+
+def calculate_beamforming_phases(
+    config: AntennaArrayConfig,
+    azimuth: float = 0,
+    elevation: float = 0,
+) -> np.ndarray:
+    """Calculates the beamforming phases at each antenna element.
+
+    Args:
+        config: Antenna array configuration.
+        azimuth: Azimuth in degrees.
+        elevation: Elevation in degrees.
+
+    Returns:
+        The beamforming phases at each antenna element.
+    """
+    x = np.array([
+        element.position.x for element in config.antenna_array_element_configs
+    ])
+    y = np.array([
+        element.position.y for element in config.antenna_array_element_configs
+    ])
+
+    # Calculate the beamforming weights as a function of the azimuth and the elevation.
+    azimuth = constants.deg2rad(azimuth)
+    elevation = constants.deg2rad(elevation)
+    # Positive azimuth points toward -x.
+    u = -np.cos(elevation) * np.sin(azimuth)
+    v = np.sin(elevation)
+    phases = -2 * np.pi * (x * u + y * v)
+    return phases
