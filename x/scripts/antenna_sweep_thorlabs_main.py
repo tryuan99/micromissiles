@@ -47,6 +47,7 @@ def main(argv):
         field_fox.capture_sp(output_path)
 
         position += FLAGS.step
+    motor.move_to(position=0)
 
 
 if __name__ == "__main__":

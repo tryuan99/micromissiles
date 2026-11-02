@@ -55,6 +55,7 @@ def main(argv):
         field_fox.capture_sp(output_path)
 
         position += FLAGS.step
+    motor.move_to(position=0)
 
 
 if __name__ == "__main__":
@@ -68,7 +69,7 @@ if __name__ == "__main__":
         "Step position in degrees.",
         lower_bound=0.0,
     )
-    flags.DEFINE_boolean("home", True, "If true, home the motor first.")
+    flags.DEFINE_boolean("home", False, "If true, home the motor first.")
     flags.DEFINE_string("output_dir", None, "Output directory.")
     flags.DEFINE_string("output_prefix", "antenna_sweep", "Output file prefix.")
     flags.mark_flags_as_required(["start", "stop", "step", "output_dir"])

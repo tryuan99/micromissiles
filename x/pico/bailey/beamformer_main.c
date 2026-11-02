@@ -10,15 +10,16 @@
 #include "x/pico/bailey/mixer.h"
 
 // Beamformer TX configuration.
-// All four channels are enabled with a zero phase shift.
+// All four channels are enabled with the same calibrated amplitude and phase
+// shift.
 static beamformer_tx_config_t g_beamformer_tx_config = (beamformer_tx_config_t){
     .channel_configs =
         {
             (beamformer_tx_channel_config_t){
                 .enabled = true,
                 .attenuator = BEAMFORMER_ATTENUATOR_BYPASS,
-                .vga_gain = 0x7F,
-                .phase = BEAMFORMER_PHASE_0,
+                .vga_gain = 0x72,
+                .phase = BEAMFORMER_PHASE_73_125,
             },
             (beamformer_tx_channel_config_t){
                 .enabled = true,
@@ -29,14 +30,14 @@ static beamformer_tx_config_t g_beamformer_tx_config = (beamformer_tx_config_t){
             (beamformer_tx_channel_config_t){
                 .enabled = true,
                 .attenuator = BEAMFORMER_ATTENUATOR_BYPASS,
-                .vga_gain = 0x7F,
-                .phase = BEAMFORMER_PHASE_0,
+                .vga_gain = 0x71,
+                .phase = BEAMFORMER_PHASE_30_9375,
             },
             (beamformer_tx_channel_config_t){
                 .enabled = true,
                 .attenuator = BEAMFORMER_ATTENUATOR_BYPASS,
-                .vga_gain = 0x7F,
-                .phase = BEAMFORMER_PHASE_0,
+                .vga_gain = 0x70,
+                .phase = BEAMFORMER_PHASE_95_625,
             },
         },
 };
