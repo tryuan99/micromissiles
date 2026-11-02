@@ -4,7 +4,7 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20260526.0",
+    version = "20260817.0",
 )
 bazel_dep(
     name = "eigen",
@@ -51,6 +51,11 @@ single_version_override(
     module_name = "pico-sdk",
     patch_strip = 1,
     patches = ["//third_party/pico_sdk:pico_sdk.patch"],
+)
+
+single_version_override(
+    module_name = "protobuf",
+    version = "33.6",
 )
 
 # Boost library.
