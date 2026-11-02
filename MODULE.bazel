@@ -4,7 +4,7 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 bazel_dep(
     name = "abseil-cpp",
-    version = "20260817.0",
+    version = "20260526.0",
 )
 bazel_dep(
     name = "eigen",
@@ -24,7 +24,7 @@ bazel_dep(
 )
 bazel_dep(
     name = "protobuf",
-    version = "36.1.bcr.1",
+    version = "33.6",
 )
 bazel_dep(
     name = "rules_cc",
