@@ -25,19 +25,19 @@ static beamformer_tx_config_t g_beamformer_tx_config = (beamformer_tx_config_t){
                 .enabled = true,
                 .attenuator = BEAMFORMER_ATTENUATOR_BYPASS,
                 .vga_gain = 0x7F,
-                .phase = BEAMFORMER_PHASE_0,
+                .phase = BEAMFORMER_PHASE_2_8125,
             },
             (beamformer_tx_channel_config_t){
                 .enabled = true,
                 .attenuator = BEAMFORMER_ATTENUATOR_BYPASS,
-                .vga_gain = 0x71,
-                .phase = BEAMFORMER_PHASE_30_9375,
+                .vga_gain = 0x75,
+                .phase = BEAMFORMER_PHASE_33_75,
             },
             (beamformer_tx_channel_config_t){
                 .enabled = true,
                 .attenuator = BEAMFORMER_ATTENUATOR_BYPASS,
                 .vga_gain = 0x70,
-                .phase = BEAMFORMER_PHASE_95_625,
+                .phase = BEAMFORMER_PHASE_98_4375,
             },
         },
 };
