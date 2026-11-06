@@ -2487,6 +2487,10 @@
             "https://files.pythonhosted.org/packages/13/72/a50adff945e66f2161a44b243970f809de19152a2e7da0473ae8ff96d642/pyvisa-1.16.2.tar.gz": "sha256:75beb93eeafe20a50be5726fa4e3a645948c93d86819f9c1f8c542efa4085a38",
             "https://files.pythonhosted.org/packages/e4/a9/776da4f397003cca093659524c3526590522f81b642936838428c11274e6/pyvisa-1.16.2-py3-none-any.whl": "sha256:54f034adafd3e8d1858d57cdafec64e920444f4b84b31c9fd17487fbad0a197a"
           },
+          "pyvisa-py": {
+            "https://files.pythonhosted.org/packages/55/8d/0f1af2b39feca8868d0692a2c5d0c47f4ad559a051fb678c441fe1e99536/pyvisa_py-0.8.1.tar.gz": "sha256:db53d3219d971d16b8f7c764a93e08475875063635b9ad8ea3c988439833ccdd",
+            "https://files.pythonhosted.org/packages/70/0b/06ccf917ce30d78d75e452d0afc89236b1d384b776c5c33d75c8cc55fbe7/pyvisa_py-0.8.1-py3-none-any.whl": "sha256:31208a2933c1793b4e829ba5f07d265b83f280668df440ee7ee6ac505dea4ee9"
+          },
           "pywin32-ctypes": {
             "https://files.pythonhosted.org/packages/85/9f/01a1a99704853cb63f253eea009390c88e7131c67e66a0a02099a8c917cb/pywin32-ctypes-0.2.3.tar.gz": "sha256:d162dc04946d704503b2edc4d55f3dba5c1d539ead017afa00142c38b9885755",
             "https://files.pythonhosted.org/packages/de/3d/8161f7711c017e01ac9f008dfddd9410dff3674334c233bde66e7ba65bbf/pywin32_ctypes-0.2.3-py3-none-any.whl": "sha256:8a1513379d709975552d202d942d9837758905c8d01eb82b8bcc30918929e7b8"

@@ -1694,7 +1694,14 @@ pyusb==1.3.1 \
 pyvisa==1.16.2 \
     --hash=sha256:54f034adafd3e8d1858d57cdafec64e920444f4b84b31c9fd17487fbad0a197a \
     --hash=sha256:75beb93eeafe20a50be5726fa4e3a645948c93d86819f9c1f8c542efa4085a38
-    # via pylablib
+    # via
+    #   -r deps/requirements.in
+    #   pylablib
+    #   pyvisa-py
+pyvisa-py==0.8.1 \
+    --hash=sha256:31208a2933c1793b4e829ba5f07d265b83f280668df440ee7ee6ac505dea4ee9 \
+    --hash=sha256:db53d3219d971d16b8f7c764a93e08475875063635b9ad8ea3c988439833ccdd
+    # via -r deps/requirements.in
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
     --hash=sha256:0150219816b6a1fa26fb4699fb7daa9caf09eb1999f3b70fb6e786805e80375a \
@@ -2222,6 +2229,7 @@ typing-extensions==4.15.0 \
     #   pydantic
     #   pydantic-core
     #   pyvisa
+    #   pyvisa-py
     #   scikit-rf
     #   typing-inspection
 typing-inspection==0.4.2 \

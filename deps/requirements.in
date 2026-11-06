@@ -13,6 +13,8 @@ pymoo==0.6.2
 pyaedt===1.5.0
 pylablib==1.4.5
 pyserial==3.5
+pyvisa==1.16.2
+pyvisa-py==0.8.1
 pyyaml==6.0.3
 scikit-learn==1.9.0
 scikit-rf==1.11.0

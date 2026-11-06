@@ -4,6 +4,26 @@ load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "catr_interface",
+    srcs = ["catr_interface.py"],
+    deps = [
+        requirement("pyvisa"),
+        requirement("pyvisa-py"),
+    ],
+)
+
+py_binary(
+    name = "catr_spherical_main",
+    srcs = ["catr_spherical_main.py"],
+    deps = [
+        ":catr_interface",
+        ":fieldfox_interface",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "fieldfox_interface",
     srcs = ["fieldfox_interface.py"],
 )
