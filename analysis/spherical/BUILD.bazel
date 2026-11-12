@@ -1,0 +1,92 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "wigner_d",
+    srcs = ["wigner_d.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "spherical_wave_coefficients",
+    srcs = ["spherical_wave_coefficients.py"],
+    deps = [
+        ":wigner_d",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "probe_response",
+    srcs = ["probe_response.py"],
+    deps = [
+        ":spherical_wave_coefficients",
+        ":wigner_d",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "spherical_measurement",
+    srcs = ["spherical_measurement.py"],
+    deps = [
+        "//utils/network:sparam_viewer",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "transmission_formula",
+    srcs = ["transmission_formula.py"],
+    deps = [
+        ":probe_response",
+        ":spherical_measurement",
+        ":spherical_wave_coefficients",
+        ":wigner_d",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "radiation_pattern_plotter",
+    srcs = ["radiation_pattern_plotter.py"],
+    deps = [
+        ":spherical_wave_coefficients",
+        "//analysis/antenna/marlin:common",
+        "//utils:constants",
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "probe_calibration_main",
+    srcs = ["probe_calibration_main.py"],
+    deps = [
+        ":radiation_pattern_plotter",
+        ":spherical_measurement",
+        ":spherical_wave_coefficients",
+        ":transmission_formula",
+        "//analysis/antenna/marlin:common",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_binary(
+    name = "antenna_under_test_main",
+    srcs = ["antenna_under_test_main.py"],
+    deps = [
+        ":radiation_pattern_plotter",
+        ":spherical_measurement",
+        ":spherical_wave_coefficients",
+        ":transmission_formula",
+        "//analysis/antenna/marlin:common",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
