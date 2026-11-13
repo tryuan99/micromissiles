@@ -71,7 +71,7 @@ if __name__ == "__main__":
     flags.DEFINE_float("azimuth_stop", 90, "Azimuth stop in degrees.")
     flags.DEFINE_float(
         "azimuth_step",
-        None,
+        1,
         "Azimuth step in degrees.",
         lower_bound=0.0,
     )
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     flags.DEFINE_float("roll_stop", 180, "Roll stop in degrees.")
     flags.DEFINE_float(
         "roll_step",
-        None,
+        1,
         "Roll step in degrees.",
         lower_bound=0.0,
     )
