@@ -45,7 +45,8 @@ class PololuTicMotor(Motor):
         self.step_mode = step_mode
         self.send_command(["--step-mode", str(step_mode.value)])
         self.send_command(["--current", str(int(max_current * 1000))])
-        max_speed = max_degrees_per_second * self.num_steps_per_revolution * self.step_mode.value * 10000 / 360
+        max_speed = (max_degrees_per_second * self.num_steps_per_revolution *
+                     self.step_mode.value * 10000 / 360)
         self.send_command(["--max-speed", str(int(max_speed))])
 
     def status(self) -> str:

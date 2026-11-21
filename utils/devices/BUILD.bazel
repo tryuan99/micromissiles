@@ -24,6 +24,15 @@ py_binary(
 )
 
 py_library(
+    name = "fieldfox_calibration",
+    srcs = ["fieldfox_calibration.py"],
+    deps = [
+        ":vna_calibration",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "fieldfox_interface",
     srcs = ["fieldfox_interface.py"],
 )
@@ -68,4 +77,10 @@ py_binary(
         ":thorlabs_motor",
         requirement("absl-py"),
     ],
+)
+
+py_library(
+    name = "vna_calibration",
+    srcs = ["vna_calibration.py"],
+    deps = [requirement("numpy")],
 )

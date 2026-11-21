@@ -4,6 +4,9 @@ from typing import Any
 
 import numpy as np
 
+# Speed of light in m/s.
+SPEED_OF_LIGHT = 299792458
+
 
 def power2db(power: Any) -> Any:
     """Converts power to dB."""

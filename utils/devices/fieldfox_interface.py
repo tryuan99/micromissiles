@@ -124,7 +124,8 @@ class FieldFoxInterface:
                                         num_bytes=num_digits).decode("ascii"))
                     payload = self._read_data(reader, payload_size)
 
-                    # The FieldFox terminates the response with LF or CRLF, so flush it.
+                    # The FieldFox terminates the response with LF or CRLF, so
+                    # flush it.
                     if self._read_data(reader, num_bytes=1) == b"\r":
                         self._read_data(reader, num_bytes=1)
 
