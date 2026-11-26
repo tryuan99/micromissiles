@@ -1,0 +1,48 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "probe_response_constants",
+    srcs = ["probe_response_constants.py"],
+    deps = [
+        ":spherical_wave_coefficients",
+        ":translation_coefficients",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "rotation_coefficients",
+    srcs = ["rotation_coefficients.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "spherical_measurement",
+    srcs = ["spherical_measurement.py"],
+    deps = [
+        "//utils:constants",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "spherical_wave_coefficients",
+    srcs = ["spherical_wave_coefficients.py"],
+    deps = [
+        ":rotation_coefficients",
+        requirement("numpy"),
+        requirement("pandas"),
+    ],
+)
+
+py_library(
+    name = "translation_coefficients",
+    srcs = ["translation_coefficients.py"],
+    deps = [
+        ":rotation_coefficients",
+        requirement("numpy"),
+    ],
+)
