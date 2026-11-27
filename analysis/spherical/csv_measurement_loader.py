@@ -12,11 +12,11 @@ from utils.devices.vna_calibration import VnaCalibration
 class CsvMeasurementLoader(MeasurementLoader):
     """Loads a single-frequency measurement from one CSV per probe polarization.
 
-    The columns are Azimuth, Roll, DutPhi, and DutTheta in degrees, Power in dB,
-    and Phase in degrees, where Azimuth is the yaw. DutPhi and DutTheta are
-    ignored. The yaw may be negative. Samples beyond the measured yaws, e.g.,
-    behind the test antenna if the yaw is only swept over +/-90 degrees, are
-    set to zero.
+    The CSV files come from the Keysight OTA Chamber Control software. The
+    columns are Azimuth, Roll, DutPhi, and DutTheta in degrees, Power in dB, and
+    Phase in degrees, where Azimuth is the yaw. DutPhi and DutTheta are ignored.
+    The yaw may be negative. Samples beyond the measured yaws, e.g., behind the
+    test antenna if the yaw is only swept over +/-90 degrees, are set to zero.
     """
 
     def __init__(

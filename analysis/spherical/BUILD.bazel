@@ -1,7 +1,21 @@
 load("@pypi//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "py_library")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "antenna_under_test_main",
+    srcs = ["antenna_under_test_main.py"],
+    deps = [
+        ":measurement_flags",
+        ":spherical_wave_coefficients",
+        ":transmission_formula",
+        "//utils:constants",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
 
 py_library(
     name = "csv_measurement_loader",
@@ -13,6 +27,35 @@ py_library(
         "//utils/devices:vna_calibration",
         requirement("numpy"),
         requirement("pandas"),
+    ],
+)
+
+py_library(
+    name = "identical_antenna_calibrator",
+    srcs = ["identical_antenna_calibrator.py"],
+    deps = [
+        ":probe_calibration",
+        ":spherical_measurement",
+        ":spherical_wave_coefficients",
+        ":transmission_formula",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "measurement_flags",
+    srcs = ["measurement_flags.py"],
+    deps = [
+        ":csv_measurement_loader",
+        ":measurement_loader",
+        ":positioner_geometry",
+        ":radiation_pattern_plotter",
+        ":sparam_measurement_loader",
+        ":spherical_measurement",
+        ":spherical_wave_coefficients",
+        "//utils/devices:fieldfox_calibration",
+        requirement("absl-py"),
     ],
 )
 
@@ -35,11 +78,46 @@ py_library(
 )
 
 py_library(
+    name = "probe_calibration",
+    srcs = ["probe_calibration.py"],
+    deps = [
+        ":spherical_wave_coefficients",
+        ":transmission_formula",
+    ],
+)
+
+py_binary(
+    name = "probe_calibration_main",
+    srcs = ["probe_calibration_main.py"],
+    deps = [
+        ":identical_antenna_calibrator",
+        ":measurement_flags",
+        ":probe_calibration",
+        ":spherical_wave_coefficients",
+        "//utils:constants",
+        "//utils/visualization:mpl_config",
+        requirement("absl-py"),
+        requirement("numpy"),
+    ],
+)
+
+py_library(
     name = "probe_response_constants",
     srcs = ["probe_response_constants.py"],
     deps = [
         ":spherical_wave_coefficients",
         ":translation_coefficients",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "radiation_pattern_plotter",
+    srcs = ["radiation_pattern_plotter.py"],
+    deps = [
+        ":spherical_wave_coefficients",
+        "//utils:constants",
+        requirement("matplotlib"),
         requirement("numpy"),
     ],
 )
