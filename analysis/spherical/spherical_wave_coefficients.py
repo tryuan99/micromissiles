@@ -57,8 +57,8 @@ class SphericalWaveCoefficients:
     def huygens_source(cls, max_degree: int = 1) -> Self:
         """Creates the coefficients of an x-polarized Huygens source.
 
-        The Huygens source radiates toward +z with no back radiation and has a
-        gain of 3; see Sections 2.3.4 and 2.4.4. It is a good initial
+        The Huygens source radiates toward the +z-axis with no back radiation
+        and has a gain of 3; see Sections 2.3.4 and 2.4.4. It is a good initial
         approximation of a probe with mu = +/-1 only; see Section 3.2.5.
 
         Args:
@@ -181,11 +181,11 @@ class SphericalWaveCoefficients:
                                                      m + self.max_degree]
         return resized
 
-    def rotate_about_z(self, angle: float) -> Self:
-        """Expresses the coefficients in a coordinate system rotated about z.
+    def rotate_around_z(self, angle: float) -> Self:
+        """Expresses the coefficients in a coordinate system rotated around z.
 
         If the new coordinate system is obtained by rotating the original one by
-        the given angle about the z-axis, then by eqn (A2.2), the coefficients
+        the given angle around the +z-axis, then by eqn (A2.2), the coefficients
         in the new coordinate system are T'_{smn} = T_{smn} exp(im angle).
 
         Args:
@@ -198,11 +198,11 @@ class SphericalWaveCoefficients:
         return type(self)(self.values *
                           np.exp(1j * m * angle)[np.newaxis, np.newaxis, :])
 
-    def rotate_about_y(self, angle: float) -> Self:
-        """Expresses the coefficients in a coordinate system rotated about y.
+    def rotate_around_y(self, angle: float) -> Self:
+        """Expresses the coefficients in a coordinate system rotated around y.
 
         If the new coordinate system is obtained by rotating the original one by
-        the given angle about the y-axis, then by eqn (A2.2), the coefficients
+        the given angle around the +y-axis, then by eqn (A2.2), the coefficients
         in the new coordinate system are
         T'_{s mu n} = sum_m T_{smn} d^n_{mu m}(angle).
 

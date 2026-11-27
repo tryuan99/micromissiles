@@ -4,6 +4,37 @@ load("@rules_python//python:defs.bzl", "py_library")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
+    name = "csv_measurement_loader",
+    srcs = ["csv_measurement_loader.py"],
+    deps = [
+        ":measurement_loader",
+        ":positioner_geometry",
+        "//utils:constants",
+        "//utils/devices:vna_calibration",
+        requirement("numpy"),
+        requirement("pandas"),
+    ],
+)
+
+py_library(
+    name = "measurement_loader",
+    srcs = ["measurement_loader.py"],
+    deps = [
+        ":positioner_geometry",
+        ":spherical_measurement",
+        "//utils:constants",
+        "//utils/devices:vna_calibration",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "positioner_geometry",
+    srcs = ["positioner_geometry.py"],
+    deps = [requirement("numpy")],
+)
+
+py_library(
     name = "probe_response_constants",
     srcs = ["probe_response_constants.py"],
     deps = [
@@ -17,6 +48,18 @@ py_library(
     name = "rotation_coefficients",
     srcs = ["rotation_coefficients.py"],
     deps = [requirement("numpy")],
+)
+
+py_library(
+    name = "sparam_measurement_loader",
+    srcs = ["sparam_measurement_loader.py"],
+    deps = [
+        ":measurement_loader",
+        ":positioner_geometry",
+        "//utils/devices:vna_calibration",
+        "//utils/network:sparam_viewer",
+        requirement("numpy"),
+    ],
 )
 
 py_library(

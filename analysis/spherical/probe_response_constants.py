@@ -55,10 +55,10 @@ class ProbeResponseConstants:
         """Computes the probe receiving coefficients R^p_{sigma mu nu}.
 
         The probe transmitting coefficients are defined in the probe's own
-        coordinate system with the boresight along +z. In the transmission
-        formula, the primed probe coordinate system has its z'-axis pointing
-        away from the test antenna, so the probe is rotated by pi about its
-        y-axis before applying reciprocity.
+        coordinate system with the boresight along the +z-axis. In the
+        transmission formula, the primed probe coordinate system has its
+        +z'-axis pointing away from the test antenna, so the probe is rotated
+        by pi around its +y-axis before applying reciprocity.
 
         Args:
             probe_coefficients: Probe transmitting coefficients in the probe's
@@ -68,4 +68,5 @@ class ProbeResponseConstants:
             The probe receiving coefficients in the primed probe coordinate
             system.
         """
-        return probe_coefficients.rotate_about_y(np.pi).receiving_coefficients()
+        return probe_coefficients.rotate_around_y(
+            np.pi).receiving_coefficients()
