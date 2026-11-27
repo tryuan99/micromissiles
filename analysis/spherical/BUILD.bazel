@@ -89,3 +89,16 @@ py_library(
         requirement("numpy"),
     ],
 )
+
+py_library(
+    name = "transmission_formula",
+    srcs = ["transmission_formula.py"],
+    deps = [
+        ":probe_response_constants",
+        ":rotation_coefficients",
+        ":spherical_measurement",
+        ":spherical_wave_coefficients",
+        "//utils:constants",
+        requirement("numpy"),
+    ],
+)
